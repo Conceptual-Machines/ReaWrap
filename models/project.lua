@@ -1,7 +1,6 @@
 local constants = require('models.constants')
 local helpers = require('models.helpers')
 local media_item = require('models.item')
-local _reaper = require('models.reaper')
 local media_item_take = require('models.take')
 local track = require('models.track')
 
@@ -11,10 +10,8 @@ Project = {pointer_type = constants.PointerTypes.ReaProject}
 
 ---Create new Project instance.
 function Project:new(o)
-    --local rea_project, _ = Reaper:enum_projects()
     o = o or {
         active = 0,
-        --rea_project = rea_project,
     }
     setmetatable(o, self)
     self.__index = self
@@ -1022,3 +1019,4 @@ function Project:is_valid()
     return r.ValidatePtr2(self.active, Reaper.Types.ReaProject)
 end
 
+return Project

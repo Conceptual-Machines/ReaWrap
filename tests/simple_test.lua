@@ -15,3 +15,13 @@ local ReaWrap = require('init')
 -- Test ReaWrap
 local rea_wrap = ReaWrap.reaper:new()
 rea_wrap:log('Reaper version: ' .. rea_wrap:get_app_version())
+
+local project = ReaWrap.project:new()
+
+local function test_iter_tracks()
+    for sel_track in project:iter_selected_tracks() do
+        project:log(sel_track)
+    end
+end
+
+test_iter_tracks()
