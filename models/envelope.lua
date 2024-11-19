@@ -1,11 +1,10 @@
---@ Module : envelope
---@ Description : Envelope model
---@ Author : J. 'Schlump' K.
---@ License : MIT
---@ Version : 1.0
+--@module : envelope
+--@description : Provides implementation of Envelope, EnvelopePoint and AutomationItem classes.
+--@author : NomadMonad
 
-local constants = require('ReaWrap.models.constants')
-local helpers = require('ReaWrap.models.helpers')
+
+local constants = require('models.constants')
+local helpers = require('models.helpers')
 
 local r = reaper
 

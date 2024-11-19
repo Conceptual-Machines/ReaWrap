@@ -1,8 +1,8 @@
 ---@description Provide implementation of the class Reaper
 ---@author NomadMonad
 
-local helpers = require('ReaWrap.models.helpers')
-local constants = require('ReaWrap.models.constants')
+local helpers = require('models.helpers')
+local constants = require('models.constants')
 
 local r = reaper
 

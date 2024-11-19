@@ -1,6 +1,6 @@
-local constants = require('ReaWrap.models.constants')
-local helpers = require('ReaWrap.models.helpers')
-local media_item_take = require('ReaWrap.models.take')
+local constants = require('models.constants')
+local helpers = require('models.helpers')
+local media_item_take = require('models.take')
 
 local r = reaper
 

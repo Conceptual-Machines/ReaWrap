@@ -1,13 +1,13 @@
-local constants = require('ReaWrap.models.constants')
-local helpers = require('ReaWrap.models.helpers')
-local media_item = require('ReaWrap.models.item')
-require('ReaWrap.models.reaper')
-require('ReaWrap.models.take')
-require('ReaWrap.models.track')
+local constants = require('models.constants')
+local helpers = require('models.helpers')
+local media_item = require('models.item')
+local _reaper = require('models.reaper')
+local media_item_take = require('models.take')
+local track = require('models.track')
 
 local r = reaper
 
-Project = {pointer_type = PointerTypes.ReaProject}
+Project = {pointer_type = constants.PointerTypes.ReaProject}
 
 ---Create new Project instance.
 function Project:new(o)
@@ -47,7 +47,7 @@ end
 ---Iterate over selected tracks
 ---@return function iterator
 function Project:iter_selected_tracks(master)
-    return helpers.iter((self:get_selected_tracks(master))
+    return helpers.iter(self:get_selected_tracks(master))
 end
 
 ---Whether there is at least one selected track
@@ -91,7 +91,7 @@ end
 ---Iterate over selected media items
 ---@return function iterator
 function Project:iter_selected_media_items()
-    return helpers.iter((self:get_selected_media_items())
+    return helpers.iter(self:get_selected_media_items())
 end
 
 ---Get value by section and key from project state.
@@ -382,14 +382,14 @@ end
 ---@return table MediaItem
 function Project:get_media_item(item_idx)
     local mt = r.GetMediaItem(self.active, item_idx)
-    return media_item.MediaItemnew(mt)
+    return media_item.MediaItem:new(mt)
 end
 
 ---@param guid string
----@return table Take
+---@return table MediaItemTake
 function Project:get_media_item_take_by_guid(guid)
     local take = r.GetMediaItemTakeByGUID(self.active, guid)
-    return Take:new(take)
+    return media_item_take.MediaItemTake:new(take)
 end
 
 ---Returns position of next audio block being processed
@@ -594,7 +594,7 @@ end
 ---@return table Track
 function Project:get_track(track_idx)
     local t = r.GetTrack(self.active, track_idx)
-    return Track:new(t)
+    return track.Track:new(t)
 end
 
 ---Get note/CC name. pitch 128 for CC0 name, 129 for CC1 name, etc. See SetTrackMIDINoteNameEx
@@ -682,10 +682,10 @@ end
 
 ---[S&M] Gets a take by GUID as string. The GUID must be enclosed in braces {}. To get take GUID as string, see BR_GetMediaItemTakeGUID
 ---@param guid string
----@return table Take
+---@return table MediaItemTake
 function Project:get_media_item_take_by_guid(guid)
     local take r.SNM_GetMediaItemTakeByGUID(self.active, guid)
-    return Take:new(take)
+    return media_item_take.MediaItemTake:new(take)
 end
 
 ---[S&M] Gets a marker/region name. Returns true if marker/region found.

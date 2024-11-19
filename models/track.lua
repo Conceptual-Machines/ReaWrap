@@ -1,14 +1,14 @@
-require('ReaWrap.models.constants')
-require('ReaWrap.models.reaper')
-require('ReaWrap.models.fx')
-require('ReaWrap.models.helpers')
-require('ReaWrap.models.item')
-require('ReaWrap.models.envelope')
+local constants = require('models.constants')
+local reap = require('models.reaper')
+local fx = require('models.fx')
+local helpers = require('models.helpers')
+local item = require('models.item')
+local envelope = require('models.envelope')
 
 local r = reaper
 
 Track = {
-    pointer_type = PointerTypes.MediaTrack
+    pointer_type = constants.PointerTypes.MediaTrack
 }
 
 ---Create new instance of Track

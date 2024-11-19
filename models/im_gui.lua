@@ -1,4 +1,4 @@
-local helpers = require('ReaWrap.models.helpers')
+local helpers = require('models.helpers')
 
 local r = reaper
 

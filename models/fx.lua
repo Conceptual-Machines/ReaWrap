@@ -1,8 +1,8 @@
 ---@description Provide implementation of TrackFX and TakeFX
 ---@author NomadMonad
 
-local constants = require('ReaWrap.models.constants')
-local helpers = require('ReaWrap.models.helpers')
+local constants = require('models.constants')
+local helpers = require('models.helpers')
 
 local r = reaper
 
