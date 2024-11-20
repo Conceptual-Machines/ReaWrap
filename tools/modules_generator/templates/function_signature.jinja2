@@ -1,0 +1,5 @@
+function {{ reawrap_class }}:{{ reawrap_name }}(
+{%- if reawrap_params -%}
+{{ reawrap_params|join(", ") }}
+{%- endif -%}
+)
