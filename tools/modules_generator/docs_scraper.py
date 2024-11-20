@@ -181,6 +181,14 @@ def get_function_name(signature: str) -> str:
     raise ValueError(f"Could not find function name in {signature}")
 
 
+def get_fn_name_space(fn_name_space_parts) -> str:
+    fn_namespace = fn_name_space_parts[0] if len(fn_name_space_parts) > 1 else None
+    if fn_namespace and fn_namespace in REA_FUNC_NAMESPACES:
+        # we want to filter out false positives like "GetSetProjectInfo_String"
+        return fn_namespace
+    return None
+
+
 def parse_lua_function(text: str) -> dict[str, str]:
     """Parse a Lua function from a string."""
     parts = text.split("reaper.", maxsplit=1)
@@ -189,7 +197,7 @@ def parse_lua_function(text: str) -> dict[str, str]:
     arguments = list(iter_types_and_names(get_arguments(signature)))
     name = get_function_name(signature)
     fn_name_space_parts = name.split("_", maxsplit=1)
-    fn_name_space = fn_name_space_parts[0] if len(fn_name_space_parts) > 1 else None
+    fn_name_space = get_fn_name_space(fn_name_space_parts)
     if fn_name_space == "TimeMap2":
         fn_name_space = "TimeMap"
     elif fn_name_space == "midi":
@@ -266,10 +274,11 @@ def refine_functions(
         """Remove the namespace from the function name and snake_case it."""
         if "TimeMap2" in function_name:
             function_name = function_name.replace("TimeMap2", "TimeMap")
-        if fn_name_space and fn_name_space in function_name:
-            function_name = function_name.replace(fn_name_space, "").replace("_", "")
-        if namespace in function_name:
+        elif namespace in function_name:
             function_name = function_name.replace(namespace, "").replace("_", "")
+        elif fn_name_space and fn_name_space in function_name:
+            function_name = function_name.replace(fn_name_space, "").replace("_", "")
+
         return to_snake(function_name)
 
     refined = {}
@@ -284,9 +293,12 @@ def refine_functions(
                     f"Skipping deprecated function: {func.rea_name} | namespace: {name_space}"
                 )
                 continue
+
             reawrap_name = get_reawrap_name(
                 name_space, func.fn_name_space, func.rea_name
             )
+            if func.rea_name == "GetSetProjectInfo_String":
+                print()
             func.reawrap_name = reawrap_name
             refined[name_space].append(func)
     return refined
