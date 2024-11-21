@@ -27,13 +27,9 @@ function helpers.console_msg(arg)
     r.ShowConsoleMsg(tostring(arg) .. '\n')
 end
 
---[[
-    Return a print closure function that takes a variable number of arguments.
-    The printer shows a console msg where the arguments are separated by
-    `sep` (default ', ').
-
-    @return function
---]]
+--- Return a print function that joins the arguments with a separator.
+-- @param sep string. Default is ', '
+-- @return function
 function helpers.print_func(sep)
     return function(...)
         joiner = helpers.string_join(sep)
@@ -41,13 +37,10 @@ function helpers.print_func(sep)
     end
 end
 
---[[
-    Return a logger closure function that takes a variable number of arguments.
-    The logger shows a console msg where the arguments are separated by the
-    arg `sep` (default ' --- '). Additionally provides timestamp and `name`.
-
-    @return function
---]]
+--- Return a log function that prepends the current date and a name to the arguments.
+-- @param name string
+-- @param sep string. Default is ' --- '
+-- @return function
 function helpers.log_func(name, sep)
     sep = sep or ' --- '
     return function(...)
@@ -57,17 +50,18 @@ function helpers.log_func(name, sep)
 end
 
 -- Show a Message Box dialogue
--- @msg string
--- @title string
--- @type number : Accepted values : constants.MsgBoxTypes
+-- @param msg string
+-- @param title number: Accepted values : constants.MsgBoxTypes
 -- @return number : Expected values : constants.MsgBoxReturnTypes
 function helpers.msg_box(msg, title, type)
     type = type or 0
     return r.ShowMessageBox(msg, title, type)
 end
 
--- Iterator function
+--- Create an iterator function for a table.
 -- https://www.lua.org/pil/7.1.html
+-- @param t table
+-- @return function
 function helpers.iter(t)
     local i = 0
     local n = #t
@@ -79,64 +73,10 @@ function helpers.iter(t)
     end
 end
 
-Binary = {}
 
-
-function Binary:new(bits)
-    local o = {
-        bits = bits or {}
-    }
-    setmetatable(o, self)
-    self.__index = self
-    return o
-end
-
-function Binary:__tostring()
-    return string.reverse(table.concat(self.bits))
-end
-
-function Binary:from_decimal(dec)
-    return self:new(dec_to_bin(dec))
-end
-
-function Binary:to_decimal(dec)
-    return bin_to_dec(self.bits)
-end
-
--- return a table with the indices (1 based) of value 1 bits
--- e.g. [0,1,0,1] -> {2,4}
-function Binary:to_bits_indices()
-    local indices = {}
-    for i, bit in ipairs(self.bits) do
-        if bit == 1 then
-            indices[#indices + 1] = i
-        end
-    end
-    return indices
-end
-
--- @return table
-function dec_to_bin(dec)
-    local bits = {}
-    while dec > 0 do
-        bit = dec % 2
-        bits[#bits + 1] = bit
-        dec = math.floor(dec / 2)
-    end
-    return bits
-end
-
--- @return number
-function bin_to_dec(bits)
-    local buf = 0
-    for i = 0, #bits - 1 do
-        if bits[i + 1] == 1 then
-            buf = buf + 2 ^ i
-        end
-    end
-    return math.floor(buf)
-end
-
+--- Check if a file exists.
+-- @param fpath string
+-- @return boolean
 function file_exists(fpath)
     local f = io.open(fpath, 'rb')
     if f then
@@ -147,6 +87,9 @@ function file_exists(fpath)
     return f ~= nil
 end
 
+--- Read a file.
+-- @param fpath string
+-- @return string
 function read_file(fpath)
     if file_exists(fpath) then
         local content = f:read("*all")
@@ -157,6 +100,11 @@ function read_file(fpath)
     end
 end
 
+--- Slice a table.
+--- @param source_table table
+--- @param start_idx number
+--- @param end_idx number
+--- @return table
 function slice_table(source_table, start_idx, end_idx)
     start_idx = start_idx or 1
     end_idx = end_idx or #source_table
@@ -169,58 +117,5 @@ function slice_table(source_table, start_idx, end_idx)
     return dest_table
 end
 
-BarsAndBeats = {}
---- Helper class for Bars and Beats
---- @return table
-function BarsAndBeats:new(bars, beats)
-    local o = {
-        bars = bars or 0,
-        beats = beats or 0,
-    }
-    setmetatable(o, self)
-    self.__index = self
-    return o
-end
-
---- Get number of beats from seconds
----@param seconds any
----@param bpm any
----@param timesig any
-function BarsAndBeats:seconds_to_beats(seconds, bpm, timesig)
-    return seconds / 60 * bpm / timesig
-end
-
---- Get number of bars from seconds
---- @param seconds number
---- @param bpm number
---- @param timesig number
-function BarsAndBeats:seconds_to_bars(seconds, bpm, timesig)
-    local beats = self.seconds_to_beats(seconds, bpm, timesig)
-    return self.beats_to_bars(beats, timesig)
-end
-
---- Get number of bars from beats
----@param beats any
----@param beats_per_bar any
-function BarsAndBeats:beats_to_bars_and_beats(beats, beats_per_bar)
-    local bars = beats // beats_per_bar
-    local rem_beats = beats % beats_per_bar
-    return bars, rem_beats
-end
-
---- Get number of beats from bars
-function BarsAndBeats:bars_to_beats(bars, beats_per_bar)
-    return bars * beats_per_bar
-end
-
---- Create new BarsAndBeats object from seconds, bpm and timesig
----@param seconds any
----@param bpm any
----@param timesig any
-function BarsAndBeats:from_seconds(seconds, bpm, timesig)
-    local total_beats = self.seconds_to_beats(seconds, bpm, timesig)
-    local bars, beats = self:beats_to_bars_and_beats(total_beats, timesig)
-    return self:new(bars, beats)
-end
 
 return helpers
