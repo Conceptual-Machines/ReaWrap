@@ -23,7 +23,7 @@ function helpers.string_join(sep)
 	end
 end
 
--- Print to console and add new line separator.
+--- Print to console and add new line separator.
 function helpers.console_msg(arg)
 	r.ShowConsoleMsg(tostring(arg) .. "\n")
 end
