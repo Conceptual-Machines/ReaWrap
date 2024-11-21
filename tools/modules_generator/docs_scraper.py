@@ -27,6 +27,7 @@ class ReaType:
     name: str | None = None
     is_optional: bool = False
     description: str | None = None
+    is_pointer: bool = False
     _default_value: str | None = None
 
     @property

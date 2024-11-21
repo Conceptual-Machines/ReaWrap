@@ -134,7 +134,9 @@ def generate_constructor_args(name_space: str) -> list[str]:
     constructor_args = {}
     match name_space:
         case "ReaProject":
-            return [ReaType(name="pointer", lua_type="number", description="The index of the project", is_optional=True)]
+            return [ReaType(name="project_idx", lua_type="number", description="The index of the project", is_optional=True, is_pointer=True)]
+        case "MediaTrack":
+            return [ReaType(name="pointer", lua_type="number", description="The index of the track", is_optional=True)]
     return constructor_args
 
 
