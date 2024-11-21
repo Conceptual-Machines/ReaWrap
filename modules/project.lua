@@ -41,15 +41,18 @@ function Project:get_selected_tracks(master)
     return tracks
 end
 
----Iterate over selected tracks
+-- Iterate over selected tracks
 ---@return function iterator
 function Project:iter_selected_tracks(master)
     return helpers.iter(self:get_selected_tracks(master))
 end
 
----Whether there is at least one selected track
+-- Whether there is at least one selected track
+-- Params:
+---@param master boolean
+-- Returns:
 ---@return boolean
-function Project:has_selected_tracks(master)
+function Project:has_selected_tracks(master --[[boolean]])
     return self:count_selected_tracks(master) > 0
 end
 

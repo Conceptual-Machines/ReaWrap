@@ -29,6 +29,7 @@ end
 function Reaper:print(...)
     printer = helpers:print_func()
     printer(...)
+    return printer
 end
 
 --[[
@@ -40,6 +41,7 @@ end
 function Reaper:log(...)
     logger = helpers.log_func('Reaper')
     logger(...)
+    return nil
 end
 
 -- Show a Message Box dialogue.

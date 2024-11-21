@@ -1,17 +1,5 @@
--- {{ module_name }}
--- @description {{ module_description or "No description provided." }}
--- @author {{ author or "Unknown" }}
--- @date {{ date or "Unknown" }}
--- @version {{ version or "1.0.0" }}
--- @license {{ license or "MIT" }}
--- @dependencies
--- {% if dependencies %}
-    -- {% for dependency in dependencies %}
-        -- - {{ dependency }}
-        -- {% endfor %}
-    -- {% else %}
-    -- None
-    -- {% endif %}
+--- {{ class_name }}: {{ description }}.
+-- @module {{ module_name }}
 
 local helpers = require('models.helpers')
 {% if pointer_type -%}
@@ -23,19 +11,19 @@ local r = reaper
 local {{ class_name }} = {}
 
 
-
 --- Create new {{ class_name }} instance.
--- {{ docstring or "Create a new instance of this class." }}
--- {% for arg, arg_type in constructor_args.items() %}
-    -- @{{ arg }} {{ arg_type }}
-    -- {% endfor %}
--- @return {{ class_name }} New instance of the class.
+{% if constructor_args %}
+{% for arg, arg_type in constructor_args.items() %}
+-- @param {{ arg }} {{ arg_type }}.
+{% endfor -%}
+{% endif -%}
+-- @return {{ class_name }} table.
 function {{ class_name }}:new({{ constructor_args.keys()|join(", ") }})
     local o = {
     {% for arg in constructor_args.keys() %}
         {{ arg }} = {{ arg }},
-    {% endfor %}
-    {% if pointer_type %}
+    {%- endfor -%}
+    {% if pointer_type -%}
         pointer_type = constants.PointerTypes.{{ pointer_type }}
     {% endif -%}
     }
@@ -44,22 +32,16 @@ function {{ class_name }}:new({{ constructor_args.keys()|join(", ") }})
     return o
 end
 
---- Convert {{ class_name }} instance to a string representation.
--- @return string The string representation of the instance.
-function {{ class_name }}:_tostring()
-    return string.format('<{{ class_name }} {{ tostring_representation }}>',
-    {% for method_call in tostring_calls -%}
-        self:{{ method_call }}(),
-    {% endfor %}
-    )
-end
+
 
 --- Log messages with the {{ class_name }} logger.
 -- @param ... (varargs) Messages to log.
 function {{ class_name }}:log(...)
     local logger = helpers.log_func('{{ class_name }}')
-logger(...)
+    logger(...)
+    return nil
 end
+
 
 {% for method in methods %}
     {{ method }}

@@ -5,7 +5,7 @@ from typing import Annotated, Iterator
 
 from bs4 import BeautifulSoup
 
-from modules_generator import API_HTML
+from modules_generator import API_HTML, REAPER_TYPES, REA_FUNC_NAMESPACES
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -14,59 +14,10 @@ handler.setFormatter(formatter)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-
-REAPER_TYPES = (
-    "MediaTrack",
-    "MediaItem",
-    "ReaProject",
-    "AudioAccessor",
-    "PCM_source",
-    "TrackEnvelope",
-    "MediaItemTake",
-    "HWND",
-    "AudioAccessor",
-)
-
-REA_FUNC_NAMESPACES = (
-    "Blink",
-    "BR",
-    "CF",
-    "CSurf",
-    "Dock",
-    "Envelope",
-    "FNG",
-    "Fab",
-    # "GR",
-    # "GSC",
-    "GU",
-    "ImGui",
-    "JB",
-    "JS",
-    "LICE",
-    "Llm",
-    # "Loop",
-    "MCULive",
-    "joystick",
-    "MIDI",
-    "MIDIEditor",
-    "MRP",
-    "Main",
-    "Master",
-    "Menu",
-    "NF",
-    "PCM",
-    "ReaPack",
-    "SNM",
-    "TakeFX",
-    "ThemeLayout",
-    "TimeMap",
-    "Track",
-    "TrackCtl",
-    "TrackFX",
-    "TrackFX",
-    "TrackList",
-    # "ULT",
-    "Xen",
+lua_reserved_keywords = (
+    "and", "break", "do", "else", "elseif", "end", "false", "for", "function",
+    "goto", "if", "in", "local", "nil", "not", "or", "repeat", "return",
+    "then", "true", "until", "while"
 )
 
 
@@ -164,12 +115,21 @@ def iter_types_and_names(types_and_names: str) -> Iterator[ReaType]:
         if not value:
             return None
         parts = [p for p in value.split(" ") if p]
+        name = to_snake(parts[1]) if len(parts) > 1 else None
+        if name in lua_reserved_keywords:
+            name = f"{name}_"
+        if name:
+            name = name.replace(".", "")
+            if name.endswith("idx"):
+                name = name.replace("idx", "_idx")
+            if name.startswith("is"):
+                name = name.replace("is", "is_")
         if parts[0] == "optional":
-            yield ReaType(name=parts[1], lua_type=parts[2], is_optional=True)
+            yield ReaType(name=name, lua_type=parts[2], is_optional=True)
         elif len(parts) == 1:
             yield ReaType(lua_type=get_type(parts[0]))
         else:
-            yield ReaType(lua_type=get_type(parts[0]), name=to_snake(parts[1]))
+            yield ReaType(lua_type=get_type(parts[0]), name=name)
 
 
 def get_function_name(signature: str) -> str:
@@ -246,9 +206,9 @@ def group_functions_by_name_space(
         ):
             namespace = "PCM"
         elif (
-            l_func.fn_name_space in ("BR", "CF")
-            and l_func.arguments
-            and l_func.arguments[0].lua_type in REAPER_TYPES
+                l_func.fn_name_space in ("BR", "CF")
+                and l_func.arguments
+                and l_func.arguments[0].lua_type in REAPER_TYPES
         ):
             namespace = l_func.arguments[0].lua_type
         elif l_func.fn_name_space in REA_FUNC_NAMESPACES:
@@ -279,7 +239,10 @@ def refine_functions(
         elif fn_name_space and fn_name_space in function_name:
             function_name = function_name.replace(fn_name_space, "").replace("_", "")
 
-        return to_snake(function_name)
+        function_name = to_snake(function_name)
+        if function_name in lua_reserved_keywords:
+            function_name = f"{function_name}_"
+        return function_name
 
     refined = {}
     for name_space, functions in sorted(
@@ -310,3 +273,15 @@ def get_functions_from_docs() -> dict[str, list[dict[str, str]]]:
     functions = list(iter_lua_functions(soup))
     by_name_space = group_functions_by_name_space(functions)
     return refine_functions(by_name_space)
+
+def main():
+    functions = get_functions_from_docs()
+    for name_space, functions in functions.items():
+        print(name_space, len(functions))
+        if name_space == "Reaper":
+            for func in functions:
+                print(func)
+
+
+if __name__ == "__main__":
+    main()

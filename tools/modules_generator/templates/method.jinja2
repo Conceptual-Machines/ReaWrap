@@ -1,16 +1,15 @@
+--- {{ function_name }}.
 {%- if docs -%}
 {%- for line in docs.split('\n') if line.strip() %}
 -- {{ line }}
 {%- endfor %}
 {%- endif -%}
 {%- if params %}
--- Parameters:
 {%- for param_name, param_type in params %}
 -- @param {{ param_name }} {{ param_type }}
 {%- endfor %}
 {%- endif -%}
 {% if return_values %}
--- Returns:
 {%- for ret_name_and_type in return_values %}
 -- @return {{ ret_name_and_type }}
 {%- endfor %}

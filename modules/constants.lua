@@ -1,5 +1,6 @@
--- @description Provide ReaScript constants
+-- @description Provide constants for the project.
 -- @author NomadMonad
+-- @license MIT
 
 local constants = {}
 
@@ -162,12 +163,12 @@ MediaItemInfoValue = {
     F_FREEMODE_Y = 'F_FREEMODE_Y', --number
     F_FREEMODE_H = 'F_FREEMODE_H', --number
 }
---
---TrackFXNamedConfigParams = {
---    pdc = 'pdc',
---    input_pin_name = 'in_pin_0',
---    output_pin_name = 'out_pin_0'
---}
+
+TrackFXNamedConfigParams = {
+   pdc = 'pdc',
+   input_pin_name = 'in_pin_0',
+   output_pin_name = 'out_pin_0'
+}
 
 constants.MediaItemTakeInfoValue = {
     D_STARTOFFS =  'D_STARTOFFS', --: number : start offset in source media, in seconds
