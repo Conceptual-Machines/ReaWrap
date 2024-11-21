@@ -1,13 +1,12 @@
---- Helpers: Provide helper functions.
--- @module helpers
-
 local r = reaper
+
+--[[
+    Return a function that joins a variable number of arguments, separated by
+    the argument `sep` (default ', ')
+--]]
 
 local helpers = {}
 
---- Return a function that joins a variable number of arguments, separated by the argument `sep` (default ', ').
--- @param sep string
--- @return function
 function helpers.string_join(sep)
 	sep = sep or ", "
 	return function(...)
@@ -23,7 +22,7 @@ function helpers.string_join(sep)
 	end
 end
 
--- Print to console and add new line separator.
+-- Print to console and add new line separator
 function helpers.console_msg(arg)
 	r.ShowConsoleMsg(tostring(arg) .. "\n")
 end
