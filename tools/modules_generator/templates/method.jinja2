@@ -1,4 +1,6 @@
+{%- if function_name.strip() %}
 --- {{ function_name }}.
+{%- endif %}
 {%- if docs -%}
 {%- for line in docs.split('\n') if line.strip() %}
 -- {{ line }}
@@ -16,3 +18,4 @@
 {%- endif %}
 {{ function_signature }}
     {{ function_body }}
+

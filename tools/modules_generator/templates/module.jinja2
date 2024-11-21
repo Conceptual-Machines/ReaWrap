@@ -1,5 +1,7 @@
---- {{ class_name }}: {{ description }}.
--- @module {{ module_name }}
+-- @description {{ class_name }}: {{ description }}.
+-- @author NomadMonad
+-- @license MIT
+
 
 local helpers = require('helpers')
 {% if pointer_type -%}
@@ -12,26 +14,34 @@ local {{ class_name }} = {}
 
 
 --- Create new {{ class_name }} instance.
-{% if constructor_args %}
-{% for arg, arg_type in constructor_args.items() %}
--- @param {{ arg }} {{ arg_type }}.
-{% endfor -%}
+{%- if constructor_args %}
+{%- for arg in constructor_args %}
+{%- if arg.is_optional %}
+-- @param {{ arg.name }} {{ arg.lua_type }} Optional. {{ arg.description }}
+{%- else -%}
+-- @param {{ arg.name }} {{ arg.lua_type }} {{ arg.description }}
 {% endif -%}
+{% endfor -%}
+{% endif %}
 -- @return {{ class_name }} table.
-function {{ class_name }}:new({{ constructor_args.keys()|join(", ") }})
-    local obj = {
-    {% for arg in constructor_args.keys() %}
-        {{ arg }} = {{ arg }},
-    {%- endfor -%}
-    {% if pointer_type -%}
-        pointer_type = constants.PointerTypes.{{ pointer_type }}
+function {{ class_name }}:new({{ constructor_args | map(attribute='name') |join(", ") }})
+    {% for arg in constructor_args %}
+    {%- if arg.is_optional -%}
+    local {{ arg.name }} = {{ arg.name }} or {{ arg.default_value }}
     {% endif -%}
+    {% endfor -%}
+    local obj = {
+        {% if pointer_type -%}
+        pointer_type = constants.PointerTypes.{{ pointer_type }},
+        {%- endif -%}
+        {%- for arg in constructor_args %}
+        {{ arg.name }} = {{ arg.name }}{{ ', ' if not loop.last }}
+        {%- endfor %}
     }
     setmetatable(obj, self)
     self.__index = self
     return obj
 end
-
 
 
 --- Log messages with the {{ class_name }} logger.
@@ -41,10 +51,10 @@ function {{ class_name }}:log(...)
     logger(...)
     return nil
 end
-
-
 {% for method in methods %}
     {{ method }}
-{% endfor %}
+{%- endfor -%}
 
+{% if class_name %}
 return {{ class_name }}
+{% endif -%}

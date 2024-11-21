@@ -1,0 +1,36 @@
+[build-system]
+# Defines the build backend (setuptools) and minimum version.
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# Project metadata
+name = "ReaWrap"
+version = "0.0.1"
+description = "Object oriented wrapper for LUA ReaScript API."
+authors = [
+    { name = "NomadMonad", email = ""}
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+keywords = ["example", "pip-tools", "pyproject"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+# Main dependencies for your project
+dependencies = [
+    "beautifulsoup4>=4.12.3",
+    "bs4>=0.0.2"
+]
+
+# Optional development dependencies for use during development
+[tool.pip-tools]
+extra = ["dev"]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+]

@@ -27,6 +27,7 @@ class ReaType:
     name: str | None = None
     is_optional: bool = False
     description: str | None = None
+    _default_value: str | None = None
 
     @property
     def is_reaper_type(self) -> bool:
@@ -38,13 +39,20 @@ class ReaType:
 
     @property
     def default_value(self) -> str:
-        if self.lua_type == "boolean":
-            return "false"
-        if self.lua_type == "number":
-            return "0"
-        if self.lua_type == "string":
-            return '""'
-        return "nil"
+        if self._default_value is None:
+            if self.lua_type == "boolean":
+                self._default_value = "false"
+            elif self.lua_type == "number":
+                self._default_value = "0"
+            elif self.lua_type == "string":
+                self._default_value = '""'
+            else:
+                self._default_value = "nil"
+        return self._default_value
+
+    @default_value.setter
+    def default_value(self, value: str):
+        self._default_value = value
 
 
 @dataclass

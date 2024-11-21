@@ -8,7 +8,7 @@ constants.PointerTypes = {
 	ReaProject = "ReaProject*",
 	MediaTrack = "MediaTrack*",
 	MediaItem = "MediaItem*",
-	MediaItem_Take = "MediaItem_Take*",
+	MediaItemTake = "MediaItem_Take*",
 	TrackEnvelope = "TrackEnvelope*",
 	PCM_source = "PCM_source*",
 }
