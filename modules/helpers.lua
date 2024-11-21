@@ -74,6 +74,23 @@ function helpers.iter(t)
 	end
 end
 
+--- Slice a table.
+--- @param source_table table
+--- @param start_idx number
+--- @param end_idx number
+--- @return table
+function slice_table(source_table, start_idx, end_idx)
+	start_idx = start_idx or 1
+	end_idx = end_idx or #source_table
+	local dest_table = {}
+	for idx, item in ipairs(source_table) do
+		if idx >= start_idx and idx <= end_idx then
+			dest_table[#dest_table + 1] = item
+		end
+	end
+	return dest_table
+end
+
 --- Check if a file exists.
 -- @param fpath string
 -- @return boolean
@@ -98,23 +115,6 @@ function read_file(fpath)
 	else
 		return nil
 	end
-end
-
---- Slice a table.
---- @param source_table table
---- @param start_idx number
---- @param end_idx number
---- @return table
-function slice_table(source_table, start_idx, end_idx)
-	start_idx = start_idx or 1
-	end_idx = end_idx or #source_table
-	local dest_table = {}
-	for idx, item in ipairs(source_table) do
-		if idx >= start_idx and idx <= end_idx then
-			dest_table[#dest_table + 1] = item
-		end
-	end
-	return dest_table
 end
 
 return helpers
