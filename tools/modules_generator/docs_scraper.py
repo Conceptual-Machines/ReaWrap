@@ -26,6 +26,7 @@ class ReaType:
     lua_type: str
     name: str | None = None
     is_optional: bool = False
+    description: str | None = None
 
     @property
     def is_reaper_type(self) -> bool:
