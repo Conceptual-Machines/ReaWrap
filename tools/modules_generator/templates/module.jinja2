@@ -1,9 +1,9 @@
 --- {{ class_name }}: {{ description }}.
 -- @module {{ module_name }}
 
-local helpers = require('models.helpers')
+local helpers = require('helpers')
 {% if pointer_type -%}
-    local constants = require('models.constants')
+    local constants = require('constants')
 {% endif -%}
 
 local r = reaper
@@ -19,7 +19,7 @@ local {{ class_name }} = {}
 {% endif -%}
 -- @return {{ class_name }} table.
 function {{ class_name }}:new({{ constructor_args.keys()|join(", ") }})
-    local o = {
+    local obj = {
     {% for arg in constructor_args.keys() %}
         {{ arg }} = {{ arg }},
     {%- endfor -%}
@@ -27,9 +27,9 @@ function {{ class_name }}:new({{ constructor_args.keys()|join(", ") }})
         pointer_type = constants.PointerTypes.{{ pointer_type }}
     {% endif -%}
     }
-    setmetatable(o, self)
+    setmetatable(obj, self)
     self.__index = self
-    return o
+    return obj
 end
 
 

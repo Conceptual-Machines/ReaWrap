@@ -133,6 +133,7 @@ def generate_constructor_args(name_space: str) -> dict:
     match name_space:
         case "ReaProject":
             pass
+    return constructor_args
 
 
 def generate_module(name_space: str, functions: list[ReaFunc]) -> str:
