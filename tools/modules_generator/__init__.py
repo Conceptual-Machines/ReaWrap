@@ -22,6 +22,7 @@ REAPER_TYPES = (
     "HWND",
     "AudioAccessor",
 )
+
 REA_FUNC_NAMESPACES = (
     "Blink",
     "BR",
@@ -62,4 +63,29 @@ REA_FUNC_NAMESPACES = (
     "TrackList",
     # "ULT",
     "Xen",
+)
+
+LUA_KEYWORDS = (
+    "and",
+    "break",
+    "do",
+    "else",
+    "elseif",
+    "end",
+    "false",
+    "for",
+    "function",
+    "goto",
+    "if",
+    "in",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
+    "return",
+    "then",
+    "true",
+    "until",
+    "while",
 )

@@ -5,7 +5,7 @@ from typing import Annotated, Iterator
 
 from bs4 import BeautifulSoup
 
-from modules_generator import API_HTML, REAPER_TYPES, REA_FUNC_NAMESPACES
+from modules_generator import API_HTML, REAPER_TYPES, REA_FUNC_NAMESPACES, LUA_KEYWORDS
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -13,12 +13,6 @@ formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
-
-lua_reserved_keywords = (
-    "and", "break", "do", "else", "elseif", "end", "false", "for", "function",
-    "goto", "if", "in", "local", "nil", "not", "or", "repeat", "return",
-    "then", "true", "until", "while"
-)
 
 
 @dataclass
@@ -126,7 +120,7 @@ def iter_types_and_names(types_and_names: str) -> Iterator[ReaType]:
             return None
         parts = [p for p in value.split(" ") if p]
         name = to_snake(parts[1]) if len(parts) > 1 else None
-        if name in lua_reserved_keywords:
+        if name in LUA_KEYWORDS:
             name = f"{name}_"
         if name:
             name = name.replace(".", "")
@@ -216,9 +210,9 @@ def group_functions_by_name_space(
         ):
             namespace = "PCM"
         elif (
-                l_func.fn_name_space in ("BR", "CF")
-                and l_func.arguments
-                and l_func.arguments[0].lua_type in REAPER_TYPES
+            l_func.fn_name_space in ("BR", "CF")
+            and l_func.arguments
+            and l_func.arguments[0].lua_type in REAPER_TYPES
         ):
             namespace = l_func.arguments[0].lua_type
         elif l_func.fn_name_space in REA_FUNC_NAMESPACES:
@@ -250,7 +244,7 @@ def refine_functions(
             function_name = function_name.replace(fn_name_space, "").replace("_", "")
 
         function_name = to_snake(function_name)
-        if function_name in lua_reserved_keywords:
+        if function_name in LUA_KEYWORDS:
             function_name = f"{function_name}_"
         return function_name
 
@@ -260,7 +254,11 @@ def refine_functions(
     ):
         if name_space not in refined:
             refined[name_space] = []
+        seen_functions = set()
         for func in functions:
+            if func.rea_name in seen_functions:
+                continue
+            seen_functions.add(func.rea_name)
             if func.docs and "deprecated" in func.docs.lower():
                 logger.debug(
                     f"Skipping deprecated function: {func.rea_name} | namespace: {name_space}"
@@ -270,8 +268,7 @@ def refine_functions(
             reawrap_name = get_reawrap_name(
                 name_space, func.fn_name_space, func.rea_name
             )
-            if func.rea_name == "GetSetProjectInfo_String":
-                print()
+
             func.reawrap_name = reawrap_name
             refined[name_space].append(func)
     return refined
@@ -283,6 +280,7 @@ def get_functions_from_docs() -> dict[str, list[dict[str, str]]]:
     functions = list(iter_lua_functions(soup))
     by_name_space = group_functions_by_name_space(functions)
     return refine_functions(by_name_space)
+
 
 def main():
     functions = get_functions_from_docs()

@@ -1,17 +1,17 @@
 {% for param, default in optional_params.items() -%}
     local {{ param }} = {{ param }} or {{ default }}
-{% endfor -%}
-{% if return_values and 'retval' in return_values -%}
+    {% endfor -%}
+    {% if return_values and 'retval' in return_values -%}
     local {{ return_values | join(", ") }} = {{ function_call }}
     if retval then
         return {{ return_values | reject('equalto', 'retval') | join(", ") }}
     else
         return nil
     end
-{%- elif return_reawrap_class -%}
+    {%- elif return_reawrap_class -%}
     local result = {{ function_call }}
     return {{ return_reawrap_class_module }}.{{ return_reawrap_class }}:new(result)
-{%- else -%}
+    {%- else -%}
     return {{ function_call }}
 {%- endif %}
 end

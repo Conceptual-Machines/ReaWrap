@@ -2,15 +2,16 @@
 -- @author NomadMonad
 -- @license MIT
 
-
-local helpers = require('helpers')
-{% if pointer_type -%}
-    local constants = require('constants')
-{% endif -%}
-
 local r = reaper
+{% if dependencies -%}
+{% for dependency in dependencies %}
+local {{ dependency }} = require('{{ dependency }}')
+{%- endfor -%}
+{%- endif %}
 
+{% if class_name %}
 local {{ class_name }} = {}
+{% endif %}
 
 
 --- Create new {{ class_name }} instance.
@@ -18,30 +19,27 @@ local {{ class_name }} = {}
 {%- for arg in constructor_args %}
 {%- if arg.is_optional %}
 -- @param {{ arg.name }} {{ arg.lua_type }} Optional. {{ arg.description }}
-{%- else -%}
--- @param {{ arg.name }} {{ arg.lua_type }} {{ arg.description }}
-{% endif -%}
+{%- else %}
+-- @param {{ arg.name }} {{ arg.lua_type }}. {{ arg.description }}
+{%- endif -%}
 {% endfor -%}
 {% endif %}
 -- @return {{ class_name }} table.
 function {{ class_name }}:new({{ constructor_args | map(attribute='name') |join(", ") }})
+    {%  if constructor_args -%}
+    {%  if has_optional_args -%}
     {% for arg in constructor_args %}
     {%- if arg.is_optional -%}
     local {{ arg.name }} = {{ arg.name }} or {{ arg.default_value }}
     {%- endif -%}
     {% endfor %}
-    local obj = {
-        {% if pointer_type -%}
-        pointer_type = constants.PointerTypes.{{ pointer_type }},
-        {%- endif -%}
-        {%- for arg in constructor_args %}
-        {%- if arg.is_pointer %}
-        pointer = {{ arg.name }}{{ ', ' if not loop.last }}
-        {%- else -%}
-        {{ arg.name }} = {{ arg.name }}{{ ', ' if not loop.last }}
-        {%- endif -%}
-        {%- endfor %}
-    }
+    {% include "local_obj.jinja2" with context %}
+    {% else -%}
+    {% include "local_obj.jinja2" with context %}
+    {% endif -%}
+    {% else -%}
+    local obj = {}
+    {% endif -%}
     setmetatable(obj, self)
     self.__index = self
     return obj

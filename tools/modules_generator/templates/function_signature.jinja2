@@ -1,7 +1,7 @@
 function {{ reawrap_class }}:{{ reawrap_name }}(
 {%- if reawrap_params -%}
 {%- for name, type in reawrap_params -%}
-    {{ name }} --[[{{ type }}]]{{ ", " if not loop.last }}
+    {{ name }}{{ ", " if not loop.last }}
 {%- endfor -%}
 {%- endif -%}
 )
