@@ -3,9 +3,9 @@ import re
 from dataclasses import dataclass
 from typing import Annotated, Iterator
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
-from modules_generator import API_HTML, REAPER_TYPES, REA_FUNC_NAMESPACES, LUA_KEYWORDS
+from modules_generator import API_HTML, REAPER_TYPES, LUA_KEYWORDS
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -13,6 +13,57 @@ formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
+
+# These have come through as namespaces because of the _ in the function name, but they are not real namespaces.
+FALSE_POSITIVE_NAMESPACES = (
+    "GetEnvelopeInfo",
+    "GetMediaItem",
+    "GetMediaItemInfo",
+    "GetMediaItemTake",
+    "GetMediaItemTakeInfo",
+    "GetMediaTrackInfo",
+    "GetSet",
+    "GetSetAutomationItemInfo",
+    "GetSetEnvelopeInfo",
+    "GetSetMediaItemInfo",
+    "GetSetMediaItemTakeInfo",
+    "GetSetMediaTrackInfo",
+    "GetSetProjectInfo",
+    "GetSetTrackSendInfo",
+    "GetTrackSendInfo",
+    "SetMediaItemInfo",
+    "SetMediaItemTake",
+    "SetMediaItemTakeInfo",
+    "SetMediaTrackInfo",
+    "SetTrackSendInfo",
+    "file",
+    "format",
+    "get",
+    "image",
+    "kbd",
+    "my",
+    "parse",
+    "reduce",
+    "relative",
+    "resolve",
+    "time",
+)
+
+# These are namespaces that will be grouped under Reaper.
+REAPER_NAMESPACES = (
+    "Audio",
+    "Dock",
+    "Help",
+    "Loop",
+    "Main",
+    "Master",
+    "Menu",
+    "Resample",
+    "Splash",
+    "ThemeLayout",
+    "TimeMap",
+    "Undo",
+)
 
 
 @dataclass
@@ -63,6 +114,7 @@ class ReaFunc:
     reawrap_name: Annotated[
         str | None, "The ReaWrap function name. Like rea_name but snake_case"
     ] = None
+    constants: list[ReaType] | None = None
 
 
 def to_snake(s: str) -> str:
@@ -83,6 +135,7 @@ def get_html_from_file(html_file: str) -> BeautifulSoup:
 
 def get_function_signature(parts: list[str]) -> str:
     """Get the function signature from a list of parts."""
+
     pattern = r"\w+\s*\(\s*[^)]*\s*\)"
     for part in parts:
         if re.match(pattern, part):
@@ -107,6 +160,30 @@ def parse_return_values(values: str) -> list[dict[str, str]]:
         return list(iter_types_and_names(types_and_names))
 
 
+def sanitize_name(parts: list[str]) -> str:
+    """Sanitize the name of the argument. Convert to snake_case and remove any unwanted characters."""
+    name = to_snake(parts[1]) if len(parts) > 1 else None
+    if name in LUA_KEYWORDS:
+        name = f"{name}_"
+    if name:
+        name = name.replace(".", "")
+        if name.endswith("idx") and name != "idx":
+            name = name.replace("idx", "_idx")
+        elif name.endswith("name") and name != "name":
+            name = name.replace("name", "_name")
+        elif name.endswith("type") and name != "type":
+            name = name.replace("type", "_type")
+        elif name.endswith("val") and name != "val":
+            name = name.replace("val", "_val")
+        elif name.startswith("is"):
+            name = name.replace("is", "is_")
+        if name.startswith("__"):
+            name = name.replace("__", "")
+        if "__" in name:
+            name = name.replace("__", "_")
+    return name
+
+
 def iter_types_and_names(types_and_names: str) -> Iterator[ReaType]:
     """Iterate over the types and names and return a dict with keys type and name."""
 
@@ -119,15 +196,7 @@ def iter_types_and_names(types_and_names: str) -> Iterator[ReaType]:
         if not value:
             return None
         parts = [p for p in value.split(" ") if p]
-        name = to_snake(parts[1]) if len(parts) > 1 else None
-        if name in LUA_KEYWORDS:
-            name = f"{name}_"
-        if name:
-            name = name.replace(".", "")
-            if name.endswith("idx"):
-                name = name.replace("idx", "_idx")
-            if name.startswith("is"):
-                name = name.replace("is", "is_")
+        name = sanitize_name(parts)
         if parts[0] == "optional":
             yield ReaType(name=name, lua_type=parts[2], is_optional=True)
         elif len(parts) == 1:
@@ -145,9 +214,9 @@ def get_function_name(signature: str) -> str:
     raise ValueError(f"Could not find function name in {signature}")
 
 
-def get_fn_name_space(fn_name_space_parts) -> str:
+def get_fn_name_space(fn_name_space_parts: list[str]) -> str:
     fn_namespace = fn_name_space_parts[0] if len(fn_name_space_parts) > 1 else None
-    if fn_namespace and fn_namespace in REA_FUNC_NAMESPACES:
+    if fn_namespace and fn_namespace not in FALSE_POSITIVE_NAMESPACES:
         # we want to filter out false positives like "GetSetProjectInfo_String"
         return fn_namespace
     return None
@@ -176,16 +245,94 @@ def parse_lua_function(text: str) -> dict[str, str]:
     }
 
 
-def iter_lua_functions(soup: BeautifulSoup) -> dict[str, str]:
+def parse_constants_from_docs(docs_soup: BeautifulSoup) -> tuple[str, list[ReaType]]:
+    """Parse the constants from the docs."""
+
+    def convert_to_lua_type(type_: str) -> str:
+        for rea_type in REAPER_TYPES:
+            if rea_type in type_:
+                return rea_type
+        if type_.startswith("int"):
+            return "number"
+        elif type_.startswith("bool"):
+            return "boolean"
+        elif type_.startswith("char"):
+            return "string"
+        elif type_.startswith("str"):
+            return "string"
+        return type_
+
+    def infer_type_from_description(description: str) -> str:
+        for rea_type in REAPER_TYPES:
+            if rea_type in description:
+                return rea_type
+        if "number" in description:
+            return "number"
+        elif "string" in description:
+            return "string"
+        elif "boolean" in description:
+            return "boolean"
+        return "any"
+
+    pattern = r"^[A-Z]+(?:_[A-Z]+)*$"
+    docs, constants = [], []
+    for child in docs_soup.children:
+        parts = [p.strip() for p in child.get_text(strip=True).split(":") if p.strip()]
+        if len(parts) > 1:
+            if re.match(pattern, parts[0]):
+                name = parts[0]
+                if len(parts) == 3:
+                    type_ = convert_to_lua_type(parts[1])
+                    description = parts[2]
+                elif len(parts) == 2:
+                    type_ = infer_type_from_description(parts[1])
+                    description = parts[1]
+                else:
+                    type_ = convert_to_lua_type(parts[1])
+                    description = "".join(parts[1:])
+                constants.append(
+                    ReaType(lua_type=type_, name=name, description=description)
+                )
+            else:
+                docs.append(child.get_text(strip=True))
+        else:
+            docs.append(child.get_text(strip=True))
+    return "".join([d for d in docs if d]), constants
+
+
+def iter_lua_functions(soup: BeautifulSoup, built_in: bool = False) -> dict[str, str]:
     """Iterate over the Lua functions in the REAPER API."""
     for func in soup.find("section", class_="functions_all").find_all(
         "div", class_="function_definition"
     ):
         l_func = func.find("div", class_="l_func")
         docs = func.find("p")
+        docstr = docs.text.replace("\u00a0", "") if docs else None
+        constants = None
         lua_func = parse_lua_function(l_func.text)
-        lua_func["docs"] = docs.text if docs else None
+        # if "Info_Value" in lua_func["rea_name"] and docs or "Info_String" in lua_func["rea_name"] and docs:
+        if "Info" in lua_func["rea_name"] and docs:
+            docstr, constants = parse_constants_from_docs(docs)
+
+        lua_func["docs"] = docstr
+        lua_func["constants"] = constants
+
         yield ReaFunc(**lua_func)
+
+    # built-in functions
+    if built_in:
+        for func in soup.find("section", class_="lua").find_all(
+            "div", class_="function_definition"
+        ):
+            l_func = func.find("div", class_="l_func")
+            docs = func.find("p")
+            try:
+                lua_func = parse_lua_function(l_func.text)
+                lua_func["fn_name_space"] = "built_in"
+                lua_func["docs"] = docs.text if docs else None
+                yield ReaFunc(**lua_func)
+            except ValueError as e:
+                logger.error(f"Error parsing built-in function: {e} - {l_func.text}")
 
 
 def group_functions_by_name_space(
@@ -200,30 +347,29 @@ def group_functions_by_name_space(
     of `Reaper` type, is used as the namespace.
     Ultimately, namespaces represent the LUA tables in the modules.
     """
-
     by_name_space = {}
     for l_func in functions:
-        if (
+        if l_func.fn_name_space == "TrackFX" or "TrackFX" in l_func.rea_name:
+            namespace = "TrackFX"
+        elif l_func.fn_name_space == "TakeFX" or "TakeFX" in l_func.rea_name:
+            namespace = "TakeFX"
+        elif (
             l_func.fn_name_space == "PCM"
             or l_func.arguments
             and l_func.arguments[0].lua_type in ("PCM_source", "PCM_sink")
         ):
             namespace = "PCM"
-        elif (
-            l_func.fn_name_space in ("BR", "CF")
-            and l_func.arguments
-            and l_func.arguments[0].lua_type in REAPER_TYPES
-        ):
-            namespace = l_func.arguments[0].lua_type
-        elif l_func.fn_name_space in REA_FUNC_NAMESPACES:
-            namespace = l_func.fn_name_space
         elif l_func.arguments and l_func.arguments[0].lua_type in REAPER_TYPES:
             namespace = l_func.arguments[0].lua_type
-        else:
+
+        elif l_func.fn_name_space in REAPER_NAMESPACES or l_func.fn_name_space is None:
             namespace = "Reaper"
+        else:
+            namespace = l_func.fn_name_space
 
         if namespace not in by_name_space:
             by_name_space[namespace] = []
+
         by_name_space[namespace].append(l_func)
     return by_name_space
 
@@ -240,7 +386,11 @@ def refine_functions(
             function_name = function_name.replace("TimeMap2", "TimeMap")
         elif namespace in function_name:
             function_name = function_name.replace(namespace, "").replace("_", "")
-        elif fn_name_space and fn_name_space in function_name:
+        elif (
+            fn_name_space
+            and fn_name_space in function_name
+            and fn_name_space not in REAPER_NAMESPACES
+        ):
             function_name = function_name.replace(fn_name_space, "").replace("_", "")
 
         function_name = to_snake(function_name)
@@ -285,9 +435,9 @@ def get_functions_from_docs() -> dict[str, list[dict[str, str]]]:
 def main():
     functions = get_functions_from_docs()
     for name_space, functions in functions.items():
-        print(name_space, len(functions))
-        if name_space == "Reaper":
-            for func in functions:
+        # print(name_space, len(functions))
+        for func in functions:
+            if func.constants:
                 print(func)
 
 

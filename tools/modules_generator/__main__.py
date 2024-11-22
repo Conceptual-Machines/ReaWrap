@@ -21,14 +21,93 @@ METHOD_TEMPLATE = ENV.get_template("method.jinja2")
 FUNC_CALL_TEMPLATE = ENV.get_template("function_call.jinja2")
 FUNC_BODY_TEMPLATE = ENV.get_template("function_body.jinja2")
 FUNC_SIGNATURE_TEMPLATE = ENV.get_template("function_signature.jinja2")
+CONSTANTS_TEMPLATE = ENV.get_template("constants.jinja2")
+
+# These are namespaces that are not currently included in the ReaWrap module.
+# Some of them may eventually be included.
+# Some other may eventually be grouped under existing namespaces.
+UNSUPPORTED_NAMESPACES = (
+    "AudioAccessor",
+    "Blink",
+    "CF",
+    "CSurf",
+    "FNG",
+    "Fab",
+    "GR",
+    "GSC",
+    "GU",
+    "JB",
+    "JS",
+    "LICE",
+    "Llm",
+    "MCULive",
+    "MIDI",
+    "MIDIEditor",
+    "MRP",
+    "ReaPack",
+    "TrackCtl",
+    "TrackList",
+    "joystick",
+    "NF",
+    "SN",
+    "SNM",
+    "ULT",
+    "Xen",
+)
+
+TRACK_FX_POINTERS = ("src_fx", "fx", "idx", "fx_idx", "index")
+TAKE_FX_POINTERS = ("src_fx", "idx", "fx_idx", "index")
 
 
-def generate_function_call(function: ReaFunc) -> str:
-    """Generate a function call with the given function. This is the actual call to Reaper API."""
-    reaper_name = function.rea_name
+def generate_function_call_args_by_name_space(
+    function: ReaFunc, namespace: str
+) -> list[str]:
+    """Generate function call arguments for the given function by namespace."""
     reaper_args = []
-    if function.arguments and function.arguments[0].is_reaper_type:
-        reaper_args.append("self.pointer")
+    match namespace:
+        case "TrackFX":
+            for i, arg in enumerate(function.arguments):
+                if arg.lua_type in ("MediaTrack", "MediaItemTake"):
+                    if i == 0:
+                        # the first argument corresponds to the attribute TrackFX.track so in the call to Reaper API
+                        # we pass the pointer to the track
+                        reaper_args.append("self.track.pointer")
+                    else:
+                        reaper_args.append(f"{arg.name}.pointer")
+
+                elif arg.name in TRACK_FX_POINTERS:
+                    if function.reawrap_name == "set_preset_by_index" and arg.name == "idx":
+                        # pointer false positive, we need to pass the preset index instead
+                        reaper_args.append("preset_idx")
+                    else:
+                        reaper_args.append("self.pointer")
+                else:
+                    reaper_args.append(arg.name)
+        case "TakeFX":
+            for i, arg in enumerate(function.arguments):
+                if arg.lua_type in ("MediaTrack", "MediaItemTake"):
+                    if i == 0:
+                        # the first argument corresponds to the attribute TakeFX.take so in the call to Reaper API
+                        # we pass the pointer to the take
+                        reaper_args.append("self.take.pointer")
+                    else:
+                        reaper_args.append(f"{arg.name}.pointer")
+                elif arg.name in TAKE_FX_POINTERS:
+                    reaper_args.append(f"self.pointer")
+                else:
+                    reaper_args.append(arg.name)
+    return reaper_args
+
+
+def generate_function_call_args(function, namespace):
+    """Generate function call arguments for the given function."""
+    reaper_args = []
+    first_arg = function.arguments[0] if function.arguments else None
+    if function.arguments and first_arg.is_reaper_type:
+        if first_arg.lua_type != namespace:
+            reaper_args.append(f"self.{first_arg.name}.pointer")
+        else:
+            reaper_args.append("self.pointer")
         args = function.arguments[1:]
     else:
         args = function.arguments
@@ -37,25 +116,83 @@ def generate_function_call(function: ReaFunc) -> str:
             reaper_args.append(f"arg_{i}")
         else:
             reaper_args.append(arg.name)
+    return reaper_args
+
+
+def generate_function_call(function: ReaFunc, namespace: str) -> str:
+    """Generate a function call with the given function. This is the actual call to Reaper API."""
+    reaper_name = function.rea_name
+    if namespace in ("TrackFX", "TakeFX"):
+        # TrackFX and TakeFX arguments need to be handled differently
+        reaper_args = generate_function_call_args_by_name_space(function, namespace)
+    else:
+        reaper_args = generate_function_call_args(function, namespace)
     tmplt = FUNC_CALL_TEMPLATE.render(reaper_name=reaper_name, reaper_args=reaper_args)
     return tmplt
 
 
-def generate_signature(function: ReaFunc, name_space: str) -> str:
-    """Generate a function signature with the given function."""
+def generate_signature_params_by_name_space(
+    function: ReaFunc, namespace: str
+) -> list[ReaType]:
+    """Generate signature parameters for the given function by namespace."""
+    reawrap_params = []  # list of parameters to be passed to the ReaWrap class function signature, excluding pointer arguments
+    match namespace:
+        case "TrackFX":
+            for i, arg in enumerate(function.arguments):
+                if arg.name is None:
+                    arg.name = f"arg_{i}"
+                # skipping the first argument cause it corresponds to the attribute TrackFX.track
+                elif i == 0 and arg.lua_type == "MediaTrack":
+                    continue
+                if function.reawrap_name == "set_preset_by_index" and arg.name == "idx":
+                    reawrap_params.append(
+                        ReaType(
+                            name="preset_idx",
+                            lua_type="number",
+                            description="The index of the preset",
+                        )
+                    )
+                # skipping any argument that corresponds to the FX index, i.e. the attribute TrackFX.pointer
+                elif arg.name in TRACK_FX_POINTERS:
+                    continue
+                else:
+                    reawrap_params.append(arg)
+
+        case "TakeFX":
+            for i, arg in enumerate(function.arguments):
+                if arg.name is None:
+                    arg.name = f"arg_{i}"
+                # skipping the first argument cause it corresponds to the attribute TakeFX.take
+                elif i == 0 and arg.lua_type == "MediaItemTake":
+                    continue
+                # skipping any argument that corresponds to the FX index, i.e. the TakeFX.pointer
+                elif arg.name in TAKE_FX_POINTERS:
+                    continue
+                else:
+                    reawrap_params.append(arg)
+    return reawrap_params
+
+
+def generate_signature_params(function: ReaFunc) -> list[[ReaType]]:
     reawrap_params = []  # list of parameters to be passed to the ReaWrap class function, excluding the self pointer
     for i, arg in enumerate(function.arguments):
+        # skipping the first argument cause it corresponds to the self.pointer
         if arg.is_reaper_type:
             continue
         if arg.name is None:
-            name = f"arg_{i}"
-        else:
-            name = arg.name
+            arg.name = f"arg_{i}"
 
-        reawrap_params.append([name, arg.lua_type])
+        reawrap_params.append(arg)
+    return reawrap_params
+
+
+def generate_signature(
+    reawrap_name: str, reawrap_params: list[ReaType], name_space: str
+) -> str:
+    """Generate a function signature with the given function."""
     tmplt = FUNC_SIGNATURE_TEMPLATE.render(
         reawrap_params=reawrap_params,
-        reawrap_name=function.reawrap_name,
+        reawrap_name=reawrap_name,
         reawrap_class=name_space,
     )
     return tmplt
@@ -92,8 +229,14 @@ def generate_function_body(function: ReaFunc, function_call: str) -> str:
 
 def generate_method(name_space: str, function: ReaFunc) -> str:
     """Generate a method with the given name and function."""
-    function_signature = generate_signature(function, name_space)
-    function_call = generate_function_call(function)
+    if name_space in ("TrackFX", "TakeFX"):
+        reawrap_params = generate_signature_params_by_name_space(function, name_space)
+    else:
+        reawrap_params = generate_signature_params(function)
+    function_signature = generate_signature(
+        function.reawrap_name, reawrap_params, name_space
+    )
+    function_call = generate_function_call(function, name_space)
     function_body = generate_function_body(function, function_call)
     return_values = []
     # TODO improve this by passing ReaType objects to the template
@@ -107,27 +250,24 @@ def generate_method(name_space: str, function: ReaFunc) -> str:
         else:
             name_and_type_ = rv.lua_type
         return_values.append(name_and_type_)
-    params = []
-    for i, arg in enumerate(function.arguments):
-        if arg.is_reaper_type:
-            continue
-        if arg.name is None:
-            name, type_ = f"arg_{i}", arg.lua_type
-        else:
-            name, type_ = arg.name, arg.lua_type
-        if arg.is_optional:
-            type_ = f"{type_} optional"
-        params.append([name, type_])
+
     function_name = " ".join(function.reawrap_name.split("_")).title()
     tmplt = METHOD_TEMPLATE.render(
         function_name=function_name,
         docs=textwrap.fill(function.docs, width=80) if function.docs else "",
-        params=params,
+        params=reawrap_params,
         return_values=return_values,
         function_signature=function_signature,
         function_body=function_body,
     )
     return tmplt
+
+
+def generate_constants(name: str, reawrap_name: str, constants: list[ReaType]) -> str:
+    """Generate a constants table with the given constants."""
+    return CONSTANTS_TEMPLATE.render(
+        name=name, reawrap_name=reawrap_name, constants=constants
+    )
 
 
 def generate_constructor_args(name_space: str) -> list[ReaType]:
@@ -171,6 +311,61 @@ def generate_constructor_args(name_space: str) -> list[ReaType]:
                     is_pointer=True,
                 )
             ]
+        case "TrackEnvelope":
+            return [
+                ReaType(
+                    name="envelope",
+                    lua_type="userdata",
+                    description="The pointer to Reaper TrackEnvelope*",
+                    is_pointer=True,
+                )
+            ]
+        case "TrackFX":
+            return [
+                ReaType(
+                    name="track",
+                    lua_type="MediaTrack",
+                    description="The MediaTrack object",
+                ),
+                ReaType(
+                    name="fx_idx",
+                    lua_type="number",
+                    description="The index of the FX",
+                    is_pointer=True,
+                ),
+            ]
+        case "TakeFX":
+            return [
+                ReaType(
+                    name="take",
+                    lua_type="MediaItemTake",
+                    description="The MediaItemTake object",
+                ),
+                ReaType(
+                    name="fx_idx",
+                    lua_type="number",
+                    description="The index of the FX",
+                    is_pointer=True,
+                ),
+            ]
+        case "PCM":
+            return [
+                ReaType(
+                    name="source",
+                    lua_type="userdata",
+                    description="The pointer to PCM_source*",
+                    is_pointer=True,
+                )
+            ]
+        case "AudioAccessor":
+            return [
+                ReaType(
+                    name="audio_accessor",
+                    lua_type="userdata",
+                    description="The pointer to audio accessor",
+                    is_pointer=True,
+                )
+            ]
     return constructor_args
 
 
@@ -181,15 +376,44 @@ def get_dependencies(name_space: str, functions: list[ReaFunc]) -> list[str]:
         for arg in function.arguments:
             if arg.is_reaper_type and arg.lua_type != name_space:
                 dependencies.add(to_snake(arg.lua_type))
-                dependencies.add("constants")
     return list(sorted(dependencies))
 
 
 def generate_module(name_space: str, functions: list[ReaFunc]) -> str:
-    """Generate a module with the given name and functions."""
-    methods = [generate_method(name_space, function) for function in functions]
+    """Generate a module with the given name and functions.
+    Some modules have been renamed from the original name space for convenience.
+
+    :param name_space: str The name_space of the module.
+    :param functions: list[ReaFunc]
+    """
+    methods = []
+    for function in functions:
+        if function.constants:
+            constant_name = (
+                f"{name_space}."
+                + "".join([p.title() for p in function.reawrap_name.split("_")])
+                + "Constants"
+            )
+            reawrap_name = f"{name_space}:{function.reawrap_name}"
+            constants = generate_constants(
+                constant_name, reawrap_name, function.constants
+            )
+            methods.append(constants)
+            for arg in function.arguments:
+                # the first string argument is mapped to constants
+                if arg.lua_type == "string":
+                    arg.description = constant_name
+                    break
+
+            method = generate_method(name_space, function)
+            methods.append(method)
+        else:
+            method = generate_method(name_space, function)
+            methods.append(method)
     dependencies = get_dependencies(name_space, functions)
-    pointer_type = name_space if name_space in REAPER_TYPES else None
+    pointer_type = f"{name_space}*" if name_space in REAPER_TYPES else None
+    if name_space == "MediaItemTake":
+        pointer_type = "MediaItem_Take*"
     description = f"Provide implementation for {name_space} functions"
     constructor_args = generate_constructor_args(name_space)
     module_name = to_snake(name_space)
@@ -208,11 +432,19 @@ def generate_module(name_space: str, functions: list[ReaFunc]) -> str:
     )
     with open(AUTOGENERATED_MODULES / f"{module_name}.lua", "w") as f:
         f.write(tmplt)
+    logger.info(f"Generated module: {module_name}.lua")
 
 
 def main():
+    AUTOGENERATED_MODULES.mkdir(exist_ok=True)
     functions = get_functions_from_docs()
     for name_space, functions in functions.items():
+        if name_space in UNSUPPORTED_NAMESPACES:
+            logger.info(
+                f"Skipping unsupported namespace: {name_space}",
+            )
+            continue
+
         generate_module(name_space, functions)
 
 

@@ -1,6 +1,6 @@
 local obj = {
-        {% if pointer_type -%}
-        pointer_type = constants.PointerTypes.{{ pointer_type }},
+        {%- if pointer_type %}
+        pointer_type = "{{ pointer_type }}",
         {%- endif -%}
         {%- for arg in constructor_args %}
         {%- if arg.is_pointer %}

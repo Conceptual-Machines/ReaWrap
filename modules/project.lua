@@ -29,7 +29,8 @@ end
 
 
 ----Get all selected tracks.
----@return table array<Track>
+-- @return table array<Track>
+-- @param master boolean. Optional. Default is false.
 function Project:get_selected_tracks(master)
     master = master or false
     local tracks = {}
@@ -48,7 +49,6 @@ function Project:iter_selected_tracks(master)
 end
 
 -- Whether there is at least one selected track
--- Params:
 ---@param master boolean
 -- Returns:
 ---@return boolean

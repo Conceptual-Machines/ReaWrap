@@ -6,10 +6,22 @@
 -- {{ line }}
 {%- endfor %}
 {%- endif -%}
-{%- if params %}
-{%- for param_name, param_type in params %}
--- @param {{ param_name }} {{ param_type }}
-{%- endfor %}
+{%- if params -%}
+{%- for param in params %}
+{%- if param.is_optional -%}
+    {%-  if param.description %}
+-- @param {{ param.name }} {{ param.lua_type }} Optional. {{ param.description }}
+    {%-  else %}
+-- @param {{ param.name }} {{ param.lua_type }} Optional.
+    {%-  endif -%}
+{%-  else -%}
+    {%-  if param.description %}
+-- @param {{ param.name }} {{ param.lua_type }}. {{ param.description }}
+    {%-  else %}
+-- @param {{ param.name }} {{ param.lua_type }}.
+    {%-  endif -%}
+{%-  endif -%}
+{%- endfor -%}
 {%- endif -%}
 {% if return_values %}
 {%- for ret_name_and_type in return_values %}
