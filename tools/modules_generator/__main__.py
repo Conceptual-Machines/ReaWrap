@@ -229,6 +229,7 @@ def generate_method(name_space: NameSpace, function: ReaFunc) -> str:
     function_name = " ".join(function.reawrap_name.split("_")).title()
     tmplt = METHOD_TEMPLATE.render(
         function_name=function_name,
+        reascript_name=function.reascript_name,
         docs=textwrap.fill(function.docs, width=80) if function.docs else "",
         params=reawrap_params,
         return_values=return_values,

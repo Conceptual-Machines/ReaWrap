@@ -1,5 +1,6 @@
---- Helpers: Provide helper functions.
--- @module helpers
+-- @description Provide implementation for helper functions.
+-- @author NomadMonad
+-- @license MIT
 
 local r = reaper
 
@@ -75,10 +76,10 @@ function helpers.iter(t)
 end
 
 --- Slice a table.
---- @param source_table table
---- @param start_idx number
---- @param end_idx number
---- @return table
+-- @param source_table table
+-- @param start_idx number
+-- @param end_idx number
+-- @return table
 function slice_table(source_table, start_idx, end_idx)
 	start_idx = start_idx or 1
 	end_idx = end_idx or #source_table

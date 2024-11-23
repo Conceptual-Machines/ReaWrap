@@ -84,7 +84,15 @@ function Track:has_envelopes()
 	return self:count_envelopes() > 0
 end
 
--- Get all TrackFX in the track
+--- Get TrackFX by index
+-- @param fx_idx number
+-- @return table TrackFX
+function Track:get_track_fx(fx_idx)
+	local TrackFX = require("track_fx")
+	return TrackFX:new(self, i)
+end
+
+--- Get all TrackFX in the track
 -- @return table array<TrackFX>
 function Track:get_all_track_fx()
 	local fxs = {}
@@ -106,14 +114,6 @@ end
 ---@return boolean
 function Track:has_track_fx()
 	return self:get_track_fx_count() > 0
-end
-
--- Get TrackFX by index
--- @param fx_idx number
--- @return table TrackFX
-function Track:get_track_fx(fx_idx)
-	local TrackFX = require("track_fx")
-	return TrackFX:new(self, i)
 end
 
 -- @section ReaScript API Methods

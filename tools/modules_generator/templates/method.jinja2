@@ -1,5 +1,6 @@
 {%- if function_name.strip() %}
---- {{ function_name }}.
+--- {{ function_name }}. Wraps {{ reascript_name }}.
+{%- else %}
 {%- endif %}
 {%- if docs -%}
 {%- for line in docs.split('\n') if line.strip() %}

@@ -35,7 +35,7 @@ end
 
 
     
---- Env Count Points.
+--- Env Count Points. Wraps BR_EnvCountPoints.
 -- [BR] Count envelope points in the envelope object allocated with BR_EnvAlloc.
 -- @param envelope BR_Envelope
 -- @return number
@@ -44,7 +44,7 @@ function BR:env_count_points(envelope)
 end
 
     
---- Env Delete Point.
+--- Env Delete Point. Wraps BR_EnvDeletePoint.
 -- [BR] Delete envelope point by index (zero-based) in the envelope object
 -- allocated with BR_EnvAlloc. Returns true on success.
 -- @param envelope BR_Envelope
@@ -55,7 +55,7 @@ function BR:env_delete_point(envelope, id)
 end
 
     
---- Env Find.
+--- Env Find. Wraps BR_EnvFind.
 -- [BR] Find envelope point at time position in the envelope object allocated with
 -- BR_EnvAlloc. Pass delta > 0 to search surrounding range - in that case the
 -- closest point to position within delta will be searched for. Returns envelope
@@ -69,7 +69,7 @@ function BR:env_find(envelope, position, delta)
 end
 
     
---- Env Find Next.
+--- Env Find Next. Wraps BR_EnvFindNext.
 -- [BR] Find next envelope point after time position in the envelope object
 -- allocated with BR_EnvAlloc. Returns envelope point id (zero-based) on success or
 -- -1 on failure.
@@ -81,7 +81,7 @@ function BR:env_find_next(envelope, position)
 end
 
     
---- Env Find Previous.
+--- Env Find Previous. Wraps BR_EnvFindPrevious.
 -- [BR] Find previous envelope point before time position in the envelope object
 -- allocated with BR_EnvAlloc. Returns envelope point id (zero-based) on success or
 -- -1 on failure.
@@ -93,7 +93,7 @@ function BR:env_find_previous(envelope, position)
 end
 
     
---- Env Free.
+--- Env Free. Wraps BR_EnvFree.
 -- [BR] Free envelope object allocated with BR_EnvAlloc and commit changes if
 -- needed. Returns true if changes were committed successfully. Note that when
 -- envelope object wasn't modified nothing will get committed even if commit = true
@@ -106,7 +106,7 @@ function BR:env_free(envelope, commit)
 end
 
     
---- Env Get Parent Take.
+--- Env Get Parent Take. Wraps BR_EnvGetParentTake.
 -- [BR] If envelope object allocated with BR_EnvAlloc is take envelope, returns
 -- parent media item take, otherwise NULL.
 -- @param envelope BR_Envelope
@@ -118,7 +118,7 @@ function BR:env_get_parent_take(envelope)
 end
 
     
---- Env Get Parent Track.
+--- Env Get Parent Track. Wraps BR_EnvGetParentTrack.
 -- [BR] Get parent track of envelope object allocated with BR_EnvAlloc. If take
 -- envelope, returns NULL.
 -- @param envelope BR_Envelope
@@ -130,7 +130,7 @@ function BR:env_get_parent_track(envelope)
 end
 
     
---- Env Get Point.
+--- Env Get Point. Wraps BR_EnvGetPoint.
 -- [BR] Get envelope point by id (zero-based) from the envelope object allocated
 -- with BR_EnvAlloc. Returns true on success.
 -- @param envelope BR_Envelope
@@ -150,7 +150,7 @@ function BR:env_get_point(envelope, id)
 end
 
     
---- Env Get Properties.
+--- Env Get Properties. Wraps BR_EnvGetProperties.
 -- [BR] Get envelope properties for the envelope object allocated with BR_EnvAlloc.
 -- @param envelope BR_Envelope
 -- @return active boolean
@@ -170,7 +170,7 @@ function BR:env_get_properties(envelope)
 end
 
     
---- Env Set Point.
+--- Env Set Point. Wraps BR_EnvSetPoint.
 -- [BR] Set envelope point by id (zero-based) in the envelope object allocated with
 -- BR_EnvAlloc. To create point instead, pass id = -1. Note that if new point is
 -- inserted or existing point's time position is changed, points won't
@@ -189,7 +189,7 @@ function BR:env_set_point(envelope, id, position, value, shape, selected, bezier
 end
 
     
---- Env Set Properties.
+--- Env Set Properties. Wraps BR_EnvSetProperties.
 -- [BR] Set envelope properties for the envelope object allocated with BR_EnvAlloc.
 -- For parameter description see BR_EnvGetProperties. Setting
 -- automationItemsOptions requires REAPER 5.979+.
@@ -208,7 +208,7 @@ function BR:env_set_properties(envelope, active, visible, armed, in_lane, lane_h
 end
 
     
---- Env Sort Points.
+--- Env Sort Points. Wraps BR_EnvSortPoints.
 -- [BR] Sort envelope points by position. The only reason to call this is if sorted
 -- points are explicitly needed after editing them with BR_EnvSetPoint. Note that
 -- you do not have to call this before doing BR_EnvFree since it does handle
@@ -219,7 +219,7 @@ function BR:env_sort_points(envelope)
 end
 
     
---- Env Value At Pos.
+--- Env Value At Pos. Wraps BR_EnvValueAtPos.
 -- [BR] Get envelope value at time position for the envelope object allocated with
 -- BR_EnvAlloc.
 -- @param envelope BR_Envelope
@@ -230,7 +230,7 @@ function BR:env_value_at_pos(envelope, position)
 end
 
     
---- Get Closest Grid Division.
+--- Get Closest Grid Division. Wraps BR_GetClosestGridDivision.
 -- [BR] Get closest grid division to position. Note that this functions is
 -- different from SnapToGrid in two regards. SnapToGrid() needs snap enabled to
 -- work and this one works always. Secondly, grid divisions are different from grid
@@ -245,7 +245,7 @@ function BR:get_closest_grid_division(position)
 end
 
     
---- Get Current Theme.
+--- Get Current Theme. Wraps BR_GetCurrentTheme.
 -- [BR] Get current theme information. themePathOut is set to full theme path and
 -- themeNameOut is set to theme name excluding any path info and extension
 -- @return theme_path string
@@ -255,7 +255,7 @@ function BR:get_current_theme()
 end
 
     
---- Get Mouse Cursor Context.
+--- Get Mouse Cursor Context. Wraps BR_GetMouseCursorContext.
 -- [BR] Get mouse cursor context. Each parameter returns information in a form of
 -- string as specified in the table below.
 -- @return window string
@@ -266,7 +266,7 @@ function BR:get_mouse_cursor_context()
 end
 
     
---- Get Mouse Cursor Context Envelope.
+--- Get Mouse Cursor Context Envelope. Wraps BR_GetMouseCursorContext_Envelope.
 -- [BR] Returns envelope that was captured with the last call to
 -- BR_GetMouseCursorContext. In case the envelope belongs to take, takeEnvelope
 -- will be true.
@@ -281,7 +281,7 @@ function BR:get_mouse_cursor_context_envelope()
 end
 
     
---- Get Mouse Cursor Context Item.
+--- Get Mouse Cursor Context Item. Wraps BR_GetMouseCursorContext_Item.
 -- [BR] Returns item under mouse cursor that was captured with the last call to
 -- BR_GetMouseCursorContext. Note that the function will return item even if mouse
 -- cursor is over some other track lane element like stretch marker or envelope.
@@ -295,7 +295,7 @@ function BR:get_mouse_cursor_context_item()
 end
 
     
---- Get Mouse Cursor Context Midi.
+--- Get Mouse Cursor Context Midi. Wraps BR_GetMouseCursorContext_MIDI.
 -- [BR] Returns midi editor under mouse cursor that was captured with the last call
 -- to BR_GetMouseCursorContext.
 -- @return inline_editor boolean
@@ -313,7 +313,7 @@ function BR:get_mouse_cursor_context_midi()
 end
 
     
---- Get Mouse Cursor Context Position.
+--- Get Mouse Cursor Context Position. Wraps BR_GetMouseCursorContext_Position.
 -- [BR] Returns project time position in arrange/ruler/midi editor that was
 -- captured with the last call to BR_GetMouseCursorContext.
 -- @return number
@@ -322,7 +322,7 @@ function BR:get_mouse_cursor_context_position()
 end
 
     
---- Get Mouse Cursor Context Stretch Marker.
+--- Get Mouse Cursor Context Stretch Marker. Wraps BR_GetMouseCursorContext_StretchMarker.
 -- [BR] Returns id of a stretch marker under mouse cursor that was captured with
 -- the last call to BR_GetMouseCursorContext.
 -- @return number
@@ -331,7 +331,7 @@ function BR:get_mouse_cursor_context_stretch_marker()
 end
 
     
---- Get Mouse Cursor Context Take.
+--- Get Mouse Cursor Context Take. Wraps BR_GetMouseCursorContext_Take.
 -- [BR] Returns take under mouse cursor that was captured with the last call to
 -- BR_GetMouseCursorContext.
 -- @return Take table
@@ -342,7 +342,7 @@ function BR:get_mouse_cursor_context_take()
 end
 
     
---- Get Mouse Cursor Context Track.
+--- Get Mouse Cursor Context Track. Wraps BR_GetMouseCursorContext_Track.
 -- [BR] Returns track under mouse cursor that was captured with the last call to
 -- BR_GetMouseCursorContext.
 -- @return Track table
@@ -353,7 +353,7 @@ function BR:get_mouse_cursor_context_track()
 end
 
     
---- Get Next Grid Division.
+--- Get Next Grid Division. Wraps BR_GetNextGridDivision.
 -- [BR] Get next grid division after the time position. For more grid divisions
 -- function, see BR_GetClosestGridDivision and BR_GetPrevGridDivision.
 -- @param position number
@@ -363,7 +363,7 @@ function BR:get_next_grid_division(position)
 end
 
     
---- Get Prev Grid Division.
+--- Get Prev Grid Division. Wraps BR_GetPrevGridDivision.
 -- [BR] Get previous grid division before the time position. For more grid division
 -- functions, see BR_GetClosestGridDivision and BR_GetNextGridDivision.
 -- @param position number
@@ -373,7 +373,7 @@ function BR:get_prev_grid_division(position)
 end
 
     
---- Item At Mouse Cursor.
+--- Item At Mouse Cursor. Wraps BR_ItemAtMouseCursor.
 -- [BR] Get media item under mouse cursor. Position is mouse cursor position in
 -- arrange.
 -- @return position number
@@ -387,7 +387,7 @@ function BR:item_at_mouse_cursor()
 end
 
     
---- Midi Cc Lane Remove.
+--- Midi Cc Lane Remove. Wraps BR_MIDI_CCLaneRemove.
 -- [BR] Remove CC lane in midi editor. Top visible CC lane is laneId 0. Returns
 -- true on success
 -- @param midi_editor identifier
@@ -398,7 +398,7 @@ function BR:midi_cc_lane_remove(midi_editor, lane_id)
 end
 
     
---- Midi Cc Lane Replace.
+--- Midi Cc Lane Replace. Wraps BR_MIDI_CCLaneReplace.
 -- [BR] Replace CC lane in midi editor. Top visible CC lane is laneId 0. Returns
 -- true on success. Valid CC lanes: CC0-127=CC, 0x100|(0-31)=14-bit CC,
 -- 0x200=velocity, 0x201=pitch, 0x202=program, 0x203=channel pressure,
@@ -412,7 +412,7 @@ function BR:midi_cc_lane_replace(midi_editor, lane_id, new_cc)
 end
 
     
---- Position At Mouse Cursor.
+--- Position At Mouse Cursor. Wraps BR_PositionAtMouseCursor.
 -- [BR] Get position at mouse cursor. To check ruler along with arrange, pass
 -- checkRuler=true. Returns -1 if cursor is not over arrange/ruler.
 -- @param check_ruler boolean
@@ -422,7 +422,7 @@ function BR:position_at_mouse_cursor(check_ruler)
 end
 
     
---- Take At Mouse Cursor.
+--- Take At Mouse Cursor. Wraps BR_TakeAtMouseCursor.
 -- [BR] Get take under mouse cursor. Position is mouse cursor position in arrange.
 -- @return position number
 function BR:take_at_mouse_cursor()
@@ -435,7 +435,7 @@ function BR:take_at_mouse_cursor()
 end
 
     
---- Track At Mouse Cursor.
+--- Track At Mouse Cursor. Wraps BR_TrackAtMouseCursor.
 -- [BR] Get track under mouse cursor. Context signifies where the track was found:
 -- 0 = TCP, 1 = MCP, 2 = Arrange. Position will hold mouse cursor position in
 -- arrange if applicable.
@@ -451,7 +451,7 @@ function BR:track_at_mouse_cursor()
 end
 
     
---- Win32 Cb Find String.
+--- Win32 Cb Find String. Wraps BR_Win32_CB_FindString.
 -- [BR] Equivalent to win32 API ComboBox_FindString().
 -- @param combo_box_hwnd identifier
 -- @param start_id number
@@ -462,7 +462,7 @@ function BR:win32_cb_find_string(combo_box_hwnd, start_id, string)
 end
 
     
---- Win32 Cb Find String Exact.
+--- Win32 Cb Find String Exact. Wraps BR_Win32_CB_FindStringExact.
 -- [BR] Equivalent to win32 API ComboBox_FindStringExact().
 -- @param combo_box_hwnd identifier
 -- @param start_id number
@@ -473,7 +473,7 @@ function BR:win32_cb_find_string_exact(combo_box_hwnd, start_id, string)
 end
 
     
---- Win32 Client To Screen.
+--- Win32 Client To Screen. Wraps BR_Win32_ClientToScreen.
 -- [BR] Equivalent to win32 API ClientToScreen().
 -- @param hwnd identifier
 -- @param x_in number
@@ -485,7 +485,7 @@ function BR:win32_client_to_screen(hwnd, x_in, y_in)
 end
 
     
---- Win32 Find Window Ex.
+--- Win32 Find Window Ex. Wraps BR_Win32_FindWindowEx.
 -- [BR] Equivalent to win32 API FindWindowEx(). Since ReaScript doesn't allow
 -- passing NULL (None in Python, nil in Lua etc...) parameters, to search by
 -- supplied class or name set searchClass and searchName accordingly. HWND
@@ -503,7 +503,7 @@ function BR:win32_find_window_ex(hwnd_parent, hwnd_child_after, class_name, wind
 end
 
     
---- Win32 Get X Lparam.
+--- Win32 Get X Lparam. Wraps BR_Win32_GET_X_LPARAM.
 -- [BR] Equivalent to win32 API GET_X_LPARAM().
 -- @param l_param number
 -- @return number
@@ -512,7 +512,7 @@ function BR:win32_get_x_lparam(l_param)
 end
 
     
---- Win32 Get Y Lparam.
+--- Win32 Get Y Lparam. Wraps BR_Win32_GET_Y_LPARAM.
 -- [BR] Equivalent to win32 API GET_Y_LPARAM().
 -- @param l_param number
 -- @return number
@@ -521,7 +521,7 @@ function BR:win32_get_y_lparam(l_param)
 end
 
     
---- Win32 Get Constant.
+--- Win32 Get Constant. Wraps BR_Win32_GetConstant.
 -- [BR] Returns various constants needed for BR_Win32 functions. Supported
 -- constants are: CB_ERR, CB_GETCOUNT, CB_GETCURSEL, CB_SETCURSEL EM_SETSEL
 -- GW_CHILD, GW_HWNDFIRST, GW_HWNDLAST, GW_HWNDNEXT, GW_HWNDPREV, GW_OWNER
@@ -536,7 +536,7 @@ function BR:win32_get_constant(constant_name)
 end
 
     
---- Win32 Get Cursor Pos.
+--- Win32 Get Cursor Pos. Wraps BR_Win32_GetCursorPos.
 -- [BR] Equivalent to win32 API GetCursorPos().
 -- @return x number
 -- @return y number
@@ -550,7 +550,7 @@ function BR:win32_get_cursor_pos()
 end
 
     
---- Win32 Get Focus.
+--- Win32 Get Focus. Wraps BR_Win32_GetFocus.
 -- [BR] Equivalent to win32 API GetFocus().
 -- @return identifier
 function BR:win32_get_focus()
@@ -558,7 +558,7 @@ function BR:win32_get_focus()
 end
 
     
---- Win32 Get Foreground Window.
+--- Win32 Get Foreground Window. Wraps BR_Win32_GetForegroundWindow.
 -- [BR] Equivalent to win32 API GetForegroundWindow().
 -- @return identifier
 function BR:win32_get_foreground_window()
@@ -566,7 +566,7 @@ function BR:win32_get_foreground_window()
 end
 
     
---- Win32 Get Main Hwnd.
+--- Win32 Get Main Hwnd. Wraps BR_Win32_GetMainHwnd.
 -- [BR] Alternative to GetMainHwnd. REAPER seems to have problems with extensions
 -- using HWND type for exported functions so all BR_Win32 functions use void*
 -- instead of HWND type
@@ -576,7 +576,7 @@ function BR:win32_get_main_hwnd()
 end
 
     
---- Win32 Get Mixer Hwnd.
+--- Win32 Get Mixer Hwnd. Wraps BR_Win32_GetMixerHwnd.
 -- [BR] Get mixer window HWND. isDockedOut will be set to true if mixer is docked
 -- @return is_docked boolean
 function BR:win32_get_mixer_hwnd()
@@ -589,7 +589,7 @@ function BR:win32_get_mixer_hwnd()
 end
 
     
---- Win32 Get Monitor Rect From Rect.
+--- Win32 Get Monitor Rect From Rect. Wraps BR_Win32_GetMonitorRectFromRect.
 -- [BR] Get coordinates for screen which is nearest to supplied coordinates. Pass
 -- workingAreaOnly as true to get screen coordinates excluding taskbar (or menu bar
 -- on OSX).
@@ -607,7 +607,7 @@ function BR:win32_get_monitor_rect_from_rect(working_area_only, left_in, top_in,
 end
 
     
---- Win32 Get Parent.
+--- Win32 Get Parent. Wraps BR_Win32_GetParent.
 -- [BR] Equivalent to win32 API GetParent().
 -- @param hwnd identifier
 -- @return identifier
@@ -616,7 +616,7 @@ function BR:win32_get_parent(hwnd)
 end
 
     
---- Win32 Get Private Profile String.
+--- Win32 Get Private Profile String. Wraps BR_Win32_GetPrivateProfileString.
 -- [BR] Equivalent to win32 API GetPrivateProfileString(). For example, you can use
 -- this to get values from REAPER.ini.
 -- @param section_name string
@@ -634,7 +634,7 @@ function BR:win32_get_private_profile_string(section_name, key_name, default_str
 end
 
     
---- Win32 Get Window.
+--- Win32 Get Window. Wraps BR_Win32_GetWindow.
 -- [BR] Equivalent to win32 API GetWindow().
 -- @param hwnd identifier
 -- @param cmd number
@@ -644,7 +644,7 @@ function BR:win32_get_window(hwnd, cmd)
 end
 
     
---- Win32 Get Window Long.
+--- Win32 Get Window Long. Wraps BR_Win32_GetWindowLong.
 -- [BR] Equivalent to win32 API GetWindowLong().
 -- @param hwnd identifier
 -- @param index number
@@ -654,7 +654,7 @@ function BR:win32_get_window_long(hwnd, index)
 end
 
     
---- Win32 Get Window Rect.
+--- Win32 Get Window Rect. Wraps BR_Win32_GetWindowRect.
 -- [BR] Equivalent to win32 API GetWindowRect().
 -- @param hwnd identifier
 -- @return left number
@@ -671,7 +671,7 @@ function BR:win32_get_window_rect(hwnd)
 end
 
     
---- Win32 Get Window Text.
+--- Win32 Get Window Text. Wraps BR_Win32_GetWindowText.
 -- [BR] Equivalent to win32 API GetWindowText().
 -- @param hwnd identifier
 -- @return text string
@@ -685,7 +685,7 @@ function BR:win32_get_window_text(hwnd)
 end
 
     
---- Win32 Hibyte.
+--- Win32 Hibyte. Wraps BR_Win32_HIBYTE.
 -- [BR] Equivalent to win32 API HIBYTE().
 -- @param value number
 -- @return number
@@ -694,7 +694,7 @@ function BR:win32_hibyte(value)
 end
 
     
---- Win32 Hiword.
+--- Win32 Hiword. Wraps BR_Win32_HIWORD.
 -- [BR] Equivalent to win32 API HIWORD().
 -- @param value number
 -- @return number
@@ -703,7 +703,7 @@ function BR:win32_hiword(value)
 end
 
     
---- Win32 Hwnd To String.
+--- Win32 Hwnd To String. Wraps BR_Win32_HwndToString.
 -- [BR] Convert HWND to string. To convert string back to HWND, see
 -- BR_Win32_StringToHwnd.
 -- @param hwnd identifier
@@ -713,7 +713,7 @@ function BR:win32_hwnd_to_string(hwnd)
 end
 
     
---- Win32 Is Window.
+--- Win32 Is Window. Wraps BR_Win32_IsWindow.
 -- [BR] Equivalent to win32 API IsWindow().
 -- @param hwnd identifier
 -- @return boolean
@@ -722,7 +722,7 @@ function BR:win32_is_window(hwnd)
 end
 
     
---- Win32 Is Window Visible.
+--- Win32 Is Window Visible. Wraps BR_Win32_IsWindowVisible.
 -- [BR] Equivalent to win32 API IsWindowVisible().
 -- @param hwnd identifier
 -- @return boolean
@@ -731,7 +731,7 @@ function BR:win32_is_window_visible(hwnd)
 end
 
     
---- Win32 Lobyte.
+--- Win32 Lobyte. Wraps BR_Win32_LOBYTE.
 -- [BR] Equivalent to win32 API LOBYTE().
 -- @param value number
 -- @return number
@@ -740,7 +740,7 @@ function BR:win32_lobyte(value)
 end
 
     
---- Win32 Loword.
+--- Win32 Loword. Wraps BR_Win32_LOWORD.
 -- [BR] Equivalent to win32 API LOWORD().
 -- @param value number
 -- @return number
@@ -749,7 +749,7 @@ function BR:win32_loword(value)
 end
 
     
---- Win32 Makelong.
+--- Win32 Makelong. Wraps BR_Win32_MAKELONG.
 -- [BR] Equivalent to win32 API MAKELONG().
 -- @param low number
 -- @param high number
@@ -759,7 +759,7 @@ function BR:win32_makelong(low, high)
 end
 
     
---- Win32 Makelparam.
+--- Win32 Makelparam. Wraps BR_Win32_MAKELPARAM.
 -- [BR] Equivalent to win32 API MAKELPARAM().
 -- @param low number
 -- @param high number
@@ -769,7 +769,7 @@ function BR:win32_makelparam(low, high)
 end
 
     
---- Win32 Makelresult.
+--- Win32 Makelresult. Wraps BR_Win32_MAKELRESULT.
 -- [BR] Equivalent to win32 API MAKELRESULT().
 -- @param low number
 -- @param high number
@@ -779,7 +779,7 @@ function BR:win32_makelresult(low, high)
 end
 
     
---- Win32 Makeword.
+--- Win32 Makeword. Wraps BR_Win32_MAKEWORD.
 -- [BR] Equivalent to win32 API MAKEWORD().
 -- @param low number
 -- @param high number
@@ -789,7 +789,7 @@ function BR:win32_makeword(low, high)
 end
 
     
---- Win32 Makewparam.
+--- Win32 Makewparam. Wraps BR_Win32_MAKEWPARAM.
 -- [BR] Equivalent to win32 API MAKEWPARAM().
 -- @param low number
 -- @param high number
@@ -799,7 +799,7 @@ function BR:win32_makewparam(low, high)
 end
 
     
---- Win32 Midi Editor Get Active.
+--- Win32 Midi Editor Get Active. Wraps BR_Win32_MIDIEditor_GetActive.
 -- [BR] Alternative to MIDIEditor_GetActive. REAPER seems to have problems with
 -- extensions using HWND type for exported functions so all BR_Win32 functions use
 -- void* instead of HWND type.
@@ -809,7 +809,7 @@ function BR:win32_midi_editor_get_active()
 end
 
     
---- Win32 Screen To Client.
+--- Win32 Screen To Client. Wraps BR_Win32_ScreenToClient.
 -- [BR] Equivalent to win32 API ClientToScreen().
 -- @param hwnd identifier
 -- @param x_in number
@@ -821,7 +821,7 @@ function BR:win32_screen_to_client(hwnd, x_in, y_in)
 end
 
     
---- Win32 Send Message.
+--- Win32 Send Message. Wraps BR_Win32_SendMessage.
 -- [BR] Equivalent to win32 API SendMessage().
 -- @param hwnd identifier
 -- @param msg number
@@ -833,7 +833,7 @@ function BR:win32_send_message(hwnd, msg, l_param, w_param)
 end
 
     
---- Win32 Set Focus.
+--- Win32 Set Focus. Wraps BR_Win32_SetFocus.
 -- [BR] Equivalent to win32 API SetFocus().
 -- @param hwnd identifier
 -- @return identifier
@@ -842,7 +842,7 @@ function BR:win32_set_focus(hwnd)
 end
 
     
---- Win32 Set Foreground Window.
+--- Win32 Set Foreground Window. Wraps BR_Win32_SetForegroundWindow.
 -- [BR] Equivalent to win32 API SetForegroundWindow().
 -- @param hwnd identifier
 -- @return number
@@ -851,7 +851,7 @@ function BR:win32_set_foreground_window(hwnd)
 end
 
     
---- Win32 Set Window Long.
+--- Win32 Set Window Long. Wraps BR_Win32_SetWindowLong.
 -- [BR] Equivalent to win32 API SetWindowLong().
 -- @param hwnd identifier
 -- @param index number
@@ -862,7 +862,7 @@ function BR:win32_set_window_long(hwnd, index, new_long)
 end
 
     
---- Win32 Set Window Pos.
+--- Win32 Set Window Pos. Wraps BR_Win32_SetWindowPos.
 -- [BR] Equivalent to win32 API SetWindowPos(). hwndInsertAfter may be a string:
 -- "HWND_BOTTOM", "HWND_NOTOPMOST", "HWND_TOP", "HWND_TOPMOST" or a string obtained
 -- with BR_Win32_HwndToString.
@@ -879,7 +879,7 @@ function BR:win32_set_window_pos(hwnd, hwnd_insert_after, x, y, width, height, f
 end
 
     
---- Win32 Shell Execute.
+--- Win32 Shell Execute. Wraps BR_Win32_ShellExecute.
 -- [BR] Equivalent to win32 API ShellExecute() with HWND set to main window
 -- @param operation string
 -- @param file string
@@ -892,7 +892,7 @@ function BR:win32_shell_execute(operation, file, parameters, directory, show_fla
 end
 
     
---- Win32 Show Window.
+--- Win32 Show Window. Wraps BR_Win32_ShowWindow.
 -- [BR] Equivalent to win32 API ShowWindow().
 -- @param hwnd identifier
 -- @param cmd_show number
@@ -902,7 +902,7 @@ function BR:win32_show_window(hwnd, cmd_show)
 end
 
     
---- Win32 String To Hwnd.
+--- Win32 String To Hwnd. Wraps BR_Win32_StringToHwnd.
 -- [BR] Convert string to HWND. To convert HWND back to string, see
 -- BR_Win32_HwndToString.
 -- @param string string
@@ -912,7 +912,7 @@ function BR:win32_string_to_hwnd(string)
 end
 
     
---- Win32 Window From Point.
+--- Win32 Window From Point. Wraps BR_Win32_WindowFromPoint.
 -- [BR] Equivalent to win32 API WindowFromPoint().
 -- @param x number
 -- @param y number
@@ -922,7 +922,7 @@ function BR:win32_window_from_point(x, y)
 end
 
     
---- Win32 Write Private Profile String.
+--- Win32 Write Private Profile String. Wraps BR_Win32_WritePrivateProfileString.
 -- [BR] Equivalent to win32 API WritePrivateProfileString(). For example, you can
 -- use this to write to REAPER.ini. You can pass an empty string as value to delete
 -- a key.

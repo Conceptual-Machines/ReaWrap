@@ -206,6 +206,7 @@ def parse_return_values(values: str) -> list[dict[str, str]]:
 
 def sanitize_name(parts: list[str]) -> str:
     """Sanitize the name of the argument. Convert to snake_case and remove any unwanted characters."""
+
     name = to_snake(parts[1]) if len(parts) > 1 else None
     if name in LUA_KEYWORDS:
         name = f"{name}_"
@@ -219,10 +220,16 @@ def sanitize_name(parts: list[str]) -> str:
             name = name.replace("type", "_type")
         elif name.endswith("val") and name != "val":
             name = name.replace("val", "_val")
+        elif name.endswith("pos") and name != "pos":
+            name = name.replace("pos", "_pos")
         elif name.startswith("is"):
             name = name.replace("is", "is_")
         elif name.startswith("swing") and name != "swing":
             name = name.replace("swing", "swing_")
+        elif name.startswith("nudge") and name != "nudge":
+            name = name.replace("nudge", "nudge_")
+        elif name.startswith("timesig") and name != "timesig":
+            name = name.replace("timesig", "time_sig")
         elif name == "guid_guid":
             name = "guid"
         if name.startswith("__"):
@@ -551,6 +558,15 @@ def dedupe_functions(refined: dict[str, list[ReaFunc]]) -> dict[str, list[ReaFun
                     if arg.name == "wantmaster":
                         arg.name = "want_master"
                         arg.is_optional = True
+            elif (
+                func.reawrap_name == "add_project_marker" and name_space == "ReaProject"
+            ):
+                continue
+            elif (
+                func.reawrap_name == "add_project_marker2"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "add_project_marker"
             elif (
                 func.reawrap_name == "enum_project_markers2"
                 and name_space == "ReaProject"

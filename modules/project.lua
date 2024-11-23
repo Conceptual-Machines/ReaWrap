@@ -55,7 +55,7 @@ end
 -- @param master boolean. Whether to include the master track. Optional (Default is false).
 -- @return function iterator
 function Project:iter_selected_tracks(master)
-    master = master or false
+	master = master or false
 	return helpers.iter(self:get_selected_tracks(master))
 end
 
@@ -63,7 +63,7 @@ end
 -- @param master boolean. Whether to include the master track. Optional (Default is false).
 ---@return boolean
 function Project:has_selected_tracks(master)
-    master = master or false
+	master = master or false
 	return self:count_selected_tracks(master) > 0
 end
 

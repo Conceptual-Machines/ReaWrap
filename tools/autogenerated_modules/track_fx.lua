@@ -41,7 +41,7 @@ end
 
 
     
---- Add By Name.
+--- Add By Name. Wraps TrackFX_AddByName.
 -- Adds or queries the position of a named FX from the track FX chain (recFX=false)
 -- or record input FX/monitoring FX (recFX=true, monitoring FX are on master
 -- track). Specify a negative value for instantiate to always create a new effect,
@@ -70,7 +70,7 @@ function TrackFX:add_by_name(fx_name, rec_fx, instantiate)
 end
 
     
---- Copy To Take.
+--- Copy To Take. Wraps TrackFX_CopyToTake.
 -- Copies (or moves) FX from src_track to dest_take. src_fx can have 0x1000000 set
 -- to reference input FX. FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
@@ -91,7 +91,7 @@ function TrackFX:copy_to_take(dest_take, dest_fx, is_move)
 end
 
     
---- Copy To Track.
+--- Copy To Track. Wraps TrackFX_CopyToTrack.
 -- Copies (or moves) FX from src_track to dest_track. Can be used with
 -- src_track=dest_track to reorder, FX indices have 0x1000000 set to reference
 -- input FX. FX indices for tracks can have 0x1000000 added to them in order to
@@ -113,7 +113,7 @@ function TrackFX:copy_to_track(dest_track, dest_fx, is_move)
 end
 
     
---- End Param Edit.
+--- End Param Edit. Wraps TrackFX_EndParamEdit.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -132,7 +132,7 @@ function TrackFX:end_param_edit(param)
 end
 
     
---- Format Param Value.
+--- Format Param Value. Wraps TrackFX_FormatParamValue.
 -- Note: only works with FX that support Cockos VST extensions. FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
 -- (normal tracks) or hardware output FX (master track). FX indices can have
@@ -158,7 +158,7 @@ function TrackFX:format_param_value(param, val)
 end
 
     
---- Format Param Value Normalized.
+--- Format Param Value Normalized. Wraps TrackFX_FormatParamValueNormalized.
 -- Note: only works with FX that support Cockos VST extensions. FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
 -- (normal tracks) or hardware output FX (master track). FX indices can have
@@ -185,7 +185,7 @@ function TrackFX:format_param_value_normalized(param, value, buf)
 end
 
     
---- Get Chain Visible.
+--- Get Chain Visible. Wraps TrackFX_GetChainVisible.
 -- returns index of effect visible in chain, or -1 for chain hidden, or -2 for
 -- chain visible but no effect selected
 -- @return number
@@ -194,7 +194,7 @@ function TrackFX:get_chain_visible()
 end
 
     
---- Get Enabled.
+--- Get Enabled. Wraps TrackFX_GetEnabled.
 -- See TrackFX_SetEnabled FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track). FX indices can have 0x2000000 added to them, in which case they will be
@@ -212,7 +212,7 @@ function TrackFX:get_enabled()
 end
 
     
---- Get Eq.
+--- Get Eq. Wraps TrackFX_GetEQ.
 -- Get the index of ReaEQ in the track FX chain. If ReaEQ is not in the chain and
 -- instantiate is true, it will be inserted. See TrackFX_GetInstrument,
 -- TrackFX_GetByName.
@@ -223,7 +223,7 @@ function TrackFX:get_eq(instantiate)
 end
 
     
---- Get Eq Band Enabled.
+--- Get Eq Band Enabled. Wraps TrackFX_GetEQBandEnabled.
 -- Returns true if the EQ band is enabled. Returns false if the band is disabled,
 -- or if track/fxidx is not ReaEQ. Bandtype: -1=master gain, 0=hipass, 1=loshelf,
 -- 2=band, 3=notch, 4=hishelf, 5=lopass, 6=bandpass, 7=parallel bandpass. Bandidx
@@ -237,7 +237,7 @@ function TrackFX:get_eq_band_enabled(band_type, band_idx)
 end
 
     
---- Get Eq Param.
+--- Get Eq Param. Wraps TrackFX_GetEQParam.
 -- Returns false if track/fxidx is not ReaEQ. Bandtype: -1=master gain, 0=hipass,
 -- 1=loshelf, 2=band, 3=notch, 4=hishelf, 5=lopass, 6=bandpass, 7=parallel
 -- bandpass. Bandidx (ignored for master gain): 0=target first band matching
@@ -270,7 +270,7 @@ function TrackFX:get_eq_param(param_idx)
 end
 
     
---- Get Floating Window.
+--- Get Floating Window. Wraps TrackFX_GetFloatingWindow.
 -- returns HWND of floating window for effect index, if any FX indices for tracks
 -- can have 0x1000000 added to them in order to reference record input FX (normal
 -- tracks) or hardware output FX (master track). FX indices can have 0x2000000
@@ -289,7 +289,7 @@ function TrackFX:get_floating_window()
 end
 
     
---- Get Formatted Param Value.
+--- Get Formatted Param Value. Wraps TrackFX_GetFormattedParamValue.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -313,7 +313,7 @@ function TrackFX:get_formatted_param_value(param)
 end
 
     
---- Get Guid.
+--- Get Guid. Wraps TrackFX_GetFXGUID.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -331,7 +331,7 @@ function TrackFX:get_guid()
 end
 
     
---- Get Name.
+--- Get Name. Wraps TrackFX_GetFXName.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -354,7 +354,7 @@ function TrackFX:get_name()
 end
 
     
---- Get Instrument.
+--- Get Instrument. Wraps TrackFX_GetInstrument.
 -- Get the index of the first track FX insert that is a virtual instrument, or -1
 -- if none. See TrackFX_GetEQ, TrackFX_GetByName.
 -- @return number
@@ -363,7 +363,7 @@ function TrackFX:get_instrument()
 end
 
     
---- Get Io Size.
+--- Get Io Size. Wraps TrackFX_GetIOSize.
 -- Gets the number of input/output pins for FX if available, returns plug-in type
 -- or -1 on error FX indices for tracks can have 0x1000000 added to them in order
 -- to reference record input FX (normal tracks) or hardware output FX (master
@@ -388,7 +388,7 @@ function TrackFX:get_io_size()
 end
 
     
---- Get Named Config Parm.
+--- Get Named Config Parm. Wraps TrackFX_GetNamedConfigParm.
 -- gets plug-in specific named configuration value (returns true on success).
 -- @param parm_name string
 -- @return buf string
@@ -402,7 +402,7 @@ function TrackFX:get_named_config_parm(parm_name)
 end
 
     
---- Get Num Params.
+--- Get Num Params. Wraps TrackFX_GetNumParams.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -420,7 +420,7 @@ function TrackFX:get_num_params()
 end
 
     
---- Get Offline.
+--- Get Offline. Wraps TrackFX_GetOffline.
 -- See TrackFX_SetOffline FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track). FX indices can have 0x2000000 added to them, in which case they will be
@@ -438,7 +438,7 @@ function TrackFX:get_offline()
 end
 
     
---- Get Open.
+--- Get Open. Wraps TrackFX_GetOpen.
 -- Returns true if this FX UI is open in the FX chain window or a floating window.
 -- See TrackFX_SetOpen FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
@@ -457,7 +457,7 @@ function TrackFX:get_open()
 end
 
     
---- Get Param.
+--- Get Param. Wraps TrackFX_GetParam.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -482,7 +482,7 @@ function TrackFX:get_param(param)
 end
 
     
---- Get Parameter Step Sizes.
+--- Get Parameter Step Sizes. Wraps TrackFX_GetParameterStepSizes.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -509,7 +509,7 @@ function TrackFX:get_parameter_step_sizes(param)
 end
 
     
---- Get Param Ex.
+--- Get Param Ex. Wraps TrackFX_GetParamEx.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -535,7 +535,7 @@ function TrackFX:get_param_ex(param)
 end
 
     
---- Get Param From Ident.
+--- Get Param From Ident. Wraps TrackFX_GetParamFromIdent.
 -- gets the parameter index from an identifying string (:wet, :bypass, :delta, or a
 -- string returned from GetParamIdent), or -1 if unknown. FX indices for tracks can
 -- have 0x1000000 added to them in order to reference record input FX (normal
@@ -556,7 +556,7 @@ function TrackFX:get_param_from_ident(ident_str)
 end
 
     
---- Get Param Ident.
+--- Get Param Ident. Wraps TrackFX_GetParamIdent.
 -- gets an identifying string for the parameter FX indices for tracks can have
 -- 0x1000000 added to them in order to reference record input FX (normal tracks) or
 -- hardware output FX (master track). FX indices can have 0x2000000 added to them,
@@ -581,7 +581,7 @@ function TrackFX:get_param_ident(param)
 end
 
     
---- Get Param Name.
+--- Get Param Name. Wraps TrackFX_GetParamName.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -605,7 +605,7 @@ function TrackFX:get_param_name(param)
 end
 
     
---- Get Param Normalized.
+--- Get Param Normalized. Wraps TrackFX_GetParamNormalized.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -624,7 +624,7 @@ function TrackFX:get_param_normalized(param)
 end
 
     
---- Get Pin Mappings.
+--- Get Pin Mappings. Wraps TrackFX_GetPinMappings.
 -- gets the effective channel mapping bitmask for a particular pin. high32Out will
 -- be set to the high 32 bits. Add 0x1000000 to pin index in order to access the
 -- second 64 bits of mappings independent of the first 64 bits. FX indices for
@@ -652,7 +652,7 @@ function TrackFX:get_pin_mappings(is_output, pin)
 end
 
     
---- Get Preset.
+--- Get Preset. Wraps TrackFX_GetPreset.
 -- Get the name of the preset currently showing in the REAPER dropdown, or the full
 -- path to a factory preset file for VST3 plug-ins (.vstpreset). See
 -- TrackFX_SetPreset. FX indices for tracks can have 0x1000000 added to them in
@@ -677,7 +677,7 @@ function TrackFX:get_preset()
 end
 
     
---- Get Preset Index.
+--- Get Preset Index. Wraps TrackFX_GetPresetIndex.
 -- Returns current preset index, or -1 if error. numberOfPresetsOut will be set to
 -- total number of presets available. See TrackFX_SetPresetByIndex FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
@@ -702,7 +702,7 @@ function TrackFX:get_preset_index()
 end
 
     
---- Get Rec Chain Visible.
+--- Get Rec Chain Visible. Wraps TrackFX_GetRecChainVisible.
 -- returns index of effect visible in record input chain, or -1 for chain hidden,
 -- or -2 for chain visible but no effect selected
 -- @return number
@@ -711,7 +711,7 @@ function TrackFX:get_rec_chain_visible()
 end
 
     
---- Get Rec Count.
+--- Get Rec Count. Wraps TrackFX_GetRecCount.
 -- returns count of record input FX. To access record input FX, use a FX indices
 -- [0x1000000..0x1000000+n). On the master track, this accesses monitoring FX
 -- rather than record input FX.
@@ -721,7 +721,7 @@ function TrackFX:get_rec_count()
 end
 
     
---- Get User Preset Filename.
+--- Get User Preset Filename. Wraps TrackFX_GetUserPresetFilename.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -739,7 +739,7 @@ function TrackFX:get_user_preset_filename()
 end
 
     
---- Navigate Presets.
+--- Navigate Presets. Wraps TrackFX_NavigatePresets.
 -- presetmove==1 activates the next preset, presetmove==-1 activates the previous
 -- preset, etc. FX indices for tracks can have 0x1000000 added to them in order to
 -- reference record input FX (normal tracks) or hardware output FX (master track).
@@ -759,7 +759,7 @@ function TrackFX:navigate_presets(presetmove)
 end
 
     
---- Set Enabled.
+--- Set Enabled. Wraps TrackFX_SetEnabled.
 -- See TrackFX_GetEnabled FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track). FX indices can have 0x2000000 added to them, in which case they will be
@@ -777,7 +777,7 @@ function TrackFX:set_enabled(enabled)
 end
 
     
---- Set Eq Band Enabled.
+--- Set Eq Band Enabled. Wraps TrackFX_SetEQBandEnabled.
 -- Enable or disable a ReaEQ band. Returns false if track/fxidx is not ReaEQ.
 -- Bandtype: -1=master gain, 0=hipass, 1=loshelf, 2=band, 3=notch, 4=hishelf,
 -- 5=lopass, 6=bandpass, 7=parallel bandpass. Bandidx (ignored for master gain):
@@ -791,7 +791,7 @@ function TrackFX:set_eq_band_enabled(band_type, band_idx, enable)
 end
 
     
---- Set Eq Param.
+--- Set Eq Param. Wraps TrackFX_SetEQParam.
 -- Returns false if track/fxidx is not ReaEQ. Targets a band matching bandtype.
 -- Bandtype: -1=master gain, 0=hipass, 1=loshelf, 2=band, 3=notch, 4=hishelf,
 -- 5=lopass, 6=bandpass, 7=parallel bandpass. Bandidx (ignored for master gain):
@@ -820,7 +820,7 @@ function TrackFX:set_eq_param(band_type, band_idx, param_type, val, is_norm)
 end
 
     
---- Set Named Config Parm.
+--- Set Named Config Parm. Wraps TrackFX_SetNamedConfigParm.
 -- sets plug-in specific named configuration value (returns true on success).
 -- @param parm_name string
 -- @param value string
@@ -830,7 +830,7 @@ function TrackFX:set_named_config_parm(parm_name, value)
 end
 
     
---- Set Offline.
+--- Set Offline. Wraps TrackFX_SetOffline.
 -- See TrackFX_GetOffline FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track). FX indices can have 0x2000000 added to them, in which case they will be
@@ -848,7 +848,7 @@ function TrackFX:set_offline(offline)
 end
 
     
---- Set Open.
+--- Set Open. Wraps TrackFX_SetOpen.
 -- Open this FX UI. See TrackFX_GetOpen FX indices for tracks can have 0x1000000
 -- added to them in order to reference record input FX (normal tracks) or hardware
 -- output FX (master track). FX indices can have 0x2000000 added to them, in which
@@ -867,7 +867,7 @@ function TrackFX:set_open(open)
 end
 
     
---- Set Param.
+--- Set Param. Wraps TrackFX_SetParam.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -887,7 +887,7 @@ function TrackFX:set_param(param, val)
 end
 
     
---- Set Param Normalized.
+--- Set Param Normalized. Wraps TrackFX_SetParamNormalized.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -907,7 +907,7 @@ function TrackFX:set_param_normalized(param, value)
 end
 
     
---- Set Pin Mappings.
+--- Set Pin Mappings. Wraps TrackFX_SetPinMappings.
 -- sets the channel mapping bitmask for a particular pin. returns false if
 -- unsupported (not all types of plug-ins support this capability). Add 0x1000000
 -- to pin index in order to access the second 64 bits of mappings independent of
@@ -932,7 +932,7 @@ function TrackFX:set_pin_mappings(is_output, pin, low32bits, hi32bits)
 end
 
     
---- Set Preset.
+--- Set Preset. Wraps TrackFX_SetPreset.
 -- Activate a preset with the name shown in the REAPER dropdown. Full paths to
 -- .vstpreset files are also supported for VST3 plug-ins. See TrackFX_GetPreset. FX
 -- indices for tracks can have 0x1000000 added to them in order to reference record
@@ -953,7 +953,7 @@ function TrackFX:set_preset(preset_name)
 end
 
     
---- Set Preset By Index.
+--- Set Preset By Index. Wraps TrackFX_SetPresetByIndex.
 -- Sets the preset idx, or the factory preset (idx==-2), or the default user preset
 -- (idx==-1). Returns true on success. See TrackFX_GetPresetIndex. FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
@@ -974,7 +974,7 @@ function TrackFX:set_preset_by_index(preset_idx)
 end
 
     
---- Show.
+--- Show. Wraps TrackFX_Show.
 -- showflag=0 for hidechain, =1 for show chain(index valid), =2 for hide floating
 -- window(index valid), =3 for show floating window (index valid) FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
@@ -994,7 +994,7 @@ function TrackFX:show(show_flag)
 end
 
     
---- Get Chain.
+--- Get Chain. Wraps CF_GetTrackFXChain.
 -- Return a handle to the given track FX chain window.
 -- @return FxChain
 function TrackFX:get_chain()
@@ -1002,7 +1002,7 @@ function TrackFX:get_chain()
 end
 
     
---- Get Chain Ex.
+--- Get Chain Ex. Wraps CF_GetTrackFXChainEx.
 -- Return a handle to the given track FX chain window. Set wantInputChain to get
 -- the track's input/monitoring FX chain.
 -- @param project table
@@ -1014,7 +1014,7 @@ function TrackFX:get_chain_ex(project, track, want_input_chain)
 end
 
     
---- Select.
+--- Select. Wraps CF_SelectTrackFX.
 -- Set which track effect is active in the track's FX chain. The FX chain window
 -- does not have to be open.
 -- @return boolean

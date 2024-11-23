@@ -41,7 +41,7 @@ end
 
 
     
---- Add By Name.
+--- Add By Name. Wraps TakeFX_AddByName.
 -- Adds or queries the position of a named FX in a take. See TrackFX_AddByName()
 -- for information on fxname and instantiate. FX indices can have 0x2000000 added
 -- to them, in which case they will be used to address FX in containers. To address
@@ -61,7 +61,7 @@ function TakeFX:add_by_name(fx_name, instantiate)
 end
 
     
---- Copy To Take.
+--- Copy To Take. Wraps TakeFX_CopyToTake.
 -- Copies (or moves) FX from src_take to dest_take. Can be used with
 -- src_take=dest_take to reorder. FX indices can have 0x2000000 added to them, in
 -- which case they will be used to address FX in containers. To address a
@@ -81,7 +81,7 @@ function TakeFX:copy_to_take(dest_take, dest_fx, is_move)
 end
 
     
---- Copy To Track.
+--- Copy To Track. Wraps TakeFX_CopyToTrack.
 -- Copies (or moves) FX from src_take to dest_track. dest_fx can have 0x1000000 set
 -- to reference input FX. FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
@@ -102,7 +102,7 @@ function TakeFX:copy_to_track(dest_track, dest_fx, is_move)
 end
 
     
---- End Param Edit.
+--- End Param Edit. Wraps TakeFX_EndParamEdit.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -119,7 +119,7 @@ function TakeFX:end_param_edit(param)
 end
 
     
---- Format Param Value.
+--- Format Param Value. Wraps TakeFX_FormatParamValue.
 -- Note: only works with FX that support Cockos VST extensions. FX indices can have
 -- 0x2000000 added to them, in which case they will be used to address FX in
 -- containers. To address a container, the 1-based subitem is multiplied by one
@@ -143,7 +143,7 @@ function TakeFX:format_param_value(param, val)
 end
 
     
---- Format Param Value Normalized.
+--- Format Param Value Normalized. Wraps TakeFX_FormatParamValueNormalized.
 -- Note: only works with FX that support Cockos VST extensions. FX indices can have
 -- 0x2000000 added to them, in which case they will be used to address FX in
 -- containers. To address a container, the 1-based subitem is multiplied by one
@@ -168,7 +168,7 @@ function TakeFX:format_param_value_normalized(param, value, buf)
 end
 
     
---- Get Chain Visible.
+--- Get Chain Visible. Wraps TakeFX_GetChainVisible.
 -- returns index of effect visible in chain, or -1 for chain hidden, or -2 for
 -- chain visible but no effect selected
 -- @return number
@@ -177,7 +177,7 @@ function TakeFX:get_chain_visible()
 end
 
     
---- Get Enabled.
+--- Get Enabled. Wraps TakeFX_GetEnabled.
 -- See TakeFX_SetEnabled FX indices can have 0x2000000 added to them, in which case
 -- they will be used to address FX in containers. To address a container, the
 -- 1-based subitem is multiplied by one plus the count of the FX chain and added to
@@ -194,7 +194,7 @@ function TakeFX:get_enabled()
 end
 
     
---- Get Envelope.
+--- Get Envelope. Wraps TakeFX_GetEnvelope.
 -- Returns the FX parameter envelope. If the envelope does not exist and
 -- create=true, the envelope will be created. If the envelope already exists and is
 -- bypassed and create=true, then the envelope will be unbypassed. FX indices can
@@ -218,7 +218,7 @@ function TakeFX:get_envelope(fxindex, parameterindex, create)
 end
 
     
---- Get Floating Window.
+--- Get Floating Window. Wraps TakeFX_GetFloatingWindow.
 -- returns HWND of floating window for effect index, if any FX indices can have
 -- 0x2000000 added to them, in which case they will be used to address FX in
 -- containers. To address a container, the 1-based subitem is multiplied by one
@@ -235,7 +235,7 @@ function TakeFX:get_floating_window()
 end
 
     
---- Get Formatted Param Value.
+--- Get Formatted Param Value. Wraps TakeFX_GetFormattedParamValue.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -257,7 +257,7 @@ function TakeFX:get_formatted_param_value(param)
 end
 
     
---- Get Guid.
+--- Get Guid. Wraps TakeFX_GetFXGUID.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -273,7 +273,7 @@ function TakeFX:get_guid()
 end
 
     
---- Get Name.
+--- Get Name. Wraps TakeFX_GetFXName.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -294,7 +294,7 @@ function TakeFX:get_name()
 end
 
     
---- Get Io Size.
+--- Get Io Size. Wraps TakeFX_GetIOSize.
 -- Gets the number of input/output pins for FX if available, returns plug-in type
 -- or -1 on error FX indices can have 0x2000000 added to them, in which case they
 -- will be used to address FX in containers. To address a container, the 1-based
@@ -317,7 +317,7 @@ function TakeFX:get_io_size()
 end
 
     
---- Get Named Config Parm.
+--- Get Named Config Parm. Wraps TakeFX_GetNamedConfigParm.
 -- gets plug-in specific named configuration value (returns true on success). see
 -- TrackFX_GetNamedConfigParm FX indices can have 0x2000000 added to them, in which
 -- case they will be used to address FX in containers. To address a container, the
@@ -341,7 +341,7 @@ function TakeFX:get_named_config_parm(parm_name)
 end
 
     
---- Get Num Params.
+--- Get Num Params. Wraps TakeFX_GetNumParams.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -357,7 +357,7 @@ function TakeFX:get_num_params()
 end
 
     
---- Get Offline.
+--- Get Offline. Wraps TakeFX_GetOffline.
 -- See TakeFX_SetOffline FX indices can have 0x2000000 added to them, in which case
 -- they will be used to address FX in containers. To address a container, the
 -- 1-based subitem is multiplied by one plus the count of the FX chain and added to
@@ -374,7 +374,7 @@ function TakeFX:get_offline()
 end
 
     
---- Get Open.
+--- Get Open. Wraps TakeFX_GetOpen.
 -- Returns true if this FX UI is open in the FX chain window or a floating window.
 -- See TakeFX_SetOpen FX indices can have 0x2000000 added to them, in which case
 -- they will be used to address FX in containers. To address a container, the
@@ -392,7 +392,7 @@ function TakeFX:get_open()
 end
 
     
---- Get Param.
+--- Get Param. Wraps TakeFX_GetParam.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -415,7 +415,7 @@ function TakeFX:get_param(param)
 end
 
     
---- Get Parameter Step Sizes.
+--- Get Parameter Step Sizes. Wraps TakeFX_GetParameterStepSizes.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -440,7 +440,7 @@ function TakeFX:get_parameter_step_sizes(param)
 end
 
     
---- Get Param Ex.
+--- Get Param Ex. Wraps TakeFX_GetParamEx.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -464,7 +464,7 @@ function TakeFX:get_param_ex(param)
 end
 
     
---- Get Param From Ident.
+--- Get Param From Ident. Wraps TakeFX_GetParamFromIdent.
 -- gets the parameter index from an identifying string (:wet, :bypass, or a string
 -- returned from GetParamIdent), or -1 if unknown. FX indices can have 0x2000000
 -- added to them, in which case they will be used to address FX in containers. To
@@ -483,7 +483,7 @@ function TakeFX:get_param_from_ident(ident_str)
 end
 
     
---- Get Param Ident.
+--- Get Param Ident. Wraps TakeFX_GetParamIdent.
 -- gets an identifying string for the parameter FX indices can have 0x2000000 added
 -- to them, in which case they will be used to address FX in containers. To address
 -- a container, the 1-based subitem is multiplied by one plus the count of the FX
@@ -506,7 +506,7 @@ function TakeFX:get_param_ident(param)
 end
 
     
---- Get Param Name.
+--- Get Param Name. Wraps TakeFX_GetParamName.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -528,7 +528,7 @@ function TakeFX:get_param_name(param)
 end
 
     
---- Get Param Normalized.
+--- Get Param Normalized. Wraps TakeFX_GetParamNormalized.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -545,7 +545,7 @@ function TakeFX:get_param_normalized(param)
 end
 
     
---- Get Pin Mappings.
+--- Get Pin Mappings. Wraps TakeFX_GetPinMappings.
 -- gets the effective channel mapping bitmask for a particular pin. high32Out will
 -- be set to the high 32 bits. Add 0x1000000 to pin index in order to access the
 -- second 64 bits of mappings independent of the first 64 bits. FX indices can have
@@ -571,7 +571,7 @@ function TakeFX:get_pin_mappings(is_output, pin)
 end
 
     
---- Get Preset.
+--- Get Preset. Wraps TakeFX_GetPreset.
 -- Get the name of the preset currently showing in the REAPER dropdown, or the full
 -- path to a factory preset file for VST3 plug-ins (.vstpreset). See
 -- TakeFX_SetPreset. FX indices can have 0x2000000 added to them, in which case
@@ -595,7 +595,7 @@ function TakeFX:get_preset()
 end
 
     
---- Get Preset Index.
+--- Get Preset Index. Wraps TakeFX_GetPresetIndex.
 -- Returns current preset index, or -1 if error. numberOfPresetsOut will be set to
 -- total number of presets available. See TakeFX_SetPresetByIndex FX indices can
 -- have 0x2000000 added to them, in which case they will be used to address FX in
@@ -618,7 +618,7 @@ function TakeFX:get_preset_index()
 end
 
     
---- Get User Preset Filename.
+--- Get User Preset Filename. Wraps TakeFX_GetUserPresetFilename.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -634,7 +634,7 @@ function TakeFX:get_user_preset_filename()
 end
 
     
---- Navigate Presets.
+--- Navigate Presets. Wraps TakeFX_NavigatePresets.
 -- presetmove==1 activates the next preset, presetmove==-1 activates the previous
 -- preset, etc. FX indices can have 0x2000000 added to them, in which case they
 -- will be used to address FX in containers. To address a container, the 1-based
@@ -652,7 +652,7 @@ function TakeFX:navigate_presets(presetmove)
 end
 
     
---- Set Enabled.
+--- Set Enabled. Wraps TakeFX_SetEnabled.
 -- See TakeFX_GetEnabled FX indices can have 0x2000000 added to them, in which case
 -- they will be used to address FX in containers. To address a container, the
 -- 1-based subitem is multiplied by one plus the count of the FX chain and added to
@@ -669,7 +669,7 @@ function TakeFX:set_enabled(enabled)
 end
 
     
---- Set Named Config Parm.
+--- Set Named Config Parm. Wraps TakeFX_SetNamedConfigParm.
 -- gets plug-in specific named configuration value (returns true on success). see
 -- TrackFX_SetNamedConfigParm FX indices can have 0x2000000 added to them, in which
 -- case they will be used to address FX in containers. To address a container, the
@@ -689,7 +689,7 @@ function TakeFX:set_named_config_parm(parm_name, value)
 end
 
     
---- Set Offline.
+--- Set Offline. Wraps TakeFX_SetOffline.
 -- See TakeFX_GetOffline FX indices can have 0x2000000 added to them, in which case
 -- they will be used to address FX in containers. To address a container, the
 -- 1-based subitem is multiplied by one plus the count of the FX chain and added to
@@ -706,7 +706,7 @@ function TakeFX:set_offline(offline)
 end
 
     
---- Set Open.
+--- Set Open. Wraps TakeFX_SetOpen.
 -- Open this FX UI. See TakeFX_GetOpen FX indices can have 0x2000000 added to them,
 -- in which case they will be used to address FX in containers. To address a
 -- container, the 1-based subitem is multiplied by one plus the count of the FX
@@ -723,7 +723,7 @@ function TakeFX:set_open(open)
 end
 
     
---- Set Param.
+--- Set Param. Wraps TakeFX_SetParam.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -741,7 +741,7 @@ function TakeFX:set_param(param, val)
 end
 
     
---- Set Param Normalized.
+--- Set Param Normalized. Wraps TakeFX_SetParamNormalized.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -759,7 +759,7 @@ function TakeFX:set_param_normalized(param, value)
 end
 
     
---- Set Pin Mappings.
+--- Set Pin Mappings. Wraps TakeFX_SetPinMappings.
 -- sets the channel mapping bitmask for a particular pin. returns false if
 -- unsupported (not all types of plug-ins support this capability). Add 0x1000000
 -- to pin index in order to access the second 64 bits of mappings independent of
@@ -783,7 +783,7 @@ function TakeFX:set_pin_mappings(is_output, pin, low32bits, hi32bits)
 end
 
     
---- Set Preset.
+--- Set Preset. Wraps TakeFX_SetPreset.
 -- Activate a preset with the name shown in the REAPER dropdown. Full paths to
 -- .vstpreset files are also supported for VST3 plug-ins. See TakeFX_GetPreset. FX
 -- indices can have 0x2000000 added to them, in which case they will be used to
@@ -802,7 +802,7 @@ function TakeFX:set_preset(preset_name)
 end
 
     
---- Set Preset By Index.
+--- Set Preset By Index. Wraps TakeFX_SetPresetByIndex.
 -- Sets the preset idx, or the factory preset (idx==-2), or the default user preset
 -- (idx==-1). Returns true on success. See TakeFX_GetPresetIndex. FX indices can
 -- have 0x2000000 added to them, in which case they will be used to address FX in
@@ -820,7 +820,7 @@ function TakeFX:set_preset_by_index()
 end
 
     
---- Show.
+--- Show. Wraps TakeFX_Show.
 -- showflag=0 for hidechain, =1 for show chain(index valid), =2 for hide floating
 -- window(index valid), =3 for show floating window (index valid) FX indices can
 -- have 0x2000000 added to them, in which case they will be used to address FX in
@@ -838,7 +838,7 @@ function TakeFX:show(show_flag)
 end
 
     
---- Get Fx Count.
+--- Get Fx Count. Wraps BR_GetTakeFXCount.
 -- [BR] Returns FX count for supplied take
 -- @return number
 function TakeFX:get_fx_count()
@@ -846,7 +846,7 @@ function TakeFX:get_fx_count()
 end
 
     
---- Get Chain.
+--- Get Chain. Wraps CF_GetTakeFXChain.
 -- Return a handle to the given take FX chain window. HACK: This temporarily
 -- renames the take in order to disambiguate the take FX chain window from
 -- similarily named takes.
@@ -856,7 +856,7 @@ function TakeFX:get_chain()
 end
 
     
---- Select.
+--- Select. Wraps CF_SelectTakeFX.
 -- Set which take effect is active in the take's FX chain. The FX chain window does
 -- not have to be open.
 -- @return boolean
