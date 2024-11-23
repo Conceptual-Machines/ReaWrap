@@ -8,7 +8,7 @@ local helpers = require("helpers")
 local Item = {}
 
 --- Create new Item instance.
--- @param item Item. The pointer to Reaper MediaItem*
+-- @param item userdata. The pointer to Reaper MediaItem*
 -- @return Item table.
 function Item:new(item)
 	local obj = {
