@@ -34,72 +34,183 @@ function Project:log(...)
     return nil
 end
 
+--- String representation of the Project instance.
+-- @return string
+function Project:_tostring()
+    return string.format('<Project name=%s>', self:get_name())
+end
+
+--- Get all selected tracks.
+-- @param master boolean. Whether to include the master track. Optional (Default is false).
+-- @return table array<Track>
+function Project:get_selected_tracks(master)
+    master = master or false
+    local tracks = {}
+    local count = self:count_selected_tracks(master)
+    for i = 0, count - 1 do
+        local track = self:get_selected_track(i)
+        tracks[i + 1] = track
+    end
+    return tracks
+end
+
+--- Iterate over selected tracks.
+-- @param master boolean. Whether to include the master track. Optional (Default is false).
+-- @return function iterator
+function Project:iter_selected_tracks(master)
+    return helpers.iter(self:get_selected_tracks(master))
+end
+
+--- Whether there is at least one selected track.
+-- @param master boolean. Whether to include the master track. Optional (Default is false).
+---@return boolean
+function Project:has_selected_tracks(master --[[boolean]])
+    return self:count_selected_tracks(master) > 0
+end
+
+--- Get all selected media items.
+-- @return table array<Item>
+function Project:get_selected_media_items()
+    local selected_media_items = {}
+    for i = 0, self:count_selected_media_items() - 1 do
+        local media_item = self:get_selected_media_item(i)
+        selected_media_items[i + 1] = media_item
+    end
+    return selected_media_items
+end
+
+--- Iterate over selected media items.
+-- @return function iterator
+function Project:iter_selected_media_items()
+    return helpers.iter(self:get_selected_media_items())
+end
+
+
+--- Whether there are any selected media items.
+-- @return boolean
+function Project:has_selected_media_items()
+    return self:count_selected_media_items() > 0
+end
+
+--- Get all tracks in the project.
+-- @return table array<Track>
+function Project:get_tracks()
+    local tracks = {}
+    for i = 0, self:count_tracks() - 1 do
+        local track = self:get_track(i)
+        tracks[i + 1] = track
+    end
+    return tracks
+end
+
+--- Iterate over all tracks in the project.
+-- @return function iterator
+function Project:iter_tracks()
+    return helpers.iter(self:get_tracks())
+end
+
+
+--- Whether there is at least one track in the project.
+-- @return boolean
+function Project:has_tracks()
+    return self:count_tracks() > 0
+end
+
+--- Get all TCP FX params.
+-- @return table array<{fx_idx, param_idx}>
+function Project:get_tcp_fx_params()
+    local tcp_fx_params = {}
+    for i = 0, self:count_tcp_fx_params() - 1 do
+        local fx_idx, param_idx = self:get_tcp_fx_param(i)
+        tcp_fx_params[i + 1] = {fx_idx, param_idx}
+    end
+    return tracks
+end
+
+--- Iterate over all TCP FX params in the project.
+-- @return function iterator
+function Project:iter_tcp_fx_params()
+    return helpers.iter(self:get_tcp_fx_params())
+end
+
+
+--- Whether there is at least one TCP FX Param in the project.
+-- @return boolean
+function Project:has_tcp_fx_params()
+    return self:count_tcp_fx_params() > 0
+end
 
 -- @section ReaScript API Methods
 
 
 
     
---- Add Project Marker.
+--- Add Project Marker. Wraps AddProjectMarker2.
 -- Returns the index of the created marker/region, or -1 on failure. Supply
--- wantidx>=0 if you want a particular index number, but you'll get a different
--- index number a region and wantidx is already in use.
--- @param is_rgn boolean
--- @param pos number
--- @param rgnend number
--- @param name string
--- @param want_idx number
--- @return number
-function Project:add_project_marker(is_rgn, pos, rgnend, name, want_idx)
-    return r.AddProjectMarker(self.pointer, is_rgn, pos, rgnend, name, want_idx)
-end
-
-    
---- Add Project Marker2.
--- Returns the index of the created marker/region, or -1 on failure. Supply
--- wantidx>=0 if you want a particular index number, but you'll get a different
--- index number a region and wantidx is already in use. color should be 0 (default
+-- want_idx>=0 if you want a particular index number, but you'll get a different
+-- index number a region and want_idx is already in use. color should be 0 (default
 -- color), or ColorToNative(r,g,b)|0x1000000
 -- @param is_rgn boolean
 -- @param pos number
--- @param rgnend number
+-- @param rgn_end number
 -- @param name string
 -- @param want_idx number
 -- @param color number
 -- @return number
-function Project:add_project_marker2(is_rgn, pos, rgnend, name, want_idx, color)
-    return r.AddProjectMarker2(self.pointer, is_rgn, pos, rgnend, name, want_idx, color)
+function Project:add_project_marker(is_rgn, pos, rgn_end, name, want_idx, color)
+    return r.AddProjectMarker2(self.pointer, is_rgn, pos, rgn_end, name, want_idx, color)
 end
 
     
---- Any Track Solo.
+--- Any Track Solo. Wraps AnyTrackSolo.
 -- @return boolean
 function Project:any_track_solo()
     return r.AnyTrackSolo(self.pointer)
 end
 
+Project.nudge.Constants = {
+    FLAG = {
+        SET_TO_VALUE = 1,
+        SNAP = 2,
+    },
+    WHAT = {
+        POSITION = 0,
+        LEFT_TRIM = 1,
+        LEFT_EDGE = 2,
+        RIGHT_EDGE = 3,
+        CONTENTS = 4,
+        DUPLICATE = 5,
+        EDIT_CURSOR = 6,
+    },
+    UNIT = {
+        MS = 0,
+        SECONDS = 1,
+        GRID = 2,
+        _256TH_NOTES = 3,
+        _1 = 15,
+        MEASURES_BEATS = 16,
+        SAMPLES = 17,
+        FRAMES = 18,
+        PIXELS = 19,
+        ITEM_LENGTHS = 20,
+        ITEM_SELECTIONS = 21,
+    },
+}
     
---- Apply Nudge.
--- nudgeflag: &1=set to value (otherwise nudge by value), &2=snap nudgewhat:
--- 0=position, 1=left trim, 2=left edge, 3=right edge, 4=contents, 5=duplicate,
--- 6=edit cursor nudgeunit: 0=ms, 1=seconds, 2=grid, 3=256th notes, ..., 15=whole
--- notes, 16=measures.beats (1.15 = 1 measure + 1.5 beats), 17=samples, 18=frames,
--- 19=pixels, 20=item lengths, 21=item selections value: amount to nudge by, or
--- value to set to reverse: in nudge mode, nudges left (otherwise ignored) copies:
--- in nudge duplicate mode, number of copies (otherwise ignored)
--- @param nudgeflag number
--- @param nudgewhat number
--- @param nudgeunits number
+--- Apply Nudge. Wraps ApplyNudge.
+-- @param nudge_flag number. Project.nudge.Constants.FLAG
+-- @param nudge_what number. Project.nudge.Constants.WHAT.
+-- @param nudge_units number. Project.nudge.Constants.UNIT.
 -- @param value number
 -- @param reverse boolean
 -- @param copies number
 -- @return boolean
-function Project:apply_nudge(nudgeflag, nudgewhat, nudgeunits, value, reverse, copies)
-    return r.ApplyNudge(self.pointer, nudgeflag, nudgewhat, nudgeunits, value, reverse, copies)
+function Project:apply_nudge(nudge_flag, nudge_what, nudge_units, value, reverse, copies)
+    return r.ApplyNudge(self.pointer, nudge_flag, nudge_what, nudge_units, value, reverse, copies)
 end
 
     
---- Count Media Items.
+--- Count Media Items. Wraps CountMediaItems.
 -- count the number of items in the project (proj=0 for active project)
 -- @return number
 function Project:count_media_items()
@@ -107,7 +218,7 @@ function Project:count_media_items()
 end
 
     
---- Count Project Markers.
+--- Count Project Markers. Wraps CountProjectMarkers.
 -- num_markersOut and num_regionsOut may be NULL.
 -- @return num_markers number
 -- @return num_regions number
@@ -121,7 +232,7 @@ function Project:count_project_markers()
 end
 
     
---- Count Selected Tracks.
+--- Count Selected Tracks. Wraps CountSelectedTracks2.
 -- Count the number of selected tracks in the project (proj=0 for active project).
 -- @param want_master boolean Optional
 -- @return number
@@ -131,15 +242,15 @@ function Project:count_selected_tracks(want_master)
 end
 
     
---- Count Tcpfx Parms.
+--- Count TCP FX Params. Wraps CountTCPFXParms.
 -- Count the number of FX parameter knobs displayed on the track control panel.
 -- @return number
-function Project:count_tcpfx_parms()
+function Project:count_tcp_fx_params()
     return r.CountTCPFXParms(self.pointer, track)
 end
 
     
---- Count Tempo Time Sig Markers.
+--- Count Tempo Time Sig Markers. Wraps CountTempoTimeSigMarkers.
 -- Count the number of tempo/time signature markers in the project. See
 -- GetTempoTimeSigMarker, SetTempoTimeSigMarker, AddTempoTimeSigMarker.
 -- @return number
@@ -148,7 +259,7 @@ function Project:count_tempo_time_sig_markers()
 end
 
     
---- Count Tracks.
+--- Count Tracks. Wraps CountTracks.
 -- count the number of tracks in the project (proj=0 for active project)
 -- @return number
 function Project:count_tracks()
@@ -156,7 +267,7 @@ function Project:count_tracks()
 end
 
     
---- Delete Project Marker.
+--- Delete Project Marker. Wraps DeleteProjectMarker.
 -- Delete a marker.  proj==NULL for the active project.
 -- @param markrgnindexnumber number
 -- @param is_rgn boolean
@@ -166,18 +277,18 @@ function Project:delete_project_marker(markrgnindexnumber, is_rgn)
 end
 
     
---- Delete Project Marker By Index.
--- Differs from DeleteProjectMarker only in that markrgnidx is 0 for the first
+--- Delete Project Marker By Index. Wraps DeleteProjectMarkerByIndex.
+-- Differs from DeleteProjectMarker only in that mark_rgn_idx is 0 for the first
 -- marker/region, 1 for the next, etc (see EnumProjectMarkers3), rather than
 -- representing the displayed marker/region ID number (see SetProjectMarker4).
--- @param markrgn_idx number
+-- @param mark_rgn_idx number
 -- @return boolean
-function Project:delete_project_marker_by_index(markrgn_idx)
-    return r.DeleteProjectMarkerByIndex(self.pointer, markrgn_idx)
+function Project:delete_project_marker_by_index(mark_rgn_idx)
+    return r.DeleteProjectMarkerByIndex(self.pointer, mark_rgn_idx)
 end
 
     
---- Delete Tempo Time Sig Marker.
+--- Delete Tempo Time Sig Marker. Wraps DeleteTempoTimeSigMarker.
 -- Delete a tempo/time signature marker.
 -- @param markerindex number
 -- @return boolean
@@ -186,7 +297,7 @@ function Project:delete_tempo_time_sig_marker(markerindex)
 end
 
     
---- Edit Tempo Time Sig Marker.
+--- Edit Tempo Time Sig Marker. Wraps EditTempoTimeSigMarker.
 -- Open the tempo/time signature marker editor dialog.
 -- @param markerindex number
 -- @return boolean
@@ -195,25 +306,25 @@ function Project:edit_tempo_time_sig_marker(markerindex)
 end
 
     
---- Enum Project Markers.
+--- Enum Project Markers. Wraps EnumProjectMarkers3.
 -- @param idx number
 -- @return is_rgn boolean
 -- @return pos number
--- @return rgnend number
+-- @return rgn_end number
 -- @return name string
 -- @return markrgnindexnumber number
 -- @return color number
 function Project:enum_project_markers(idx)
-    local ret_val, is_rgn, pos, rgnend, name, markrgnindexnumber, color = r.EnumProjectMarkers3(self.pointer, idx)
+    local ret_val, is_rgn, pos, rgn_end, name, markrgnindexnumber, color = r.EnumProjectMarkers3(self.pointer, idx)
     if ret_val then
-        return is_rgn, pos, rgnend, name, markrgnindexnumber, color
+        return is_rgn, pos, rgn_end, name, markrgnindexnumber, color
     else
         return nil
     end
 end
 
     
---- Enum Proj Ext State.
+--- Enum Proj Ext State. Wraps EnumProjExtState.
 -- Enumerate the data stored with the project for a specific extname. Returns false
 -- when there is no more data. See SetProjExtState, GetProjExtState.
 -- @param ext_name string
@@ -230,23 +341,23 @@ function Project:enum_proj_ext_state(ext_name, idx)
 end
 
     
---- Enum Region Render Matrix.
+--- Enum Region Render Matrix. Wraps EnumRegionRenderMatrix.
 -- Enumerate which tracks will be rendered within this region when using the region
 -- render matrix. When called with rendertrack==0, the function returns the first
 -- track that will be rendered (which may be the master track); rendertrack==1 will
 -- return the next track rendered, and so on. The function returns NULL when there
 -- are no more tracks that will be rendered within this region.
--- @param regionindex number
+-- @param region_idx number
 -- @param rendertrack number
 -- @return Track table
-function Project:enum_region_render_matrix(regionindex, rendertrack)
+function Project:enum_region_render_matrix(region_idx, rendertrack)
     local Track = require('track')
-    local result = r.EnumRegionRenderMatrix(self.pointer, regionindex, rendertrack)
+    local result = r.EnumRegionRenderMatrix(self.pointer, region_idx, rendertrack)
     return Track:new(result)
 end
 
     
---- Enum Track Midi Program Names Ex.
+--- Enum Track Midi Program Names Ex. Wraps EnumTrackMIDIProgramNamesEx.
 -- returns false if there are no plugins on the track that support MIDI programs,or
 -- if all programs have been enumerated
 -- @param program_number number
@@ -262,7 +373,7 @@ function Project:enum_track_midi_program_names_ex(program_number, program_name)
 end
 
     
---- Find Tempo Time Sig Marker.
+--- Find Tempo Time Sig Marker. Wraps FindTempoTimeSigMarker.
 -- Find the tempo/time signature marker that falls at or before this time position
 -- (the marker that is in effect as of this time position).
 -- @param time number
@@ -272,7 +383,7 @@ function Project:find_tempo_time_sig_marker(time)
 end
 
     
---- Get All Project Play States.
+--- Get All Project Play States. Wraps GetAllProjectPlayStates.
 -- returns the bitwise OR of all project play states (1=playing, 2=pause,
 -- 4=recording)
 -- @return number
@@ -281,7 +392,7 @@ function Project:get_all_project_play_states()
 end
 
     
---- Get Cursor Position Ex.
+--- Get Cursor Position Ex. Wraps GetCursorPositionEx.
 -- edit cursor position
 -- @return number
 function Project:get_cursor_position_ex()
@@ -289,7 +400,7 @@ function Project:get_cursor_position_ex()
 end
 
     
---- Get Free Disk Space For Record Path.
+--- Get Free Disk Space For Record Path. Wraps GetFreeDiskSpaceForRecordPath.
 -- returns free disk space in megabytes, pathIdx 0 for normal, 1 for alternate.
 -- @param path_idx number
 -- @return number
@@ -298,7 +409,7 @@ function Project:get_free_disk_space_for_record_path(path_idx)
 end
 
     
---- Get Last Marker And Cur Region.
+--- Get Last Marker And Cur Region. Wraps GetLastMarkerAndCurRegion.
 -- Get the last project marker before time, and/or the project region that includes
 -- time. markeridx and regionidx are returned not necessarily as the displayed
 -- marker/region index, but as the index that can be passed to EnumProjectMarkers.
@@ -311,7 +422,7 @@ function Project:get_last_marker_and_cur_region(time)
 end
 
     
---- Get Master Track.
+--- Get Master Track. Wraps GetMasterTrack.
 -- @return Track table
 function Project:get_master_track()
     local Track = require('track')
@@ -320,7 +431,7 @@ function Project:get_master_track()
 end
 
     
---- Get Media Item.
+--- Get Media Item. Wraps GetMediaItem.
 -- get an item from a project by item count (zero-based) (proj=0 for active
 -- project)
 -- @param item_idx number
@@ -332,7 +443,7 @@ function Project:get_media_item(item_idx)
 end
 
     
---- Get Media Item Take By Guid.
+--- Get Media Item Take By Guid. Wraps GetMediaItemTakeByGUID.
 -- @param guid string
 -- @return Take table
 function Project:get_media_item_take_by_guid(guid)
@@ -342,7 +453,7 @@ function Project:get_media_item_take_by_guid(guid)
 end
 
     
---- Get Play Position.
+--- Get Play Position. Wraps GetPlayPosition2Ex.
 -- returns position of next audio block being processed
 -- @return number
 function Project:get_play_position()
@@ -350,7 +461,7 @@ function Project:get_play_position()
 end
 
     
---- Get Play Position Lat Comp.
+--- Get Play Position Lat Comp. Wraps GetPlayPositionEx.
 -- returns latency-compensated actual-what-you-hear position
 -- @return number
 function Project:get_play_position_lat_comp()
@@ -358,7 +469,7 @@ function Project:get_play_position_lat_comp()
 end
 
     
---- Get Play State Ex.
+--- Get Play State Ex. Wraps GetPlayStateEx.
 -- &1=playing, &2=paused, &4=is recording
 -- @return number
 function Project:get_play_state_ex()
@@ -366,7 +477,7 @@ function Project:get_play_state_ex()
 end
 
     
---- Get Project Length.
+--- Get Project Length. Wraps GetProjectLength.
 -- returns length of project (maximum of end of media item, markers, end of
 -- regions, tempo map
 -- @return number
@@ -375,14 +486,14 @@ function Project:get_project_length()
 end
 
     
---- Get Name.
+--- Get Name. Wraps GetProjectName.
 -- @return buf string
 function Project:get_name()
     return r.GetProjectName(self.pointer)
 end
 
     
---- Get Project Path Ex.
+--- Get Project Path Ex. Wraps GetProjectPathEx.
 -- Get the project recording path.
 -- @return buf string
 function Project:get_project_path_ex()
@@ -390,7 +501,7 @@ function Project:get_project_path_ex()
 end
 
     
---- Get Project State Change Count.
+--- Get Project State Change Count. Wraps GetProjectStateChangeCount.
 -- returns an integer that changes when the project state changes
 -- @return number
 function Project:get_project_state_change_count()
@@ -398,7 +509,7 @@ function Project:get_project_state_change_count()
 end
 
     
---- Get Project Time Offset.
+--- Get Project Time Offset. Wraps GetProjectTimeOffset.
 -- Gets project time offset in seconds (project settings - project start time). If
 -- rndframe is true, the offset is rounded to a multiple of the project frame size.
 -- @param rndframe boolean
@@ -408,7 +519,7 @@ function Project:get_project_time_offset(rndframe)
 end
 
     
---- Get Project Time Signature.
+--- Get Project Time Signature. Wraps GetProjectTimeSignature2.
 -- Gets basic time signature (beats per minute, numerator of time signature in bpi)
 -- this does not reflect tempo envelopes but is purely what is set in the project
 -- settings.
@@ -419,7 +530,7 @@ function Project:get_project_time_signature()
 end
 
     
---- Get Proj Ext State.
+--- Get Proj Ext State. Wraps GetProjExtState.
 -- Get the value previously associated with this extname and key, the last time the
 -- project was saved. See SetProjExtState, EnumProjExtState.
 -- @param ext_name string
@@ -435,7 +546,7 @@ function Project:get_proj_ext_state(ext_name, key)
 end
 
     
---- Get Selected Envelope.
+--- Get Selected Envelope. Wraps GetSelectedEnvelope.
 -- get the currently selected envelope, returns NULL/nil if no envelope is selected
 -- @return Envelope table
 function Project:get_selected_envelope()
@@ -445,7 +556,7 @@ function Project:get_selected_envelope()
 end
 
     
---- Get Selected Track.
+--- Get Selected Track. Wraps GetSelectedTrack2.
 -- Get a selected track from a project (proj=0 for active project) by selected
 -- track count (zero-based).
 -- @param seltrack_idx number
@@ -459,7 +570,7 @@ function Project:get_selected_track(seltrack_idx, want_master)
 end
 
     
---- Get Selected Track Envelope.
+--- Get Selected Track Envelope. Wraps GetSelectedTrackEnvelope.
 -- get the currently selected track envelope, returns NULL/nil if no envelope is
 -- selected
 -- @return Envelope table
@@ -470,7 +581,7 @@ function Project:get_selected_track_envelope()
 end
 
     
---- Get Set Arrange View2.
+--- Get Set Arrange View2. Wraps GetSet_ArrangeView2.
 -- Gets or sets the arrange view start/end time for screen coordinates. use
 -- screen_x_start=screen_x_end=0 to use the full arrange view's start/end time
 -- @param is_set boolean
@@ -485,7 +596,7 @@ function Project:get_set_arrange_view2(is_set, screen_x_start, screen_x_end, sta
 end
 
     
---- Get Set Loop Time Range2.
+--- Get Set Loop Time Range2. Wraps GetSet_LoopTimeRange2.
 -- @param is_set boolean
 -- @param is_loop boolean
 -- @param start number
@@ -498,7 +609,7 @@ function Project:get_set_loop_time_range2(is_set, is_loop, start, end_, allowaut
 end
 
     
---- Get Set Project Grid.
+--- Get Set Project Grid. Wraps GetSetProjectGrid.
 -- Get or set the arrange view grid division. 0.25=quarter note, 1.0/3.0=half note
 -- triplet, etc. swingmode can be 1 for swing enabled, swingamt is -1..1. swingmode
 -- can be 3 for measure-grid. Returns grid configuration flags
@@ -563,7 +674,7 @@ Project.GetSetProjectInfoConstants = {
     PROJECT_SRATE_USE = "PROJECT_SRATE_USE",
 }
     
---- Get Set Project Info.
+--- Get Set Project Info. Wraps GetSetProjectInfo.
 -- Get or set project information.
 -- @param desc string. Project.GetSetProjectInfoConstants
 -- @param value number
@@ -612,7 +723,7 @@ Project.GetSetProjectInfoStringConstants = {
     RENDER_FORMAT = "RENDER_FORMAT",
 }
     
---- Get Set Project Info String.
+--- Get Set Project Info String. Wraps GetSetProjectInfo_String.
 -- Get or set project information.GetProjectPathEx()RENDER_FORMAT2 : base64-encoded
 -- secondary sink configuration. Callers can also pass a simple 4-byte string (non-
 -- base64-encoded), e.g. "evaw" or "l3pm", to use default settings for that sink
@@ -633,7 +744,7 @@ function Project:get_set_project_info_string(desc, valuestr_need_big, is_set)
 end
 
     
---- Get Set Project Notes.
+--- Get Set Project Notes. Wraps GetSetProjectNotes.
 -- gets or sets project notes, notesNeedBig_sz is ignored when setting
 -- @param set boolean
 -- @param notes string
@@ -643,7 +754,7 @@ function Project:get_set_project_notes(set, notes)
 end
 
     
---- Get Set Repeat Ex.
+--- Get Set Repeat Ex. Wraps GetSetRepeatEx.
 -- -1 == query,0=clear,1=set,>1=toggle . returns new value
 -- @param val number
 -- @return number
@@ -652,7 +763,7 @@ function Project:get_set_repeat_ex(val)
 end
 
     
---- Get Set Tempo Time Sig Marker Flag.
+--- Get Set Tempo Time Sig Marker Flag. Wraps GetSetTempoTimeSigMarkerFlag.
 -- Gets or sets the attribute flag of a tempo/time signature marker. flag &1=sets
 -- time signature and starts new measure, &2=does not set tempo, &4=allow previous
 -- partial measure if starting new measure, &8=set new metronome pattern if
@@ -666,43 +777,43 @@ function Project:get_set_tempo_time_sig_marker_flag(point_index, flag, is_set)
 end
 
     
---- Get Tcpfx Parm.
+--- Get TCP FX Param. Wraps GetTCPFXParm.
 -- Get information about a specific FX parameter knob (see CountTCPFXParms).
 -- @param index number
--- @return fxindex number
--- @return parm_idx number
-function Project:get_tcpfx_parm(index)
-    local ret_val, fxindex, parm_idx = r.GetTCPFXParm(self.pointer, track, index)
+-- @return fx_idx number
+-- @return param_idx number
+function Project:get_tcp_fx_param(index)
+    local ret_val, fx_idx, param_idx = r.GetTCPFXParm(self.pointer, track, index)
     if ret_val then
-        return fxindex, parm_idx
+        return fx_idx, param_idx
     else
         return nil
     end
 end
 
     
---- Get Tempo Time Sig Marker.
+--- Get Tempo Time Sig Marker. Wraps GetTempoTimeSigMarker.
 -- Get information about a tempo/time signature marker. See
 -- CountTempoTimeSigMarkers, SetTempoTimeSigMarker, AddTempoTimeSigMarker.
 -- @param pt_idx number
--- @return timepos number
--- @return measurepos number
--- @return beatpos number
+-- @return time_pos number
+-- @return measure_pos number
+-- @return beat_pos number
 -- @return bpm number
--- @return timesig_num number
--- @return timesig_denom number
--- @return lineartempo boolean
+-- @return time_sig_num number
+-- @return time_sig_denom number
+-- @return linear_tempo boolean
 function Project:get_tempo_time_sig_marker(pt_idx)
-    local ret_val, timepos, measurepos, beatpos, bpm, timesig_num, timesig_denom, lineartempo = r.GetTempoTimeSigMarker(self.pointer, pt_idx)
+    local ret_val, time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo = r.GetTempoTimeSigMarker(self.pointer, pt_idx)
     if ret_val then
-        return timepos, measurepos, beatpos, bpm, timesig_num, timesig_denom, lineartempo
+        return time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo
     else
         return nil
     end
 end
 
     
---- Get Track.
+--- Get Track. Wraps GetTrack.
 -- get a track from a project by track count (zero-based) (proj=0 for active
 -- project)
 -- @param track_idx number
@@ -714,7 +825,7 @@ function Project:get_track(track_idx)
 end
 
     
---- Get Track Midi Note Name Ex.
+--- Get Track Midi Note Name Ex. Wraps GetTrackMIDINoteNameEx.
 -- Get note/CC name. pitch 128 for CC0 name, 129 for CC1 name, etc. See
 -- SetTrackMIDINoteNameEx
 -- @param pitch number
@@ -725,7 +836,7 @@ function Project:get_track_midi_note_name_ex(pitch, chan)
 end
 
     
---- Get Track Midi Note Range.
+--- Get Track Midi Note Range. Wraps GetTrackMIDINoteRange.
 -- @return note_lo number
 -- @return note_hi number
 function Project:get_track_midi_note_range()
@@ -733,7 +844,7 @@ function Project:get_track_midi_note_range()
 end
 
     
---- Go To Marker.
+--- Go To Marker. Wraps GoToMarker.
 -- Go to marker. If use_timeline_order==true, marker_index 1 refers to the first
 -- marker on the timeline.  If use_timeline_order==false, marker_index 1 refers to
 -- the first marker with the user-editable index of 1.
@@ -744,7 +855,7 @@ function Project:go_to_marker(marker_index, use_timeline_order)
 end
 
     
---- Go To Region.
+--- Go To Region. Wraps GoToRegion.
 -- Seek to region after current region finishes playing (smooth seek). If
 -- use_timeline_order==true, region_index 1 refers to the first region on the
 -- timeline.  If use_timeline_order==false, region_index 1 refers to the first
@@ -756,16 +867,16 @@ function Project:go_to_region(region_index, use_timeline_order)
 end
 
     
---- Has Track Midi Programs Ex.
+--- Has Track Midi Programs. Wraps HasTrackMIDIProgramsEx.
 -- returns name of track plugin that is supplying MIDI programs,or NULL if there is
 -- none
 -- @return string
-function Project:has_track_midi_programs_ex()
+function Project:has_track_midi_programs()
     return r.HasTrackMIDIProgramsEx(self.pointer, track)
 end
 
     
---- Insert Track In Project.
+--- Insert Track In Project. Wraps InsertTrackInProject.
 -- inserts a track in project proj at idx, this will be clamped to
 -- 0..CountTracks(proj). flags&1 for default envelopes/FX, otherwise no enabled
 -- fx/envelopes will be added.
@@ -776,7 +887,7 @@ function Project:insert_track_in_project(idx, flags)
 end
 
     
---- Is Project Dirty.
+--- Is Project Dirty. Wraps IsProjectDirty.
 -- Is the project dirty (needing save)? Always returns 0 if 'undo/prompt to save'
 -- is disabled in preferences.
 -- @return number
@@ -785,7 +896,7 @@ function Project:is_project_dirty()
 end
 
     
---- On Arrow.
+--- On Arrow. Wraps Loop_OnArrow.
 -- Move the loop selection left or right. Returns true if snap is enabled.
 -- @param direction number
 -- @return boolean
@@ -794,7 +905,7 @@ function Project:on_arrow(direction)
 end
 
     
---- Save Project.
+--- Save Project. Wraps Main_SaveProject.
 -- Save the project.
 -- @param force_save_as_in boolean
 function Project:save_project(force_save_as_in)
@@ -802,7 +913,7 @@ function Project:save_project(force_save_as_in)
 end
 
     
---- Save Project Ex.
+--- Save Project Ex. Wraps Main_SaveProjectEx.
 -- Save the project. options: &1=save selected tracks as track template, &2=include
 -- media with track template, &4=include envelopes with track template. See
 -- Main_openProject, Main_SaveProject.
@@ -813,7 +924,7 @@ function Project:save_project_ex(file_name, options)
 end
 
     
---- Mark Project Dirty.
+--- Mark Project Dirty. Wraps MarkProjectDirty.
 -- Marks project as dirty (needing save) if 'undo/prompt to save' is enabled in
 -- preferences.
 function Project:mark_project_dirty()
@@ -821,48 +932,48 @@ function Project:mark_project_dirty()
 end
 
     
---- Get Play Rate.
+--- Get Play Rate. Wraps Master_GetPlayRate.
 -- @return number
 function Project:get_play_rate()
     return r.Master_GetPlayRate(self.pointer)
 end
 
     
---- On Pause Button Ex.
+--- On Pause Button Ex. Wraps OnPauseButtonEx.
 -- direct way to simulate pause button hit
 function Project:on_pause_button_ex()
     return r.OnPauseButtonEx(self.pointer)
 end
 
     
---- On Play Button Ex.
+--- On Play Button Ex. Wraps OnPlayButtonEx.
 -- direct way to simulate play button hit
 function Project:on_play_button_ex()
     return r.OnPlayButtonEx(self.pointer)
 end
 
     
---- On Stop Button Ex.
+--- On Stop Button Ex. Wraps OnStopButtonEx.
 -- direct way to simulate stop button hit
 function Project:on_stop_button_ex()
     return r.OnStopButtonEx(self.pointer)
 end
 
     
---- Select All Media Items.
+--- Select All Media Items. Wraps SelectAllMediaItems.
 -- @param selected boolean
 function Project:select_all_media_items(selected)
     return r.SelectAllMediaItems(self.pointer, selected)
 end
 
     
---- Select Project Instance.
+--- Select Project Instance. Wraps SelectProjectInstance.
 function Project:select_project_instance()
     return r.SelectProjectInstance(self.pointer)
 end
 
     
---- Set Current Bpm.
+--- Set Current Bpm. Wraps SetCurrentBPM.
 -- set current BPM in project, set wantUndo=true to add undo point
 -- @param bpm number
 -- @param want_undo boolean
@@ -871,7 +982,7 @@ function Project:set_current_bpm(bpm, want_undo)
 end
 
     
---- Set Edit Cur Pos2.
+--- Set Edit Cur Pos2. Wraps SetEditCurPos2.
 -- @param time number
 -- @param moveview boolean
 -- @param seekplay boolean
@@ -880,7 +991,7 @@ function Project:set_edit_cur_pos2(time, moveview, seekplay)
 end
 
     
---- Set Midi Editor Grid.
+--- Set Midi Editor Grid. Wraps SetMIDIEditorGrid.
 -- Set the MIDI editor grid division. 0.25=quarter note, 1.0/3.0=half note tripet,
 -- etc.
 -- @param division number
@@ -889,7 +1000,7 @@ function Project:set_midi_editor_grid(division)
 end
 
     
---- Set Project Grid.
+--- Set Project Grid. Wraps SetProjectGrid.
 -- Set the arrange view grid division. 0.25=quarter note, 1.0/3.0=half note
 -- triplet, etc.
 -- @param division number
@@ -898,90 +1009,90 @@ function Project:set_project_grid(division)
 end
 
     
---- Set Project Marker2.
+--- Set Project Marker2. Wraps SetProjectMarker2.
 -- Note: this function can't clear a marker's name (an empty string will leave the
 -- name unchanged), see SetProjectMarker4.
--- @param markrgnindexnumber number
+-- @param markr_rgn_idx number
 -- @param is_rgn boolean
 -- @param pos number
--- @param rgnend number
+-- @param rgn_end number
 -- @param name string
 -- @return boolean
-function Project:set_project_marker2(markrgnindexnumber, is_rgn, pos, rgnend, name)
-    return r.SetProjectMarker2(self.pointer, markrgnindexnumber, is_rgn, pos, rgnend, name)
+function Project:set_project_marker2(markr_rgn_idx, is_rgn, pos, rgn_end, name)
+    return r.SetProjectMarker2(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name)
 end
 
     
---- Set Project Marker3.
+--- Set Project Marker3. Wraps SetProjectMarker3.
 -- Note: this function can't clear a marker's name (an empty string will leave the
 -- name unchanged), see SetProjectMarker4.
--- @param markrgnindexnumber number
+-- @param markr_rgn_idx number
 -- @param is_rgn boolean
 -- @param pos number
--- @param rgnend number
+-- @param rgn_end number
 -- @param name string
 -- @param color number
 -- @return boolean
-function Project:set_project_marker3(markrgnindexnumber, is_rgn, pos, rgnend, name, color)
-    return r.SetProjectMarker3(self.pointer, markrgnindexnumber, is_rgn, pos, rgnend, name, color)
+function Project:set_project_marker3(markr_rgn_idx, is_rgn, pos, rgn_end, name, color)
+    return r.SetProjectMarker3(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name, color)
 end
 
     
---- Set Project Marker4.
+--- Set Project Marker4. Wraps SetProjectMarker4.
 -- color should be 0 to not change, or ColorToNative(r,g,b)|0x1000000, flags&1 to
 -- clear name
--- @param markrgnindexnumber number
+-- @param markr_rgn_idx number
 -- @param is_rgn boolean
 -- @param pos number
--- @param rgnend number
+-- @param rgn_end number
 -- @param name string
 -- @param color number
 -- @param flags number
 -- @return boolean
-function Project:set_project_marker4(markrgnindexnumber, is_rgn, pos, rgnend, name, color, flags)
-    return r.SetProjectMarker4(self.pointer, markrgnindexnumber, is_rgn, pos, rgnend, name, color, flags)
+function Project:set_project_marker4(markr_rgn_idx, is_rgn, pos, rgn_end, name, color, flags)
+    return r.SetProjectMarker4(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name, color, flags)
 end
 
     
---- Set Project Marker By Index.
+--- Set Project Marker By Index. Wraps SetProjectMarkerByIndex.
 -- See SetProjectMarkerByIndex2.
--- @param markrgn_idx number
+-- @param mark_rgn_idx number
 -- @param is_rgn boolean
 -- @param pos number
--- @param rgnend number
--- @param i_dnumber number
+-- @param rgn_end number
+-- @param id_num number
 -- @param name string
 -- @param color number
 -- @return boolean
-function Project:set_project_marker_by_index(markrgn_idx, is_rgn, pos, rgnend, i_dnumber, name, color)
-    return r.SetProjectMarkerByIndex(self.pointer, markrgn_idx, is_rgn, pos, rgnend, i_dnumber, name, color)
+function Project:set_project_marker_by_index(mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color)
+    return r.SetProjectMarkerByIndex(self.pointer, mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color)
 end
 
     
---- Set Project Marker By Index2.
--- Differs from SetProjectMarker4 in that markrgnidx is 0 for the first
+--- Set Project Marker By Index2. Wraps SetProjectMarkerByIndex2.
+-- Differs from SetProjectMarker4 in that mark_rgn_idx is 0 for the first
 -- marker/region, 1 for the next, etc (see EnumProjectMarkers3), rather than
 -- representing the displayed marker/region ID number (see SetProjectMarker3).
 -- Function will fail if attempting to set a duplicate ID number for a region
--- (duplicate ID numbers for markers are OK). , flags&1 to clear name. If flags&2,
+-- (duplicate ID numbers for markers are OK).flags&1 to clear name. If flags&2,
 -- markers will not be re-sorted, and after making updates, you MUST call
--- SetProjectMarkerByIndex2 with markrgnidx=-1 and flags&2 to force re-sort/UI
+-- SetProjectMarkerByIndex2 with mark_rgn_idx=-1 and flags&2 to force re-sort/UI
 -- updates.
--- @param markrgn_idx number
+-- @param mark_rgn_idx number
 -- @param is_rgn boolean
 -- @param pos number
--- @param rgnend number
--- @param i_dnumber number
+-- @param rgn_end number
+-- @param id_num number
 -- @param name string
 -- @param color number
 -- @param flags number
 -- @return boolean
-function Project:set_project_marker_by_index2(markrgn_idx, is_rgn, pos, rgnend, i_dnumber, name, color, flags)
-    return r.SetProjectMarkerByIndex2(self.pointer, markrgn_idx, is_rgn, pos, rgnend, i_dnumber, name, color, flags)
+function Project:set_project_marker_by_index2(mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color, flags)
+    return r.SetProjectMarkerByIndex2(self.pointer, mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color, flags)
 end
 
     
---- Set Proj Ext State.
+--- Set Proj Ext State. Wraps SetProjExtState.
 -- Save a key/value pair for a specific extension, to be restored the next time
 -- this specific project is loaded. Typically extname will be the name of a
 -- reascript or extension section. If key is NULL or "", all extended data for that
@@ -997,38 +1108,38 @@ function Project:set_proj_ext_state(ext_name, key, value)
 end
 
     
---- Set Region Render Matrix.
+--- Set Region Render Matrix. Wraps SetRegionRenderMatrix.
 -- Add (flag > 0) or remove (flag < 0) a track from this region when using the
 -- region render matrix. If adding, flag==2 means force mono, flag==4 means force
 -- stereo, flag==N means force N/2 channels.
--- @param regionindex number
+-- @param region_idx number
 -- @param flag number
-function Project:set_region_render_matrix(regionindex, flag)
-    return r.SetRegionRenderMatrix(self.pointer, regionindex, track, flag)
+function Project:set_region_render_matrix(region_idx, flag)
+    return r.SetRegionRenderMatrix(self.pointer, region_idx, track, flag)
 end
 
     
---- Set Tempo Time Sig Marker.
--- Set parameters of a tempo/time signature marker. Provide either timepos (with
--- measurepos=-1, beatpos=-1), or measurepos and beatpos (with timepos=-1). If
--- timesig_num and timesig_denom are zero, the previous time signature will be
--- used. ptidx=-1 will insert a new tempo/time signature marker. See
+--- Set Tempo Time Sig Marker. Wraps SetTempoTimeSigMarker.
+-- Set parameters of a tempo/time signature marker. Provide either time_pos (with
+-- measure_pos=-1, beat_pos=-1), or measure_pos and beat_pos (with time_pos=-1). If
+-- time_sig_num and time_sig_denom are zero, the previous time signature will be
+-- used. pt_idx=-1 will insert a new tempo/time signature marker. See
 -- CountTempoTimeSigMarkers, GetTempoTimeSigMarker, AddTempoTimeSigMarker.
 -- @param pt_idx number
--- @param timepos number
--- @param measurepos number
--- @param beatpos number
+-- @param time_pos number
+-- @param measure_pos number
+-- @param beat_pos number
 -- @param bpm number
--- @param timesig_num number
--- @param timesig_denom number
--- @param lineartempo boolean
+-- @param time_sig_num number
+-- @param time_sig_denom number
+-- @param linear_tempo boolean
 -- @return boolean
-function Project:set_tempo_time_sig_marker(pt_idx, timepos, measurepos, beatpos, bpm, timesig_num, timesig_denom, lineartempo)
-    return r.SetTempoTimeSigMarker(self.pointer, pt_idx, timepos, measurepos, beatpos, bpm, timesig_num, timesig_denom, lineartempo)
+function Project:set_tempo_time_sig_marker(pt_idx, time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo)
+    return r.SetTempoTimeSigMarker(self.pointer, pt_idx, time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo)
 end
 
     
---- Set Track Midi Note Name Ex.
+--- Set Track Midi Note Name Ex. Wraps SetTrackMIDINoteNameEx.
 -- channel < 0 assigns note name to all channels. pitch 128 assigns name for CC0,
 -- pitch 129 for CC1, etc.
 -- @param pitch number
@@ -1040,7 +1151,7 @@ function Project:set_track_midi_note_name_ex(pitch, chan, name)
 end
 
     
---- Snap To Grid.
+--- Snap To Grid. Wraps SnapToGrid.
 -- @param time_pos number
 -- @return number
 function Project:snap_to_grid(time_pos)
@@ -1048,7 +1159,7 @@ function Project:snap_to_grid(time_pos)
 end
 
     
---- Beats To Time.
+--- Beats To Time. Wraps TimeMap2_beatsToTime.
 -- convert a beat position (or optionally a beats+measures if measures is non-NULL)
 -- to time.
 -- @param tpos number
@@ -1060,7 +1171,7 @@ function Project:beats_to_time(tpos, integer)
 end
 
     
---- Get Divided Bpm At Time.
+--- Get Divided Bpm At Time. Wraps TimeMap2_GetDividedBpmAtTime.
 -- get the effective BPM at the time (seconds) position (i.e. 2x in /8 signatures)
 -- @param time number
 -- @return number
@@ -1069,7 +1180,7 @@ function Project:get_divided_bpm_at_time(time)
 end
 
     
---- Get Next Change Time.
+--- Get Next Change Time. Wraps TimeMap2_GetNextChangeTime.
 -- when does the next time map (tempo or time sig) change occur
 -- @param time number
 -- @return number
@@ -1078,7 +1189,7 @@ function Project:get_next_change_time(time)
 end
 
     
---- Qn To Time.
+--- Qn To Time. Wraps TimeMap2_QNToTime.
 -- converts project QN position to time.
 -- @param qn number
 -- @return number
@@ -1087,29 +1198,29 @@ function Project:qn_to_time(qn)
 end
 
     
---- Time To Beats.
+--- Time To Beats. Wraps TimeMap2_timeToBeats.
 -- convert a time into beats. if measures is non-NULL, measures will be set to the
 -- measure count, return value will be beats since measure. if cml is non-NULL,
 -- will be set to current measure length in beats (i.e. time signature numerator)
--- if fullbeats is non-NULL, and measures is non-NULL, fullbeats will get the full
+-- if full_beats is non-NULL, and measures is non-NULL, full_bats will get the full
 -- beat count (same value returned if measures is NULL). if cdenom is non-NULL,
 -- will be set to the current time signature denominator.
 -- @param tpos number
--- @return integer measures
--- @return integer cml
--- @return number fullbeats
--- @return integer cdenom
+-- @return measures number
+-- @return cml number
+-- @return full_beats number
+-- @return cdenom number
 function Project:time_to_beats(tpos)
-    local ret_val, integer, integer, number, integer = r.TimeMap2_timeToBeats(self.pointer, tpos)
+    local ret_val, measures, cml, full_beats, cdenom = r.TimeMap2_timeToBeats(self.pointer, tpos)
     if ret_val then
-        return integer, integer, number, integer
+        return measures, cml, full_beats, cdenom
     else
         return nil
     end
 end
 
     
---- Time To Qn.
+--- Time To Qn. Wraps TimeMap2_timeToQN.
 -- converts project time position to QN position.
 -- @param tpos number
 -- @return number
@@ -1118,7 +1229,7 @@ function Project:time_to_qn(tpos)
 end
 
     
---- Cur Frame Rate.
+--- Cur Frame Rate. Wraps TimeMap_curFrameRate.
 -- Gets project framerate, and optionally whether it is drop-frame timecode
 -- @return drop_frame boolean
 function Project:cur_frame_rate()
@@ -1131,26 +1242,26 @@ function Project:cur_frame_rate()
 end
 
     
---- Get Measure Info.
+--- Get Measure Info. Wraps TimeMap_GetMeasureInfo.
 -- Get the QN position and time signature information for the start of a measure.
 -- Return the time in seconds of the measure start.
 -- @param measure number
 -- @return qn_start number
 -- @return qn_end number
--- @return timesig_num number
--- @return timesig_denom number
+-- @return time_sig_num number
+-- @return time_sig_denom number
 -- @return tempo number
 function Project:get_measure_info(measure)
-    local ret_val, qn_start, qn_end, timesig_num, timesig_denom, tempo = r.TimeMap_GetMeasureInfo(self.pointer, measure)
+    local ret_val, qn_start, qn_end, time_sig_num, time_sig_denom, tempo = r.TimeMap_GetMeasureInfo(self.pointer, measure)
     if ret_val then
-        return qn_start, qn_end, timesig_num, timesig_denom, tempo
+        return qn_start, qn_end, time_sig_num, time_sig_denom, tempo
     else
         return nil
     end
 end
 
     
---- Get Metronome Pattern.
+--- Get Metronome Pattern. Wraps TimeMap_GetMetronomePattern.
 -- Fills in a string representing the active metronome pattern. For example, in a
 -- 7/8 measure divided 3+4, the pattern might be "1221222". The length of the
 -- string is the time signature numerator, and the function returns the time
@@ -1168,33 +1279,33 @@ function Project:get_metronome_pattern(time, pattern)
 end
 
     
---- Get Time Sig At Time.
+--- Get Time Sig At Time. Wraps TimeMap_GetTimeSigAtTime.
 -- get the effective time signature and tempo
 -- @param time number
--- @return timesig_num number
--- @return timesig_denom number
+-- @return time_sig_num number
+-- @return time_sig_denom number
 -- @return tempo number
 function Project:get_time_sig_at_time(time)
     return r.TimeMap_GetTimeSigAtTime(self.pointer, time)
 end
 
     
---- Qn To Measures.
+--- Qn To Measures. Wraps TimeMap_QNToMeasures.
 -- Find which measure the given QN position falls in.
 -- @param qn number
--- @return number qnMeasureStart
--- @return number qnMeasureEnd
+-- @return qn_measure_start number
+-- @return qn_measure_end number
 function Project:qn_to_measures(qn)
-    local ret_val, number, number = r.TimeMap_QNToMeasures(self.pointer, qn)
+    local ret_val, qn_measure_start, qn_measure_end = r.TimeMap_QNToMeasures(self.pointer, qn)
     if ret_val then
-        return number, number
+        return qn_measure_start, qn_measure_end
     else
         return nil
     end
 end
 
     
---- Qn To Time Abs.
+--- Qn To Time Abs. Wraps TimeMap_QNToTime_abs.
 -- Converts project quarter note count (QN) to time. QN is counted from the start
 -- of the project, regardless of any partial measures. See TimeMap2_QNToTime
 -- @param qn number
@@ -1204,7 +1315,7 @@ function Project:qn_to_time_abs(qn)
 end
 
     
---- Time To Qn Abs.
+--- Time To Qn Abs. Wraps TimeMap_timeToQN_abs.
 -- Converts project time position to quarter note count (QN). QN is counted from
 -- the start of the project, regardless of any partial measures. See
 -- TimeMap2_timeToQN
@@ -1215,14 +1326,14 @@ function Project:time_to_qn_abs(tpos)
 end
 
     
---- Undo Begin Block2.
+--- Undo Begin Block2. Wraps Undo_BeginBlock2.
 -- call to start a new block
 function Project:undo_begin_block2()
     return r.Undo_BeginBlock2(self.pointer)
 end
 
     
---- Undo Can Redo2.
+--- Undo Can Redo2. Wraps Undo_CanRedo2.
 -- returns string of next action,if able,NULL if not
 -- @return string
 function Project:undo_can_redo2()
@@ -1230,7 +1341,7 @@ function Project:undo_can_redo2()
 end
 
     
---- Undo Can Undo2.
+--- Undo Can Undo2. Wraps Undo_CanUndo2.
 -- returns string of last action,if able,NULL if not
 -- @return string
 function Project:undo_can_undo2()
@@ -1238,7 +1349,7 @@ function Project:undo_can_undo2()
 end
 
     
---- Undo Do Redo2.
+--- Undo Do Redo2. Wraps Undo_DoRedo2.
 -- nonzero if success
 -- @return number
 function Project:undo_do_redo2()
@@ -1246,7 +1357,7 @@ function Project:undo_do_redo2()
 end
 
     
---- Undo Do Undo2.
+--- Undo Do Undo2. Wraps Undo_DoUndo2.
 -- nonzero if success
 -- @return number
 function Project:undo_do_undo2()
@@ -1254,41 +1365,41 @@ function Project:undo_do_undo2()
 end
 
     
---- Undo End Block2.
+--- Undo End Block2. Wraps Undo_EndBlock2.
 -- call to end the block,with extra flags if any,and a description
--- @param descchange string
+-- @param desc_change string
 -- @param extraflags number
-function Project:undo_end_block2(descchange, extraflags)
-    return r.Undo_EndBlock2(self.pointer, descchange, extraflags)
+function Project:undo_end_block2(desc_change, extraflags)
+    return r.Undo_EndBlock2(self.pointer, desc_change, extraflags)
 end
 
     
---- Undo On State Change2.
+--- Undo On State Change2. Wraps Undo_OnStateChange2.
 -- limited state change to items
--- @param descchange string
-function Project:undo_on_state_change2(descchange)
-    return r.Undo_OnStateChange2(self.pointer, descchange)
+-- @param desc_change string
+function Project:undo_on_state_change2(desc_change)
+    return r.Undo_OnStateChange2(self.pointer, desc_change)
 end
 
     
---- Undo On State Change Item.
+--- Undo On State Change Item. Wraps Undo_OnStateChange_Item.
 -- @param name string
 function Project:undo_on_state_change_item(name)
     return r.Undo_OnStateChange_Item(self.pointer, name, item)
 end
 
     
---- Undo On State Change Ex2.
--- trackparm=-1 by default,or if updating one fx chain,you can specify track index
--- @param descchange string
--- @param which_states number
--- @param trackparm number
-function Project:undo_on_state_change_ex2(descchange, which_states, trackparm)
-    return r.Undo_OnStateChangeEx2(self.pointer, descchange, which_states, trackparm)
+--- Undo On State Change Ex2. Wraps Undo_OnStateChangeEx2.
+-- track_param=-1 by default,or if updating one fx chain,you can specify track index
+-- @param desc_change string
+-- @param which_state number
+-- @param track_param number
+function Project:undo_on_state_change_ex2(desc_change, which_state, track_param)
+    return r.Undo_OnStateChangeEx2(self.pointer, desc_change, which_state, track_param)
 end
 
     
---- Update Item Lanes.
+--- Update Item Lanes. Wraps UpdateItemLanes.
 -- Recalculate lane arrangement for fixed lane tracks, including auto-removing
 -- empty lanes at the bottom of the track
 -- @return boolean
@@ -1297,19 +1408,19 @@ function Project:update_item_lanes()
 end
 
     
---- Validate Ptr2.
+--- Validate Pointer. Wraps ValidatePtr2.
 -- Return true if the pointer is a valid object of the right type in proj (proj is
 -- ignored if pointer is itself a project). Supported types are: ReaProject*,
 -- MediaTrack*, MediaItem*, MediaItem_Take*, TrackEnvelope* and PCM_source*.
--- @param pointer identifier
+-- @param identifier pointer
 -- @param ctype_name string
 -- @return boolean
-function Project:validate_ptr2(pointer, ctype_name)
-    return r.ValidatePtr2(self.pointer, pointer, ctype_name)
+function Project:validate_ptr(identifier, ctype_name)
+    return r.ValidatePtr2(self.pointer, identifier, ctype_name)
 end
 
     
---- Get Media Item By Guid.
+--- Get Media Item By Guid. Wraps BR_GetMediaItemByGUID.
 -- [BR] Get media item from GUID string. Note that the GUID must be enclosed in
 -- braces {}. To get item's GUID as a string, see BR_GetMediaItemGUID.
 -- @param guid_string_in string
@@ -1321,7 +1432,7 @@ function Project:get_media_item_by_guid(guid_string_in)
 end
 
     
---- Get Media Track By Guid.
+--- Get Media Track By Guid. Wraps BR_GetMediaTrackByGUID.
 -- [BR] Get media track from GUID string. Note that the GUID must be enclosed in
 -- braces {}. To get track's GUID as a string, see GetSetMediaTrackInfo_String.
 -- @param guid_string_in string
@@ -1333,41 +1444,41 @@ function Project:get_media_track_by_guid(guid_string_in)
 end
 
     
---- Get Sws Extra Project Notes.
+--- Get Sws Extra Project Notes. Wraps JB_GetSWSExtraProjectNotes.
 -- @return string
 function Project:get_sws_extra_project_notes()
     return r.JB_GetSWSExtraProjectNotes(self.pointer)
 end
 
     
---- Set Sws Extra Project Notes.
+--- Set Sws Extra Project Notes. Wraps JB_SetSWSExtraProjectNotes.
 -- @param str string
 function Project:set_sws_extra_project_notes(str)
     return r.JB_SetSWSExtraProjectNotes(self.pointer, str)
 end
 
     
---- Get Double Config Var Ex.
+--- Get Double Config Var Ex. Wraps SNM_GetDoubleConfigVarEx.
 -- [S&M] See SNM_GetDoubleConfigVar.
 -- @param var_name string
--- @param errvalue number
+-- @param err_value number
 -- @return number
-function Project:get_double_config_var_ex(var_name, errvalue)
-    return r.SNM_GetDoubleConfigVarEx(self.pointer, var_name, errvalue)
+function Project:get_double_config_var_ex(var_name, err_value)
+    return r.SNM_GetDoubleConfigVarEx(self.pointer, var_name, err_value)
 end
 
     
---- Get Int Config Var Ex.
+--- Get Int Config Var Ex. Wraps SNM_GetIntConfigVarEx.
 -- [S&M] See SNM_GetIntConfigVar.
 -- @param var_name string
--- @param errvalue number
+-- @param err_value number
 -- @return number
-function Project:get_int_config_var_ex(var_name, errvalue)
-    return r.SNM_GetIntConfigVarEx(self.pointer, var_name, errvalue)
+function Project:get_int_config_var_ex(var_name, err_value)
+    return r.SNM_GetIntConfigVarEx(self.pointer, var_name, err_value)
 end
 
     
---- Get Long Config Var Ex.
+--- Get Long Config Var Ex. Wraps SNM_GetLongConfigVarEx.
 -- [S&M] See SNM_GetLongConfigVar.
 -- @param var_name string
 -- @return high number
@@ -1382,7 +1493,7 @@ function Project:get_long_config_var_ex(var_name)
 end
 
     
---- Get Project Marker Name.
+--- Get Project Marker Name. Wraps SNM_GetProjectMarkerName.
 -- [S&M] Gets a marker/region name. Returns true if marker/region found.
 -- @param num number
 -- @param is_rgn boolean
@@ -1393,27 +1504,27 @@ function Project:get_project_marker_name(num, is_rgn, name)
 end
 
     
---- Set Double Config Var Ex.
+--- Set Double Config Var Ex. Wraps SNM_SetDoubleConfigVarEx.
 -- [S&M] See SNM_SetDoubleConfigVar.
 -- @param var_name string
--- @param newvalue number
+-- @param new_value number
 -- @return boolean
-function Project:set_double_config_var_ex(var_name, newvalue)
-    return r.SNM_SetDoubleConfigVarEx(self.pointer, var_name, newvalue)
+function Project:set_double_config_var_ex(var_name, new_value)
+    return r.SNM_SetDoubleConfigVarEx(self.pointer, var_name, new_value)
 end
 
     
---- Set Int Config Var Ex.
+--- Set Int Config Var Ex. Wraps SNM_SetIntConfigVarEx.
 -- [S&M] See SNM_SetIntConfigVar.
 -- @param var_name string
--- @param newvalue number
+-- @param new_value number
 -- @return boolean
-function Project:set_int_config_var_ex(var_name, newvalue)
-    return r.SNM_SetIntConfigVarEx(self.pointer, var_name, newvalue)
+function Project:set_int_config_var_ex(var_name, new_value)
+    return r.SNM_SetIntConfigVarEx(self.pointer, var_name, new_value)
 end
 
     
---- Set Long Config Var Ex.
+--- Set Long Config Var Ex. Wraps SNM_SetLongConfigVarEx.
 -- [S&M] SNM_SetLongConfigVar.
 -- @param var_name string
 -- @param new_high_value number
