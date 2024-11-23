@@ -19,6 +19,7 @@ function ImGui:new()
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the ImGui logger.
 -- @param ... (varargs) Messages to log.
@@ -27,6 +28,11 @@ function ImGui:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Accept Drag Drop Payload.

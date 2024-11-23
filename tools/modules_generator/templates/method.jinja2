@@ -9,17 +9,17 @@
 {%- if params -%}
 {%- for param in params %}
 {%- if param.is_optional -%}
-    {%-  if param.description %}
+{%-  if param.description %}
 -- @param {{ param.name }} {{ param.reawrap_lua_type }} Optional. {{ param.description }}
-    {%-  else %}
+{%-  else %}
 -- @param {{ param.name }} {{ param.reawrap_lua_type }} Optional
-    {%-  endif -%}
+{%-  endif -%}
 {%-  else -%}
-    {%-  if param.description %}
+{%-  if param.description %}
 -- @param {{ param.name }} {{ param.reawrap_lua_type }}. {{ param.description }}
-    {%-  else %}
+{%-  else %}
 -- @param {{ param.name }} {{ param.reawrap_lua_type }}
-    {%-  endif -%}
+{%-  endif -%}
 {%-  endif -%}
 {%- endfor -%}
 {%- endif -%}

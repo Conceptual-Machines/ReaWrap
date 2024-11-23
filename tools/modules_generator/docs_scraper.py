@@ -221,6 +221,10 @@ def sanitize_name(parts: list[str]) -> str:
             name = name.replace("val", "_val")
         elif name.startswith("is"):
             name = name.replace("is", "is_")
+        elif name.startswith("swing") and name != "swing":
+            name = name.replace("swing", "swing_")
+        elif name == "guid_guid":
+            name = "guid"
         if name.startswith("__"):
             name = name.replace("__", "")
         if "__" in name:
@@ -405,9 +409,9 @@ def group_functions_by_name_space(
         ) and l_func.reascript_name not in take_fx_exceptions:
             namespace = "TakeFX"
         elif (
-                l_func.fn_name_space == "PCM"
-                or l_func.arguments
-                and l_func.arguments[0].reascript_type in ("PCM_source", "PCM_sink")
+            l_func.fn_name_space == "PCM"
+            or l_func.arguments
+            and l_func.arguments[0].reascript_type in ("PCM_source", "PCM_sink")
         ):
             namespace = "PCM"
         elif l_func.arguments and l_func.arguments[0].reascript_type in REAPER_TYPES:
@@ -452,6 +456,9 @@ def generate_reawrap_name(namespace: str, fn_name_space: str, reascript_name: st
         },
         "MediaItem": {
             "add_take_to": "add_take",
+        },
+        "ReaProject": {
+            "get_project_name": "get_name",
         },
     }
     if "TimeMap2" in reascript_name:
@@ -500,6 +507,25 @@ def refine_functions(
         if name_space not in seen_funcs:
             seen_funcs[name_space] = set()
         for func in functions:
+            reawrap_name = generate_reawrap_name(
+                name_space, func.fn_name_space, func.reascript_name
+            )
+            func.reawrap_name = reawrap_name
+            if reawrap_name not in seen_funcs[name_space]:
+                # some ReaScript functions are duplicates and result in the same ReaWrap name, e.g. GetMediaItemTake and GetMediaItem_Take
+                seen_funcs[name_space].add(reawrap_name)
+                refined[name_space].append(func)
+
+    return refined
+
+
+def dedupe_functions(refined: dict[str, list[ReaFunc]]) -> dict[str, list[ReaFunc]]:
+    """Further refinement. Remove duplicates from the functions or deprecated functions. Apply selective renaming."""
+    deduped = {}
+    for name_space, functions in refined.items():
+        seen = set()
+        deduped[name_space] = []
+        for func in functions:
             if func.docs and "deprecated" in func.docs.lower():
                 logger.debug(
                     f"Skipping deprecated function: {func.reascript_name} | namespace: {name_space}"
@@ -510,18 +536,70 @@ def refine_functions(
                     f"Skipping discouraged function: {func.reascript_name} | namespace: {name_space}"
                 )
                 continue
+            if (
+                func.reawrap_name == "count_selected_tracks"
+                and name_space == "ReaProject"
+            ):
+                continue
 
-            reawrap_name = generate_reawrap_name(
-                name_space, func.fn_name_space, func.reascript_name
-            )
+            elif (
+                func.reawrap_name == "count_selected_tracks2"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "count_selected_tracks"
+                for arg in func.arguments:
+                    if arg.name == "wantmaster":
+                        arg.name = "want_master"
+                        arg.is_optional = True
+            elif (
+                func.reawrap_name == "enum_project_markers2"
+                and name_space == "ReaProject"
+            ):
+                continue
 
-            func.reawrap_name = reawrap_name
-            if reawrap_name not in seen_funcs[name_space]:
-                # some ReaScript functions are duplicates and result in the same ReaWrap name, e.g. GetMediaItemTake and GetMediaItem_Take
-                seen_funcs[name_space].add(reawrap_name)
-                refined[name_space].append(func)
+            elif (
+                func.reawrap_name == "enum_project_markers3"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "enum_project_markers"
 
-    return refined
+            elif (
+                func.reawrap_name == "get_play_position_ex"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "get_play_position_lat_comp"
+
+            elif (
+                func.reawrap_name == "get_play_position2_ex"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "get_play_position"
+
+            elif (
+                func.reawrap_name == "get_project_time_signature2"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "get_project_time_signature"
+
+            elif (
+                func.reawrap_name == "get_selected_track" and name_space == "ReaProject"
+            ):
+                continue
+
+            elif (
+                func.reawrap_name == "get_selected_track2"
+                and name_space == "ReaProject"
+            ):
+                func.reawrap_name = "get_selected_track"
+                for arg in func.arguments:
+                    if arg.name == "wantmaster":
+                        arg.name = "want_master"
+                        arg.is_optional = True
+
+            if func.reawrap_name not in seen:
+                seen.add(func.reawrap_name)
+                deduped[name_space].append(func)
+    return deduped
 
 
 def get_functions_from_docs() -> dict[str, list[dict[str, str]]]:
@@ -529,7 +607,8 @@ def get_functions_from_docs() -> dict[str, list[dict[str, str]]]:
     soup = get_html_from_file(API_HTML)
     functions = list(iter_lua_functions(soup))
     by_name_space = group_functions_by_name_space(functions)
-    return refine_functions(by_name_space)
+    refined = refine_functions(by_name_space)
+    return dedupe_functions(refined)
 
 
 def main():

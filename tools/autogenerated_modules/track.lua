@@ -23,6 +23,7 @@ function Track:new(track)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the Track logger.
 -- @param ... (varargs) Messages to log.
@@ -31,6 +32,11 @@ function Track:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Add Media Item To Track.

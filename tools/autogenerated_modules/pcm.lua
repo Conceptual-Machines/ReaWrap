@@ -23,6 +23,7 @@ function PCM:new(source)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the PCM logger.
 -- @param ... (varargs) Messages to log.
@@ -31,6 +32,11 @@ function PCM:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Calc Media Src Loudness.

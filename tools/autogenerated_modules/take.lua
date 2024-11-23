@@ -23,6 +23,7 @@ function Take:new(take)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the Take logger.
 -- @param ... (varargs) Messages to log.
@@ -31,6 +32,11 @@ function Take:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Count Take Envelopes.

@@ -19,6 +19,7 @@ function Reaper:new()
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the Reaper logger.
 -- @param ... (varargs) Messages to log.
@@ -27,6 +28,11 @@ function Reaper:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Add Remove Rea Script.

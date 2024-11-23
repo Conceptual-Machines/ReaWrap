@@ -34,6 +34,7 @@ CONSTANTS_TEMPLATE = ENV.get_template("constants.jinja2")
 TRACK_FX_POINTERS = ("src_fx", "fx", "idx", "fx_idx", "index")
 TAKE_FX_POINTERS = ("src_fx", "fx", "idx", "fx_idx", "index")
 
+
 @dataclass
 class NameSpace:
     reawrap_name: str
@@ -451,7 +452,11 @@ def main():
             continue
         renamed_ns = NAMESPACE_RENAMES.get(name_space_str, name_space_str)
         pointer_type = NAMESPACE_POINTER_TYPES.get(renamed_ns, renamed_ns)
-        name_space = NameSpace(reawrap_name=renamed_ns, reascript_name=name_space_str, pointer_type=pointer_type)
+        name_space = NameSpace(
+            reawrap_name=renamed_ns,
+            reascript_name=name_space_str,
+            pointer_type=pointer_type,
+        )
         generate_module(name_space, functions)
 
 

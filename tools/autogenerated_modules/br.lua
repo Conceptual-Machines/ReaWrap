@@ -19,6 +19,7 @@ function BR:new()
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the BR logger.
 -- @param ... (varargs) Messages to log.
@@ -27,6 +28,11 @@ function BR:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Env Count Points.

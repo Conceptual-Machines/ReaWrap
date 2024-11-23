@@ -24,6 +24,7 @@ function Project:new(project_idx)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the Project logger.
 -- @param ... (varargs) Messages to log.
@@ -32,6 +33,11 @@ function Project:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Add Project Marker.
@@ -117,19 +123,11 @@ end
     
 --- Count Selected Tracks.
 -- Count the number of selected tracks in the project (proj=0 for active project).
--- This function ignores the master track, see CountSelectedTracks2.
+-- @param want_master boolean Optional
 -- @return number
-function Project:count_selected_tracks()
-    return r.CountSelectedTracks(self.pointer)
-end
-
-    
---- Count Selected Tracks2.
--- Count the number of selected tracks in the project (proj=0 for active project).
--- @param wantmaster boolean
--- @return number
-function Project:count_selected_tracks2(wantmaster)
-    return r.CountSelectedTracks2(self.pointer, wantmaster)
+function Project:count_selected_tracks(want_master)
+    local want_master = want_master or false
+    return r.CountSelectedTracks2(self.pointer, want_master)
 end
 
     
@@ -197,24 +195,7 @@ function Project:edit_tempo_time_sig_marker(markerindex)
 end
 
     
---- Enum Project Markers2.
--- @param idx number
--- @return is_rgn boolean
--- @return pos number
--- @return rgnend number
--- @return name string
--- @return markrgnindexnumber number
-function Project:enum_project_markers2(idx)
-    local ret_val, is_rgn, pos, rgnend, name, markrgnindexnumber = r.EnumProjectMarkers2(self.pointer, idx)
-    if ret_val then
-        return is_rgn, pos, rgnend, name, markrgnindexnumber
-    else
-        return nil
-    end
-end
-
-    
---- Enum Project Markers3.
+--- Enum Project Markers.
 -- @param idx number
 -- @return is_rgn boolean
 -- @return pos number
@@ -222,7 +203,7 @@ end
 -- @return name string
 -- @return markrgnindexnumber number
 -- @return color number
-function Project:enum_project_markers3(idx)
+function Project:enum_project_markers(idx)
     local ret_val, is_rgn, pos, rgnend, name, markrgnindexnumber, color = r.EnumProjectMarkers3(self.pointer, idx)
     if ret_val then
         return is_rgn, pos, rgnend, name, markrgnindexnumber, color
@@ -352,27 +333,27 @@ end
 
     
 --- Get Media Item Take By Guid.
--- @param guid_guid string
+-- @param guid string
 -- @return Take table
-function Project:get_media_item_take_by_guid(guid_guid)
+function Project:get_media_item_take_by_guid(guid)
     local Take = require('take')
-    local result = r.GetMediaItemTakeByGUID(self.pointer, guid_guid)
+    local result = r.GetMediaItemTakeByGUID(self.pointer, guid)
     return Take:new(result)
 end
 
     
---- Get Play Position2 Ex.
+--- Get Play Position.
 -- returns position of next audio block being processed
 -- @return number
-function Project:get_play_position2_ex()
+function Project:get_play_position()
     return r.GetPlayPosition2Ex(self.pointer)
 end
 
     
---- Get Play Position Ex.
+--- Get Play Position Lat Comp.
 -- returns latency-compensated actual-what-you-hear position
 -- @return number
-function Project:get_play_position_ex()
+function Project:get_play_position_lat_comp()
     return r.GetPlayPositionEx(self.pointer)
 end
 
@@ -394,9 +375,9 @@ function Project:get_project_length()
 end
 
     
---- Get Project Name.
+--- Get Name.
 -- @return buf string
-function Project:get_project_name()
+function Project:get_name()
     return r.GetProjectName(self.pointer)
 end
 
@@ -427,13 +408,13 @@ function Project:get_project_time_offset(rndframe)
 end
 
     
---- Get Project Time Signature2.
+--- Get Project Time Signature.
 -- Gets basic time signature (beats per minute, numerator of time signature in bpi)
 -- this does not reflect tempo envelopes but is purely what is set in the project
 -- settings.
 -- @return bpm number
 -- @return bpi number
-function Project:get_project_time_signature2()
+function Project:get_project_time_signature()
     return r.GetProjectTimeSignature2(self.pointer)
 end
 
@@ -466,26 +447,14 @@ end
     
 --- Get Selected Track.
 -- Get a selected track from a project (proj=0 for active project) by selected
--- track count (zero-based). This function ignores the master track, see
--- GetSelectedTrack2.
--- @param seltrack_idx number
--- @return Track table
-function Project:get_selected_track(seltrack_idx)
-    local Track = require('track')
-    local result = r.GetSelectedTrack(self.pointer, seltrack_idx)
-    return Track:new(result)
-end
-
-    
---- Get Selected Track2.
--- Get a selected track from a project (proj=0 for active project) by selected
 -- track count (zero-based).
 -- @param seltrack_idx number
--- @param wantmaster boolean
+-- @param want_master boolean Optional
 -- @return Track table
-function Project:get_selected_track2(seltrack_idx, wantmaster)
+function Project:get_selected_track(seltrack_idx, want_master)
+    local want_master = want_master or false
     local Track = require('track')
-    local result = r.GetSelectedTrack2(self.pointer, seltrack_idx, wantmaster)
+    local result = r.GetSelectedTrack2(self.pointer, seltrack_idx, want_master)
     return Track:new(result)
 end
 

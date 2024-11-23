@@ -25,6 +25,7 @@ function TakeFX:new(take, fx_idx)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the TakeFX logger.
 -- @param ... (varargs) Messages to log.
@@ -33,6 +34,11 @@ function TakeFX:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Add By Name.

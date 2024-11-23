@@ -23,6 +23,7 @@ function Item:new(item)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the Item logger.
 -- @param ... (varargs) Messages to log.
@@ -31,6 +32,11 @@ function Item:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Add Take.

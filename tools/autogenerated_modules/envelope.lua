@@ -23,6 +23,7 @@ function Envelope:new(envelope)
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the Envelope logger.
 -- @param ... (varargs) Messages to log.
@@ -31,6 +32,11 @@ function Envelope:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 
     
 --- Count Automation Items.

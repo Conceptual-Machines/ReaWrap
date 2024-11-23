@@ -41,6 +41,7 @@ function {{ class_name }}:new({{ constructor_args | map(attribute='name') |join(
     return obj
 end
 
+-- @section ReaWrap Custom Methods
 
 --- Log messages with the {{ class_name }} logger.
 -- @param ... (varargs) Messages to log.
@@ -49,6 +50,11 @@ function {{ class_name }}:log(...)
     logger(...)
     return nil
 end
+
+
+-- @section ReaScript API Methods
+
+
 {% for method in methods %}
     {{ method }}
 {%- endfor -%}
