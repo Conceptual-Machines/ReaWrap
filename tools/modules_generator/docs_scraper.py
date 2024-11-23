@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 from dataclasses import dataclass
@@ -5,7 +6,12 @@ from typing import Annotated, Iterator
 
 from bs4 import BeautifulSoup, NavigableString
 
-from modules_generator import API_HTML, REAPER_TYPES, LUA_KEYWORDS
+from modules_generator import (
+    API_HTML,
+    REAPER_TYPES,
+    LUA_KEYWORDS,
+    UNSUPPORTED_NAMESPACES,
+)
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -68,7 +74,7 @@ REAPER_NAMESPACES = (
 
 @dataclass
 class ReaType:
-    lua_type: str
+    reascript_type: str
     name: str | None = None
     is_optional: bool = False
     description: str | None = None
@@ -77,20 +83,57 @@ class ReaType:
 
     @property
     def is_reaper_type(self) -> bool:
-        return self.lua_type in REAPER_TYPES
+        return self.reascript_type in REAPER_TYPES
+
+    @property
+    def is_reawrap_type(self) -> bool:
+        return self.reawrap_type != self.reascript_type
 
     @property
     def reawrap_class(self) -> str:
-        return f"ReaWrap{self.lua_type}"
+        return f"ReaWrap{self.reascript_type}"
+
+    @property
+    def reawrap_type(self) -> str:
+        if self.reascript_type == "ReaProject":
+            return "Project"
+        elif self.reascript_type == "MediaItem":
+            return "Item"
+        elif self.reascript_type == "MediaItemTake":
+            return "Take"
+        elif self.reascript_type == "MediaTrack":
+            return "Track"
+        elif self.reascript_type == "TrackEnvelope":
+            return "Envelope"
+        return self.reascript_type
+
+    @property
+    def lua_type(self) -> str:
+        if self.is_reaper_type:
+            return "userdata"
+        if self.reascript_type in ("integer", "double", "float"):
+            return "number"
+        elif self.reascript_type == "boolean":
+            return "boolean"
+        elif self.reascript_type in ("string", "str"):
+            return "string"
+        else:
+            return self.reascript_type
+
+    @property
+    def reawrap_lua_type(self) -> str:
+        if self.is_reawrap_type:
+            return "table"
+        return self.lua_type
 
     @property
     def default_value(self) -> str:
         if self._default_value is None:
-            if self.lua_type == "boolean":
+            if self.reascript_type == "boolean":
                 self._default_value = "false"
-            elif self.lua_type == "number":
+            elif self.reascript_type == "number":
                 self._default_value = "0"
-            elif self.lua_type == "string":
+            elif self.reascript_type == "string":
                 self._default_value = '""'
             else:
                 self._default_value = "nil"
@@ -104,7 +147,7 @@ class ReaType:
 @dataclass
 class ReaFunc:
     signature: Annotated[str, "The function signature including arguments."]
-    rea_name: Annotated[str, "The function name as per Reaper API."]
+    reascript_name: Annotated[str, "The function name as per Reaper API."]
     fn_name_space: Annotated[
         str, "The ReaAPI function namespace, e.g Track, TrackFX, etc."
     ]
@@ -112,7 +155,8 @@ class ReaFunc:
     return_values: Annotated[list[ReaType], "The function return values."]
     docs: Annotated[str, "The function documentation."]
     reawrap_name: Annotated[
-        str | None, "The ReaWrap function name. Like rea_name but snake_case"
+        str | None,
+        "The ReaWrap function name. Like reascript_name but snake_case and some further edits.",
     ] = None
     constants: list[ReaType] | None = None
 
@@ -198,11 +242,11 @@ def iter_types_and_names(types_and_names: str) -> Iterator[ReaType]:
         parts = [p for p in value.split(" ") if p]
         name = sanitize_name(parts)
         if parts[0] == "optional":
-            yield ReaType(name=name, lua_type=parts[2], is_optional=True)
+            yield ReaType(name=name, reascript_type=parts[2], is_optional=True)
         elif len(parts) == 1:
-            yield ReaType(lua_type=get_type(parts[0]))
+            yield ReaType(reascript_type=get_type(parts[0]))
         else:
-            yield ReaType(lua_type=get_type(parts[0]), name=name)
+            yield ReaType(reascript_type=get_type(parts[0]), name=name)
 
 
 def get_function_name(signature: str) -> str:
@@ -238,7 +282,7 @@ def parse_lua_function(text: str) -> dict[str, str]:
 
     return {
         "signature": signature,
-        "rea_name": name,
+        "reascript_name": name,
         "fn_name_space": fn_name_space,
         "arguments": arguments,
         "return_values": return_values,
@@ -291,7 +335,7 @@ def parse_constants_from_docs(docs_soup: BeautifulSoup) -> tuple[str, list[ReaTy
                     type_ = convert_to_lua_type(parts[1])
                     description = "".join(parts[1:])
                 constants.append(
-                    ReaType(lua_type=type_, name=name, description=description)
+                    ReaType(reascript_type=type_, name=name, description=description)
                 )
             else:
                 docs.append(child.get_text(strip=True))
@@ -310,8 +354,7 @@ def iter_lua_functions(soup: BeautifulSoup, built_in: bool = False) -> dict[str,
         docstr = docs.text.replace("\u00a0", "") if docs else None
         constants = None
         lua_func = parse_lua_function(l_func.text)
-        # if "Info_Value" in lua_func["rea_name"] and docs or "Info_String" in lua_func["rea_name"] and docs:
-        if "Info" in lua_func["rea_name"] and docs:
+        if "Info" in lua_func["reascript_name"] and docs:
             docstr, constants = parse_constants_from_docs(docs)
 
         lua_func["docs"] = docstr
@@ -347,20 +390,28 @@ def group_functions_by_name_space(
     of `Reaper` type, is used as the namespace.
     Ultimately, namespaces represent the LUA tables in the modules.
     """
+    track_fx_exceptions = ("TrackFX_Delete", "TrackFX_GetCount")
+    take_fx_exceptions = ("TakeFX_Delete", "TakeFX_GetCount")
     by_name_space = {}
     for l_func in functions:
-        if l_func.fn_name_space == "TrackFX" or "TrackFX" in l_func.rea_name:
+        # the or condition is for user namespaces, e.g. BR, CF
+        if (
+            l_func.fn_name_space == "TrackFX" or "TrackFX" in l_func.reascript_name
+        ) and l_func.reascript_name not in track_fx_exceptions:
             namespace = "TrackFX"
-        elif l_func.fn_name_space == "TakeFX" or "TakeFX" in l_func.rea_name:
+        # the or condition is for user namespaces, e.g. BR, CF
+        elif (
+            l_func.fn_name_space == "TakeFX" or "TakeFX" in l_func.reascript_name
+        ) and l_func.reascript_name not in take_fx_exceptions:
             namespace = "TakeFX"
         elif (
-            l_func.fn_name_space == "PCM"
-            or l_func.arguments
-            and l_func.arguments[0].lua_type in ("PCM_source", "PCM_sink")
+                l_func.fn_name_space == "PCM"
+                or l_func.arguments
+                and l_func.arguments[0].reascript_type in ("PCM_source", "PCM_sink")
         ):
             namespace = "PCM"
-        elif l_func.arguments and l_func.arguments[0].lua_type in REAPER_TYPES:
-            namespace = l_func.arguments[0].lua_type
+        elif l_func.arguments and l_func.arguments[0].reascript_type in REAPER_TYPES:
+            namespace = l_func.arguments[0].reascript_type
 
         elif l_func.fn_name_space in REAPER_NAMESPACES or l_func.fn_name_space is None:
             namespace = "Reaper"
@@ -369,58 +420,107 @@ def group_functions_by_name_space(
 
         if namespace not in by_name_space:
             by_name_space[namespace] = []
-
         by_name_space[namespace].append(l_func)
     return by_name_space
+
+
+def generate_reawrap_name(namespace: str, fn_name_space: str, reascript_name: str):
+    """Remove the namespace from the function name and snake_case it and some further edits.
+    :param namespace: The namespace of the function.
+    :param fn_name_space: The ReaAPI function namespace, e.g. TrackFX, BR etc.
+    :param reascript_name: The function name as per Reaper API.
+    """
+    ns_special_cases = ("MIDI", "Undo", "Audio", "Menu", "Splash", "ThemeLayout")
+    functions_special_cases = {
+        "TakeFX": {
+            "get_fxguid": "get_guid",
+            "get_fx_name": "get_name",
+            "get_count": "get_fx_count",
+        },
+        "TrackFX": {
+            "get_fxguid": "get_guid",
+            "get_fx_name": "get_name",
+            "get_count": "get_fx_count",
+        },
+        "MediaItemTake": {
+            "get_count": "get_fx_count",
+            "delete": "delete_fx",
+        },
+        "MediaTrack": {
+            "get_count": "get_fx_count",
+            "delete": "delete_fx",
+        },
+        "MediaItem": {
+            "add_take_to": "add_take",
+        },
+    }
+    if "TimeMap2" in reascript_name:
+        reascript_name = reascript_name.replace("TimeMap2", "TimeMap")
+
+    if (
+        fn_name_space and fn_name_space in reascript_name or namespace in reascript_name
+    ) and fn_name_space not in ns_special_cases:  #
+        reawrap_name = (
+            reascript_name.replace(fn_name_space, "")
+            if fn_name_space
+            else reascript_name
+        )
+        reawrap_name = reawrap_name.replace(namespace, "")
+    else:
+        reawrap_name = reascript_name
+
+    if reawrap_name.startswith("__"):
+        reawrap_name = reawrap_name[2:]
+
+    elif reawrap_name.startswith("_"):
+        reawrap_name = reawrap_name[1:]
+
+    reawrap_name = to_snake(reawrap_name)
+    if reawrap_name in LUA_KEYWORDS:
+        reawrap_name = f"{reawrap_name}_"
+    reawrap_name = functions_special_cases.get(
+        namespace, {reawrap_name: reawrap_name}
+    ).get(reawrap_name, reawrap_name)
+    return reawrap_name
 
 
 def refine_functions(
     by_name_space: dict[str, list[ReaFunc]],
 ) -> dict[str, list[ReaFunc]]:
     """Once the functions are grouped by namespace, refine the name by removing the namespace and converting it to snake_case.
-    Skip function that are declared as deprecated in the docs."""
-
-    def get_reawrap_name(namespace, fn_name_space, function_name):
-        """Remove the namespace from the function name and snake_case it."""
-        if "TimeMap2" in function_name:
-            function_name = function_name.replace("TimeMap2", "TimeMap")
-        elif namespace in function_name:
-            function_name = function_name.replace(namespace, "").replace("_", "")
-        elif (
-            fn_name_space
-            and fn_name_space in function_name
-            and fn_name_space not in REAPER_NAMESPACES
-        ):
-            function_name = function_name.replace(fn_name_space, "").replace("_", "")
-
-        function_name = to_snake(function_name)
-        if function_name in LUA_KEYWORDS:
-            function_name = f"{function_name}_"
-        return function_name
+    Skip function that are declared as deprecated in the docs and remove duplicates."""
 
     refined = {}
+    seen_funcs = {}
     for name_space, functions in sorted(
         by_name_space.items(), key=lambda item: item[0].lower()
     ):
         if name_space not in refined:
             refined[name_space] = []
-        seen_functions = set()
+        if name_space not in seen_funcs:
+            seen_funcs[name_space] = set()
         for func in functions:
-            if func.rea_name in seen_functions:
-                continue
-            seen_functions.add(func.rea_name)
             if func.docs and "deprecated" in func.docs.lower():
                 logger.debug(
-                    f"Skipping deprecated function: {func.rea_name} | namespace: {name_space}"
+                    f"Skipping deprecated function: {func.reascript_name} | namespace: {name_space}"
+                )
+                continue
+            if func.docs and "discouraged" in func.docs.lower():
+                logger.debug(
+                    f"Skipping discouraged function: {func.reascript_name} | namespace: {name_space}"
                 )
                 continue
 
-            reawrap_name = get_reawrap_name(
-                name_space, func.fn_name_space, func.rea_name
+            reawrap_name = generate_reawrap_name(
+                name_space, func.fn_name_space, func.reascript_name
             )
 
             func.reawrap_name = reawrap_name
-            refined[name_space].append(func)
+            if reawrap_name not in seen_funcs[name_space]:
+                # some ReaScript functions are duplicates and result in the same ReaWrap name, e.g. GetMediaItemTake and GetMediaItem_Take
+                seen_funcs[name_space].add(reawrap_name)
+                refined[name_space].append(func)
+
     return refined
 
 

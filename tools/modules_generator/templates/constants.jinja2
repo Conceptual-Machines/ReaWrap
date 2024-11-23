@@ -4,7 +4,7 @@
 {%- for constant in constants %}
 -- @field {{ constant.name }} {{ constant.lua_type }}: {{ constant.description }}
 {%- endfor %}
-{{ name }}{
+{{ name }} = {
     {%- for constant in constants %}
     {{ constant.name }} = "{{ constant.name }}",
     {%- endfor %}

@@ -3,11 +3,7 @@
 -- @license MIT
 
 local r = reaper
-{% if dependencies -%}
-{% for dependency in dependencies %}
-local {{ dependency }} = require('{{ dependency }}')
-{%- endfor -%}
-{%- endif %}
+local helpers = require('helpers')
 
 {% if class_name %}
 local {{ class_name }} = {}
@@ -18,9 +14,9 @@ local {{ class_name }} = {}
 {%- if constructor_args %}
 {%- for arg in constructor_args %}
 {%- if arg.is_optional %}
--- @param {{ arg.name }} {{ arg.lua_type }} Optional. {{ arg.description }}
+-- @param {{ arg.name }} {{ arg.rewrap_type }} Optional. {{ arg.description }}
 {%- else %}
--- @param {{ arg.name }} {{ arg.lua_type }}. {{ arg.description }}
+-- @param {{ arg.name }} {{ arg.rewrap_type }}. {{ arg.description }}
 {%- endif -%}
 {% endfor -%}
 {% endif %}

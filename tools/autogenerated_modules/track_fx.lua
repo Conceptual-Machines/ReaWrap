@@ -3,11 +3,7 @@
 -- @license MIT
 
 local r = reaper
-
 local helpers = require('helpers')
-local media_item_take = require('media_item_take')
-local media_track = require('media_track')
-local rea_project = require('rea_project')
 
 
 local TrackFX = {}
@@ -15,11 +11,12 @@ local TrackFX = {}
 
 
 --- Create new TrackFX instance.
--- @param track MediaTrack. The MediaTrack object
--- @param fx_idx number. The index of the FX
+-- @param track . The MediaTrack object
+-- @param fx_idx . The index of the FX
 -- @return TrackFX table.
 function TrackFX:new(track, fx_idx)
     local obj = {
+        pointer_type = "TrackFX",
         track = track, 
         pointer = fx_idx
     }
@@ -58,10 +55,10 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fx_name string.
--- @param rec_fx boolean.
--- @param instantiate integer.
--- @return integer
+-- @param fx_name string
+-- @param rec_fx boolean
+-- @param instantiate number
+-- @return number
 function TrackFX:add_by_name(fx_name, rec_fx, instantiate)
     return r.TrackFX_AddByName(self.track.pointer, fx_name, rec_fx, instantiate)
 end
@@ -80,11 +77,11 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param dest_take MediaItemTake.
--- @param dest_fx integer.
--- @param is_move boolean.
+-- @param dest_take table
+-- @param dest_fx number
+-- @param is_move boolean
 function TrackFX:copy_to_take(dest_take, dest_fx, is_move)
-    return r.TrackFX_CopyToTake(self.track.pointer, self.pointer, dest_take.pointer, dest_fx, is_move)
+    return r.TrackFX_CopyToTake(self.src_track.pointer, src_fx, dest_take, dest_fx, is_move)
 end
 
     
@@ -102,30 +99,11 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param dest_track MediaTrack.
--- @param dest_fx integer.
--- @param is_move boolean.
+-- @param dest_track table
+-- @param dest_fx number
+-- @param is_move boolean
 function TrackFX:copy_to_track(dest_track, dest_fx, is_move)
-    return r.TrackFX_CopyToTrack(self.track.pointer, self.pointer, dest_track.pointer, dest_fx, is_move)
-end
-
-    
---- Delete.
--- Remove a FX from track chain (returns true on success) FX indices for tracks can
--- have 0x1000000 added to them in order to reference record input FX (normal
--- tracks) or hardware output FX (master track). FX indices can have 0x2000000
--- added to them, in which case they will be used to address FX in containers. To
--- address a container, the 1-based subitem is multiplied by one plus the count of
--- the FX chain and added to the 1-based container item index. e.g. to address the
--- third item in the container at the second position of the track FX chain for tr,
--- the index would be 0x2000000 + 3*(TrackFX_GetCount(tr)+1) + 2. This can be
--- extended to sub-containers using TrackFX_GetNamedConfigParm with container_count
--- and similar logic. In REAPER v7.06+, you can use the much more convenient method
--- to navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container
--- and container_item.X.
--- @return boolean
-function TrackFX:delete()
-    return r.TrackFX_Delete(self.track.pointer, self.pointer)
+    return r.TrackFX_CopyToTrack(self.src_track.pointer, src_fx, dest_track, dest_fx, is_move)
 end
 
     
@@ -141,10 +119,10 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
+-- @param param number
 -- @return boolean
 function TrackFX:end_param_edit(param)
-    return r.TrackFX_EndParamEdit(self.track.pointer, self.pointer, param)
+    return r.TrackFX_EndParamEdit(self.track.pointer, fx, param)
 end
 
     
@@ -161,12 +139,16 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @param val number.
--- @return ret_val boolean
+-- @param param number
+-- @param val number
 -- @return buf string
 function TrackFX:format_param_value(param, val)
-    return r.TrackFX_FormatParamValue(self.track.pointer, self.pointer, param, val)
+    local ret_val, buf = r.TrackFX_FormatParamValue(self.track.pointer, fx, param, val)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -183,29 +165,26 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @param value number.
--- @param buf string.
--- @return ret_val boolean
+-- @param param number
+-- @param value number
+-- @param buf string
 -- @return buf string
 function TrackFX:format_param_value_normalized(param, value, buf)
-    return r.TrackFX_FormatParamValueNormalized(self.track.pointer, self.pointer, param, value, buf)
+    local ret_val, buf = r.TrackFX_FormatParamValueNormalized(self.track.pointer, fx, param, value, buf)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
 --- Get Chain Visible.
 -- returns index of effect visible in chain, or -1 for chain hidden, or -2 for
 -- chain visible but no effect selected
--- @return integer
+-- @return number
 function TrackFX:get_chain_visible()
     return r.TrackFX_GetChainVisible(self.track.pointer)
-end
-
-    
---- Get Count.
--- @return integer
-function TrackFX:get_count()
-    return r.TrackFX_GetCount(self.track.pointer)
 end
 
     
@@ -223,7 +202,7 @@ end
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
 -- @return boolean
 function TrackFX:get_enabled()
-    return r.TrackFX_GetEnabled(self.track.pointer, self.pointer)
+    return r.TrackFX_GetEnabled(self.track.pointer, fx)
 end
 
     
@@ -231,8 +210,8 @@ end
 -- Get the index of ReaEQ in the track FX chain. If ReaEQ is not in the chain and
 -- instantiate is true, it will be inserted. See TrackFX_GetInstrument,
 -- TrackFX_GetByName.
--- @param instantiate boolean.
--- @return integer
+-- @param instantiate boolean
+-- @return number
 function TrackFX:get_eq(instantiate)
     return r.TrackFX_GetEQ(self.track.pointer, instantiate)
 end
@@ -244,11 +223,11 @@ end
 -- 2=band, 3=notch, 4=hishelf, 5=lopass, 6=bandpass, 7=parallel bandpass. Bandidx
 -- (ignored for master gain): 0=target first band matching bandtype, 1=target 2nd
 -- band matching bandtype, etc.
--- @param band_type integer.
--- @param band_idx integer.
+-- @param band_type number
+-- @param band_idx number
 -- @return boolean
 function TrackFX:get_eq_band_enabled(band_type, band_idx)
-    return r.TrackFX_GetEQBandEnabled(self.track.pointer, self.pointer, band_type, band_idx)
+    return r.TrackFX_GetEQBandEnabled(self.track.pointer, fx_idx, band_type, band_idx)
 end
 
     
@@ -270,14 +249,18 @@ end
 -- and similar logic. In REAPER v7.06+, you can use the much more convenient method
 -- to navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container
 -- and container_item.X.
--- @param param_idx integer.
--- @return ret_val boolean
--- @return band_type integer
--- @return band_idx integer
--- @return param_type integer
+-- @param param_idx number
+-- @return band_type number
+-- @return band_idx number
+-- @return param_type number
 -- @return norm_val number
 function TrackFX:get_eq_param(param_idx)
-    return r.TrackFX_GetEQParam(self.track.pointer, self.pointer, param_idx)
+    local ret_val, band_type, band_idx, param_type, norm_val = r.TrackFX_GetEQParam(self.track.pointer, fx_idx, param_idx)
+    if ret_val then
+        return band_type, band_idx, param_type, norm_val
+    else
+        return nil
+    end
 end
 
     
@@ -296,7 +279,7 @@ end
 -- and container_item.X.
 -- @return HWND
 function TrackFX:get_floating_window()
-    return r.TrackFX_GetFloatingWindow(self.track.pointer, self.pointer)
+    return r.TrackFX_GetFloatingWindow(self.track.pointer, index)
 end
 
     
@@ -312,15 +295,19 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return buf string
 function TrackFX:get_formatted_param_value(param)
-    return r.TrackFX_GetFormattedParamValue(self.track.pointer, self.pointer, param)
+    local ret_val, buf = r.TrackFX_GetFormattedParamValue(self.track.pointer, fx, param)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
---- Get Fxguid.
+--- Get Guid.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -333,12 +320,12 @@ end
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
 -- @return guid string
-function TrackFX:get_fxguid()
-    return r.TrackFX_GetFXGUID(self.track.pointer, self.pointer)
+function TrackFX:get_guid()
+    return r.TrackFX_GetFXGUID(self.track.pointer, fx)
 end
 
     
---- Get Fx Name.
+--- Get Name.
 --  FX indices for tracks can have 0x1000000 added to them in order to reference
 -- record input FX (normal tracks) or hardware output FX (master track). FX indices
 -- can have 0x2000000 added to them, in which case they will be used to address FX
@@ -350,17 +337,21 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @return ret_val boolean
 -- @return buf string
-function TrackFX:get_fx_name()
-    return r.TrackFX_GetFXName(self.track.pointer, self.pointer)
+function TrackFX:get_name()
+    local ret_val, buf = r.TrackFX_GetFXName(self.track.pointer, fx)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
 --- Get Instrument.
 -- Get the index of the first track FX insert that is a virtual instrument, or -1
 -- if none. See TrackFX_GetEQ, TrackFX_GetByName.
--- @return integer
+-- @return number
 function TrackFX:get_instrument()
     return r.TrackFX_GetInstrument(self.track.pointer)
 end
@@ -379,21 +370,29 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @return ret_val integer
--- @return input_pins integer
--- @return output_pins integer
+-- @return input_pins number
+-- @return output_pins number
 function TrackFX:get_io_size()
-    return r.TrackFX_GetIOSize(self.track.pointer, self.pointer)
+    local ret_val, input_pins, output_pins = r.TrackFX_GetIOSize(self.track.pointer, fx)
+    if ret_val then
+        return input_pins, output_pins
+    else
+        return nil
+    end
 end
 
     
 --- Get Named Config Parm.
 -- gets plug-in specific named configuration value (returns true on success).
--- @param parm_name string.
--- @return ret_val boolean
+-- @param parm_name string
 -- @return buf string
 function TrackFX:get_named_config_parm(parm_name)
-    return r.TrackFX_GetNamedConfigParm(self.track.pointer, self.pointer, parm_name)
+    local ret_val, buf = r.TrackFX_GetNamedConfigParm(self.track.pointer, fx, parm_name)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -409,9 +408,9 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @return integer
+-- @return number
 function TrackFX:get_num_params()
-    return r.TrackFX_GetNumParams(self.track.pointer, self.pointer)
+    return r.TrackFX_GetNumParams(self.track.pointer, fx)
 end
 
     
@@ -429,7 +428,7 @@ end
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
 -- @return boolean
 function TrackFX:get_offline()
-    return r.TrackFX_GetOffline(self.track.pointer, self.pointer)
+    return r.TrackFX_GetOffline(self.track.pointer, fx)
 end
 
     
@@ -448,7 +447,7 @@ end
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
 -- @return boolean
 function TrackFX:get_open()
-    return r.TrackFX_GetOpen(self.track.pointer, self.pointer)
+    return r.TrackFX_GetOpen(self.track.pointer, fx)
 end
 
     
@@ -464,12 +463,16 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @return ret_val number
+-- @param param number
 -- @return min_val number
 -- @return max_val number
 function TrackFX:get_param(param)
-    return r.TrackFX_GetParam(self.track.pointer, self.pointer, param)
+    local ret_val, min_val, max_val = r.TrackFX_GetParam(self.track.pointer, fx, param)
+    if ret_val then
+        return min_val, max_val
+    else
+        return nil
+    end
 end
 
     
@@ -485,14 +488,18 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return step number
 -- @return smallstep number
 -- @return largestep number
 -- @return is_toggle boolean
 function TrackFX:get_parameter_step_sizes(param)
-    return r.TrackFX_GetParameterStepSizes(self.track.pointer, self.pointer, param)
+    local ret_val, step, smallstep, largestep, is_toggle = r.TrackFX_GetParameterStepSizes(self.track.pointer, fx, param)
+    if ret_val then
+        return step, smallstep, largestep, is_toggle
+    else
+        return nil
+    end
 end
 
     
@@ -508,13 +515,17 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @return ret_val number
+-- @param param number
 -- @return min_val number
 -- @return max_val number
 -- @return mid_val number
 function TrackFX:get_param_ex(param)
-    return r.TrackFX_GetParamEx(self.track.pointer, self.pointer, param)
+    local ret_val, min_val, max_val, mid_val = r.TrackFX_GetParamEx(self.track.pointer, fx, param)
+    if ret_val then
+        return min_val, max_val, mid_val
+    else
+        return nil
+    end
 end
 
     
@@ -532,10 +543,10 @@ end
 -- and similar logic. In REAPER v7.06+, you can use the much more convenient method
 -- to navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container
 -- and container_item.X.
--- @param ident_str string.
--- @return integer
+-- @param ident_str string
+-- @return number
 function TrackFX:get_param_from_ident(ident_str)
-    return r.TrackFX_GetParamFromIdent(self.track.pointer, self.pointer, ident_str)
+    return r.TrackFX_GetParamFromIdent(self.track.pointer, fx, ident_str)
 end
 
     
@@ -552,11 +563,15 @@ end
 -- similar logic. In REAPER v7.06+, you can use the much more convenient method to
 -- navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return buf string
 function TrackFX:get_param_ident(param)
-    return r.TrackFX_GetParamIdent(self.track.pointer, self.pointer, param)
+    local ret_val, buf = r.TrackFX_GetParamIdent(self.track.pointer, fx, param)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -572,11 +587,15 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return buf string
 function TrackFX:get_param_name(param)
-    return r.TrackFX_GetParamName(self.track.pointer, self.pointer, param)
+    local ret_val, buf = r.TrackFX_GetParamName(self.track.pointer, fx, param)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -592,10 +611,10 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
+-- @param param number
 -- @return number
 function TrackFX:get_param_normalized(param)
-    return r.TrackFX_GetParamNormalized(self.track.pointer, self.pointer, param)
+    return r.TrackFX_GetParamNormalized(self.track.pointer, fx, param)
 end
 
     
@@ -614,12 +633,16 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param is_output integer.
--- @param pin integer.
--- @return ret_val integer
--- @return high32 integer
+-- @param is_output number
+-- @param pin number
+-- @return high32 number
 function TrackFX:get_pin_mappings(is_output, pin)
-    return r.TrackFX_GetPinMappings(self.track.pointer, self.pointer, is_output, pin)
+    local ret_val, high32 = r.TrackFX_GetPinMappings(self.tr.pointer, fx, is_output, pin)
+    if ret_val then
+        return high32
+    else
+        return nil
+    end
 end
 
     
@@ -637,10 +660,14 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @return ret_val boolean
 -- @return preset_name string
 function TrackFX:get_preset()
-    return r.TrackFX_GetPreset(self.track.pointer, self.pointer)
+    local ret_val, preset_name = r.TrackFX_GetPreset(self.track.pointer, fx)
+    if ret_val then
+        return preset_name
+    else
+        return nil
+    end
 end
 
     
@@ -658,17 +685,21 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @return ret_val integer
--- @return number_of_presets integer
+-- @return number_of_presets number
 function TrackFX:get_preset_index()
-    return r.TrackFX_GetPresetIndex(self.track.pointer, self.pointer)
+    local ret_val, number_of_presets = r.TrackFX_GetPresetIndex(self.track.pointer, fx)
+    if ret_val then
+        return number_of_presets
+    else
+        return nil
+    end
 end
 
     
 --- Get Rec Chain Visible.
 -- returns index of effect visible in record input chain, or -1 for chain hidden,
 -- or -2 for chain visible but no effect selected
--- @return integer
+-- @return number
 function TrackFX:get_rec_chain_visible()
     return r.TrackFX_GetRecChainVisible(self.track.pointer)
 end
@@ -678,7 +709,7 @@ end
 -- returns count of record input FX. To access record input FX, use a FX indices
 -- [0x1000000..0x1000000+n). On the master track, this accesses monitoring FX
 -- rather than record input FX.
--- @return integer
+-- @return number
 function TrackFX:get_rec_count()
     return r.TrackFX_GetRecCount(self.track.pointer)
 end
@@ -698,7 +729,7 @@ end
 -- with parent_container and container_item.X.
 -- @return fn string
 function TrackFX:get_user_preset_filename()
-    return r.TrackFX_GetUserPresetFilename(self.track.pointer, self.pointer)
+    return r.TrackFX_GetUserPresetFilename(self.track.pointer, fx)
 end
 
     
@@ -715,10 +746,10 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param presetmove integer.
+-- @param presetmove number
 -- @return boolean
 function TrackFX:navigate_presets(presetmove)
-    return r.TrackFX_NavigatePresets(self.track.pointer, self.pointer, presetmove)
+    return r.TrackFX_NavigatePresets(self.track.pointer, fx, presetmove)
 end
 
     
@@ -734,9 +765,9 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param enabled boolean.
+-- @param enabled boolean
 function TrackFX:set_enabled(enabled)
-    return r.TrackFX_SetEnabled(self.track.pointer, self.pointer, enabled)
+    return r.TrackFX_SetEnabled(self.track.pointer, fx, enabled)
 end
 
     
@@ -745,12 +776,12 @@ end
 -- Bandtype: -1=master gain, 0=hipass, 1=loshelf, 2=band, 3=notch, 4=hishelf,
 -- 5=lopass, 6=bandpass, 7=parallel bandpass. Bandidx (ignored for master gain):
 -- 0=target first band matching bandtype, 1=target 2nd band matching bandtype, etc.
--- @param band_type integer.
--- @param band_idx integer.
--- @param enable boolean.
+-- @param band_type number
+-- @param band_idx number
+-- @param enable boolean
 -- @return boolean
 function TrackFX:set_eq_band_enabled(band_type, band_idx, enable)
-    return r.TrackFX_SetEQBandEnabled(self.track.pointer, self.pointer, band_type, band_idx, enable)
+    return r.TrackFX_SetEQBandEnabled(self.track.pointer, fx_idx, band_type, band_idx, enable)
 end
 
     
@@ -772,24 +803,24 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param band_type integer.
--- @param band_idx integer.
--- @param param_type integer.
--- @param val number.
--- @param is_norm boolean.
+-- @param band_type number
+-- @param band_idx number
+-- @param param_type number
+-- @param val number
+-- @param is_norm boolean
 -- @return boolean
 function TrackFX:set_eq_param(band_type, band_idx, param_type, val, is_norm)
-    return r.TrackFX_SetEQParam(self.track.pointer, self.pointer, band_type, band_idx, param_type, val, is_norm)
+    return r.TrackFX_SetEQParam(self.track.pointer, fx_idx, band_type, band_idx, param_type, val, is_norm)
 end
 
     
 --- Set Named Config Parm.
 -- sets plug-in specific named configuration value (returns true on success).
--- @param parm_name string.
--- @param value string.
+-- @param parm_name string
+-- @param value string
 -- @return boolean
 function TrackFX:set_named_config_parm(parm_name, value)
-    return r.TrackFX_SetNamedConfigParm(self.track.pointer, self.pointer, parm_name, value)
+    return r.TrackFX_SetNamedConfigParm(self.track.pointer, fx, parm_name, value)
 end
 
     
@@ -805,9 +836,9 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param offline boolean.
+-- @param offline boolean
 function TrackFX:set_offline(offline)
-    return r.TrackFX_SetOffline(self.track.pointer, self.pointer, offline)
+    return r.TrackFX_SetOffline(self.track.pointer, fx, offline)
 end
 
     
@@ -824,9 +855,9 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param open boolean.
+-- @param open boolean
 function TrackFX:set_open(open)
-    return r.TrackFX_SetOpen(self.track.pointer, self.pointer, open)
+    return r.TrackFX_SetOpen(self.track.pointer, fx, open)
 end
 
     
@@ -842,11 +873,11 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @param val number.
+-- @param param number
+-- @param val number
 -- @return boolean
 function TrackFX:set_param(param, val)
-    return r.TrackFX_SetParam(self.track.pointer, self.pointer, param, val)
+    return r.TrackFX_SetParam(self.track.pointer, fx, param, val)
 end
 
     
@@ -862,11 +893,11 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param param integer.
--- @param value number.
+-- @param param number
+-- @param value number
 -- @return boolean
 function TrackFX:set_param_normalized(param, value)
-    return r.TrackFX_SetParamNormalized(self.track.pointer, self.pointer, param, value)
+    return r.TrackFX_SetParamNormalized(self.track.pointer, fx, param, value)
 end
 
     
@@ -885,13 +916,13 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param is_output integer.
--- @param pin integer.
--- @param low32bits integer.
--- @param hi32bits integer.
+-- @param is_output number
+-- @param pin number
+-- @param low32bits number
+-- @param hi32bits number
 -- @return boolean
 function TrackFX:set_pin_mappings(is_output, pin, low32bits, hi32bits)
-    return r.TrackFX_SetPinMappings(self.track.pointer, self.pointer, is_output, pin, low32bits, hi32bits)
+    return r.TrackFX_SetPinMappings(self.tr.pointer, fx, is_output, pin, low32bits, hi32bits)
 end
 
     
@@ -909,10 +940,10 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param preset_name string.
+-- @param preset_name string
 -- @return boolean
 function TrackFX:set_preset(preset_name)
-    return r.TrackFX_SetPreset(self.track.pointer, self.pointer, preset_name)
+    return r.TrackFX_SetPreset(self.track.pointer, fx, preset_name)
 end
 
     
@@ -933,7 +964,7 @@ end
 -- @param preset_idx number. The index of the preset
 -- @return boolean
 function TrackFX:set_preset_by_index(preset_idx)
-    return r.TrackFX_SetPresetByIndex(self.track.pointer, self.pointer, preset_idx)
+    return r.TrackFX_SetPresetByIndex(self.track.pointer, fx, idx)
 end
 
     
@@ -951,38 +982,38 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param show_flag integer.
+-- @param show_flag number
 function TrackFX:show(show_flag)
-    return r.TrackFX_Show(self.track.pointer, self.pointer, show_flag)
+    return r.TrackFX_Show(self.track.pointer, index, show_flag)
 end
 
     
---- Cf Get Chain.
+--- Get Chain.
 -- Return a handle to the given track FX chain window.
 -- @return FxChain
-function TrackFX:cf_get_chain()
+function TrackFX:get_chain()
     return r.CF_GetTrackFXChain(self.track.pointer)
 end
 
     
---- Cf Get Chain Ex.
+--- Get Chain Ex.
 -- Return a handle to the given track FX chain window. Set wantInputChain to get
 -- the track's input/monitoring FX chain.
--- @param project ReaProject.
--- @param track MediaTrack.
--- @param want_input_chain boolean.
+-- @param project table
+-- @param track table
+-- @param want_input_chain boolean
 -- @return FxChain
-function TrackFX:cf_get_chain_ex(project, track, want_input_chain)
-    return r.CF_GetTrackFXChainEx(project, track.pointer, want_input_chain)
+function TrackFX:get_chain_ex(project, track, want_input_chain)
+    return r.CF_GetTrackFXChainEx(self.project.pointer, track, want_input_chain)
 end
 
     
---- Cf Select.
+--- Select.
 -- Set which track effect is active in the track's FX chain. The FX chain window
 -- does not have to be open.
 -- @return boolean
-function TrackFX:cf_select()
-    return r.CF_SelectTrackFX(self.track.pointer, self.pointer)
+function TrackFX:select()
+    return r.CF_SelectTrackFX(self.track.pointer, index)
 end
 
 return TrackFX

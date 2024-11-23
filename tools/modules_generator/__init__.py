@@ -125,3 +125,36 @@ ALL_FN_NAMESPACES = (
     "resolve",
     "time",
 )
+
+# These are namespaces that are not currently included in the ReaWrap module.
+# Some of them may eventually be included.
+# Some other may eventually be grouped under existing namespaces.
+# Some others may never be included.
+UNSUPPORTED_NAMESPACES = (
+    "AudioAccessor",
+    "Blink",
+    "CF",
+    "CSurf",
+    "FNG",
+    "Fab",
+    "GR",
+    "GSC",
+    "GU",
+    "JB",
+    "JS",
+    "LICE",
+    "Llm",
+    "MCULive",
+    "MIDI",
+    "MIDIEditor",
+    "MRP",
+    "ReaPack",
+    "TrackCtl",
+    "TrackList",
+    "joystick",
+    "NF",
+    "SN",
+    "SNM",
+    "ULT",
+    "Xen",
+)

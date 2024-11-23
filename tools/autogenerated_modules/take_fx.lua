@@ -3,10 +3,7 @@
 -- @license MIT
 
 local r = reaper
-
 local helpers = require('helpers')
-local media_item_take = require('media_item_take')
-local media_track = require('media_track')
 
 
 local TakeFX = {}
@@ -14,11 +11,12 @@ local TakeFX = {}
 
 
 --- Create new TakeFX instance.
--- @param take MediaItemTake. The MediaItemTake object
--- @param fx_idx number. The index of the FX
+-- @param take . The MediaItemTake object
+-- @param fx_idx . The index of the FX
 -- @return TakeFX table.
 function TakeFX:new(take, fx_idx)
     local obj = {
+        pointer_type = "TakeFX",
         take = take, 
         pointer = fx_idx
     }
@@ -49,9 +47,9 @@ end
 -- similar logic. In REAPER v7.06+, you can use the much more convenient method to
 -- navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx_name string.
--- @param instantiate integer.
--- @return integer
+-- @param fx_name string
+-- @param instantiate number
+-- @return number
 function TakeFX:add_by_name(fx_name, instantiate)
     return r.TakeFX_AddByName(self.take.pointer, fx_name, instantiate)
 end
@@ -69,11 +67,11 @@ end
 -- similar logic. In REAPER v7.06+, you can use the much more convenient method to
 -- navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param dest_take MediaItemTake.
--- @param dest_fx integer.
--- @param is_move boolean.
+-- @param dest_take table
+-- @param dest_fx number
+-- @param is_move boolean
 function TakeFX:copy_to_take(dest_take, dest_fx, is_move)
-    return r.TakeFX_CopyToTake(self.take.pointer, self.pointer, dest_take.pointer, dest_fx, is_move)
+    return r.TakeFX_CopyToTake(self.src_take.pointer, src_fx, dest_take, dest_fx, is_move)
 end
 
     
@@ -90,29 +88,11 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param dest_track MediaTrack.
--- @param dest_fx integer.
--- @param is_move boolean.
+-- @param dest_track table
+-- @param dest_fx number
+-- @param is_move boolean
 function TakeFX:copy_to_track(dest_track, dest_fx, is_move)
-    return r.TakeFX_CopyToTrack(self.take.pointer, self.pointer, dest_track.pointer, dest_fx, is_move)
-end
-
-    
---- Delete.
--- Remove a FX from take chain (returns true on success) FX indices can have
--- 0x2000000 added to them, in which case they will be used to address FX in
--- containers. To address a container, the 1-based subitem is multiplied by one
--- plus the count of the FX chain and added to the 1-based container item index.
--- e.g. to address the third item in the container at the second position of the
--- track FX chain for tr, the index would be 0x2000000 + 3*(TrackFX_GetCount(tr)+1)
--- + 2. This can be extended to sub-containers using TrackFX_GetNamedConfigParm
--- with container_count and similar logic. In REAPER v7.06+, you can use the much
--- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
--- with parent_container and container_item.X.
--- @param fx integer.
--- @return boolean
-function TakeFX:delete(fx)
-    return r.TakeFX_Delete(self.take.pointer, fx)
+    return r.TakeFX_CopyToTrack(self.src_take.pointer, src_fx, dest_track, dest_fx, is_move)
 end
 
     
@@ -126,10 +106,9 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
+-- @param param number
 -- @return boolean
-function TakeFX:end_param_edit(fx, param)
+function TakeFX:end_param_edit(param)
     return r.TakeFX_EndParamEdit(self.take.pointer, fx, param)
 end
 
@@ -145,13 +124,16 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @param val number.
--- @return ret_val boolean
+-- @param param number
+-- @param val number
 -- @return buf string
-function TakeFX:format_param_value(fx, param, val)
-    return r.TakeFX_FormatParamValue(self.take.pointer, fx, param, val)
+function TakeFX:format_param_value(param, val)
+    local ret_val, buf = r.TakeFX_FormatParamValue(self.take.pointer, fx, param, val)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -166,30 +148,26 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @param value number.
--- @param buf string.
--- @return ret_val boolean
+-- @param param number
+-- @param value number
+-- @param buf string
 -- @return buf string
-function TakeFX:format_param_value_normalized(fx, param, value, buf)
-    return r.TakeFX_FormatParamValueNormalized(self.take.pointer, fx, param, value, buf)
+function TakeFX:format_param_value_normalized(param, value, buf)
+    local ret_val, buf = r.TakeFX_FormatParamValueNormalized(self.take.pointer, fx, param, value, buf)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
 --- Get Chain Visible.
 -- returns index of effect visible in chain, or -1 for chain hidden, or -2 for
 -- chain visible but no effect selected
--- @return integer
+-- @return number
 function TakeFX:get_chain_visible()
     return r.TakeFX_GetChainVisible(self.take.pointer)
-end
-
-    
---- Get Count.
--- @return integer
-function TakeFX:get_count()
-    return r.TakeFX_GetCount(self.take.pointer)
 end
 
     
@@ -204,9 +182,8 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
 -- @return boolean
-function TakeFX:get_enabled(fx)
+function TakeFX:get_enabled()
     return r.TakeFX_GetEnabled(self.take.pointer, fx)
 end
 
@@ -224,13 +201,14 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fxindex integer.
--- @param parameterindex integer.
--- @param create boolean.
--- @return TrackEnvelope table
+-- @param fxindex number
+-- @param parameterindex number
+-- @param create boolean
+-- @return Envelope table
 function TakeFX:get_envelope(fxindex, parameterindex, create)
+    local Envelope = require('envelope')
     local result = r.TakeFX_GetEnvelope(self.take.pointer, fxindex, parameterindex, create)
-    return track_envelope.TrackEnvelope:new(result)
+    return Envelope:new(result)
 end
 
     
@@ -247,7 +225,7 @@ end
 -- with parent_container and container_item.X.
 -- @return HWND
 function TakeFX:get_floating_window()
-    return r.TakeFX_GetFloatingWindow(self.take.pointer, self.pointer)
+    return r.TakeFX_GetFloatingWindow(self.take.pointer, index)
 end
 
     
@@ -261,16 +239,19 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return buf string
-function TakeFX:get_formatted_param_value(fx, param)
-    return r.TakeFX_GetFormattedParamValue(self.take.pointer, fx, param)
+function TakeFX:get_formatted_param_value(param)
+    local ret_val, buf = r.TakeFX_GetFormattedParamValue(self.take.pointer, fx, param)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
---- Get Fxguid.
+--- Get Guid.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -280,14 +261,13 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
 -- @return guid string
-function TakeFX:get_fxguid(fx)
+function TakeFX:get_guid()
     return r.TakeFX_GetFXGUID(self.take.pointer, fx)
 end
 
     
---- Get Fx Name.
+--- Get Name.
 --  FX indices can have 0x2000000 added to them, in which case they will be used to
 -- address FX in containers. To address a container, the 1-based subitem is
 -- multiplied by one plus the count of the FX chain and added to the 1-based
@@ -297,11 +277,14 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @return ret_val boolean
 -- @return buf string
-function TakeFX:get_fx_name(fx)
-    return r.TakeFX_GetFXName(self.take.pointer, fx)
+function TakeFX:get_name()
+    local ret_val, buf = r.TakeFX_GetFXName(self.take.pointer, fx)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -316,12 +299,15 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @return ret_val integer
--- @return input_pins integer
--- @return output_pins integer
-function TakeFX:get_io_size(fx)
-    return r.TakeFX_GetIOSize(self.take.pointer, fx)
+-- @return input_pins number
+-- @return output_pins number
+function TakeFX:get_io_size()
+    local ret_val, input_pins, output_pins = r.TakeFX_GetIOSize(self.take.pointer, fx)
+    if ret_val then
+        return input_pins, output_pins
+    else
+        return nil
+    end
 end
 
     
@@ -337,12 +323,15 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param parm_name string.
--- @return ret_val boolean
+-- @param parm_name string
 -- @return buf string
-function TakeFX:get_named_config_parm(fx, parm_name)
-    return r.TakeFX_GetNamedConfigParm(self.take.pointer, fx, parm_name)
+function TakeFX:get_named_config_parm(parm_name)
+    local ret_val, buf = r.TakeFX_GetNamedConfigParm(self.take.pointer, fx, parm_name)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -356,9 +345,8 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @return integer
-function TakeFX:get_num_params(fx)
+-- @return number
+function TakeFX:get_num_params()
     return r.TakeFX_GetNumParams(self.take.pointer, fx)
 end
 
@@ -374,9 +362,8 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
 -- @return boolean
-function TakeFX:get_offline(fx)
+function TakeFX:get_offline()
     return r.TakeFX_GetOffline(self.take.pointer, fx)
 end
 
@@ -393,9 +380,8 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
 -- @return boolean
-function TakeFX:get_open(fx)
+function TakeFX:get_open()
     return r.TakeFX_GetOpen(self.take.pointer, fx)
 end
 
@@ -410,13 +396,16 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @return ret_val number
+-- @param param number
 -- @return min_val number
 -- @return max_val number
-function TakeFX:get_param(fx, param)
-    return r.TakeFX_GetParam(self.take.pointer, fx, param)
+function TakeFX:get_param(param)
+    local ret_val, min_val, max_val = r.TakeFX_GetParam(self.take.pointer, fx, param)
+    if ret_val then
+        return min_val, max_val
+    else
+        return nil
+    end
 end
 
     
@@ -430,15 +419,18 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return step number
 -- @return smallstep number
 -- @return largestep number
 -- @return is_toggle boolean
-function TakeFX:get_parameter_step_sizes(fx, param)
-    return r.TakeFX_GetParameterStepSizes(self.take.pointer, fx, param)
+function TakeFX:get_parameter_step_sizes(param)
+    local ret_val, step, smallstep, largestep, is_toggle = r.TakeFX_GetParameterStepSizes(self.take.pointer, fx, param)
+    if ret_val then
+        return step, smallstep, largestep, is_toggle
+    else
+        return nil
+    end
 end
 
     
@@ -452,14 +444,17 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @return ret_val number
+-- @param param number
 -- @return min_val number
 -- @return max_val number
 -- @return mid_val number
-function TakeFX:get_param_ex(fx, param)
-    return r.TakeFX_GetParamEx(self.take.pointer, fx, param)
+function TakeFX:get_param_ex(param)
+    local ret_val, min_val, max_val, mid_val = r.TakeFX_GetParamEx(self.take.pointer, fx, param)
+    if ret_val then
+        return min_val, max_val, mid_val
+    else
+        return nil
+    end
 end
 
     
@@ -475,10 +470,9 @@ end
 -- and similar logic. In REAPER v7.06+, you can use the much more convenient method
 -- to navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container
 -- and container_item.X.
--- @param fx integer.
--- @param ident_str string.
--- @return integer
-function TakeFX:get_param_from_ident(fx, ident_str)
+-- @param ident_str string
+-- @return number
+function TakeFX:get_param_from_ident(ident_str)
     return r.TakeFX_GetParamFromIdent(self.take.pointer, fx, ident_str)
 end
 
@@ -494,12 +488,15 @@ end
 -- similar logic. In REAPER v7.06+, you can use the much more convenient method to
 -- navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return buf string
-function TakeFX:get_param_ident(fx, param)
-    return r.TakeFX_GetParamIdent(self.take.pointer, fx, param)
+function TakeFX:get_param_ident(param)
+    local ret_val, buf = r.TakeFX_GetParamIdent(self.take.pointer, fx, param)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -513,12 +510,15 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @return ret_val boolean
+-- @param param number
 -- @return buf string
-function TakeFX:get_param_name(fx, param)
-    return r.TakeFX_GetParamName(self.take.pointer, fx, param)
+function TakeFX:get_param_name(param)
+    local ret_val, buf = r.TakeFX_GetParamName(self.take.pointer, fx, param)
+    if ret_val then
+        return buf
+    else
+        return nil
+    end
 end
 
     
@@ -532,10 +532,9 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
+-- @param param number
 -- @return number
-function TakeFX:get_param_normalized(fx, param)
+function TakeFX:get_param_normalized(param)
     return r.TakeFX_GetParamNormalized(self.take.pointer, fx, param)
 end
 
@@ -553,13 +552,16 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fx integer.
--- @param is_output integer.
--- @param pin integer.
--- @return ret_val integer
--- @return high32 integer
-function TakeFX:get_pin_mappings(fx, is_output, pin)
-    return r.TakeFX_GetPinMappings(self.take.pointer, fx, is_output, pin)
+-- @param is_output number
+-- @param pin number
+-- @return high32 number
+function TakeFX:get_pin_mappings(is_output, pin)
+    local ret_val, high32 = r.TakeFX_GetPinMappings(self.take.pointer, fx, is_output, pin)
+    if ret_val then
+        return high32
+    else
+        return nil
+    end
 end
 
     
@@ -576,11 +578,14 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @return ret_val boolean
 -- @return preset_name string
-function TakeFX:get_preset(fx)
-    return r.TakeFX_GetPreset(self.take.pointer, fx)
+function TakeFX:get_preset()
+    local ret_val, preset_name = r.TakeFX_GetPreset(self.take.pointer, fx)
+    if ret_val then
+        return preset_name
+    else
+        return nil
+    end
 end
 
     
@@ -596,11 +601,14 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fx integer.
--- @return ret_val integer
--- @return number_of_presets integer
-function TakeFX:get_preset_index(fx)
-    return r.TakeFX_GetPresetIndex(self.take.pointer, fx)
+-- @return number_of_presets number
+function TakeFX:get_preset_index()
+    local ret_val, number_of_presets = r.TakeFX_GetPresetIndex(self.take.pointer, fx)
+    if ret_val then
+        return number_of_presets
+    else
+        return nil
+    end
 end
 
     
@@ -614,9 +622,8 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
 -- @return fn string
-function TakeFX:get_user_preset_filename(fx)
+function TakeFX:get_user_preset_filename()
     return r.TakeFX_GetUserPresetFilename(self.take.pointer, fx)
 end
 
@@ -632,10 +639,9 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param presetmove integer.
+-- @param presetmove number
 -- @return boolean
-function TakeFX:navigate_presets(fx, presetmove)
+function TakeFX:navigate_presets(presetmove)
     return r.TakeFX_NavigatePresets(self.take.pointer, fx, presetmove)
 end
 
@@ -651,9 +657,8 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param enabled boolean.
-function TakeFX:set_enabled(fx, enabled)
+-- @param enabled boolean
+function TakeFX:set_enabled(enabled)
     return r.TakeFX_SetEnabled(self.take.pointer, fx, enabled)
 end
 
@@ -670,11 +675,10 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param parm_name string.
--- @param value string.
+-- @param parm_name string
+-- @param value string
 -- @return boolean
-function TakeFX:set_named_config_parm(fx, parm_name, value)
+function TakeFX:set_named_config_parm(parm_name, value)
     return r.TakeFX_SetNamedConfigParm(self.take.pointer, fx, parm_name, value)
 end
 
@@ -690,9 +694,8 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param offline boolean.
-function TakeFX:set_offline(fx, offline)
+-- @param offline boolean
+function TakeFX:set_offline(offline)
     return r.TakeFX_SetOffline(self.take.pointer, fx, offline)
 end
 
@@ -708,9 +711,8 @@ end
 -- similar logic. In REAPER v7.06+, you can use the much more convenient method to
 -- navigate hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param open boolean.
-function TakeFX:set_open(fx, open)
+-- @param open boolean
+function TakeFX:set_open(open)
     return r.TakeFX_SetOpen(self.take.pointer, fx, open)
 end
 
@@ -725,11 +727,10 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @param val number.
+-- @param param number
+-- @param val number
 -- @return boolean
-function TakeFX:set_param(fx, param, val)
+function TakeFX:set_param(param, val)
     return r.TakeFX_SetParam(self.take.pointer, fx, param, val)
 end
 
@@ -744,11 +745,10 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param param integer.
--- @param value number.
+-- @param param number
+-- @param value number
 -- @return boolean
-function TakeFX:set_param_normalized(fx, param, value)
+function TakeFX:set_param_normalized(param, value)
     return r.TakeFX_SetParamNormalized(self.take.pointer, fx, param, value)
 end
 
@@ -767,13 +767,12 @@ end
 -- logic. In REAPER v7.06+, you can use the much more convenient method to navigate
 -- hierarchies, see TrackFX_GetNamedConfigParm with parent_container and
 -- container_item.X.
--- @param fx integer.
--- @param is_output integer.
--- @param pin integer.
--- @param low32bits integer.
--- @param hi32bits integer.
+-- @param is_output number
+-- @param pin number
+-- @param low32bits number
+-- @param hi32bits number
 -- @return boolean
-function TakeFX:set_pin_mappings(fx, is_output, pin, low32bits, hi32bits)
+function TakeFX:set_pin_mappings(is_output, pin, low32bits, hi32bits)
     return r.TakeFX_SetPinMappings(self.take.pointer, fx, is_output, pin, low32bits, hi32bits)
 end
 
@@ -790,10 +789,9 @@ end
 -- TrackFX_GetNamedConfigParm with container_count and similar logic. In REAPER
 -- v7.06+, you can use the much more convenient method to navigate hierarchies, see
 -- TrackFX_GetNamedConfigParm with parent_container and container_item.X.
--- @param fx integer.
--- @param preset_name string.
+-- @param preset_name string
 -- @return boolean
-function TakeFX:set_preset(fx, preset_name)
+function TakeFX:set_preset(preset_name)
     return r.TakeFX_SetPreset(self.take.pointer, fx, preset_name)
 end
 
@@ -810,10 +808,9 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param fx integer.
 -- @return boolean
-function TakeFX:set_preset_by_index(fx)
-    return r.TakeFX_SetPresetByIndex(self.take.pointer, fx, self.pointer)
+function TakeFX:set_preset_by_index()
+    return r.TakeFX_SetPresetByIndex(self.take.pointer, fx, idx)
 end
 
     
@@ -829,36 +826,36 @@ end
 -- with container_count and similar logic. In REAPER v7.06+, you can use the much
 -- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
 -- with parent_container and container_item.X.
--- @param show_flag integer.
+-- @param show_flag number
 function TakeFX:show(show_flag)
-    return r.TakeFX_Show(self.take.pointer, self.pointer, show_flag)
+    return r.TakeFX_Show(self.take.pointer, index, show_flag)
 end
 
     
---- Br Get Count.
+--- Get Fx Count.
 -- [BR] Returns FX count for supplied take
--- @return integer
-function TakeFX:br_get_count()
+-- @return number
+function TakeFX:get_fx_count()
     return r.BR_GetTakeFXCount(self.take.pointer)
 end
 
     
---- Cf Get Chain.
+--- Get Chain.
 -- Return a handle to the given take FX chain window. HACK: This temporarily
 -- renames the take in order to disambiguate the take FX chain window from
 -- similarily named takes.
 -- @return FxChain
-function TakeFX:cf_get_chain()
+function TakeFX:get_chain()
     return r.CF_GetTakeFXChain(self.take.pointer)
 end
 
     
---- Cf Select.
+--- Select.
 -- Set which take effect is active in the take's FX chain. The FX chain window does
 -- not have to be open.
 -- @return boolean
-function TakeFX:cf_select()
-    return r.CF_SelectTakeFX(self.take.pointer, self.pointer)
+function TakeFX:select()
+    return r.CF_SelectTakeFX(self.take.pointer, index)
 end
 
 return TakeFX
