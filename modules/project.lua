@@ -160,7 +160,7 @@ function Project:any_track_solo()
 	return r.AnyTrackSolo(self.pointer)
 end
 
-Project.nudge.Constants = {
+Project.NudgeConstants = {
 	FLAG = {
 		SET_TO_VALUE = 1,
 		SNAP = 2,
@@ -190,9 +190,9 @@ Project.nudge.Constants = {
 }
 
 --- Apply Nudge. Wraps ApplyNudge.
--- @param nudge_flag number. Project.nudge.Constants.FLAG
--- @param nudge_what number. Project.nudge.Constants.WHAT.
--- @param nudge_units number. Project.nudge.Constants.UNIT.
+-- @param nudge_flag number. Project.NudgeConstants.FLAG
+-- @param nudge_what number. Project.NudgeConstants.WHAT.
+-- @param nudge_units number. Project.NudgeConstants.UNIT.
 -- @param value number
 -- @param reverse boolean
 -- @param copies number
