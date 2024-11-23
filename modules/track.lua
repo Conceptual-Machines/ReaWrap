@@ -141,17 +141,59 @@ function Track:count_items()
 	return r.CountTrackMediaItems(self.pointer)
 end
 
+--- Add By Name. Wraps TrackFX_AddByName.
+-- Adds or queries the position of a named FX from the track FX chain (recFX=false)
+-- or record input FX/monitoring FX (recFX=true, monitoring FX are on master
+-- track). Specify a negative value for instantiate to always create a new effect,
+-- 0 to only query the first instance of an effect, or a positive value to add an
+-- instance if one is not found. If instantiate is <= -1000, it is used for the
+-- insertion position (-1000 is first item in chain, -1001 is second, etc). fx_name
+-- can have prefix to specify type: VST3:,VST2:,VST:,AU:,JS:, or DX:, or FXADD:
+-- which adds selected items from the currently-open FX browser, FXADD:2 to limit
+-- to 2 FX added, or FXADD:2e to only succeed if exactly 2 FX are selected. Returns
+-- -1 on failure or the new position in chain on success.
+-- @param fx_name string
+-- @param rec_fx boolean
+-- @param instantiate number
+-- @return number
+function Track:add_fx_by_name(fx_name, rec_fx, instantiate)
+	return r.TrackFX_AddByName(self.pointer, fx_name, rec_fx, instantiate)
+end
+
+--- Copy TrackFX To Take. Wraps TrackFX_CopyToTake.
+-- Copies (or moves) FX from src_track to dest_take. src_fx can have 0x1000000 set
+-- to reference input FX.
+-- @param src_fx number
+-- @param dest_take Take table
+-- @param dest_fx number
+-- @param is_move boolean Optional
+function Track:copy_fx_to_take(src_fx, dest_take, dest_fx, is_move)
+	local is_move = is_move or false
+	return r.TrackFX_CopyToTake(self.pointer, src_fx, dest_take.pointer, dest_fx, is_move)
+end
+
+--- Copy TrackFX To Track. Wraps TrackFX_CopyToTrack.
+-- Copies (or moves) FX from src_track to dest_track. Can be used with
+-- src_track=dest_track to reorder.
+-- @param dest_track table
+-- @param dest_fx number
+-- @param is_move boolean Optional
+function Track:copy_fx_to_track(dest_track, dest_fx, is_move)
+	local is_move = is_move or false
+	return r.TrackFX_CopyToTrack(self.src_track.pointer, src_fx, dest_track.pointer, dest_fx, is_move)
+end
+
 --- Create New Midi Item In Proj. Wraps CreateNewMIDIItemInProj.
 -- Create a new MIDI media item, containing no MIDI events. Time is in seconds
 -- unless qn is set.
--- @param starttime number
--- @param endtime number
+-- @param start_time number
+-- @param end_time number
 -- @param boolean qnIn Optional
 -- @return Item table
-function Track:create_new_midi_item_in_proj(starttime, endtime, boolean)
+function Track:create_new_midi_item_in_proj(start_time, end_time, boolean)
 	local boolean = boolean or nil
 	local Item = require("item")
-	local result = r.CreateNewMIDIItemInProj(self.pointer, starttime, endtime, boolean)
+	local result = r.CreateNewMIDIItemInProj(self.pointer, start_time, end_time, boolean)
 	return Item:new(result)
 end
 

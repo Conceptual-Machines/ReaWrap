@@ -221,7 +221,8 @@ end
 -- @return large_step number
 -- @return is_toggle boolean
 function TakeFX:get_parameter_step_sizes(param)
-	local ret_val, step, small_step, large_step, is_toggle = r.TakeFX_GetParameterStepSizes(self.take.pointer, self.pointer, param)
+	local ret_val, step, small_step, large_step, is_toggle =
+		r.TakeFX_GetParameterStepSizes(self.take.pointer, self.pointer, param)
 	if ret_val then
 		return step, small_step, large_step, is_toggle
 	else
