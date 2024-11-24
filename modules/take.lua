@@ -130,12 +130,12 @@ function Take:get_track()
 end
 
 --- Constants for Take:get_info_value.
--- @field D_STARTOFFS double *: start offset in source media, in seconds
--- @field D_VOL double *: take volume, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc, negative if take polarity is flipped
--- @field D_PAN double *: take pan, -1..1
--- @field D_PANLAW double *: take pan law, -1=default, 0.5=-6dB, 1.0=+0dB, etc
--- @field D_PLAYRATE double *: take playback rate, 0.5=half speed, 1=normal, 2=double speed, etc
--- @field D_PITCH double *: take pitch adjustment in semitones, -12=one octave down, 0=normal, +12=one octave up, etc
+-- @field D_STARTOFFS number: start offset in source media, in seconds
+-- @field D_VOL number: take volume, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc, negative if take polarity is flipped
+-- @field D_PAN number: take pan, -1..1
+-- @field D_PANLAW number: take pan law, -1=default, 0.5=-6dB, 1.0=+0dB, etc
+-- @field D_PLAYRATE number: take playback rate, 0.5=half speed, 1=normal, 2=double speed, etc
+-- @field D_PITCH number: take pitch adjustment in semitones, -12=one octave down, 0=normal, +12=one octave up, etc
 -- @field B_PPITCH boolean: preserve pitch when changing playback rate
 -- @field I_LASTY number: Y-position (relative to top of track) in pixels (read-only)
 -- @field I_LASTH number: height in pixels (read-only)
@@ -464,12 +464,12 @@ function Take:midi_get_grid()
 end
 
 --- Midi Get Hash. Wraps MIDI_GetHash.
--- Get a string that only changes when the MIDI data changes. If notesonly==true,
+-- Get a string that only changes when the MIDI data changes. If notes_only==true,
 -- then the string changes only when the MIDI notes change. See MIDI_GetTrackHash
--- @param notesonly boolean
+-- @param notes_only boolean
 -- @return hash string
-function Take:midi_get_hash(notesonly)
-	local ret_val, hash = r.MIDI_GetHash(self.pointer, notesonly)
+function Take:midi_get_hash(notes_only)
+	local ret_val, hash = r.MIDI_GetHash(self.pointer, notes_only)
 	if ret_val then
 		return hash
 	else
@@ -482,15 +482,15 @@ end
 -- @param note_idx number
 -- @return selected boolean
 -- @return muted boolean
--- @return startppq_pos number
--- @return endppq_pos number
+-- @return start_ppq number
+-- @return end_ppq number
 -- @return chan number
 -- @return pitch number
 -- @return vel number
 function Take:midi_get_note(note_idx)
-	local ret_val, selected, muted, startppq_pos, endppq_pos, chan, pitch, vel = r.MIDI_GetNote(self.pointer, note_idx)
+	local ret_val, selected, muted, start_ppq, end_ppq, chan, pitch, vel = r.MIDI_GetNote(self.pointer, note_idx)
 	if ret_val then
-		return selected, muted, startppq_pos, endppq_pos, chan, pitch, vel
+		return selected, muted, start_ppq, end_ppq, chan, pitch, vel
 	else
 		return nil
 	end
@@ -619,20 +619,20 @@ function Take:midi_insert_evt(selected, muted, ppq_pos, bytestr)
 end
 
 --- Midi Insert Note. Wraps MIDI_InsertNote.
--- Insert a new MIDI note. Set noSort if inserting multiple events, then call
+-- Insert a new MIDI note. Set no_sort if inserting multiple events, then call
 -- MIDI_Sort when done.
 -- @param selected boolean
 -- @param muted boolean
--- @param startppq_pos number
--- @param endppq_pos number
+-- @param start_ppq number
+-- @param end_ppq number
 -- @param chan number
 -- @param pitch number
 -- @param vel number
--- @param boolean noSortIn Optional
+-- @param no_sort boolean Optional
 -- @return boolean
-function Take:midi_insert_note(selected, muted, startppq_pos, endppq_pos, chan, pitch, vel, boolean)
-	local boolean = boolean or nil
-	return r.MIDI_InsertNote(self.pointer, selected, muted, startppq_pos, endppq_pos, chan, pitch, vel, boolean)
+function Take:midi_insert_note(selected, muted, start_ppq, end_ppq, chan, pitch, vel, no_sort)
+	local no_sort = no_sort or false
+	return r.MIDI_InsertNote(self.pointer, selected, muted, start_ppq, end_ppq, chan, pitch, vel, no_sort)
 end
 
 --- Midi Insert Text Sysex Evt. Wraps MIDI_InsertTextSysexEvt.
@@ -680,7 +680,7 @@ end
 
 --- Midi Set Cc. Wraps MIDI_SetCC.
 -- Set MIDI CC event properties. Properties passed as NULL will not be set. set
--- noSort if setting multiple events, then call MIDI_Sort when done.
+-- no_sort if setting multiple events, then call MIDI_Sort when done.
 -- @param cc_idx number
 -- @param selected_in boolean Optional. Default true
 -- @param muted_in boolean Optional. Default false
@@ -689,9 +689,9 @@ end
 -- @param chan_in number Optional. Default 0
 -- @param msg2_in number Optional. Default 0
 -- @param msg3_in number Optional. Default 0
--- @param no_sort_in boolean Optional. Default false
+-- @param no_sort boolean Optional. Default false
 -- @return boolean
-function Take:midi_set_cc(cc_idx, selected_in, muted_in, ppq_pos_in, chan_msg_in, chan_in, msg2_in, msg3_in, no_sort_in)
+function Take:midi_set_cc(cc_idx, selected_in, muted_in, ppq_pos_in, chan_msg_in, chan_in, msg2_in, msg3_in, no_sort)
 	local selected_in = selected_in or true
 	local muted_in = muted_in or false
 	local ppq_pos_in = ppq_pos_in or 0
@@ -699,7 +699,7 @@ function Take:midi_set_cc(cc_idx, selected_in, muted_in, ppq_pos_in, chan_msg_in
 	local chan_in = chan_in or 0
 	local msg2_in = msg2_in or 0
 	local msg3_in = msg3_in or 0
-	local no_sort_in = no_sort_in or false
+	local no_sort = no_sort or false
 	return r.MIDI_SetCC(
 		self.pointer,
 		cc_idx,
@@ -710,26 +710,26 @@ function Take:midi_set_cc(cc_idx, selected_in, muted_in, ppq_pos_in, chan_msg_in
 		chan_in,
 		msg2_in,
 		msg3_in,
-		no_sort_in
+		no_sort
 	)
 end
 
 --- Midi Set Cc Shape. Wraps MIDI_SetCCShape.
--- Set CC shape and bezier tension. set noSort if setting multiple events, then
+-- Set CC shape and bezier tension. set no_sort if setting multiple events, then
 -- call MIDI_Sort when done. See MIDI_SetCC, MIDI_GetCCShape
 -- @param cc_idx number
 -- @param shape number
 -- @param bez_tension number
--- @param no_sort_in boolean Optional. Default false
+-- @param no_sort boolean Optional. Default false
 -- @return boolean
-function Take:midi_set_cc_shape(cc_idx, shape, bez_tension, boolean)
-	local no_sort_in = no_sort_in or false
-	return r.MIDI_SetCCShape(self.pointer, cc_idx, shape, bez_tension, boolean)
+function Take:midi_set_cc_shape(cc_idx, shape, bez_tension, no_sort)
+	local no_sort = no_sort or false
+	return r.MIDI_SetCCShape(self.pointer, cc_idx, shape, bez_tension, no_sort)
 end
 
 --- Midi Set Evt. Wraps MIDI_SetEvt.
 -- Set MIDI event properties. Properties passed as NULL will not be set.  set
--- noSort if setting multiple events, then call MIDI_Sort when done.
+-- no_sort if setting multiple events, then call MIDI_Sort when done.
 -- @param evt_idx number
 -- @param selected_in boolean. Optional. Default true.
 -- @param muted boolean. Optional. Default false.
@@ -748,7 +748,7 @@ end
 
 --- Midi Set Note. Wraps MIDI_SetNote.
 -- Set MIDI note properties. Properties passed as NULL (or negative values) will
--- not be set. Set noSort if setting multiple events, then call MIDI_Sort when
+-- not be set. Set no_sort if setting multiple events, then call MIDI_Sort when
 -- done. Setting multiple note start positions at once is done more safely by
 -- deleting and re-inserting the notes.
 -- @param note_idx number
@@ -776,7 +776,7 @@ end
 --- Midi Set Text Sysex Evt. Wraps MIDI_SetTextSysexEvt.
 -- Set MIDI text or sysex event properties. Properties passed as NULL will not be
 -- set. Allowable types are -1:sysex (msg should not include bounding F0..F7),
--- 1-14:MIDI text event types, 15=REAPER notation event. set noSort if setting
+-- 1-14:MIDI text event types, 15=REAPER notation event. set no_sort if setting
 -- multiple events, then call MIDI_Sort when done.
 -- @param sysxevt_idx number
 -- @param selected boolean Optional
@@ -821,12 +821,12 @@ function Take:set_source(source)
 end
 
 --- Constants for Take:set_info_value.
--- @field D_STARTOFFS double *: start offset in source media, in seconds
--- @field D_VOL double *: take volume, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc, negative if take polarity is flipped
--- @field D_PAN double *: take pan, -1..1
--- @field D_PANLAW double *: take pan law, -1=default, 0.5=-6dB, 1.0=+0dB, etc
--- @field D_PLAYRATE double *: take playback rate, 0.5=half speed, 1=normal, 2=double speed, etc
--- @field D_PITCH double *: take pitch adjustment in semitones, -12=one octave down, 0=normal, +12=one octave up, etc
+-- @field D_STARTOFFS number: start offset in source media, in seconds
+-- @field D_VOL number: take volume, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc, negative if take polarity is flipped
+-- @field D_PAN number: take pan, -1..1
+-- @field D_PANLAW number: take pan law, -1=default, 0.5=-6dB, 1.0=+0dB, etc
+-- @field D_PLAYRATE number: take playback rate, 0.5=half speed, 1=normal, 2=double speed, etc
+-- @field D_PITCH number: take pitch adjustment in semitones, -12=one octave down, 0=normal, +12=one octave up, etc
 -- @field B_PPITCH boolean: preserve pitch when changing playback rate
 -- @field I_LASTY number: Y-position (relative to top of track) in pixels (read-only)
 -- @field I_LASTH number: height in pixels (read-only)
@@ -910,16 +910,7 @@ function Take:set_take_stretch_marker_slope(idx, slope)
 end
 
 --- Delete Fx. Wraps TakeFX_Delete.
--- Remove a FX from take chain (returns true on success) FX indices can have
--- 0x2000000 added to them, in which case they will be used to address FX in
--- containers. To address a container, the 1-based subitem is multiplied by one
--- plus the count of the FX chain and added to the 1-based container item index.
--- e.g. to address the third item in the container at the second position of the
--- track FX chain for tr, the index would be 0x2000000 + 3*(TrackFX_GetCount(tr)+1)
--- + 2. This can be extended to sub-containers using TrackFX_GetNamedConfigParm
--- with container_count and similar logic. In REAPER v7.06+, you can use the much
--- more convenient method to navigate hierarchies, see TrackFX_GetNamedConfigParm
--- with parent_container and container_item.X.
+-- Remove a FX from take chain (returns true on success).
 -- @param fx number
 -- @return boolean
 function Take:delete_fx(fx)
@@ -1116,7 +1107,7 @@ end
 --- Analyze Take Loudness2. Wraps NF_AnalyzeTakeLoudness2.
 -- Same as NF_AnalyzeTakeLoudness but additionally returns shortTermMaxPos and
 -- momentaryMaxPos (in absolute project time). Note: shortTermMaxPos and
--- momentaryMaxPos indicate the beginning of time intervalls, (3 sec. and 0.4 sec.
+-- momentaryMaxPos indicate the beginning of time intervals, (3 sec. and 0.4 sec.
 -- resp.).
 -- @param analyze_true_peak boolean
 -- @return lufs_integrated number
