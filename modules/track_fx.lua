@@ -40,7 +40,7 @@ end
 
 --- Get param values from TrackFX.
 -- @return table array<Envelope>
-function TrackFX:get_params_values()
+function TrackFX:get_param_values()
 	local params = {}
 	local count = self:get_num_params()
 	for i = 0, count - 1 do
@@ -50,28 +50,28 @@ function TrackFX:get_params_values()
 	return params
 end
 
---- Iterate over TrackFX params values.
+--- Iterate over TrackFX param values.
 -- @return function iterator
-function TrackFX:iter_params_values()
-	return helpers.iter(self:get_params_values())
+function TrackFX:iter_param_values()
+	return helpers.iter(self:get_param_values())
 end
 
 --- Get param names from TrackFX.
 -- @return table array<Envelope>
-function TrackFX:get_params_names()
+function TrackFX:get_param_names()
 	local params = {}
 	local count = self:get_num_params()
 	for i = 0, count - 1 do
-		local param = self:get_param(i)
+		local param = self:get_param_name(i)
 		params[i + 1] = param
 	end
 	return params
 end
 
---- Iterate over TrackFX params values.
+--- Iterate over TrackFX param names.
 -- @return function iterator
-function TrackFX:iter_params_values()
-	return helpers.iter(self:get_params_values())
+function TrackFX:iter_param_names()
+	return helpers.iter(self:get_param_names())
 end
 
 -- @section ReaScript API Methods
@@ -517,7 +517,7 @@ end
 -- @param hi32bits number
 -- @return boolean
 function TrackFX:set_pin_mappings(is_output, pin, low32bits, hi32bits)
-	return r.TrackFX_SetPinMappings(self.tr.pointer, self.pointer, is_output, pin, low32bits, hi32bits)
+	return r.TrackFX_SetPinMappings(self.track.pointer, self.pointer, is_output, pin, low32bits, hi32bits)
 end
 
 --- Set Preset. Wraps TrackFX_SetPreset.
@@ -561,12 +561,13 @@ end
 --- Get Chain Ex. Wraps CF_GetTrackFXChainEx.
 -- Return a handle to the given track FX chain window. Set wantInputChain to get
 -- the track's input/monitoring FX chain.
--- @param project table
--- @param track table
 -- @param want_input_chain boolean
 -- @return FxChain
-function TrackFX:get_chain_ex(project, track, want_input_chain)
-	return r.CF_GetTrackFXChainEx(self.project.pointer, track, want_input_chain)
+function TrackFX:get_chain_ex(want_input_chain)
+    local Project = require("project")
+    local project = Project:new()
+    local want_input_chain = want_input_chain or false
+	return r.CF_GetTrackFXChainEx(project, self.track.pointer, want_input_chain)
 end
 
 --- Select. Wraps CF_SelectTrackFX.

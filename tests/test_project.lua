@@ -15,6 +15,10 @@ local function test_iter_sel_tracks()
         p:log(sel_track)
         for fx in sel_track:iter_track_fx_chain() do
             p:log(fx)
+            local handle = fx:get_chain_ex()
+            for param_name in fx:iter_param_names() do
+                p:log(param_name)
+            end
         end
         for item in sel_track:iter_items() do
             p:log(item)
