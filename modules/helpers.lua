@@ -55,13 +55,31 @@ function helpers.log_func(name, sep)
 	end
 end
 
--- Show a Message Box dialogue
+--- Constants for message box types.
+--- @field OK number
+--- @field OKCANCEL number
+--- @field ABORTRETRYIGNORE number
+--- @field YESNOCANCEL number
+--- @field YESNO number
+--- @field RETRYCANCEL number
+helpers.MsgBoxTypes = {
+	OK = 0,
+	OKCANCEL = 1,
+	ABORTRETRYIGNORE = 2,
+	YESNOCANCEL = 3,
+	YESNO = 4,
+	RETRYCANCEL = 5,
+}
+
+--- Show a Message Box dialogue
 --- @param msg string
 --- @param title number
+--- @param msgbox_type number helpers.MsgBoxTypes
 --- @return number
-function helpers.msg_box(msg, title, type)
+--- @see helpers.MsgBoxTypes
+function helpers.msg_box(msg, title, msgbox_type)
 	type = type or 0
-	return r.ShowMessageBox(msg, title, type)
+	return r.ShowMessageBox(msg, title, msgbox_type)
 end
 
 --- Create an iterator function for a table.
@@ -84,7 +102,7 @@ end
 --- @param start_idx number
 --- @param end_idx number
 --- @return table
-function slice_table(source_table, start_idx, end_idx)
+function helpers.slice_table(source_table, start_idx, end_idx)
 	start_idx = start_idx or 1
 	end_idx = end_idx or #source_table
 	local dest_table = {}
@@ -99,12 +117,12 @@ end
 --- Check if a file exists.
 --- @param fpath string
 --- @return boolean
-function file_exists(fpath)
+function helpers.file_exists(fpath)
 	local f = io.open(fpath, "rb")
 	if f then
 		f:close()
 	else
-		msg_box("File not found: " .. tostring(fpath), "Error")
+		helpers.msg_box("File not found: " .. tostring(fpath), "Error")
 	end
 	return f ~= nil
 end
@@ -112,7 +130,7 @@ end
 --- Read a file.
 --- @param fpath string
 --- @return string
-function read_file(fpath)
+function helpers.read_file(fpath)
 	if file_exists(fpath) then
 		local content = f:read("*all")
 		f:close()
