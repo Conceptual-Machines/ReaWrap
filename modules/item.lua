@@ -6,14 +6,14 @@
 local r = reaper
 local helpers = require("helpers")
 
---@class Item
+-- @class Item
 -- A wrapper for Reaper MediaItem*.
 local Item = {}
 
 --- Create new Item instance.
 --- @within ReaWrap Custom Methods
---- @param item userdata. The pointer to Reaper MediaItem*
---- @return Item table.
+--- @param item userdata The pointer to Reaper MediaItem*
+--- @return table Item instance
 function Item:new(item)
 	local obj = {
 		pointer_type = "MediaItem*",
@@ -57,46 +57,46 @@ end
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Item:iter_takes()
-	return helpers.iter(self:get_takes(master))
+	return helpers.iter(self:get_takes())
 end
 
 --- Whether there is at least one take in the item.
 --- @within ReaWrap Custom Methods
----@return boolean
+--- @return boolean
 function Item:has_takes()
-	return self:count_takes(master) > 0
+	return self:count_takes() > 0
 end
 
 --- Set Length in Beats.
 -- Redraws the screen only if refreshUI == true.
 --- @within ReaWrap Custom Methods
---- @param length number. Length in beats.
---- @param refresh_ui boolean. Optional (default true).
+--- @param length number Length in beats.
+--- @param refresh_ui boolean Optional (default true).
 --- @return boolean
 function Item:set_length_beats(length, refresh_ui)
 	local project = self:get_project_context()
 	local beats_to_seconds = project:beats_to_time(length)
 	local refresh_ui = refresh_ui or true
-	return r.SetMediaItemLength(self.pointer, length, refresh_ui)
+	return r.SetMediaItemLength(self.pointer, beats_to_seconds, refresh_ui)
 end
 
 --- Set Position in Beats.
--- Redraws the screen only if refreshUI == true. See UpdateArrange().
+-- Redraws the screen only if refreshUI == true.
 --- @within ReaWrap Custom Methods
---- @param position number. Position in beats.
---- @param refresh_ui boolean. Optional (default true).
+--- @param position number Position in beats.
+--- @param refresh_ui boolean Optional (default true).
 --- @return boolean
 function Item:set_position_beats(position, refresh_ui)
 	local project = self:get_project_context()
 	local beats_to_seconds = project:beats_to_time(position)
 	local refresh_ui = refresh_ui or true
-	return r.SetMediaItemLength(self.pointer, position, refresh_ui)
+	return r.SetMediaItemLength(self.pointer, beats_to_seconds, refresh_ui)
 end
 
 --- Add Take. Wraps AddTakeToMediaItem.
 -- creates a new take in an item
 --- @within ReaScript Wrapped Methods
---- @return Take table
+--- @return table Take instance
 function Item:add_take()
 	local Take = require("take")
 	local result = r.AddTakeToMediaItem(self.pointer)
@@ -114,7 +114,7 @@ end
 --- Get Active Take. Wraps GetActiveTake.
 -- get the active take in this item
 --- @within ReaScript Wrapped Methods
---- @return Take table
+--- @return table Take instance
 function Item:get_active_take()
 	local Take = require("take")
 	local result = r.GetActiveTake(self.pointer)
@@ -142,7 +142,7 @@ end
 
 --- Get Item Project Context. Wraps GetItemProjectContext.
 --- @within ReaScript Wrapped Methods
---- @return Project table
+--- @return table Project instance
 function Item:get_project_context()
 	local Project = require("project")
 	local result = r.GetItemProjectContext(self.pointer)
@@ -155,11 +155,11 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param str string
 --- @param is_undo boolean
---- @return str string
+--- @return string|nil
 function Item:get_state_chunk(str, is_undo)
-	local ret_val, str = r.GetItemStateChunk(self.pointer, str, is_undo)
+	local ret_val, chunk = r.GetItemStateChunk(self.pointer, str, is_undo)
 	if ret_val then
-		return str
+		return chunk
 	else
 		return nil
 	end
@@ -531,25 +531,25 @@ end
 -- arrays in the reaper.array format.
 --- @within ReaScript Wrapped Methods
 --- @param window_size number
---- @param reaperarray_peaks identifier
---- @param reaperarray_peakpositions identifier
---- @param reaperarray_rm_ss identifier
---- @param reaperarray_rm_spositions identifier
+--- @param peaks userdata
+--- @param peakpositions userdata
+--- @param rms userdata
+--- @param rms_positions userdata
 --- @return boolean
 function Item:analyze_peak_and_rms(
 	window_size,
-	reaperarray_peaks,
-	reaperarray_peakpositions,
-	reaperarray_rm_ss,
-	reaperarray_rm_spositions
+	peaks,
+	peakpositions,
+	rms,
+	rms_positions
 )
 	return r.NF_AnalyzeMediaItemPeakAndRMS(
 		self.pointer,
 		window_size,
-		reaperarray_peaks,
-		reaperarray_peakpositions,
-		reaperarray_rm_ss,
-		reaperarray_rm_spositions
+		peaks,
+		peakpositions,
+		rms,
+		rms_positions
 	)
 end
 
@@ -626,7 +626,7 @@ end
 -- see SNM_GetSetSourceState2.
 --- @within ReaScript Wrapped Methods
 --- @param take_idx number
---- @param state WDL_FastString
+--- @param state userdata
 --- @param new_value boolean
 --- @return boolean
 function Item:get_set_source_state(take_idx, state, new_value)
