@@ -34,23 +34,23 @@ function helpers.console_msg(arg)
 end
 
 --- Return a print function that joins the arguments with a separator.
---- @param sep string. Default is ', '
+--- @param sep string Default is ', '
 --- @return function
 function helpers.print_func(sep)
 	return function(...)
-		joiner = helpers.string_join(sep)
+		local joiner = helpers.string_join(sep)
 		helpers.console_msg(joiner(...))
 	end
 end
 
 --- Return a log function that prepends the current date and a name to the arguments.
 --- @param name string
---- @param sep string. Default is ' --- '
+--- @param sep string Default is ' --- '
 --- @return function
 function helpers.log_func(name, sep)
 	sep = sep or " --- "
 	return function(...)
-		printer = helpers.print_func(sep)
+		local printer = helpers.print_func(sep)
 		printer(os.date(), name, ...)
 	end
 end
