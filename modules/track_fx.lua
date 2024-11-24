@@ -13,9 +13,9 @@ local TrackFX = {}
 
 --- Create new TrackFX instance.
 --- @within ReaWrap Custom Methods
---- @param track Track. The Track object
---- @param fx_idx . The index of the FX
---- @return TrackFX table.
+--- @param track table The Track object
+--- @param fx_idx number The index of the FX
+--- @return table TrackFX instance
 function TrackFX:new(track, fx_idx)
 	local obj = {
 		pointer_type = "TrackFX",
@@ -94,13 +94,13 @@ end
 --- Format Param Value. Wraps TrackFX_FormatParamValue.
 -- Note: only works with FX that support Cockos VST extensions.--- @within ReaScript Wrapped Methods param number--- @within ReaScript Wrapped Methods val number
 --- @within ReaScript Wrapped Methods
---- @return buf string
+--- @return string
 function TrackFX:format_param_value(param, val)
 	local ret_val, buf = r.TrackFX_FormatParamValue(self.track.pointer, self.pointer, param, val)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to format param value.")
 	end
 end
 
@@ -110,13 +110,13 @@ end
 --- @param param number
 --- @param value number
 --- @param buf string
---- @return buf string
+--- @return string
 function TrackFX:format_param_value_normalized(param, value, buf)
 	local ret_val, buf = r.TrackFX_FormatParamValueNormalized(self.track.pointer, self.pointer, param, value, buf)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to format param value normalized.")
 	end
 end
 
@@ -177,8 +177,8 @@ TrackFX.BandIndexConstants = {
 -- Returns true if the EQ band is enabled. Returns false if the band is disabled,
 -- or if track/fx_idx is not ReaEQ.
 --- @within ReaScript Wrapped Methods
---- @param band_type number. TrackFX.BandTypeConstants.
---- @param band_idx number. TrackFX.BandIndexConstants.
+--- @param band_type number TrackFX.BandTypeConstants.
+--- @param band_idx number TrackFX.BandIndexConstants.
 --- @return boolean
 function TrackFX:get_eq_band_enabled(band_type, band_idx)
 	return r.TrackFX_GetEQBandEnabled(self.track.pointer, self.pointer, band_type, band_idx)
@@ -189,17 +189,17 @@ end
 -- bandpass.
 --- @within ReaScript Wrapped Methods
 --- @param param_idx number
---- @return band_type number. See TrackFX.BandTypeConstants.
---- @return band_idx number. See TrackFX.BandIndexConstants.
---- @return param_type number
---- @return norm_val number
+--- @return number band_type. See TrackFX.BandTypeConstants.
+--- @return number band_idx See TrackFX.BandIndexConstants.
+--- @return number param_type
+--- @return number norm_val
 function TrackFX:get_eq_param(param_idx)
 	local ret_val, band_type, band_idx, param_type, norm_val =
-		r.TrackFX_GetEQParam(self.track.pointer, fx_idx, param_idx)
+		r.TrackFX_GetEQParam(self.track.pointer, self.pointer, param_idx)
 	if ret_val then
 		return band_type, band_idx, param_type, norm_val
 	else
-		return nil
+		error("Failed to get EQ param.")
 	end
 end
 
@@ -207,7 +207,7 @@ end
 -- returns HWND of floating window for effect index, if any.
 -- and container_item.X.
 --- @within ReaScript Wrapped Methods
---- @return HWND
+--- @return userdata HWND
 function TrackFX:get_floating_window()
 	return r.TrackFX_GetFloatingWindow(self.track.pointer, self.pointer)
 end
@@ -215,19 +215,19 @@ end
 --- Get Formatted Param Value. Wraps TrackFX_GetFormattedParamValue.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return buf string
+--- @return string
 function TrackFX:get_formatted_param_value(param)
 	local ret_val, buf = r.TrackFX_GetFormattedParamValue(self.track.pointer, self.pointer, param)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get formatted param value.")
 	end
 end
 
 --- Get Guid. Wraps TrackFX_GetFXGUID.
 --- @within ReaScript Wrapped Methods
---- @return guid string
+--- @return string
 function TrackFX:get_guid()
 	return r.TrackFX_GetFXGUID(self.track.pointer, self.pointer)
 end
@@ -235,14 +235,14 @@ end
 --- Get Name. Wraps TrackFX_GetFXName.
 --- @within ReaScript Wrapped Methods
 --- @param fx_idx number Optional. If not provided, the current FX index will be used.
---- @return buf string
+--- @return string
 function TrackFX:get_name(fx_idx)
 	local fx_idx = fx_idx or self.pointer
 	local ret_val, buf = r.TrackFX_GetFXName(self.track.pointer, fx_idx)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get FX name.")
 	end
 end
 
@@ -259,14 +259,14 @@ end
 -- Gets the number of input/output pins for FX if available, returns plug-in type
 -- or -1 on error.
 --- @within ReaScript Wrapped Methods
---- @return input_pins number
---- @return output_pins number
+--- @return number input_pins
+--- @return number output_pins
 function TrackFX:get_io_size()
 	local ret_val, input_pins, output_pins = r.TrackFX_GetIOSize(self.track.pointer, self.pointer)
 	if ret_val then
 		return input_pins, output_pins
 	else
-		return nil
+		error("Failed to get IO size.")
 	end
 end
 
@@ -445,7 +445,7 @@ function TrackFX:get_named_config_param(param_name)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get named config param.")
 	end
 end
 
@@ -473,46 +473,46 @@ end
 --- Get Param. Wraps TrackFX_GetParam.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return min_val number
---- @return max_val number
+--- @return number min_val
+--- @return number max_val
 function TrackFX:get_param(param)
 	local ret_val, min_val, max_val = r.TrackFX_GetParam(self.track.pointer, self.pointer, param)
 	if ret_val then
 		return min_val, max_val
 	else
-		return nil
+		error("Failed to get param.")
 	end
 end
 
 --- Get Parameter Step Sizes. Wraps TrackFX_GetParameterStepSizes.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return step number
---- @return small_step number
---- @return large_step number
---- @return is_toggle boolean
+--- @return number step
+--- @return number small_step
+--- @return number large_step
+--- @return boolean is_toggle
 function TrackFX:get_parameter_step_sizes(param)
 	local ret_val, step, small_step, large_step, is_toggle =
 		r.TrackFX_GetParameterStepSizes(self.track.pointer, self.pointer, param)
 	if ret_val then
 		return step, small_step, large_step, is_toggle
 	else
-		return nil
+		error("Failed to get parameter step sizes.")
 	end
 end
 
 --- Get Param Ex. Wraps TrackFX_GetParamEx.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return min_val number
---- @return max_val number
---- @return mid_val number
+--- @return number min_val
+--- @return number max_val
+--- @return number mid_val
 function TrackFX:get_param_ex(param)
 	local ret_val, min_val, max_val, mid_val = r.TrackFX_GetParamEx(self.track.pointer, self.pointer, param)
 	if ret_val then
 		return min_val, max_val, mid_val
 	else
-		return nil
+		error("Failed to get param ex.")
 	end
 end
 
@@ -529,26 +529,26 @@ end
 --- Get Param Ident. Wraps TrackFX_GetParamIdent.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return buf string
+--- @return string
 function TrackFX:get_param_ident(param)
 	local ret_val, buf = r.TrackFX_GetParamIdent(self.track.pointer, self.pointer, param)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get param ident.")
 	end
 end
 
 --- Get Param Name. Wraps TrackFX_GetParamName.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return buf string
+--- @return string
 function TrackFX:get_param_name(param)
 	local ret_val, buf = r.TrackFX_GetParamName(self.track.pointer, self.pointer, param)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get param name.")
 	end
 end
 
@@ -569,13 +569,13 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param is_output number
 --- @param pin number
---- @return high32 number
+--- @return number high32
 function TrackFX:get_pin_mappings(is_output, pin)
 	local ret_val, high32 = r.TrackFX_GetPinMappings(self.tr.pointer, self.pointer, is_output, pin)
 	if ret_val then
 		return high32
 	else
-		return nil
+		error("Failed to get pin mappings.")
 	end
 end
 
@@ -589,19 +589,19 @@ function TrackFX:get_preset()
 	if ret_val then
 		return preset_name
 	else
-		return nil
+		error("Failed to get preset.")
 	end
 end
 
 --- Get Preset Index. Wraps TrackFX_GetPresetIndex.
 --- @within ReaScript Wrapped Methods
---- @return number_of_presets number
+--- @return number
 function TrackFX:get_preset_index()
-	local ret_val, number_of_presets = r.TrackFX_GetPresetIndex(self.track.pointer, self.pointer)
+	local ret_val, preset_idx = r.TrackFX_GetPresetIndex(self.track.pointer, self.pointer)
 	if ret_val then
-		return number_of_presets
+		return preset_idx
 	else
-		return nil
+		error("Failed to get preset index.")
 	end
 end
 
@@ -626,7 +626,7 @@ end
 
 --- Get User Preset Filename. Wraps TrackFX_GetUserPresetFilename.
 --- @within ReaScript Wrapped Methods
---- @return fn string
+--- @return string
 function TrackFX:get_user_preset_filename()
 	return r.TrackFX_GetUserPresetFilename(self.track.pointer, self.pointer)
 end
@@ -653,8 +653,8 @@ end
 
 --- Set Eq Band Enabled. Wraps TrackFX_SetEQBandEnabled.
 --- @within ReaScript Wrapped Methods
---- @param band_type number. TrackFX.BandTypeConstants.
---- @param band_idx number. TrackFX.BandIndexConstants.
+--- @param band_type number TrackFX.BandTypeConstants.
+--- @param band_idx number TrackFX.BandIndexConstants.
 --- @param enable boolean
 --- @return boolean
 function TrackFX:set_eq_band_enabled(band_type, band_idx, enable)
@@ -664,8 +664,8 @@ end
 --- Set Eq Param. Wraps TrackFX_SetEQParam.
 -- Returns false if track/fxidx is not ReaEQ.
 --- @within ReaScript Wrapped Methods
---- @param band_type number. TrackFX.BandTypeConstants.
---- @param band_idx number. TrackFX.BandIndexConstants.
+--- @param band_type number  TrackFX.BandTypeConstants.
+--- @param band_idx number TrackFX.BandIndexConstants.
 --- @param param_type number
 --- @param val number
 --- @param is_norm boolean
@@ -747,7 +747,7 @@ end
 -- Sets the preset idx, or the factory preset (idx==-2), or the default user preset
 -- (idx==-1). Returns true on success. See TrackFX_GetPresetIndex.
 --- @within ReaScript Wrapped Methods
---- @param preset_idx number. The index of the preset
+--- @param preset_idx number The index of the preset
 --- @return boolean
 function TrackFX:set_preset_by_index(preset_idx)
 	return r.TrackFX_SetPresetByIndex(self.track.pointer, self.pointer, idx)
@@ -762,7 +762,7 @@ TrackFX.ShowFlagsConstants = {
 
 --- Show. Wraps TrackFX_Show.
 --- @within ReaScript Wrapped Methods
---- @param show_flag number. TrackFX.ShowFlagsConstants.
+--- @param show_flag number TrackFX.ShowFlagsConstants.
 function TrackFX:show(show_flag)
 	return r.TrackFX_Show(self.track.pointer, self.pointer, show_flag)
 end
@@ -780,7 +780,8 @@ end
 -- the track's input/monitoring FX chain.
 --- @within ReaScript Wrapped Methods
 --- @param want_input_chain boolean
---- @return FxChain
+--- @return userdata FxChain
+---- TODO move this to Project
 function TrackFX:get_chain_ex(want_input_chain)
 	local Project = require("project")
 	local project = Project:new()
