@@ -155,20 +155,20 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param str string
 --- @param is_undo boolean
---- @return string|nil
+--- @return string
 function Item:get_state_chunk(str, is_undo)
 	local ret_val, chunk = r.GetItemStateChunk(self.pointer, str, is_undo)
 	if ret_val then
 		return chunk
 	else
-		return nil
+		error("Failed to get item state chunk.")
 	end
 end
 
 --- Get Track. Wraps GetMediaItem_Track.
 -- Get parent track of media item
 --- @within ReaScript Wrapped Methods
---- @return Track table
+--- @return table Track object
 function Item:get_track()
 	local Track = require("track")
 	local result = r.GetMediaItem_Track(self.pointer)
@@ -290,7 +290,7 @@ Item.GetSetInfoStringConstants = {
 --- @param param_name string Item.GetSetInfoStringConstants
 --- @param info string
 --- @param set_value boolean Optional (default false)
---- @return info string
+--- @return string info
 --- @see Item.GetSetInfoStringConstants
 function Item:get_set_info_string(param_name, info, set_value)
 	local set_value = set_value or false
@@ -298,7 +298,7 @@ function Item:get_set_info_string(param_name, info, set_value)
 	if ret_val then
 		return info
 	else
-		return nil
+		error("Failed to get/set item info string.")
 	end
 end
 
@@ -331,7 +331,7 @@ end
 --- Move To Track. Wraps MoveMediaItemToTrack.
 -- Returns TRUE if move succeeded.
 --- @within ReaScript Wrapped Methods
---- @param dest_track Track
+--- @param dest_track table Track
 --- @return boolean
 function Item:move_to_track(dest_track)
 	return r.MoveMediaItemToTrack(self.pointer, dest_track.pointer)
@@ -479,7 +479,7 @@ end
 -- [BR] Get media item GUID as a string (guidStringOut_sz should be at least 64).
 -- To get media item back from GUID string, see BR_GetMediaItemByGUID.
 --- @within ReaScript Wrapped Methods
---- @return guid_string string
+--- @return string guid_string
 function Item:get_guid()
 	return r.BR_GetMediaItemGUID(self.pointer)
 end
@@ -489,14 +489,14 @@ end
 -- false if there is no image resource set. To set image resource, see
 -- BR_SetMediaItemImageResource.
 --- @within ReaScript Wrapped Methods
---- @return image string
---- @return image_flags number
+--- @return string image
+--- @return number image_flags
 function Item:get_image_resource()
 	local ret_val, image, image_flags = r.BR_GetMediaItemImageResource(self.pointer)
 	if ret_val then
 		return image, image_flags
 	else
-		return nil
+		error("Failed to get image resource.")
 	end
 end
 
@@ -575,13 +575,13 @@ end
 -- See NF_GetMediaItemMaxPeak, additionally returns maxPeakPos (relative to item
 -- position).
 --- @within ReaScript Wrapped Methods
---- @return max_peak_pos number
+--- @return number max_peak_pos
 function Item:get_max_peak_and_max_peak_pos()
 	local ret_val, max_peak_pos = r.NF_GetMediaItemMaxPeakAndMaxPeakPos(self.pointer)
 	if ret_val then
 		return max_peak_pos
 	else
-		return nil
+		error("Failed to get max peak and max peak pos.")
 	end
 end
 
