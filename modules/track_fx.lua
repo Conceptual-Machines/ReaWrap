@@ -7,10 +7,12 @@ local r = reaper
 local helpers = require("helpers")
 
 -- @class TrackFX
--- Abstracts TrackFX functions.
+-- @field pointer_type string
+-- @field track Track
 local TrackFX = {}
 
 --- Create new TrackFX instance.
+--- @within ReaWrap Custom Methods
 --- @param track Track. The Track object
 --- @param fx_idx . The index of the FX
 --- @return TrackFX table.
@@ -25,10 +27,8 @@ function TrackFX:new(track, fx_idx)
 	return obj
 end
 
--- @section ReaWrap Custom Methods
-
 --- Log messages with the TrackFX logger.
--- Custom ReaWrap method.
+--- @within ReaWrap Custom Methods
 --- @param ... (varargs) Messages to log.
 function TrackFX:log(...)
 	local logger = helpers.log_func("TrackFX")
@@ -37,14 +37,14 @@ function TrackFX:log(...)
 end
 
 --- String representation of the TrackFX instance.
--- Custom ReaWrap method.
+--- @within ReaWrap Custom Methods
 --- @return string
 function TrackFX:__tostring()
 	return string.format("<TrackFX name=%s>", self:get_name())
 end
 
 --- Get param values from TrackFX.
--- Custom ReaWrap method.
+--- @within ReaWrap Custom Methods
 --- @return table array<Envelope>
 function TrackFX:get_param_values()
 	local params = {}
@@ -57,14 +57,14 @@ function TrackFX:get_param_values()
 end
 
 --- Iterate over TrackFX param values.
--- Custom ReaWrap method.
+--- @within ReaWrap Custom Methods
 --- @return function iterator
 function TrackFX:iter_param_values()
 	return helpers.iter(self:get_param_values())
 end
 
 --- Get param names from TrackFX.
--- Custom ReaWrap method.
+--- @within ReaWrap Custom Methods
 --- @return table array<Envelope>
 function TrackFX:get_param_names()
 	local params = {}
@@ -77,16 +77,14 @@ function TrackFX:get_param_names()
 end
 
 --- Iterate over TrackFX param names.
--- Custom ReaWrap method.
+--- @within ReaWrap Custom Methods
 --- @return function iterator
 function TrackFX:iter_param_names()
 	return helpers.iter(self:get_param_names())
 end
 
--- @section ReaScript API Methods
-
 --- End Param Edit. Wraps TrackFX_EndParamEdit.
--- Custom ReaWrap method.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return boolean
 function TrackFX:end_param_edit(param)
@@ -94,9 +92,8 @@ function TrackFX:end_param_edit(param)
 end
 
 --- Format Param Value. Wraps TrackFX_FormatParamValue.
--- Note: only works with FX that support Cockos VST extensions.
---- @param param number
---- @param val number
+-- Note: only works with FX that support Cockos VST extensions.--- @within ReaScript Wrapped Methods param number--- @within ReaScript Wrapped Methods val number
+--- @within ReaScript Wrapped Methods
 --- @return buf string
 function TrackFX:format_param_value(param, val)
 	local ret_val, buf = r.TrackFX_FormatParamValue(self.track.pointer, self.pointer, param, val)
@@ -109,6 +106,7 @@ end
 
 --- Format Param Value Normalized. Wraps TrackFX_FormatParamValueNormalized.
 -- Note: only works with FX that support Cockos VST extensions.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @param value number
 --- @param buf string
@@ -125,12 +123,14 @@ end
 --- Get Chain Visible. Wraps TrackFX_GetChainVisible.
 -- returns index of effect visible in chain, or -1 for chain hidden, or -2 for
 -- chain visible but no effect selected
+--- @within ReaScript Wrapped Methods
 --- @return number
 function TrackFX:get_chain_visible()
 	return r.TrackFX_GetChainVisible(self.track.pointer)
 end
 
 --- Get Enabled. Wraps TrackFX_GetEnabled.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function TrackFX:get_enabled()
 	return r.TrackFX_GetEnabled(self.track.pointer, self.pointer)
@@ -140,6 +140,7 @@ end
 -- Get the index of ReaEQ in the track FX chain. If ReaEQ is not in the chain and
 -- instantiate is true, it will be inserted. See TrackFX_GetInstrument,
 -- TrackFX_GetByName.
+--- @within ReaScript Wrapped Methods
 --- @param instantiate boolean Optional.
 --- @return number
 function TrackFX:get_eq(instantiate)
@@ -175,6 +176,7 @@ TrackFX.BandIndexConstants = {
 --- Get Eq Band Enabled. Wraps TrackFX_GetEQBandEnabled.
 -- Returns true if the EQ band is enabled. Returns false if the band is disabled,
 -- or if track/fx_idx is not ReaEQ.
+--- @within ReaScript Wrapped Methods
 --- @param band_type number. TrackFX.BandTypeConstants.
 --- @param band_idx number. TrackFX.BandIndexConstants.
 --- @return boolean
@@ -185,6 +187,7 @@ end
 --- Get Eq Param. Wraps TrackFX_GetEQParam.
 -- Returns false if track/fx_idx is not ReaEQ.
 -- bandpass.
+--- @within ReaScript Wrapped Methods
 --- @param param_idx number
 --- @return band_type number. See TrackFX.BandTypeConstants.
 --- @return band_idx number. See TrackFX.BandIndexConstants.
@@ -203,12 +206,14 @@ end
 --- Get Floating Window. Wraps TrackFX_GetFloatingWindow.
 -- returns HWND of floating window for effect index, if any.
 -- and container_item.X.
+--- @within ReaScript Wrapped Methods
 --- @return HWND
 function TrackFX:get_floating_window()
 	return r.TrackFX_GetFloatingWindow(self.track.pointer, self.pointer)
 end
 
 --- Get Formatted Param Value. Wraps TrackFX_GetFormattedParamValue.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return buf string
 function TrackFX:get_formatted_param_value(param)
@@ -221,12 +226,14 @@ function TrackFX:get_formatted_param_value(param)
 end
 
 --- Get Guid. Wraps TrackFX_GetFXGUID.
+--- @within ReaScript Wrapped Methods
 --- @return guid string
 function TrackFX:get_guid()
 	return r.TrackFX_GetFXGUID(self.track.pointer, self.pointer)
 end
 
 --- Get Name. Wraps TrackFX_GetFXName.
+--- @within ReaScript Wrapped Methods
 --- @param fx_idx number Optional. If not provided, the current FX index will be used.
 --- @return buf string
 function TrackFX:get_name(fx_idx)
@@ -242,6 +249,7 @@ end
 --- Get Instrument. Wraps TrackFX_GetInstrument.
 -- Get the index of the first track FX insert that is a virtual instrument, or -1
 -- if none. See TrackFX_GetEQ, TrackFX_GetByName.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function TrackFX:get_instrument()
 	return r.TrackFX_GetInstrument(self.track.pointer)
@@ -250,6 +258,7 @@ end
 --- Get Io Size. Wraps TrackFX_GetIOSize.
 -- Gets the number of input/output pins for FX if available, returns plug-in type
 -- or -1 on error.
+--- @within ReaScript Wrapped Methods
 --- @return input_pins number
 --- @return output_pins number
 function TrackFX:get_io_size()
@@ -264,6 +273,7 @@ end
 TrackFX.NamedConfigParamConstants = {}
 
 --- A table of configuration parameters for TrackFX:get_named_config_param. Read Only.
+--- @within Constants
 --- @field PDC string PDC latency
 --- @field IN_PIN_X string name of input pin X
 --- @field OUT_PIN_X string name of output pin X
@@ -284,6 +294,7 @@ TrackFX.NamedConfigParamConstants = {}
 TrackFX.NamedConfigParamConstants.ReadOnly = {}
 
 --- A table of configuration parameters for TrackFX:get_named_config_param. Read Write.
+--- @within Constants
 --- @field VST_CHUNK_PROGRAM string base64-encoded VST-specific chunk.
 --- @field CLAP_CHUNK string base64-encoded CLAP-specific chunk.
 --- @field PARAM_X_LFO string parameter modulation LFO state
@@ -329,6 +340,7 @@ TrackFX.NamedConfigParamConstants.ReadOnly = {}
 TrackFX.NamedConfigParamConstants.ReadWrite = {}
 
 --- A table of values to be associated with configuration constants.
+--- @within Constants
 --- @field container_idx number Index of the container.
 --- @field input_pin_idx number Index of the input pin.
 --- @field output_pin_idx number Index of the output pin.
@@ -340,6 +352,7 @@ TrackFX.NamedConfigParamConstants.ReadWrite = {}
 TrackFX.NamedConfigParamValues = {}
 
 --- Create a table of named configuration parameters constants.
+--- @within ReaScript Wrapped Methods
 --- @param params Optional. A table containing values that need to be associated to a constant, e.g. CONTAINER_ITEM_X.
 --- @return table. A populated table of configuration constants.
 --- @usage -- For config params that require a value to be associated with a constant, e.g. CONTAINER_ITEM_X
@@ -417,6 +430,7 @@ end
 
 --- Get Named Config Param. Wraps TrackFX_GetNamedConfigParm.
 -- Gets plug-in specific named configuration value.
+--- @within ReaScript Wrapped Methods
 --- @param param_name string. Use TrackFX.NamedConfigParamConstants:create(params --[[optional]) for valid constants.
 --- @return buf string
 --- @usage -- For config params that don't require a value
@@ -436,24 +450,28 @@ function TrackFX:get_named_config_param(param_name)
 end
 
 --- Get Num Params. Wraps TrackFX_GetNumParams.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function TrackFX:get_num_params()
 	return r.TrackFX_GetNumParams(self.track.pointer, self.pointer)
 end
 
 --- Get Offline. Wraps TrackFX_GetOffline.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function TrackFX:get_offline()
 	return r.TrackFX_GetOffline(self.track.pointer, self.pointer)
 end
 
 --- Get Open. Wraps TrackFX_GetOpen.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function TrackFX:get_open()
 	return r.TrackFX_GetOpen(self.track.pointer, self.pointer)
 end
 
 --- Get Param. Wraps TrackFX_GetParam.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return min_val number
 --- @return max_val number
@@ -467,6 +485,7 @@ function TrackFX:get_param(param)
 end
 
 --- Get Parameter Step Sizes. Wraps TrackFX_GetParameterStepSizes.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return step number
 --- @return small_step number
@@ -483,6 +502,7 @@ function TrackFX:get_parameter_step_sizes(param)
 end
 
 --- Get Param Ex. Wraps TrackFX_GetParamEx.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return min_val number
 --- @return max_val number
@@ -499,6 +519,7 @@ end
 --- Get Param From Ident. Wraps TrackFX_GetParamFromIdent.
 -- gets the parameter index from an identifying string (:wet, :bypass, :delta, or a
 -- string returned from GetParamIdent), or -1 if unknown.
+--- @within ReaScript Wrapped Methods
 --- @param ident_str string
 --- @return number
 function TrackFX:get_param_from_ident(ident_str)
@@ -506,6 +527,7 @@ function TrackFX:get_param_from_ident(ident_str)
 end
 
 --- Get Param Ident. Wraps TrackFX_GetParamIdent.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return buf string
 function TrackFX:get_param_ident(param)
@@ -518,6 +540,7 @@ function TrackFX:get_param_ident(param)
 end
 
 --- Get Param Name. Wraps TrackFX_GetParamName.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return buf string
 function TrackFX:get_param_name(param)
@@ -530,6 +553,7 @@ function TrackFX:get_param_name(param)
 end
 
 --- Get Param Normalized. Wraps TrackFX_GetParamNormalized.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @return number
 function TrackFX:get_param_normalized(param)
@@ -542,6 +566,7 @@ end
 -- second 64 bits of mappings independent of the first 64 bits. FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
 -- (normal tracks) or hardware output FX (master track).
+--- @within ReaScript Wrapped Methods
 --- @param is_output number
 --- @param pin number
 --- @return high32 number
@@ -558,6 +583,7 @@ end
 -- Get the name of the preset currently showing in the REAPER dropdown, or the full
 -- path to a factory preset file for VST3 plug-ins (.vstpreset). See
 -- TrackFX_SetPreset.
+--- @within ReaScript Wrapped Methods
 function TrackFX:get_preset()
 	local ret_val, preset_name = r.TrackFX_GetPreset(self.track.pointer, self.pointer)
 	if ret_val then
@@ -568,6 +594,7 @@ function TrackFX:get_preset()
 end
 
 --- Get Preset Index. Wraps TrackFX_GetPresetIndex.
+--- @within ReaScript Wrapped Methods
 --- @return number_of_presets number
 function TrackFX:get_preset_index()
 	local ret_val, number_of_presets = r.TrackFX_GetPresetIndex(self.track.pointer, self.pointer)
@@ -581,6 +608,7 @@ end
 --- Get Rec Chain Visible. Wraps TrackFX_GetRecChainVisible.
 -- returns index of effect visible in record input chain, or -1 for chain hidden,
 -- or -2 for chain visible but no effect selected
+--- @within ReaScript Wrapped Methods
 --- @return number
 function TrackFX:get_rec_chain_visible()
 	return r.TrackFX_GetRecChainVisible(self.track.pointer)
@@ -590,12 +618,14 @@ end
 -- returns count of record input FX. To access record input FX, use a FX indices
 -- [0x1000000..0x1000000+n). On the master track, this accesses monitoring FX
 -- rather than record input FX.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function TrackFX:get_rec_count()
 	return r.TrackFX_GetRecCount(self.track.pointer)
 end
 
 --- Get User Preset Filename. Wraps TrackFX_GetUserPresetFilename.
+--- @within ReaScript Wrapped Methods
 --- @return fn string
 function TrackFX:get_user_preset_filename()
 	return r.TrackFX_GetUserPresetFilename(self.track.pointer, self.pointer)
@@ -604,6 +634,7 @@ end
 --- Navigate Presets. Wraps TrackFX_NavigatePresets.
 -- preset_move==1 activates the next preset, preset_move==-1 activates the previous
 -- preset, etc.
+--- @within ReaScript Wrapped Methods
 --- @param preset_move number
 --- @return boolean
 function TrackFX:navigate_presets(preset_move)
@@ -614,12 +645,14 @@ end
 -- See TrackFX_GetEnabled FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track).
+--- @within ReaScript Wrapped Methods
 --- @param enabled boolean
 function TrackFX:set_enabled(enabled)
 	return r.TrackFX_SetEnabled(self.track.pointer, self.pointer, enabled)
 end
 
 --- Set Eq Band Enabled. Wraps TrackFX_SetEQBandEnabled.
+--- @within ReaScript Wrapped Methods
 --- @param band_type number. TrackFX.BandTypeConstants.
 --- @param band_idx number. TrackFX.BandIndexConstants.
 --- @param enable boolean
@@ -630,6 +663,7 @@ end
 
 --- Set Eq Param. Wraps TrackFX_SetEQParam.
 -- Returns false if track/fxidx is not ReaEQ.
+--- @within ReaScript Wrapped Methods
 --- @param band_type number. TrackFX.BandTypeConstants.
 --- @param band_idx number. TrackFX.BandIndexConstants.
 --- @param param_type number
@@ -642,6 +676,7 @@ end
 
 --- Set Named Config Parm. Wraps TrackFX_SetNamedConfigParm.
 -- sets plug-in specific named configuration value (returns true on success).
+--- @within ReaScript Wrapped Methods
 --- @param param_name string
 --- @param value string
 --- @return boolean
@@ -651,6 +686,7 @@ end
 
 --- Set Offline. Wraps TrackFX_SetOffline.
 -- See TrackFX_GetOffline.
+--- @within ReaScript Wrapped Methods
 --- @param offline boolean
 function TrackFX:set_offline(offline)
 	return r.TrackFX_SetOffline(self.track.pointer, self.pointer, offline)
@@ -658,12 +694,14 @@ end
 
 --- Set Open. Wraps TrackFX_SetOpen.
 -- Open this FX UI. See TrackFX_GetOpen.
+--- @within ReaScript Wrapped Methods
 --- @param open boolean
 function TrackFX:set_open(open)
 	return r.TrackFX_SetOpen(self.track.pointer, self.pointer, open)
 end
 
 --- Set Param. Wraps TrackFX_SetParam.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @param val number
 --- @return boolean
@@ -672,6 +710,7 @@ function TrackFX:set_param(param, val)
 end
 
 --- Set Param Normalized. Wraps TrackFX_SetParamNormalized.
+--- @within ReaScript Wrapped Methods
 --- @param param number
 --- @param value number
 --- @return boolean
@@ -684,6 +723,7 @@ end
 -- unsupported (not all types of plug-ins support this capability). Add 0x1000000
 -- to pin index in order to access the second 64 bits of mappings independent of
 -- the first 64 bits.
+--- @within ReaScript Wrapped Methods
 --- @param is_output number
 --- @param pin number
 --- @param low32bits number
@@ -696,6 +736,7 @@ end
 --- Set Preset. Wraps TrackFX_SetPreset.
 -- Activate a preset with the name shown in the REAPER dropdown. Full paths to
 -- .vst preset files are also supported for VST3 plug-ins. See TrackFX_GetPreset.
+--- @within ReaScript Wrapped Methods
 --- @param preset_name string
 --- @return boolean
 function TrackFX:set_preset(preset_name)
@@ -705,6 +746,7 @@ end
 --- Set Preset By Index. Wraps TrackFX_SetPresetByIndex.
 -- Sets the preset idx, or the factory preset (idx==-2), or the default user preset
 -- (idx==-1). Returns true on success. See TrackFX_GetPresetIndex.
+--- @within ReaScript Wrapped Methods
 --- @param preset_idx number. The index of the preset
 --- @return boolean
 function TrackFX:set_preset_by_index(preset_idx)
@@ -719,6 +761,7 @@ TrackFX.ShowFlagsConstants = {
 }
 
 --- Show. Wraps TrackFX_Show.
+--- @within ReaScript Wrapped Methods
 --- @param show_flag number. TrackFX.ShowFlagsConstants.
 function TrackFX:show(show_flag)
 	return r.TrackFX_Show(self.track.pointer, self.pointer, show_flag)
@@ -726,6 +769,7 @@ end
 
 --- Get Chain. Wraps CF_GetTrackFXChain.
 -- Return a handle to the given track FX chain window.
+--- @within ReaScript Wrapped Methods
 --- @return FxChain
 function TrackFX:get_chain()
 	return r.CF_GetTrackFXChain(self.track.pointer)
@@ -734,6 +778,7 @@ end
 --- Get Chain Ex. Wraps CF_GetTrackFXChainEx.
 -- Return a handle to the given track FX chain window. Set wantInputChain to get
 -- the track's input/monitoring FX chain.
+--- @within ReaScript Wrapped Methods
 --- @param want_input_chain boolean
 --- @return FxChain
 function TrackFX:get_chain_ex(want_input_chain)
@@ -746,6 +791,7 @@ end
 --- Select. Wraps CF_SelectTrackFX.
 -- Set which track effect is active in the track's FX chain. The FX chain window
 -- does not have to be open.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function TrackFX:select()
 	return r.CF_SelectTrackFX(self.track.pointer, self.pointer)
