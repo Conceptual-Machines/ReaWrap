@@ -536,21 +536,8 @@ end
 --- @param rms userdata
 --- @param rms_positions userdata
 --- @return boolean
-function Item:analyze_peak_and_rms(
-	window_size,
-	peaks,
-	peakpositions,
-	rms,
-	rms_positions
-)
-	return r.NF_AnalyzeMediaItemPeakAndRMS(
-		self.pointer,
-		window_size,
-		peaks,
-		peakpositions,
-		rms,
-		rms_positions
-	)
+function Item:analyze_peak_and_rms(window_size, peaks, peakpositions, rms, rms_positions)
+	return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, window_size, peaks, peakpositions, rms, rms_positions)
 end
 
 --- Delete Take From Item. Wraps NF_DeleteTakeFromItem.
