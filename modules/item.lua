@@ -288,15 +288,15 @@ Item.GetSetInfoStringConstants = {
 -- Gets/sets an item attribute string.
 --- @within ReaScript Wrapped Methods
 --- @param param_name string Item.GetSetInfoStringConstants
---- @param string_need_big string
---- @param set_new_value boolean
---- @return string_need_big string
+--- @param info string
+--- @param set_value boolean Optional (default false)
+--- @return info string
 --- @see Item.GetSetInfoStringConstants
-function Item:get_set_info_string(param_name, string_need_big, set_new_value)
-	local ret_val, string_need_big =
-		r.GetSetMediaItemInfo_String(self.pointer, param_name, string_need_big, set_new_value)
+function Item:get_set_info_string(param_name, info, set_value)
+	local set_value = set_value or false
+	local ret_val, info = r.GetSetMediaItemInfo_String(self.pointer, param_name, info, set_value)
 	if ret_val then
-		return string_need_big
+		return info
 	else
 		return nil
 	end
@@ -534,12 +534,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param win_size number
 --- @param peaks userdata
---- @param peak_positions userdata
+--- @param peaks_pos userdata
 --- @param rms userdata
---- @param rms_positions userdata
+--- @param rms_pos userdata
 --- @return boolean
-function Item:analyze_peak_and_rms(win_size, peaks, peak_positions, rms, rms_positions)
-	return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, win_size, peaks, peak_positions, rms, rms_positions)
+function Item:analyze_peak_and_rms(win_size, peaks, peaks_pos, rms, rms_pos)
+	return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, win_size, peaks, peaks_pos, rms, rms_pos)
 end
 
 --- Delete Take From Item. Wraps NF_DeleteTakeFromItem.
