@@ -7,7 +7,8 @@ local r = reaper
 local helpers = require("helpers")
 
 -- @class PCM
--- Abstracts PCM_source.
+-- @field pointer_type string "PCM_source*"
+-- @field pointer userdata Pointer to PCM_source*
 local PCM = {}
 
 --- Create new PCM instance.
@@ -358,13 +359,14 @@ end
 -- Give a section source created using PCM_Source_CreateFromType("SECTION"). Offset
 -- and length are ignored if 0. Negative length to subtract from the total length
 -- of the source.
+--- @param section userdata PCM_source*
 --- @param offset number
 --- @param length number
 --- @param reverse boolean
 --- @param fade_in number Optional
 --- @return boolean
 function PCM:source_set_section_info(section, offset, length, reverse, fade_in)
-	local fade_in = fade_in or nil
+	local fade_in = fade_in or 0
 	return r.CF_PCM_Source_SetSectionInfo(section, self.pointer, offset, length, reverse, fade_in)
 end
 
