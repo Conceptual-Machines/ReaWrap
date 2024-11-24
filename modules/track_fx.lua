@@ -1,16 +1,19 @@
--- @description Provide implementation for TrackFX functions.
--- @author NomadMonad
+--- Provide implementation for TrackFX functions.
+-- @author Nomad Monad
 -- @license MIT
+-- @release 0.0.1
 
 local r = reaper
 local helpers = require("helpers")
 
+-- @class TrackFX
+-- Abstracts TrackFX functions.
 local TrackFX = {}
 
 --- Create new TrackFX instance.
--- @param track Track. The Track object
--- @param fx_idx . The index of the FX
--- @return TrackFX table.
+--- @param track Track. The Track object
+--- @param fx_idx . The index of the FX
+--- @return TrackFX table.
 function TrackFX:new(track, fx_idx)
 	local obj = {
 		pointer_type = "TrackFX",
@@ -25,7 +28,8 @@ end
 -- @section ReaWrap Custom Methods
 
 --- Log messages with the TrackFX logger.
--- @param ... (varargs) Messages to log.
+-- Custom ReaWrap method.
+--- @param ... (varargs) Messages to log.
 function TrackFX:log(...)
 	local logger = helpers.log_func("TrackFX")
 	logger(...)
@@ -33,13 +37,15 @@ function TrackFX:log(...)
 end
 
 --- String representation of the TrackFX instance.
--- @return string
+-- Custom ReaWrap method.
+--- @return string
 function TrackFX:__tostring()
 	return string.format("<TrackFX name=%s>", self:get_name())
 end
 
 --- Get param values from TrackFX.
--- @return table array<Envelope>
+-- Custom ReaWrap method.
+--- @return table array<Envelope>
 function TrackFX:get_param_values()
 	local params = {}
 	local count = self:get_num_params()
@@ -51,13 +57,15 @@ function TrackFX:get_param_values()
 end
 
 --- Iterate over TrackFX param values.
--- @return function iterator
+-- Custom ReaWrap method.
+--- @return function iterator
 function TrackFX:iter_param_values()
 	return helpers.iter(self:get_param_values())
 end
 
 --- Get param names from TrackFX.
--- @return table array<Envelope>
+-- Custom ReaWrap method.
+--- @return table array<Envelope>
 function TrackFX:get_param_names()
 	local params = {}
 	local count = self:get_num_params()
@@ -69,7 +77,8 @@ function TrackFX:get_param_names()
 end
 
 --- Iterate over TrackFX param names.
--- @return function iterator
+-- Custom ReaWrap method.
+--- @return function iterator
 function TrackFX:iter_param_names()
 	return helpers.iter(self:get_param_names())
 end
@@ -77,17 +86,18 @@ end
 -- @section ReaScript API Methods
 
 --- End Param Edit. Wraps TrackFX_EndParamEdit.
--- @param param number
--- @return boolean
+-- Custom ReaWrap method.
+--- @param param number
+--- @return boolean
 function TrackFX:end_param_edit(param)
 	return r.TrackFX_EndParamEdit(self.track.pointer, self.pointer, param)
 end
 
 --- Format Param Value. Wraps TrackFX_FormatParamValue.
 -- Note: only works with FX that support Cockos VST extensions.
--- @param param number
--- @param val number
--- @return buf string
+--- @param param number
+--- @param val number
+--- @return buf string
 function TrackFX:format_param_value(param, val)
 	local ret_val, buf = r.TrackFX_FormatParamValue(self.track.pointer, self.pointer, param, val)
 	if ret_val then
@@ -99,10 +109,10 @@ end
 
 --- Format Param Value Normalized. Wraps TrackFX_FormatParamValueNormalized.
 -- Note: only works with FX that support Cockos VST extensions.
--- @param param number
--- @param value number
--- @param buf string
--- @return buf string
+--- @param param number
+--- @param value number
+--- @param buf string
+--- @return buf string
 function TrackFX:format_param_value_normalized(param, value, buf)
 	local ret_val, buf = r.TrackFX_FormatParamValueNormalized(self.track.pointer, self.pointer, param, value, buf)
 	if ret_val then
@@ -115,13 +125,13 @@ end
 --- Get Chain Visible. Wraps TrackFX_GetChainVisible.
 -- returns index of effect visible in chain, or -1 for chain hidden, or -2 for
 -- chain visible but no effect selected
--- @return number
+--- @return number
 function TrackFX:get_chain_visible()
 	return r.TrackFX_GetChainVisible(self.track.pointer)
 end
 
 --- Get Enabled. Wraps TrackFX_GetEnabled.
--- @return boolean
+--- @return boolean
 function TrackFX:get_enabled()
 	return r.TrackFX_GetEnabled(self.track.pointer, self.pointer)
 end
@@ -130,8 +140,8 @@ end
 -- Get the index of ReaEQ in the track FX chain. If ReaEQ is not in the chain and
 -- instantiate is true, it will be inserted. See TrackFX_GetInstrument,
 -- TrackFX_GetByName.
--- @param instantiate boolean Optional.
--- @return number
+--- @param instantiate boolean Optional.
+--- @return number
 function TrackFX:get_eq(instantiate)
 	local instantiate = instantiate or false
 	return r.TrackFX_GetEQ(self.track.pointer, instantiate)
@@ -165,9 +175,9 @@ TrackFX.BandIndexConstants = {
 --- Get Eq Band Enabled. Wraps TrackFX_GetEQBandEnabled.
 -- Returns true if the EQ band is enabled. Returns false if the band is disabled,
 -- or if track/fx_idx is not ReaEQ.
--- @param band_type number. TrackFX.BandTypeConstants.
--- @param band_idx number. TrackFX.BandIndexConstants.
--- @return boolean
+--- @param band_type number. TrackFX.BandTypeConstants.
+--- @param band_idx number. TrackFX.BandIndexConstants.
+--- @return boolean
 function TrackFX:get_eq_band_enabled(band_type, band_idx)
 	return r.TrackFX_GetEQBandEnabled(self.track.pointer, self.pointer, band_type, band_idx)
 end
@@ -175,11 +185,11 @@ end
 --- Get Eq Param. Wraps TrackFX_GetEQParam.
 -- Returns false if track/fx_idx is not ReaEQ.
 -- bandpass.
--- @param param_idx number
--- @return band_type number. See TrackFX.BandTypeConstants.
--- @return band_idx number. See TrackFX.BandIndexConstants.
--- @return param_type number
--- @return norm_val number
+--- @param param_idx number
+--- @return band_type number. See TrackFX.BandTypeConstants.
+--- @return band_idx number. See TrackFX.BandIndexConstants.
+--- @return param_type number
+--- @return norm_val number
 function TrackFX:get_eq_param(param_idx)
 	local ret_val, band_type, band_idx, param_type, norm_val =
 		r.TrackFX_GetEQParam(self.track.pointer, fx_idx, param_idx)
@@ -193,14 +203,14 @@ end
 --- Get Floating Window. Wraps TrackFX_GetFloatingWindow.
 -- returns HWND of floating window for effect index, if any.
 -- and container_item.X.
--- @return HWND
+--- @return HWND
 function TrackFX:get_floating_window()
 	return r.TrackFX_GetFloatingWindow(self.track.pointer, self.pointer)
 end
 
 --- Get Formatted Param Value. Wraps TrackFX_GetFormattedParamValue.
--- @param param number
--- @return buf string
+--- @param param number
+--- @return buf string
 function TrackFX:get_formatted_param_value(param)
 	local ret_val, buf = r.TrackFX_GetFormattedParamValue(self.track.pointer, self.pointer, param)
 	if ret_val then
@@ -211,15 +221,17 @@ function TrackFX:get_formatted_param_value(param)
 end
 
 --- Get Guid. Wraps TrackFX_GetFXGUID.
--- @return guid string
+--- @return guid string
 function TrackFX:get_guid()
 	return r.TrackFX_GetFXGUID(self.track.pointer, self.pointer)
 end
 
 --- Get Name. Wraps TrackFX_GetFXName.
--- @return buf string
-function TrackFX:get_name()
-	local ret_val, buf = r.TrackFX_GetFXName(self.track.pointer, self.pointer)
+--- @param fx_idx number Optional. If not provided, the current FX index will be used.
+--- @return buf string
+function TrackFX:get_name(fx_idx)
+	local fx_idx = fx_idx or self.pointer
+	local ret_val, buf = r.TrackFX_GetFXName(self.track.pointer, fx_idx)
 	if ret_val then
 		return buf
 	else
@@ -230,7 +242,7 @@ end
 --- Get Instrument. Wraps TrackFX_GetInstrument.
 -- Get the index of the first track FX insert that is a virtual instrument, or -1
 -- if none. See TrackFX_GetEQ, TrackFX_GetByName.
--- @return number
+--- @return number
 function TrackFX:get_instrument()
 	return r.TrackFX_GetInstrument(self.track.pointer)
 end
@@ -238,8 +250,8 @@ end
 --- Get Io Size. Wraps TrackFX_GetIOSize.
 -- Gets the number of input/output pins for FX if available, returns plug-in type
 -- or -1 on error.
--- @return input_pins number
--- @return output_pins number
+--- @return input_pins number
+--- @return output_pins number
 function TrackFX:get_io_size()
 	local ret_val, input_pins, output_pins = r.TrackFX_GetIOSize(self.track.pointer, self.pointer)
 	if ret_val then
@@ -249,10 +261,169 @@ function TrackFX:get_io_size()
 	end
 end
 
---- Get Named Config Parm. Wraps TrackFX_GetNamedConfigParm.
--- gets plug-in specific named configuration value (returns true on success).
--- @param param_name string
--- @return buf string
+--- A table of configuration parameters for TrackFX:get_named_config_param. Read Only.
+--- @field PDC string PDC latency
+--- @field IN_PIN_X string name of input pin X
+--- @field OUT_PIN_X string name of output pin X
+--- @field FX_TYPE string type string
+--- @field FX_IDENT string type-specific identifier
+--- @field FX_NAME string name of FX (also supported as original_name)
+--- @field GAINREDUCTION_DB string [ReaComp + other supported compressors]
+--- @field PARENT_CONTAINER string FX ID of parent container, if any (v7.06+)
+--- @field CONTAINER_COUNT string [Container] number of FX in container
+--- @field CONTAINER_ITEM_X string FX ID of item in container (first item is container_item.0) (v7.06+)
+--- @field PARAM_X_CONTAINER_MAP_HINT_ID string unique ID of mapping (preserved if mapping order changes)
+--- @field PARAM_X_CONTAINER_MAP_DELETE string read this value in order to remove the mapping for this parameter
+--- @field CONTAINER_MAP_ADD string read from this value to add a new container parameter mapping -- will return new parameter index (accessed via param.X.container_map.*)
+--- @field CONTAINER_MAP_ADD_FXID_PARMIDX string read from this value to add/get container parameter mapping for FXID/PARMIDX -- will return the parameter index (accessed via param.X.container_map.*). FXID can be a full address (must be a child of the container) or a 0-based sub-index (v7.06+).
+--- @field CONTAINER_MAP_GET_FXID_PARMIDX string read from this value to get container parameter mapping for FXID/PARMIDX -- will return the parameter index (accessed via param.X.container_map.*). FXID can be a full address (must be a child of the container) or a 0-based sub-index (v7.06+).
+--- @field CHAIN_PDC_ACTUAL string returns the actual chain latency in samples, only valid after playback has commenced, may be rounded up to block size.
+--- @field CHAIN_PDC_REPORTING string returns the reported chain latency, always valid, not rounded to block size.
+TrackFX.NamedConfigParamConstants.ReadOnly = {}
+
+--- A table of configuration parameters for TrackFX:get_named_config_param. Read Write.
+--- @field VST_CHUNK_PROGRAM string base64-encoded VST-specific chunk.
+--- @field CLAP_CHUNK string base64-encoded CLAP-specific chunk.
+--- @field PARAM_X_LFO string parameter modulation LFO state
+--- @field PARAM_X_ACS string parameter modulation ACS state
+--- @field PARAM_X_PLINK string parameter link/MIDI link: set effect=-100 to support midi_*
+--- @field PARAM_X_MOD string parameter module global settings
+--- @field PARAM_X_LEARN string first two bytes of MIDI message, or OSC string if set
+--- @field PARAM_X_LEARN_MODE string absolution/relative mode flag (0: Absolute, 1: 127=-1,1=+1, 2: 63=-1, 65=+1, 3: 65=-1, 1=+1, 4: toggle if nonzero)
+--- @field PARAM_X_LEARN_FLAGS string &1=selected track only, &2=soft takeover, &4=focused FX only, &8=LFO retrigger, &16=visible FX only
+--- @field PARAM_X_CONTAINER_MAP_FX_INDEX string index of FX contained in container
+--- @field PARAM_X_CONTAINER_MAP_FX_PARM string parameter index of parameter of FX contained in container
+--- @field PARAM_X_CONTAINER_MAP_ALIASED_NAME string name of parameter (if user-renamed, otherwise fails)
+--- @field BANDTYPE_X string band configuration [ReaEQ]
+--- @field BANDENABLED_X string band configuration [ReaEQ]
+--- @field THRESHOLD string [ReaLimit]
+--- @field CEILING string [ReaLimit]
+--- @field TRUEPEAK string [ReaLimit]
+--- @field NUMCHANNELS string [ReaSurroundPan]
+--- @field NUMSPEAKERS string [ReaSurroundPan]
+--- @field RESETCHANNELS string [ReaSurroundPan]
+--- @field ITEM_X string [ReaVerb] state configuration line, when writing should be followed by a write of DONE
+--- @field FILE string [RS5k] file list, -/+ prefixes are write-only, when writing any, should be followed by a write of DONE
+--- @field FILE_X string [RS5k] file list, -/+ prefixes are write-only, when writing any, should be followed by a write of DONE
+--- @field MINUS_FILE_X string [RS5k] file list, -/+ prefixes are write-only, when writing any, should be followed by a write of DONE
+--- @field PLUS_FILE_X string [RS5k] file list, -/+ prefixes are write-only, when writing any, should be followed by a write of DONE
+--- @field MINUS_FILE_STAR string [RS5k] file list, -/+ prefixes are write-only, when writing any, should be followed by a write of DONE
+--- @field MODE string [RS5k] general mode, resample mode
+--- @field RSMODE string [RS5k] general mode, resample mode
+--- @field VIDEO_CODE string [video processor] code
+--- @field FORCE_AUTO_BYPASS string 0 or 1 - force auto-bypass plug-in on silence
+--- @field PARALLEL string 0, 1 or 2 - 1=process plug-in in parallel with previous, 2=process plug-in parallel and merge MIDI
+--- @field INSTANCE_OVERSAMPLE_SHIFT string instance oversampling shift amount, 0=none, 1=~96k, 2=~192k, etc. When setting requires playback stop/start to take effect
+--- @field CHAIN_OVERSAMPLE_SHIFT string chain oversampling shift amount, 0=none, 1=~96k, 2=~192k, etc. When setting requires playback stop/start to take effect
+--- @field CHAIN_PDC_MODE string chain PDC mode (0=classic, 1=new-default, 2=ignore PDC, 3=hwcomp-master)
+--- @field CHAIN_SEL string selected/visible FX in chain
+--- @field RENAMED_NAME string renamed FX instance name (empty string = not renamed)
+--- @field CONTAINER_NCH string number of internal channels for container
+--- @field CONTAINER_NCH_IN string number of input pins for container
+--- @field CONTAINER_NCH_OUT string number of output pins for container
+--- @field CONTAINER_NCH_FEEDBACK string number of internal feedback channels enabled in container
+--- @field FOCUSED string reading returns 1 if focused. Writing a positive value to this sets the FX UI as `last focused.`
+--- @field LAST_TOUCHED string reading returns two integers, one indicates whether FX is the last-touched FX, the second indicates which parameter was last touched. Writing a negative value ensures this plug-in is not set as last touched, otherwise the FX is set "last touched," and last touched parameter index is set to the value in the string (if valid).
+TrackFX.NamedConfigParamConstants.ReadWrite = {}
+
+--- A table of values to be associated with configuration constants.
+--- @field container_idx number Index of the container.
+--- @field input_pin_idx number Index of the input pin.
+--- @field output_pin_idx number Index of the output pin.
+--- @field fx_idx number Index of the FX.
+--- @field param_idx number Index of the parameter.
+--- @field param_value string Value of the parameter.
+--- @see TrackFX.NamedConfigParamConstants.ReadOnly
+--- @see TrackFX.NamedConfigParamConstants.ReadWrite
+TrackFX.NamedConfigParamValues = {}
+
+--- Create a table of named configuration parameters constants.
+--- @param params Optional. A table containing values that need to be associated to a constant, e.g. CONTAINER_ITEM_X.
+--- @return table. A populated table of configuration constants.
+--- @usage -- For config params that require a value to be associated with a constant, e.g. CONTAINER_ITEM_X
+-- local constants = TrackFX.NamedConfigParamConstants:create({container_idx = 0})
+-- -- For config params that don't require a value
+-- local constants = TrackFX.NamedConfigParamConstants:create()
+--- @see TrackFX.NamedConfigParamConstants.ReadOnly
+--- @see TrackFX.NamedConfigParamConstants.ReadWrite
+--- @see TrackFX.NamedConfigParamValues
+--- @function TrackFX.NamedConfigParamConstants:create
+function TrackFX.NamedConfigParamConstants:create(params)
+	local params = params or {}
+	return {
+		PDC = "pdc",
+		IN_PIN_X = string.format("in_pin.%s", params.input_pin_idx),
+		OUT_PIN_X = string.format("out_pin.%s", params.output_pin_idx),
+		FX_TYPE = "fx_type",
+		FX_IDENT = "fx_ident",
+		FX_NAME = "fx_name",
+		GAINREDUCTION_DB = "GainReduction_dB",
+		PARENT_CONTAINER = "parent_container",
+		CONTAINER_COUNT = "container_count",
+		CONTAINER_ITEM_X = string.format("container_item.%s", params.container_idx),
+		PARAM_X_CONTAINER_MAP_HINT_ID = string.format("param.%s.container_map.hint_id", params.param_idx),
+		PARAM_X_CONTAINER_MAP_DELETE = string.format("param.%s.container_map.delete", params.param_idx),
+		CONTAINER_MAP_ADD = "container_map.add",
+		CONTAINER_MAP_ADD_FXID_PARMIDX = string.format("container_map.add.%s.%s", params.fx_idx, param_idx),
+		CONTAINER_MAP_GET_FXID_PARMIDX = string.format("container_map.get.%s.%s", fx_idx, param_idx),
+		CHAIN_PDC_ACTUAL = "chain_pdc_actual",
+		CHAIN_PDC_REPORTING = "chain_pdc_reporting",
+		VST_CHUNK_PROGRAM = "vst_chunk[_program]",
+		CLAP_CHUNK = "clap_chunk",
+		PARAM_X_LFO = string.format("param.%s.lfo.%s", param_idx, param_value),
+		PARAM_X_ACS = "param.X.acs.[active,dir,strength,attack,release,dblo,dbhi,chan,stereo,x2,y2]",
+		PARAM_X_PLINK = "param.X.plink.[active,scale,offset,effect,param,midi_bus,midi_chan,midi_msg,midi_msg2]",
+		PARAM_X_MOD = "param.X.mod.[active,baseline,visible]",
+		PARAM_X_LEARN = "param.X.learn.[midi1,midi2,osc]",
+		PARAM_X_LEARN_MODE = "param.X.learn.mode",
+		PARAM_X_LEARN_FLAGS = "param.X.learn.flags",
+		PARAM_X_CONTAINER_MAP_FX_INDEX = "param.X.container_map.fx_index",
+		PARAM_X_CONTAINER_MAP_FX_PARM = "param.X.container_map.fx_parm",
+		PARAM_X_CONTAINER_MAP_ALIASED_NAME = "param.X.container_map.aliased_name",
+		BANDTYPE_X = "BANDTYPEx",
+		BANDENABLED_X = "BANDENABLEDx",
+		THRESHOLD = "THRESHOLD",
+		CEILING = "CEILING",
+		TRUEPEAK = "TRUEPEAK",
+		NUMCHANNELS = "NUMCHANNELS",
+		NUMSPEAKERS = "NUMSPEAKERS",
+		RESETCHANNELS = "RESETCHANNELS",
+		ITEM_X = "ITEMx",
+		FILE = "FILE",
+		FILE_X = "FILEx",
+		MINUS_FILE_X = "-FILEx",
+		PLUS_FILE_X = "+FILEx",
+		MINUS_FILE_STAR = "-FILE*",
+		MODE = "MODE",
+		RSMODE = "RSMODE",
+		VIDEO_CODE = "VIDEO_CODE",
+		FORCE_AUTO_BYPASS = "force_auto_bypass",
+		PARALLEL = "parallel",
+		INSTANCE_OVERSAMPLE_SHIFT = "instance_oversample_shift",
+		CHAIN_OVERSAMPLE_SHIFT = "chain_oversample_shift",
+		CHAIN_PDC_MODE = "chain_pdc_mode",
+		CHAIN_SEL = "chain_sel",
+		RENAMED_NAME = "renamed_name",
+		CONTAINER_NCH = "container_nch",
+		CONTAINER_NCH_IN = "container_nch_in",
+		CONTAINER_NCH_OUT = "container_nch_out",
+		CONTAINER_NCH_FEEDBACK = "container_nch_feedback",
+		FOCUSED = "focused",
+		LAST_TOUCHED = "last_touched",
+	}
+end
+
+--- Get Named Config Param. Wraps TrackFX_GetNamedConfigParm.
+-- Gets plug-in specific named configuration value.
+--- @param param_name string. Use TrackFX.NamedConfigParamConstants:create(params --[[optional]) for valid constants.
+--- @return buf string
+--- @usage -- For config params that don't require a value
+-- local constants = TrackFX.NamedConfigParamConstants:create()
+-- TrackFX:get_named_config_param(constants.PDC)
+-- -- For config params that require a value
+-- local constants = TrackFX.NamedConfigParamConstants:create({container_idx = 0})
+-- TrackFX:get_named_config_param(constants.CONTAINER_ITEM_X)
+--- @see TrackFX.NamedConfigParamConstants:create
 function TrackFX:get_named_config_param(param_name)
 	local ret_val, buf = r.TrackFX_GetNamedConfigParm(self.track.pointer, self.pointer, param_name)
 	if ret_val then
@@ -263,27 +434,27 @@ function TrackFX:get_named_config_param(param_name)
 end
 
 --- Get Num Params. Wraps TrackFX_GetNumParams.
--- @return number
+--- @return number
 function TrackFX:get_num_params()
 	return r.TrackFX_GetNumParams(self.track.pointer, self.pointer)
 end
 
 --- Get Offline. Wraps TrackFX_GetOffline.
--- @return boolean
+--- @return boolean
 function TrackFX:get_offline()
 	return r.TrackFX_GetOffline(self.track.pointer, self.pointer)
 end
 
 --- Get Open. Wraps TrackFX_GetOpen.
--- @return boolean
+--- @return boolean
 function TrackFX:get_open()
 	return r.TrackFX_GetOpen(self.track.pointer, self.pointer)
 end
 
 --- Get Param. Wraps TrackFX_GetParam.
--- @param param number
--- @return min_val number
--- @return max_val number
+--- @param param number
+--- @return min_val number
+--- @return max_val number
 function TrackFX:get_param(param)
 	local ret_val, min_val, max_val = r.TrackFX_GetParam(self.track.pointer, self.pointer, param)
 	if ret_val then
@@ -294,11 +465,11 @@ function TrackFX:get_param(param)
 end
 
 --- Get Parameter Step Sizes. Wraps TrackFX_GetParameterStepSizes.
--- @param param number
--- @return step number
--- @return small_step number
--- @return large_step number
--- @return is_toggle boolean
+--- @param param number
+--- @return step number
+--- @return small_step number
+--- @return large_step number
+--- @return is_toggle boolean
 function TrackFX:get_parameter_step_sizes(param)
 	local ret_val, step, small_step, large_step, is_toggle =
 		r.TrackFX_GetParameterStepSizes(self.track.pointer, self.pointer, param)
@@ -310,10 +481,10 @@ function TrackFX:get_parameter_step_sizes(param)
 end
 
 --- Get Param Ex. Wraps TrackFX_GetParamEx.
--- @param param number
--- @return min_val number
--- @return max_val number
--- @return mid_val number
+--- @param param number
+--- @return min_val number
+--- @return max_val number
+--- @return mid_val number
 function TrackFX:get_param_ex(param)
 	local ret_val, min_val, max_val, mid_val = r.TrackFX_GetParamEx(self.track.pointer, self.pointer, param)
 	if ret_val then
@@ -326,15 +497,15 @@ end
 --- Get Param From Ident. Wraps TrackFX_GetParamFromIdent.
 -- gets the parameter index from an identifying string (:wet, :bypass, :delta, or a
 -- string returned from GetParamIdent), or -1 if unknown.
--- @param ident_str string
--- @return number
+--- @param ident_str string
+--- @return number
 function TrackFX:get_param_from_ident(ident_str)
 	return r.TrackFX_GetParamFromIdent(self.track.pointer, self.pointer, ident_str)
 end
 
 --- Get Param Ident. Wraps TrackFX_GetParamIdent.
--- @param param number
--- @return buf string
+--- @param param number
+--- @return buf string
 function TrackFX:get_param_ident(param)
 	local ret_val, buf = r.TrackFX_GetParamIdent(self.track.pointer, self.pointer, param)
 	if ret_val then
@@ -345,8 +516,8 @@ function TrackFX:get_param_ident(param)
 end
 
 --- Get Param Name. Wraps TrackFX_GetParamName.
--- @param param number
--- @return buf string
+--- @param param number
+--- @return buf string
 function TrackFX:get_param_name(param)
 	local ret_val, buf = r.TrackFX_GetParamName(self.track.pointer, self.pointer, param)
 	if ret_val then
@@ -357,8 +528,8 @@ function TrackFX:get_param_name(param)
 end
 
 --- Get Param Normalized. Wraps TrackFX_GetParamNormalized.
--- @param param number
--- @return number
+--- @param param number
+--- @return number
 function TrackFX:get_param_normalized(param)
 	return r.TrackFX_GetParamNormalized(self.track.pointer, self.pointer, param)
 end
@@ -369,9 +540,9 @@ end
 -- second 64 bits of mappings independent of the first 64 bits. FX indices for
 -- tracks can have 0x1000000 added to them in order to reference record input FX
 -- (normal tracks) or hardware output FX (master track).
--- @param is_output number
--- @param pin number
--- @return high32 number
+--- @param is_output number
+--- @param pin number
+--- @return high32 number
 function TrackFX:get_pin_mappings(is_output, pin)
 	local ret_val, high32 = r.TrackFX_GetPinMappings(self.tr.pointer, self.pointer, is_output, pin)
 	if ret_val then
@@ -395,7 +566,7 @@ function TrackFX:get_preset()
 end
 
 --- Get Preset Index. Wraps TrackFX_GetPresetIndex.
--- @return number_of_presets number
+--- @return number_of_presets number
 function TrackFX:get_preset_index()
 	local ret_val, number_of_presets = r.TrackFX_GetPresetIndex(self.track.pointer, self.pointer)
 	if ret_val then
@@ -408,7 +579,7 @@ end
 --- Get Rec Chain Visible. Wraps TrackFX_GetRecChainVisible.
 -- returns index of effect visible in record input chain, or -1 for chain hidden,
 -- or -2 for chain visible but no effect selected
--- @return number
+--- @return number
 function TrackFX:get_rec_chain_visible()
 	return r.TrackFX_GetRecChainVisible(self.track.pointer)
 end
@@ -417,13 +588,13 @@ end
 -- returns count of record input FX. To access record input FX, use a FX indices
 -- [0x1000000..0x1000000+n). On the master track, this accesses monitoring FX
 -- rather than record input FX.
--- @return number
+--- @return number
 function TrackFX:get_rec_count()
 	return r.TrackFX_GetRecCount(self.track.pointer)
 end
 
 --- Get User Preset Filename. Wraps TrackFX_GetUserPresetFilename.
--- @return fn string
+--- @return fn string
 function TrackFX:get_user_preset_filename()
 	return r.TrackFX_GetUserPresetFilename(self.track.pointer, self.pointer)
 end
@@ -431,8 +602,8 @@ end
 --- Navigate Presets. Wraps TrackFX_NavigatePresets.
 -- preset_move==1 activates the next preset, preset_move==-1 activates the previous
 -- preset, etc.
--- @param preset_move number
--- @return boolean
+--- @param preset_move number
+--- @return boolean
 function TrackFX:navigate_presets(preset_move)
 	return r.TrackFX_NavigatePresets(self.track.pointer, self.pointer, preset_move)
 end
@@ -441,67 +612,67 @@ end
 -- See TrackFX_GetEnabled FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track).
--- @param enabled boolean
+--- @param enabled boolean
 function TrackFX:set_enabled(enabled)
 	return r.TrackFX_SetEnabled(self.track.pointer, self.pointer, enabled)
 end
 
 --- Set Eq Band Enabled. Wraps TrackFX_SetEQBandEnabled.
--- @param band_type number. TrackFX.BandTypeConstants.
--- @param band_idx number. TrackFX.BandIndexConstants.
--- @param enable boolean
--- @return boolean
+--- @param band_type number. TrackFX.BandTypeConstants.
+--- @param band_idx number. TrackFX.BandIndexConstants.
+--- @param enable boolean
+--- @return boolean
 function TrackFX:set_eq_band_enabled(band_type, band_idx, enable)
 	return r.TrackFX_SetEQBandEnabled(self.track.pointer, self.pointer, band_type, band_idx, enable)
 end
 
 --- Set Eq Param. Wraps TrackFX_SetEQParam.
 -- Returns false if track/fxidx is not ReaEQ.
--- @param band_type number. TrackFX.BandTypeConstants.
--- @param band_idx number. TrackFX.BandIndexConstants.
--- @param param_type number
--- @param val number
--- @param is_norm boolean
--- @return boolean
+--- @param band_type number. TrackFX.BandTypeConstants.
+--- @param band_idx number. TrackFX.BandIndexConstants.
+--- @param param_type number
+--- @param val number
+--- @param is_norm boolean
+--- @return boolean
 function TrackFX:set_eq_param(band_type, band_idx, param_type, val, is_norm)
 	return r.TrackFX_SetEQParam(self.track.pointer, self.pointer, band_type, band_idx, param_type, val, is_norm)
 end
 
 --- Set Named Config Parm. Wraps TrackFX_SetNamedConfigParm.
 -- sets plug-in specific named configuration value (returns true on success).
--- @param param_name string
--- @param value string
--- @return boolean
+--- @param param_name string
+--- @param value string
+--- @return boolean
 function TrackFX:set_named_config_param(param_name, value)
 	return r.TrackFX_SetNamedConfigParm(self.track.pointer, self.pointer, param_name, value)
 end
 
 --- Set Offline. Wraps TrackFX_SetOffline.
 -- See TrackFX_GetOffline.
--- @param offline boolean
+--- @param offline boolean
 function TrackFX:set_offline(offline)
 	return r.TrackFX_SetOffline(self.track.pointer, self.pointer, offline)
 end
 
 --- Set Open. Wraps TrackFX_SetOpen.
 -- Open this FX UI. See TrackFX_GetOpen.
--- @param open boolean
+--- @param open boolean
 function TrackFX:set_open(open)
 	return r.TrackFX_SetOpen(self.track.pointer, self.pointer, open)
 end
 
 --- Set Param. Wraps TrackFX_SetParam.
--- @param param number
--- @param val number
--- @return boolean
+--- @param param number
+--- @param val number
+--- @return boolean
 function TrackFX:set_param(param, val)
 	return r.TrackFX_SetParam(self.track.pointer, self.pointer, param, val)
 end
 
 --- Set Param Normalized. Wraps TrackFX_SetParamNormalized.
--- @param param number
--- @param value number
--- @return boolean
+--- @param param number
+--- @param value number
+--- @return boolean
 function TrackFX:set_param_normalized(param, value)
 	return r.TrackFX_SetParamNormalized(self.track.pointer, self.pointer, param, value)
 end
@@ -511,11 +682,11 @@ end
 -- unsupported (not all types of plug-ins support this capability). Add 0x1000000
 -- to pin index in order to access the second 64 bits of mappings independent of
 -- the first 64 bits.
--- @param is_output number
--- @param pin number
--- @param low32bits number
--- @param hi32bits number
--- @return boolean
+--- @param is_output number
+--- @param pin number
+--- @param low32bits number
+--- @param hi32bits number
+--- @return boolean
 function TrackFX:set_pin_mappings(is_output, pin, low32bits, hi32bits)
 	return r.TrackFX_SetPinMappings(self.track.pointer, self.pointer, is_output, pin, low32bits, hi32bits)
 end
@@ -523,8 +694,8 @@ end
 --- Set Preset. Wraps TrackFX_SetPreset.
 -- Activate a preset with the name shown in the REAPER dropdown. Full paths to
 -- .vst preset files are also supported for VST3 plug-ins. See TrackFX_GetPreset.
--- @param preset_name string
--- @return boolean
+--- @param preset_name string
+--- @return boolean
 function TrackFX:set_preset(preset_name)
 	return r.TrackFX_SetPreset(self.track.pointer, self.pointer, preset_name)
 end
@@ -532,8 +703,8 @@ end
 --- Set Preset By Index. Wraps TrackFX_SetPresetByIndex.
 -- Sets the preset idx, or the factory preset (idx==-2), or the default user preset
 -- (idx==-1). Returns true on success. See TrackFX_GetPresetIndex.
--- @param preset_idx number. The index of the preset
--- @return boolean
+--- @param preset_idx number. The index of the preset
+--- @return boolean
 function TrackFX:set_preset_by_index(preset_idx)
 	return r.TrackFX_SetPresetByIndex(self.track.pointer, self.pointer, idx)
 end
@@ -546,14 +717,14 @@ TrackFX.ShowFlagsConstants = {
 }
 
 --- Show. Wraps TrackFX_Show.
--- @param show_flag number. TrackFX.ShowFlagsConstants.
+--- @param show_flag number. TrackFX.ShowFlagsConstants.
 function TrackFX:show(show_flag)
 	return r.TrackFX_Show(self.track.pointer, self.pointer, show_flag)
 end
 
 --- Get Chain. Wraps CF_GetTrackFXChain.
 -- Return a handle to the given track FX chain window.
--- @return FxChain
+--- @return FxChain
 function TrackFX:get_chain()
 	return r.CF_GetTrackFXChain(self.track.pointer)
 end
@@ -561,19 +732,19 @@ end
 --- Get Chain Ex. Wraps CF_GetTrackFXChainEx.
 -- Return a handle to the given track FX chain window. Set wantInputChain to get
 -- the track's input/monitoring FX chain.
--- @param want_input_chain boolean
--- @return FxChain
+--- @param want_input_chain boolean
+--- @return FxChain
 function TrackFX:get_chain_ex(want_input_chain)
-    local Project = require("project")
-    local project = Project:new()
-    local want_input_chain = want_input_chain or false
+	local Project = require("project")
+	local project = Project:new()
+	local want_input_chain = want_input_chain or false
 	return r.CF_GetTrackFXChainEx(project, self.track.pointer, want_input_chain)
 end
 
 --- Select. Wraps CF_SelectTrackFX.
 -- Set which track effect is active in the track's FX chain. The FX chain window
 -- does not have to be open.
--- @return boolean
+--- @return boolean
 function TrackFX:select()
 	return r.CF_SelectTrackFX(self.track.pointer, self.pointer)
 end

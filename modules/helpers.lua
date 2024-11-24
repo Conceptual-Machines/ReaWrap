@@ -1,14 +1,16 @@
--- @description Provide implementation for helper functions.
--- @author NomadMonad
+--- Contains helper functions for common tasks.
+-- @author Nomad Monad
 -- @license MIT
+-- @release 0.0.1
+-- @module helpers
 
 local r = reaper
 
 local helpers = {}
 
 --- Return a function that joins a variable number of arguments, separated by the argument `sep` (default ', ').
--- @param sep string
--- @return function
+--- @param sep string
+--- @return function
 function helpers.string_join(sep)
 	sep = sep or ", "
 	return function(...)
@@ -30,8 +32,8 @@ function helpers.console_msg(arg)
 end
 
 --- Return a print function that joins the arguments with a separator.
--- @param sep string. Default is ', '
--- @return function
+--- @param sep string. Default is ', '
+--- @return function
 function helpers.print_func(sep)
 	return function(...)
 		joiner = helpers.string_join(sep)
@@ -40,9 +42,9 @@ function helpers.print_func(sep)
 end
 
 --- Return a log function that prepends the current date and a name to the arguments.
--- @param name string
--- @param sep string. Default is ' --- '
--- @return function
+--- @param name string
+--- @param sep string. Default is ' --- '
+--- @return function
 function helpers.log_func(name, sep)
 	sep = sep or " --- "
 	return function(...)
@@ -52,9 +54,9 @@ function helpers.log_func(name, sep)
 end
 
 -- Show a Message Box dialogue
--- @param msg string
--- @param title number: Accepted values : constants.MsgBoxTypes
--- @return number : Expected values : constants.MsgBoxReturnTypes
+--- @param msg string
+--- @param title number
+--- @return number
 function helpers.msg_box(msg, title, type)
 	type = type or 0
 	return r.ShowMessageBox(msg, title, type)
@@ -62,8 +64,8 @@ end
 
 --- Create an iterator function for a table.
 -- https://www.lua.org/pil/7.1.html
--- @param t table
--- @return function
+--- @param t table
+--- @return function
 function helpers.iter(t)
 	local i = 0
 	local n = #t
@@ -76,10 +78,10 @@ function helpers.iter(t)
 end
 
 --- Slice a table.
--- @param source_table table
--- @param start_idx number
--- @param end_idx number
--- @return table
+--- @param source_table table
+--- @param start_idx number
+--- @param end_idx number
+--- @return table
 function slice_table(source_table, start_idx, end_idx)
 	start_idx = start_idx or 1
 	end_idx = end_idx or #source_table
@@ -93,8 +95,8 @@ function slice_table(source_table, start_idx, end_idx)
 end
 
 --- Check if a file exists.
--- @param fpath string
--- @return boolean
+--- @param fpath string
+--- @return boolean
 function file_exists(fpath)
 	local f = io.open(fpath, "rb")
 	if f then
@@ -106,8 +108,8 @@ function file_exists(fpath)
 end
 
 --- Read a file.
--- @param fpath string
--- @return string
+--- @param fpath string
+--- @return string
 function read_file(fpath)
 	if file_exists(fpath) then
 		local content = f:read("*all")

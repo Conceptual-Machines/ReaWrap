@@ -572,22 +572,22 @@ end
 -- @param selected boolean Optional
 -- @param muted boolean Optional
 -- @param ppq_pos number Optional
--- @param type integer Optional
+-- @param type_ number Optional
 -- @param msg string Optional
 -- @return selected boolean
 -- @return muted boolean
 -- @return ppq_pos number
--- @return type integer
+-- @return type_ integer
 -- @return msg string
-function Take:midi_get_text_sysex_evt(sysxevt_idx, boolean, boolean, number, integer, string)
+function Take:midi_get_text_sysex_evt(sysxevt_idx, selected, muted, ppq_pos, type_, msg)
 	local selected = selected or true
 	local muted = muted or false
 	local ppq_pos = number or 0
 	local msg = msg or ""
 	local ret_val, selected, muted, ppq_pos, type, msg =
-		r.MIDI_GetTextSysexEvt(self.pointer, sysxevt_idx, boolean, boolean, number, integer, string)
+		r.MIDI_GetTextSysexEvt(self.pointer, sysxevt_idx, selected, muted, ppq_pos, type_, msg)
 	if ret_val then
-		return boolean, selected, muted, ppq_pos, type, msg
+		return boolean, selected, muted, ppq_pos, type_, msg
 	else
 		return nil
 	end
