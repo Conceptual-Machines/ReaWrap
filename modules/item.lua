@@ -419,6 +419,7 @@ Item.SetInfoValueConstants = {
 
 --- Set Info Value. Wraps SetMediaItemInfo_Value.
 -- Set media item numerical-value attributes.
+--- @within ReaScript Wrapped Methods
 --- @param param_name string Item.SetInfoValueConstants
 --- @param new_value any
 --- @return boolean
@@ -469,6 +470,7 @@ function Item:split(position)
 end
 
 --- Update Item In Project. Wraps UpdateItemInProject.
+--- @within ReaScript Wrapped Methods
 function Item:update_item_in_project()
 	return r.UpdateItemInProject(self.pointer)
 end
@@ -530,14 +532,14 @@ end
 -- objects. If using this function with other scripting languages, you must provide
 -- arrays in the reaper.array format.
 --- @within ReaScript Wrapped Methods
---- @param window_size number
+--- @param win_size number
 --- @param peaks userdata
---- @param peakpositions userdata
+--- @param peak_positions userdata
 --- @param rms userdata
 --- @param rms_positions userdata
 --- @return boolean
-function Item:analyze_peak_and_rms(window_size, peaks, peakpositions, rms, rms_positions)
-	return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, window_size, peaks, peakpositions, rms, rms_positions)
+function Item:analyze_peak_and_rms(win_size, peaks, peak_positions, rms, rms_positions)
+	return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, win_size, peaks, peak_positions, rms, rms_positions)
 end
 
 --- Delete Take From Item. Wraps NF_DeleteTakeFromItem.
