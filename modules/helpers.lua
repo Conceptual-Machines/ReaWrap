@@ -6,6 +6,8 @@
 
 local r = reaper
 
+-- @class helpers
+-- Helper functions for common tasks.
 local helpers = {}
 
 --- Return a function that joins a variable number of arguments, separated by the argument `sep` (default ', ').
