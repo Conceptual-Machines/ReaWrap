@@ -249,7 +249,7 @@ Item.GetInfoValueConstants = {
 --- Get Info Value. Wraps GetMediaItemInfo_Value.
 -- Get media item numerical-value attributes.
 --- @within ReaScript Wrapped Methods
---- @param param_name string. Item.GetInfoValueConstants
+--- @param param_name string Item.GetInfoValueConstants
 --- @return number
 --- @see Item.GetInfoValueConstants
 function Item:get_info_value(param_name)
@@ -287,7 +287,7 @@ Item.GetSetInfoStringConstants = {
 --- Get Set Info String. Wraps GetSetMediaItemInfo_String.
 -- Gets/sets an item attribute string.
 --- @within ReaScript Wrapped Methods
---- @param param_name string. Item.GetSetInfoStringConstants
+--- @param param_name string Item.GetSetInfoStringConstants
 --- @param string_need_big string
 --- @param set_new_value boolean
 --- @return string_need_big string
@@ -419,7 +419,7 @@ Item.SetInfoValueConstants = {
 
 --- Set Info Value. Wraps SetMediaItemInfo_Value.
 -- Set media item numerical-value attributes.
---- @param param_name string. Item.SetInfoValueConstants
+--- @param param_name string Item.SetInfoValueConstants
 --- @param new_value any
 --- @return boolean
 --- @see Item.SetInfoValueConstants
@@ -430,8 +430,8 @@ end
 --- Set Length in seconds. Wraps SetMediaItemLength.
 -- Redraws the screen only if refreshUI == true.
 --- @within ReaScript Wrapped Methods
---- @param length number. Length in seconds.
---- @param refresh_ui boolean. Optional (default true)
+--- @param length number Length in seconds.
+--- @param refresh_ui boolean Optional (default true)
 --- @return boolean
 function Item:set_length_seconds(length, refresh_ui)
 	local refresh_ui = refresh_ui or true
@@ -441,8 +441,8 @@ end
 --- Set Position in seconds. Wraps SetMediaItemPosition.
 -- Redraws the screen only if refreshUI == true.
 --- @within ReaScript Wrapped Methods
---- @param position number. Position in seconds.
---- @param refresh_ui boolean. Optional (default true).
+--- @param position number Position in seconds.
+--- @param refresh_ui boolean Optional (default true).
 --- @return boolean
 function Item:set_position_seconds(position, refresh_ui)
 	local refresh_ui = refresh_ui or true
