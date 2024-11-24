@@ -261,6 +261,8 @@ function TrackFX:get_io_size()
 	end
 end
 
+TrackFX.NamedConfigParamConstants = {}
+
 --- A table of configuration parameters for TrackFX:get_named_config_param. Read Only.
 --- @field PDC string PDC latency
 --- @field IN_PIN_X string name of input pin X
