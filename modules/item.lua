@@ -7,7 +7,8 @@ local r = reaper
 local helpers = require("helpers")
 
 -- @class Item
--- A wrapper for Reaper MediaItem*.
+-- @field pointer_type string "MediaItem*"
+-- @field pointer userdata The pointer to Reaper MediaItem*
 local Item = {}
 
 --- Create new Item instance.
