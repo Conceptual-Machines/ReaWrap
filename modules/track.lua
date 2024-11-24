@@ -8,7 +8,7 @@ local helpers = require("helpers")
 local Track = {}
 
 --- Create new Track instance.
--- @param track . The pointer to Reaper MediaTrack*
+-- @param track userdata. The pointer to Reaper MediaTrack*
 -- @return Track table.
 function Track:new(track)
 	local obj = {
@@ -32,7 +32,7 @@ end
 
 --- String representation of the Track instance.
 -- @return string
-function Track:_tostring()
+function Track:__tostring()
 	return string.format("<Track name=%s>", self:get_name())
 end
 
@@ -89,16 +89,16 @@ end
 -- @return table TrackFX
 function Track:get_track_fx(fx_idx)
 	local TrackFX = require("track_fx")
-	return TrackFX:new(self, i)
+	return TrackFX:new(self, fx_idx)
 end
 
 --- Get all TrackFX in the track
 -- @return table array<TrackFX>
-function Track:get_all_track_fx()
+function Track:get_track_fx_chain()
 	local fxs = {}
 	local count = self:get_track_fx_count()
 	for i = 0, count - 1 do
-		local track_fx = self.get_track_fx(i)
+		local track_fx = self:get_track_fx(i)
 		fxs[i + 1] = track_fx
 	end
 	return fxs
@@ -106,8 +106,8 @@ end
 
 --- Iterate over all TrackFX.
 -- @return function iterator
-function Track:iter_fx()
-	return helpers.iter(self:get_all_fx())
+function Track:iter_track_fx_chain()
+	return helpers.iter(self:get_track_fx_chain())
 end
 
 --- Whether the track has TrackFX.

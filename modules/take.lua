@@ -30,6 +30,12 @@ function Take:log(...)
 	return nil
 end
 
+--- String representation of the Take instance.
+-- @return string
+function Take:__tostring()
+	return string.format("<Take name=%s>", self:get_name())
+end
+
 -- @section ReaScript API Methods
 
 --- Count Take Envelopes. Wraps CountTakeEnvelopes.

@@ -33,7 +33,7 @@ end
 
 --- String representation of the Project instance.
 -- @return string
-function Project:_tostring()
+function Project:__tostring()
 	return string.format("<Project name=%s>", self:get_name())
 end
 

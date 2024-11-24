@@ -32,8 +32,8 @@ end
 
 --- String representation of the Item instance.
 -- @return string
-function Item:_tostring()
-	return string.format("<Item name=%s>", self:get_name())
+function Item:__tostring()
+	return string.format("<Item GUID=%s>", self:get_guid())
 end
 
 --- Get all takes.
@@ -171,16 +171,16 @@ end
 -- @field C_BEATATTACHMODE string: char *item timebase, -1=track or project default, 1=beats (position, length, rate), 2=beats (position only). for auto-stretch timebaseC_BEATATTACHMODE=1, C_AUTOSTRETCH=1
 -- @field C_AUTOSTRETCH string: auto-stretch at project tempo changes, 1=enabled, requires C_BEATATTACHMODE=1
 -- @field C_LOCK string: locked, &1=locked
--- @field D_VOL double *: item volume,  0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
--- @field D_POSITION double *: item position in seconds
--- @field D_LENGTH double *: item length in seconds
--- @field D_SNAPOFFSET double *: item snap offset in seconds
--- @field D_FADEINLEN double *: item manual fadein length in seconds
--- @field D_FADEOUTLEN double *: item manual fadeout length in seconds
--- @field D_FADEINDIR double *: item fadein curvature, -1..1
--- @field D_FADEOUTDIR double *: item fadeout curvature, -1..1
--- @field D_FADEINLEN_AUTO double *: item auto-fadein length in seconds, -1=no auto-fadein
--- @field D_FADEOUTLEN_AUTO double *: item auto-fadeout length in seconds, -1=no auto-fadeout
+-- @field D_VOL number: item volume,  0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
+-- @field D_POSITION number: item position in seconds
+-- @field D_LENGTH number: item length in seconds
+-- @field D_SNAPOFFSET number: item snap offset in seconds
+-- @field D_FADEINLEN number: item manual fadein length in seconds
+-- @field D_FADEOUTLEN number: item manual fadeout length in seconds
+-- @field D_FADEINDIR number: item fadein curvature, -1..1
+-- @field D_FADEOUTDIR number: item fadeout curvature, -1..1
+-- @field D_FADEINLEN_AUTO number: item auto-fadein length in seconds, -1=no auto-fadein
+-- @field D_FADEOUTLEN_AUTO number: item auto-fadeout length in seconds, -1=no auto-fadeout
 -- @field C_FADEINSHAPE number: fadein shape, 0..6, 0=linear
 -- @field C_FADEOUTSHAPE number: fadeout shape, 0..6, 0=linear
 -- @field I_GROUPID number: group ID, 0=no group
@@ -232,10 +232,10 @@ Item.GetInfoValueConstants = {
 
 --- Get Info Value. Wraps GetMediaItemInfo_Value.
 -- Get media item numerical-value attributes.
--- @param parm_name string. Item.GetInfoValueConstants
+-- @param param_name string. Item.GetInfoValueConstants
 -- @return number
-function Item:get_info_value(parm_name)
-	return r.GetMediaItemInfo_Value(self.pointer, parm_name)
+function Item:get_info_value(param_name)
+	return r.GetMediaItemInfo_Value(self.pointer, param_name)
 end
 
 --- Get Num Takes. Wraps GetMediaItemNumTakes.
@@ -265,13 +265,13 @@ Item.GetSetInfoStringConstants = {
 
 --- Get Set Info String. Wraps GetSetMediaItemInfo_String.
 -- Gets/sets an item attribute string:
--- @param parm_name string. Item.GetSetInfoStringConstants
+-- @param param_name string. Item.GetSetInfoStringConstants
 -- @param string_need_big string
 -- @param set_new_value boolean
 -- @return string_need_big string
-function Item:get_set_info_string(parm_name, string_need_big, set_new_value)
+function Item:get_set_info_string(param_name, string_need_big, set_new_value)
 	local ret_val, string_need_big =
-		r.GetSetMediaItemInfo_String(self.pointer, parm_name, string_need_big, set_new_value)
+		r.GetSetMediaItemInfo_String(self.pointer, param_name, string_need_big, set_new_value)
 	if ret_val then
 		return string_need_big
 	else
@@ -331,16 +331,16 @@ end
 -- @field C_BEATATTACHMODE string: char *item timebase, -1=track or project default, 1=beats (position, length, rate), 2=beats (position only). for auto-stretch timebaseC_BEATATTACHMODE=1, C_AUTOSTRETCH=1
 -- @field C_AUTOSTRETCH string: auto-stretch at project tempo changes, 1=enabled, requires C_BEATATTACHMODE=1
 -- @field C_LOCK string: locked, &1=locked
--- @field D_VOL double *: item volume,  0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
--- @field D_POSITION double *: item position in seconds
--- @field D_LENGTH double *: item length in seconds
--- @field D_SNAPOFFSET double *: item snap offset in seconds
--- @field D_FADEINLEN double *: item manual fadein length in seconds
--- @field D_FADEOUTLEN double *: item manual fadeout length in seconds
--- @field D_FADEINDIR double *: item fadein curvature, -1..1
--- @field D_FADEOUTDIR double *: item fadeout curvature, -1..1
--- @field D_FADEINLEN_AUTO double *: item auto-fadein length in seconds, -1=no auto-fadein
--- @field D_FADEOUTLEN_AUTO double *: item auto-fadeout length in seconds, -1=no auto-fadeout
+-- @field D_VOL number: item volume,  0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
+-- @field D_POSITION number: item position in seconds
+-- @field D_LENGTH number: item length in seconds
+-- @field D_SNAPOFFSET number: item snap offset in seconds
+-- @field D_FADEINLEN number: item manual fadein length in seconds
+-- @field D_FADEOUTLEN number: item manual fadeout length in seconds
+-- @field D_FADEINDIR number: item fadein curvature, -1..1
+-- @field D_FADEOUTDIR number: item fadeout curvature, -1..1
+-- @field D_FADEINLEN_AUTO number: item auto-fadein length in seconds, -1=no auto-fadein
+-- @field D_FADEOUTLEN_AUTO number: item auto-fadeout length in seconds, -1=no auto-fadeout
 -- @field C_FADEINSHAPE number: fadein shape, 0..6, 0=linear
 -- @field C_FADEOUTSHAPE number: fadeout shape, 0..6, 0=linear
 -- @field I_GROUPID number: group ID, 0=no group
@@ -390,11 +390,11 @@ Item.SetInfoValueConstants = {
 
 --- Set Info Value. Wraps SetMediaItemInfo_Value.
 -- Set media item numerical-value attributes.
--- @param parm_name string. Item.SetInfoValueConstants
--- @param new_value number
+-- @param param_name string. Item.SetInfoValueConstants
+-- @param new_value any
 -- @return boolean
-function Item:set_info_value(parm_name, new_value)
-	return r.SetMediaItemInfo_Value(self.pointer, parm_name, new_value)
+function Item:set_info_value(param_name, new_value)
+	return r.SetMediaItemInfo_Value(self.pointer, param_name, new_value)
 end
 
 --- Set Length in seconds. Wraps SetMediaItemLength.

@@ -34,7 +34,7 @@ end
 
 --- String representation of the TrackFX instance.
 -- @return string
-function TrackFX:_tostring()
+function TrackFX:__tostring()
 	return string.format("<TrackFX name=%s>", self:get_name())
 end
 
@@ -143,7 +143,7 @@ TrackFX.BandTypeConstants = {
 	LOSHELF = 1,
 	BAND = 2,
 	NOTCH = 3,
-	HIGHSHELF = 4,
+	HISHELF = 4,
 	LOPASS = 5,
 	BANDPASS = 6,
 	PARALLEL_BANDPASS = 7,
@@ -522,7 +522,7 @@ end
 
 --- Set Preset. Wraps TrackFX_SetPreset.
 -- Activate a preset with the name shown in the REAPER dropdown. Full paths to
--- .vstpreset files are also supported for VST3 plug-ins. See TrackFX_GetPreset.
+-- .vst preset files are also supported for VST3 plug-ins. See TrackFX_GetPreset.
 -- @param preset_name string
 -- @return boolean
 function TrackFX:set_preset(preset_name)
