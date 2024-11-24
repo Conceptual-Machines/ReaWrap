@@ -55,6 +55,7 @@ function helpers.log_func(name, sep)
 end
 
 --- Constants for message box types.
+--- @within Constants
 --- @field OK number
 --- @field OKCANCEL number
 --- @field ABORTRETRYIGNORE number
