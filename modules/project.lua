@@ -238,7 +238,7 @@ Project.NudgeConstants.UNIT = {
 }
 
 --- Apply Nudge. Wraps ApplyNudge.
---- @within Constants
+--- @within ReaScript Wrapped Methods
 --- @param nudge_flag number Project.NudgeConstants.FLAG
 --- @param nudge_what number Project.NudgeConstants.WHAT.
 --- @param nudge_units number Project.NudgeConstants.UNIT.
@@ -1519,6 +1519,7 @@ function Project:get_media_track_by_guid(guid_string_in)
 end
 
 --- Get Sws Extra Project Notes. Wraps JB_GetSWSExtraProjectNotes.
+--- @within ReaScript Wrapped Methods
 --- @return string
 function Project:get_sws_extra_project_notes()
 	return r.JB_GetSWSExtraProjectNotes(self.pointer)
