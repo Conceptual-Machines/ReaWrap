@@ -507,6 +507,7 @@ end
 --- Midi Get Hash. Wraps MIDI_GetHash.
 -- Get a string that only changes when the MIDI data changes. If notes_only==true,
 -- then the string changes only when the MIDI notes change. See MIDI_GetTrackHash
+--- @within ReaScript Wrapped Methods
 --- @param notes_only boolean
 --- @return string
 function Take:midi_get_hash(notes_only)
@@ -520,6 +521,7 @@ end
 
 --- Midi Get Note. Wraps MIDI_GetNote.
 -- Get MIDI note properties.
+--- @within ReaScript Wrapped Methods
 --- @param note_idx number
 --- @return boolean selected
 --- @return boolean muted
@@ -1073,6 +1075,7 @@ end
 
 --- Is Midi Open In Inline Editor. Wraps BR_IsMidiOpenInInlineEditor.
 -- [SWS] Check if take has MIDI inline editor open and returns true or false.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function Take:is_midi_open_in_inline_editor()
 	return r.BR_IsMidiOpenInInlineEditor(self.pointer)
