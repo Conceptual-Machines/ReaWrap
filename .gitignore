@@ -40,4 +40,9 @@ luac.out
 *.x86_64
 *.hex
 
-
+# Custom
+.ruff_cache
+.venv
+doc
+.idea
+.vscode
