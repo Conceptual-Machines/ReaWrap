@@ -7,7 +7,8 @@ local r = reaper
 local helpers = require("helpers")
 
 -- @class Project
--- Wrapper for ReaProject.
+-- @field pointer_type string "ReaProject*"
+-- @field pointer number The index of the project
 local Project = {}
 
 --- Create new Project instance.
@@ -128,7 +129,7 @@ end
 
 --- Get all TCP FX params.
 --- @within ReaWrap Custom Methods
---- @return table array {fx_idx, param_idx}
+--- @return table array
 function Project:get_tcp_fx_params()
 	local tcp_fx_params = {}
 	for i = 0, self:count_tcp_fx_params() - 1 do
@@ -287,9 +288,10 @@ end
 --- Count TCP FX Params. Wraps CountTCPFXParms.
 -- Count the number of FX parameter knobs displayed on the track control panel.
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @return number
-function Project:count_tcp_fx_params()
-	return r.CountTCPFXParms(self.pointer, track)
+function Project:count_tcp_fx_params(track)
+	return r.CountTCPFXParms(self.pointer, track.pointer)
 end
 
 --- Count Tempo Time Sig Markers. Wraps CountTempoTimeSigMarkers.
@@ -403,11 +405,13 @@ end
 -- returns false if there are no plugins on the track that support MIDI programs,or
 -- if all programs have been enumerated
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @param program_number number
 --- @param program_name string
 --- @return string program_name
-function Project:enum_track_midi_program_names_ex(program_number, program_name)
-	local ret_val, program_name = r.EnumTrackMIDIProgramNamesEx(self.pointer, track, program_number, program_name)
+function Project:enum_track_midi_program_names_ex(track, program_number, program_name)
+	local ret_val, program_name =
+		r.EnumTrackMIDIProgramNamesEx(self.pointer, track.pointer, program_number, program_name)
 	if ret_val then
 		return program_name
 	else
@@ -666,10 +670,10 @@ end
 function Project:get_set_project_grid(set, division, swingmode, swingamt)
 	local division = division or nil
 	local swingmode = swingmode or nil
-    local swingamt = swingamt or nil
-	local ret_val, number, integer, number = r.GetSetProjectGrid(self.pointer, set, division, swingmode, swingamt)
+	local swingamt = swingamt or nil
+	local ret_val, division, swingmode, swingamt = r.GetSetProjectGrid(self.pointer, set, division, swingmode, swingamt)
 	if ret_val then
-		return number, integer, number
+		return division, swingmode, swingamt
 	else
 		error("Error in GetSetProjectGrid")
 	end
@@ -792,11 +796,11 @@ end
 --- Get Set Project Notes. Wraps GetSetProjectNotes.
 -- gets or sets project notes, notesNeedBig_sz is ignored when setting
 --- @within ReaScript Wrapped Methods
---- @param set boolean
+--- @param is_set boolean
 --- @param notes string
 --- @return string
-function Project:get_set_project_notes(set, notes)
-	return r.GetSetProjectNotes(self.pointer, set, notes)
+function Project:get_set_project_notes(is_set, notes)
+	return r.GetSetProjectNotes(self.pointer, is_set, notes)
 end
 
 --- Get Set Repeat Ex. Wraps GetSetRepeatEx.
@@ -825,11 +829,12 @@ end
 --- Get TCP FX Param. Wraps GetTCPFXParm.
 -- Get information about a specific FX parameter knob (see CountTCPFXParms).
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @param index number
 --- @return number fx_idx
 --- @return number param_idx
-function Project:get_tcp_fx_param(index)
-	local ret_val, fx_idx, param_idx = r.GetTCPFXParm(self.pointer, track, index)
+function Project:get_tcp_fx_param(track, index)
+	local ret_val, fx_idx, param_idx = r.GetTCPFXParm(self.pointer, track.pointer, index)
 	if ret_val then
 		return fx_idx, param_idx
 	else
@@ -875,19 +880,21 @@ end
 -- Get note/CC name. pitch 128 for CC0 name, 129 for CC1 name, etc. See
 -- SetTrackMIDINoteNameEx
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @param pitch number
 --- @param chan number
 --- @return string
-function Project:get_track_midi_note_name_ex(pitch, chan)
-	return r.GetTrackMIDINoteNameEx(self.pointer, track, pitch, chan)
+function Project:get_track_midi_note_name_ex(track, pitch, chan)
+	return r.GetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan)
 end
 
 --- Get Track Midi Note Range. Wraps GetTrackMIDINoteRange.
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @return number note_lo
 --- @return number note_hi
-function Project:get_track_midi_note_range()
-	return r.GetTrackMIDINoteRange(self.pointer, track)
+function Project:get_track_midi_note_range(track)
+	return r.GetTrackMIDINoteRange(self.pointer, track.pointer)
 end
 
 --- Go To Marker. Wraps GoToMarker.
@@ -916,9 +923,10 @@ end
 --- Has Track Midi Programs. Wraps HasTrackMIDIProgramsEx.
 -- returns name of track plugin that is supplying MIDI programs,or NULL if there is none
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @return string
-function Project:has_track_midi_programs()
-	return r.HasTrackMIDIProgramsEx(self.pointer, track)
+function Project:has_track_midi_programs(track)
+	return r.HasTrackMIDIProgramsEx(self.pointer, track.pointer)
 end
 
 --- Insert Track In Project. Wraps InsertTrackInProject.
@@ -1158,9 +1166,10 @@ end
 -- stereo, flag==N means force N/2 channels.
 --- @within ReaScript Wrapped Methods
 --- @param region_idx number
+--- @param track table Track object
 --- @param flag number
-function Project:set_region_render_matrix(region_idx, flag)
-	return r.SetRegionRenderMatrix(self.pointer, region_idx, track, flag)
+function Project:set_region_render_matrix(region_idx, track, flag)
+	return r.SetRegionRenderMatrix(self.pointer, region_idx, track.pointer, flag)
 end
 
 --- Set Tempo Time Sig Marker. Wraps SetTempoTimeSigMarker.
@@ -1206,12 +1215,13 @@ end
 -- channel < 0 assigns note name to all channels. pitch 128 assigns name for CC0,
 -- pitch 129 for CC1, etc.
 --- @within ReaScript Wrapped Methods
+--- @param track table Track object
 --- @param pitch number
 --- @param chan number
 --- @param name string
 --- @return boolean
-function Project:set_track_midi_note_name_ex(pitch, chan, name)
-	return r.SetTrackMIDINoteNameEx(self.pointer, track, pitch, chan, name)
+function Project:set_track_midi_note_name_ex(track, pitch, chan, name)
+	return r.SetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan, name)
 end
 
 --- Snap To Grid. Wraps SnapToGrid.
@@ -1448,8 +1458,9 @@ end
 --- Undo On State Change Item. Wraps Undo_OnStateChange_Item.
 --- @within ReaScript Wrapped Methods
 --- @param name string
-function Project:undo_on_state_change_item(name)
-	return r.Undo_OnStateChange_Item(self.pointer, name, item)
+--- @param item table Item object
+function Project:undo_on_state_change_item(name, item)
+	return r.Undo_OnStateChange_Item(self.pointer, name, item.pointer)
 end
 
 --- Undo On State Change Ex2. Wraps Undo_OnStateChangeEx2.
@@ -1476,7 +1487,7 @@ end
 -- ignored if pointer is itself a project). Supported types are: ReaProject*,
 -- MediaTrack*, MediaItem*, MediaItem_Take*, TrackEnvelope* and PCM_source*.
 --- @within ReaScript Wrapped Methods
---- @param identifier pointer
+--- @param identifier userdata
 --- @param ctype_name string
 --- @return boolean
 function Project:validate_ptr(identifier, ctype_name)
@@ -1534,7 +1545,6 @@ end
 -- [S&M] See SNM_GetIntConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
---- @within ReaScript Wrapped Methods
 --- @param err_value number
 --- @return number
 function Project:get_int_config_var_ex(var_name, err_value)
