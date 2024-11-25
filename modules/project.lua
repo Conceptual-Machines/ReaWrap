@@ -166,7 +166,7 @@ end
 --- @return number
 function Project:add_project_marker(is_rgn, pos, rgn_end, name, want_idx, color)
 	return r.AddProjectMarker2(self.pointer, is_rgn, pos, rgn_end, name, want_idx, color)
-end
+
 
 --- Any Track Solo. Wraps AnyTrackSolo.
 --- @within ReaScript Wrapped Methods
@@ -293,10 +293,11 @@ function Project:count_tcp_fx_params(track)
 end
 
 --- Count Tempo Time Sig Markers. Wraps CountTempoTimeSigMarkers.
--- Count the number of tempo/time signature markers in the project. See
--- GetTempoTimeSigMarker, SetTempoTimeSigMarker, AddTempoTimeSigMarker.
+-- Count the number of tempo/time signature markers in the project.
 --- @within ReaScript Wrapped Methods
 --- @return number
+--- @see Project:get_tempo_time_sig_marker
+--- @see Project:set_tempo_time_sig_marker
 function Project:count_tempo_time_sig_markers()
 	return r.CountTempoTimeSigMarkers(self.pointer)
 end
@@ -376,12 +377,14 @@ end
 
 --- Enum Proj Ext State. Wraps EnumProjExtState.
 -- Enumerate the data stored with the project for a specific extname. Returns false
--- when there is no more data. See SetProjExtState, GetProjExtState.
+-- when there is no more data.
 --- @within ReaScript Wrapped Methods
 --- @param ext_name string
 --- @param idx number
 --- @return string key
 --- @return string val
+--- @see Project:set_proj_ext_state
+--- @see Project:get_proj_ext_state
 function Project:enum_proj_ext_state(ext_name, idx)
 	local ret_val, key, val = r.EnumProjExtState(self.pointer, ext_name, idx)
 	if ret_val then
@@ -464,12 +467,13 @@ end
 --- Get Last Marker And Cur Region. Wraps GetLastMarkerAndCurRegion.
 -- Get the last project marker before time, and/or the project region that includes
 -- time. marker_idx and region_idx are returned not necessarily as the displayed
--- marker/region index, but as the index that can be passed to EnumProjectMarkers.
--- Either or both of marker_idx and region_idx may be NULL. See EnumProjectMarkers.
+-- marker/region index, but as the index that can be passed to Project:enum_project_markers.
+-- Either or both of marker_idx and region_idx may be NULL.
 --- @within ReaScript Wrapped Methods
 --- @param time number
 --- @return number marker_idx
 --- @return number region_idx
+--- @see Project:enum_project_markers
 function Project:get_last_marker_and_cur_region(time)
 	return r.GetLastMarkerAndCurRegion(self.pointer, time)
 end
@@ -584,11 +588,13 @@ end
 
 --- Get Proj Ext State. Wraps GetProjExtState.
 -- Get the value previously associated with this extname and key, the last time the
--- project was saved. See SetProjExtState, EnumProjExtState.
+-- project was saved.
 --- @within ReaScript Wrapped Methods
 --- @param ext_name string
 --- @param key string
 --- @return string value
+--- @see Project:set_proj_ext_state
+--- @see Project:enum_proj_ext_state
 function Project:get_proj_ext_state(ext_name, key)
 	local ret_val, val = r.GetProjExtState(self.pointer, ext_name, key)
 	if ret_val then
@@ -849,8 +855,7 @@ function Project:get_tcp_fx_param(track, index)
 end
 
 --- Get Tempo Time Sig Marker. Wraps GetTempoTimeSigMarker.
--- Get information about a tempo/time signature marker. See
--- CountTempoTimeSigMarkers, SetTempoTimeSigMarker, AddTempoTimeSigMarker.
+-- Get information about a tempo/time signature marker.
 --- @within ReaScript Wrapped Methods
 --- @param pt_idx number
 --- @return number time_pos
@@ -860,6 +865,8 @@ end
 --- @return number time_sig_num
 --- @return number time_sig_denom
 --- @return boolean linear_tempo
+--- @see Project:count_tempo_time_sig_markers
+--- @see Project:set_tempo_time_sig_marker
 function Project:get_tempo_time_sig_marker(pt_idx)
 	local ret_val, time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo =
 		r.GetTempoTimeSigMarker(self.pointer, pt_idx)
@@ -883,13 +890,13 @@ function Project:get_track(track_idx)
 end
 
 --- Get Track Midi Note Name Ex. Wraps GetTrackMIDINoteNameEx.
--- Get note/CC name. pitch 128 for CC0 name, 129 for CC1 name, etc. See
--- SetTrackMIDINoteNameEx
+-- Get note/CC name. pitch 128 for CC0 name, 129 for CC1 name, etc.
 --- @within ReaScript Wrapped Methods
 --- @param track table Track object
 --- @param pitch number
 --- @param chan number
 --- @return string
+--- @see Project:set_track_midi_note_name_ex
 function Project:get_track_midi_note_name_ex(track, pitch, chan)
 	return r.GetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan)
 end
@@ -1113,7 +1120,6 @@ function Project:set_project_marker4(markr_rgn_idx, is_rgn, pos, rgn_end, name, 
 end
 
 --- Set Project Marker By Index. Wraps SetProjectMarkerByIndex.
--- See SetProjectMarkerByIndex2.
 --- @within ReaScript Wrapped Methods
 --- @param mark_rgn_idx number
 --- @param is_rgn boolean
@@ -1123,6 +1129,7 @@ end
 --- @param name string
 --- @param color number
 --- @return boolean
+--- @see Project:set_project_marker_by_index2
 function Project:set_project_marker_by_index(mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color)
 	return r.SetProjectMarkerByIndex(self.pointer, mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color)
 end
@@ -1146,6 +1153,7 @@ end
 --- @param color number
 --- @param flags number
 --- @return boolean
+--- @see Project:set_project_marker_by_index
 function Project:set_project_marker_by_index2(mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color, flags)
 	return r.SetProjectMarkerByIndex2(self.pointer, mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color, flags)
 end
@@ -1156,12 +1164,13 @@ end
 -- reascript or extension section. If key is NULL or "", all extended data for that
 -- extname will be deleted.  If val is NULL or "", the data previously associated
 -- with that key will be deleted. Returns the size of the state for this extname.
--- See GetProjExtState, EnumProjExtState.
 --- @within ReaScript Wrapped Methods
 --- @param ext_name string
 --- @param key string
 --- @param value string
 --- @return number
+--- @see Project:get_proj_ext_state
+--- @see Project:enum_proj_ext_state
 function Project:set_proj_ext_state(ext_name, key, value)
 	return r.SetProjExtState(self.pointer, ext_name, key, value)
 end
@@ -1182,8 +1191,7 @@ end
 -- Set parameters of a tempo/time signature marker. Provide either time_pos (with
 -- measure_pos=-1, beat_pos=-1), or measure_pos and beat_pos (with time_pos=-1). If
 -- time_sig_num and time_sig_denom are zero, the previous time signature will be
--- used. pt_idx=-1 will insert a new tempo/time signature marker. See
--- CountTempoTimeSigMarkers, GetTempoTimeSigMarker, AddTempoTimeSigMarker.
+-- used. pt_idx=-1 will insert a new tempo/time signature marker. AddTempoTimeSigMarker.
 --- @within ReaScript Wrapped Methods
 --- @param pt_idx number
 --- @param time_pos number
@@ -1194,6 +1202,8 @@ end
 --- @param time_sig_denom number
 --- @param linear_tempo boolean
 --- @return boolean
+--- @see Project:get_tempo_time_sig_marker
+--- @see Project:count_tempo_time_sig_markers
 function Project:set_tempo_time_sig_marker(
 	pt_idx,
 	time_pos,
@@ -1386,21 +1396,22 @@ end
 
 --- Qn To Time Abs. Wraps TimeMap_QNToTime_abs.
 -- Converts project quarter note count (QN) to time. QN is counted from the start
--- of the project, regardless of any partial measures. See TimeMap2_QNToTime
+-- of the project, regardless of any partial measures.
 --- @within ReaScript Wrapped Methods
 --- @param qn number
 --- @return number
+--- @see Project:qn_to_time
 function Project:qn_to_time_abs(qn)
 	return r.TimeMap_QNToTime_abs(self.pointer, qn)
 end
 
 --- Time To Qn Abs. Wraps TimeMap_timeToQN_abs.
 -- Converts project time position to quarter note count (QN). QN is counted from
--- the start of the project, regardless of any partial measures. See
--- TimeMap2_timeToQN
+-- the start of the project, regardless of any partial measures.
 --- @within ReaScript Wrapped Methods
 --- @param tpos number
 --- @return number
+--- @see Project:time_to_qn
 function Project:time_to_qn_abs(tpos)
 	return r.TimeMap_timeToQN_abs(self.pointer, tpos)
 end
@@ -1539,7 +1550,6 @@ function Project:set_sws_extra_project_notes(str)
 end
 
 --- Get Double Config Var Ex. Wraps SNM_GetDoubleConfigVarEx.
--- [S&M] See SNM_GetDoubleConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
 --- @param err_value number
@@ -1549,7 +1559,6 @@ function Project:get_double_config_var_ex(var_name, err_value)
 end
 
 --- Get Int Config Var Ex. Wraps SNM_GetIntConfigVarEx.
--- [S&M] See SNM_GetIntConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
 --- @param err_value number
@@ -1559,7 +1568,6 @@ function Project:get_int_config_var_ex(var_name, err_value)
 end
 
 --- Get Long Config Var Ex. Wraps SNM_GetLongConfigVarEx.
--- [S&M] See SNM_GetLongConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
 --- @return number high
@@ -1574,7 +1582,7 @@ function Project:get_long_config_var_ex(var_name)
 end
 
 --- Get Project Marker Name. Wraps SNM_GetProjectMarkerName.
--- [S&M] Gets a marker/region name. Returns true if marker/region found.
+-- Gets a marker/region name. Returns true if marker/region found.
 --- @within ReaScript Wrapped Methods
 --- @param num number
 --- @param is_rgn boolean
@@ -1585,7 +1593,6 @@ function Project:get_project_marker_name(num, is_rgn, name)
 end
 
 --- Set Double Config Var Ex. Wraps SNM_SetDoubleConfigVarEx.
--- [S&M] See SNM_SetDoubleConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
 --- @param new_value number
@@ -1595,7 +1602,6 @@ function Project:set_double_config_var_ex(var_name, new_value)
 end
 
 --- Set Int Config Var Ex. Wraps SNM_SetIntConfigVarEx.
--- [S&M] See SNM_SetIntConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
 --- @param new_value number
@@ -1605,7 +1611,6 @@ function Project:set_int_config_var_ex(var_name, new_value)
 end
 
 --- Set Long Config Var Ex. Wraps SNM_SetLongConfigVarEx.
--- [S&M] SNM_SetLongConfigVar.
 --- @within ReaScript Wrapped Methods
 --- @param var_name string
 --- @param new_high_value number
