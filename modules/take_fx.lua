@@ -87,7 +87,7 @@ function TakeFX:format_param_value(param, val)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:format_param_value failed")
 	end
 end
 
@@ -102,7 +102,7 @@ function TakeFX:format_param_value_normalized(param, value, buf)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:format_param_value_normalized failed")
 	end
 end
 
@@ -150,7 +150,7 @@ function TakeFX:get_formatted_param_value(param)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:get_formatted_param_value failed")
 	end
 end
 
@@ -169,7 +169,7 @@ function TakeFX:get_name()
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:get_name failed")
 	end
 end
 
@@ -182,7 +182,7 @@ function TakeFX:get_io_size()
 	if ret_val then
 		return input_pins, output_pins
 	else
-		return nil
+		error("TakeFX:get_io_size failed")
 	end
 end
 
@@ -195,7 +195,7 @@ function TakeFX:get_named_config_parm(param_name)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:get_named_config_parm failed")
 	end
 end
 
@@ -230,7 +230,7 @@ function TakeFX:get_param(param)
 	if ret_val then
 		return min_val, max_val
 	else
-		return nil
+		error("TakeFX:get_param failed")
 	end
 end
 
@@ -247,7 +247,7 @@ function TakeFX:get_parameter_step_sizes(param)
 	if ret_val then
 		return step, small_step, large_step, is_toggle
 	else
-		return nil
+		error("TakeFX:get_parameter_step_sizes failed")
 	end
 end
 
@@ -262,7 +262,7 @@ function TakeFX:get_param_ex(param)
 	if ret_val then
 		return min_val, max_val, mid_val
 	else
-		return nil
+		error("TakeFX:get_param_ex failed")
 	end
 end
 
@@ -283,7 +283,7 @@ function TakeFX:get_param_ident(param)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:get_param_ident failed")
 	end
 end
 
@@ -296,7 +296,7 @@ function TakeFX:get_param_name(param)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("TakeFX:get_param_name failed")
 	end
 end
 
@@ -318,7 +318,7 @@ function TakeFX:get_pin_mappings(is_output, pin)
 	if ret_val then
 		return high32
 	else
-		return nil
+		error("TakeFX:get_pin_mappings failed")
 	end
 end
 
@@ -330,7 +330,7 @@ function TakeFX:get_preset()
 	if ret_val then
 		return preset_name
 	else
-		return nil
+		error("TakeFX:get_preset failed")
 	end
 end
 
@@ -342,7 +342,7 @@ function TakeFX:get_preset_index()
 	if ret_val then
 		return number_of_presets
 	else
-		return nil
+		error("TakeFX:get_preset_index failed")
 	end
 end
 
