@@ -166,7 +166,7 @@ end
 --- @return number
 function Project:add_project_marker(is_rgn, pos, rgn_end, name, want_idx, color)
 	return r.AddProjectMarker2(self.pointer, is_rgn, pos, rgn_end, name, want_idx, color)
-
+end
 
 --- Any Track Solo. Wraps AnyTrackSolo.
 --- @within ReaScript Wrapped Methods

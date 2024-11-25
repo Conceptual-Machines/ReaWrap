@@ -4,7 +4,6 @@
 -- @release 0.0.1
 -- @module track
 
-
 local r = reaper
 local helpers = require("helpers")
 
@@ -234,12 +233,6 @@ end
 -- Create an audio accessor object for this track. Must only call from the main thread.
 --- @within ReaScript Wrapped Methods
 --- @return userdata
---- @see Take:create_take_audio_accessor
---- @see AudioAccessor:destroy
---- @see AudioAccessor:state_changed
---- @see AudioAccessor:get_start_time
---- @see AudioAccessor:get_end_time
---- @see AudioAccessor:get_samples
 function Track:create_track_audio_accessor()
 	local AudioAccessor = require("audio_accessor")
 	local result = r.CreateTrackAudioAccessor(self.pointer)
@@ -593,7 +586,6 @@ end
 function Track:get_set_track_group_membership_high(group_name, set_mask, set_value)
 	return r.GetSetTrackGroupMembershipHigh(self.pointer, group_name, set_mask, set_value)
 end
-
 
 --- Get Set Track Send Info string. Wraps GetSetTrackSendInfo_string
 -- Gets/sets a send attribute string
@@ -1081,7 +1073,6 @@ end
 function Track:midi_editor_flags_for_track(pitchwheel_range, flags, is_set)
 	return r.MIDIEditorFlagsForTrack(self.pointer, pitchwheel_range, flags, is_set)
 end
-
 
 --- Remove Receives from another track. Wraps SNM_RemoveReceivesFrom.
 -- [S&M] Removes all receives from src_track. Returns false if nothing updated.

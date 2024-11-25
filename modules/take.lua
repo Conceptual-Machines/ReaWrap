@@ -56,13 +56,6 @@ end
 -- Create an audio accessor object for this take. Must only call from the main thread.
 --- @within ReaScript Wrapped Methods
 --- @return table AudioAccessor object
---- @see Track:create_track_audio_accessor
---- @see AudioAccessor:destroy
---- @see AudioAccessor:state_changed
---- @see AudioAccessor:get_start_time
---- @see AudioAccessor:get_end_time
---- @see AudioAccessor:get_samples
-
 function Take:create_take_audio_accessor()
 	local AudioAccessor = require("audio_accessor")
 	local result = r.CreateTakeAudioAccessor(self.pointer)

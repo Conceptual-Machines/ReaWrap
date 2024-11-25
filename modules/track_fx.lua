@@ -141,7 +141,6 @@ end
 --- @param instantiate boolean Optional.
 --- @return number
 --- @see TrackFX:get_instrument
---- @see TrackFX:add_by_name
 function TrackFX:get_eq(instantiate)
 	local instantiate = instantiate or false
 	return r.TrackFX_GetEQ(self.track.pointer, instantiate)
@@ -251,7 +250,6 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 --- @see TrackFX:get_eq
---- @see TrackFX:add_by_name
 function TrackFX:get_instrument()
 	return r.TrackFX_GetInstrument(self.track.pointer)
 end

@@ -7,7 +7,6 @@
 local r = reaper
 local helpers = require("helpers")
 
-
 local PCM = {}
 
 --- Create new PCM instance.
@@ -23,7 +22,6 @@ function PCM:new(source)
 	self.__index = self
 	return obj
 end
-
 
 --- Log messages with the PCM logger.
 --- @within ReaWrap Custom Methods
@@ -276,7 +274,7 @@ function PCM:source_get_peaks(peakrate, starttime, numchannels, numsamplespercha
 end
 
 --- Source Get Section Info. Wraps PCM_Source_GetSectionInfo.
--- If a section/reverse block, retrieves offset/len/reverse. 
+-- If a section/reverse block, retrieves offset/len/reverse.
 --- @within ReaScript Wrapped Methods
 --- @return number offs
 --- @return number len

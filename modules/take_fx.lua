@@ -7,7 +7,6 @@
 local r = reaper
 local helpers = require("helpers")
 
-
 local TakeFX = {}
 
 --- Create new TakeFX instance.
