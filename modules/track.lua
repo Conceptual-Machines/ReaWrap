@@ -141,22 +141,6 @@ function Track:add_media_item()
 	return Item:new(result)
 end
 
---- Count Track Envelopes. Wraps CountTrackEnvelopes.
--- see GetTrackEnvelope
---- @within ReaScript Wrapped Methods
---- @return number
-function Track:count_envelopes()
-	return r.CountTrackEnvelopes(self.pointer)
-end
-
---- Count Media Items. Wraps CountTrackMediaItems.
--- count the number of items in the track
---- @within ReaScript Wrapped Methods
---- @return number
-function Track:count_items()
-	return r.CountTrackMediaItems(self.pointer)
-end
-
 --- Add By Name. Wraps TrackFX_AddByName.
 -- Adds or queries the position of a named FX from the track FX chain (recFX=false)
 -- or record input FX/monitoring FX (recFX=true, monitoring FX are on master
@@ -172,17 +156,30 @@ end
 --- @param fx_name string
 --- @param rec_fx boolean
 --- @param instantiate number
---- @return number
+--- @return table TrackFX object
 function Track:add_fx_by_name(fx_name, rec_fx, instantiate)
-	return r.TrackFX_AddByName(self.pointer, fx_name, rec_fx, instantiate)
+	local TrackFX = require("track_fx")
+	local result = r.TrackFX_AddByName(self.pointer, fx_name, rec_fx, instantiate)
+	return TrackFX:new(self, result)
 end
 
---- Copy TrackFX To Take. Wraps TrackFX_CopyToTake.
+--- Add TCP FX Parm. Wraps SNM_AddTCPFXParm.
+-- [S&M] Add an FX parameter knob in the TCP. Returns false if nothing updated
+-- (invalid parameters, knob already present, etc..)
+--- @within ReaScript Wrapped Methods
+--- @param fx_id number
+--- @param prm_id number
+--- @return boolean
+function Track:add_tcp_fx_parm(fx_id, prm_id)
+	return r.SNM_AddTCPFXParm(self.pointer, fx_id, prm_id)
+end
+
+--- Copy FX To Take. Wraps TrackFX_CopyToTake.
 -- Copies (or moves) FX from src_track to dest_take. src_fx can have 0x1000000 set
 -- to reference input FX.
 --- @within ReaScript Wrapped Methods
 --- @param src_fx number
---- @param dest_take Take table
+--- @param dest_take table Take object
 --- @param dest_fx number
 --- @param is_move boolean Optional
 function Track:copy_fx_to_take(src_fx, dest_take, dest_fx, is_move)
@@ -190,16 +187,17 @@ function Track:copy_fx_to_take(src_fx, dest_take, dest_fx, is_move)
 	return r.TrackFX_CopyToTake(self.pointer, src_fx, dest_take.pointer, dest_fx, is_move)
 end
 
---- Copy TrackFX To Track. Wraps TrackFX_CopyToTrack.
+--- Copy FX To Track. Wraps TrackFX_CopyToTrack.
 -- Copies (or moves) FX from src_track to dest_track. Can be used with
 -- src_track=dest_track to reorder.
 --- @within ReaScript Wrapped Methods
---- @param dest_track table
+--- @param src_fx number
+--- @param dest_track table Track object
 --- @param dest_fx number
 --- @param is_move boolean Optional
-function Track:copy_fx_to_track(dest_track, dest_fx, is_move)
+function Track:copy_fx_to_track(src_fx, dest_track, dest_fx, is_move)
 	local is_move = is_move or false
-	return r.TrackFX_CopyToTrack(self.src_track.pointer, src_fx, dest_track.pointer, dest_fx, is_move)
+	return r.TrackFX_CopyToTrack(self.pointer, src_fx, dest_track.pointer, dest_fx, is_move)
 end
 
 --- Create New Midi Item In Proj. Wraps CreateNewMIDIItemInProj.
@@ -208,13 +206,29 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param start_time number
 --- @param end_time number
---- @param boolean qnIn Optional
---- @return Item table
-function Track:create_new_midi_item_in_proj(start_time, end_time, boolean)
-	local boolean = boolean or nil
+--- @param boolean qn_in Optional
+--- @return table Item object
+function Track:create_new_midi_item_in_proj(start_time, end_time, qn_in)
+	local qn_in = qn_in or nil
 	local Item = require("item")
-	local result = r.CreateNewMIDIItemInProj(self.pointer, start_time, end_time, boolean)
+	local result = r.CreateNewMIDIItemInProj(self.pointer, start_time, end_time, qn_in)
 	return Item:new(result)
+end
+
+--- Count Track Envelopes. Wraps CountTrackEnvelopes.
+-- see GetTrackEnvelope
+--- @within ReaScript Wrapped Methods
+--- @return number
+function Track:count_envelopes()
+	return r.CountTrackEnvelopes(self.pointer)
+end
+
+--- Count Media Items. Wraps CountTrackMediaItems.
+-- count the number of items in the track
+--- @within ReaScript Wrapped Methods
+--- @return number
+function Track:count_items()
+	return r.CountTrackMediaItems(self.pointer)
 end
 
 --- Create Track Audio Accessor. Wraps CreateTrackAudioAccessor.
@@ -241,262 +255,12 @@ function Track:create_send()
 	return r.CreateTrackSend(self.pointer, dest_track)
 end
 
---- Get Touch State. Wraps CSurf_GetTouchState.
+--- Delete Media Item. Wraps DeleteTrackMediaItem.
 --- @within ReaScript Wrapped Methods
---- @param is_pan number
+--- @param item table Item object
 --- @return boolean
-function Track:get_touch_state(is_pan)
-	return r.CSurf_GetTouchState(self.pointer, is_pan)
-end
-
---- On Fx Change. Wraps CSurf_OnFXChange.
---- @within ReaScript Wrapped Methods
---- @param en number
---- @return boolean
-function Track:on_fx_change(en)
-	return r.CSurf_OnFXChange(self.pointer, en)
-end
-
---- On Input Monitor Change. Wraps CSurf_OnInputMonitorChange.
---- @within ReaScript Wrapped Methods
---- @param monitor number
---- @return number
-function Track:on_input_monitor_change(monitor)
-	return r.CSurf_OnInputMonitorChange(self.pointer, monitor)
-end
-
---- On Input Monitor Change Ex. Wraps CSurf_OnInputMonitorChangeEx.
---- @within ReaScript Wrapped Methods
---- @param monitor number
---- @param allowgang boolean
---- @return number
-function Track:on_input_monitor_change_ex(monitor, allowgang)
-	return r.CSurf_OnInputMonitorChangeEx(self.pointer, monitor, allowgang)
-end
-
---- On Mute Change. Wraps CSurf_OnMuteChange.
---- @within ReaScript Wrapped Methods
---- @param mute number
---- @return boolean
-function Track:on_mute_change(mute)
-	return r.CSurf_OnMuteChange(self.pointer, mute)
-end
-
---- On Mute Change Ex. Wraps CSurf_OnMuteChangeEx.
---- @within ReaScript Wrapped Methods
---- @param mute number
---- @param allowgang boolean
---- @return boolean
-function Track:on_mute_change_ex(mute, allowgang)
-	return r.CSurf_OnMuteChangeEx(self.pointer, mute, allowgang)
-end
-
---- On Pan Change. Wraps CSurf_OnPanChange.
---- @within ReaScript Wrapped Methods
---- @param pan number
---- @param relative boolean
---- @return number
-function Track:on_pan_change(pan, relative)
-	return r.CSurf_OnPanChange(self.pointer, pan, relative)
-end
-
---- On Pan Change Ex. Wraps CSurf_OnPanChangeEx.
---- @within ReaScript Wrapped Methods
---- @param pan number
---- @param relative boolean
---- @param allow_gang boolean
---- @return number
-function Track:on_pan_change_ex(pan, relative, allow_gang)
-	return r.CSurf_OnPanChangeEx(self.pointer, pan, relative, allow_gang)
-end
-
---- On Rec Arm Change. Wraps CSurf_Onrec_armChange.
---- @within ReaScript Wrapped Methods
---- @param rec_arm number
---- @return boolean
-function Track:on_rec_arm_change(rec_arm)
-	return r.CSurf_Onrec_armChange(self.pointer, rec_arm)
-end
-
---- On Rec Arm Change Ex. Wraps CSurf_Onrec_armChangeEx.
---- @within ReaScript Wrapped Methods
---- @param rec_arm number
---- @param allowgang boolean
---- @return boolean
-function Track:on_rec_arm_change_ex(rec_arm, allowgang)
-	return r.CSurf_Onrec_armChangeEx(self.pointer, rec_arm, allowgang)
-end
-
---- On Recv Pan Change. Wraps CSurf_OnRecvPanChange.
---- @within ReaScript Wrapped Methods
---- @param recv_index number
---- @param pan number
---- @param relative boolean
---- @return number
-function Track:on_recv_pan_change(recv_index, pan, relative)
-	return r.CSurf_OnRecvPanChange(self.pointer, recv_index, pan, relative)
-end
-
---- On Recv Volume Change. Wraps CSurf_OnRecvVolumeChange.
---- @within ReaScript Wrapped Methods
---- @param recv_index number
---- @param volume number
---- @param relative boolean
---- @return number
-function Track:on_recv_volume_change(recv_index, volume, relative)
-	return r.CSurf_OnRecvVolumeChange(self.pointer, recv_index, volume, relative)
-end
-
---- On Selected Change. Wraps CSurf_OnSelectedChange.
---- @within ReaScript Wrapped Methods
---- @param selected number
---- @return boolean
-function Track:on_selected_change(selected)
-	return r.CSurf_OnSelectedChange(self.pointer, selected)
-end
-
---- On Send Pan Change. Wraps CSurf_OnSendPanChange.
---- @within ReaScript Wrapped Methods
---- @param send_index number
---- @param pan number
---- @param relative boolean
---- @return number
-function Track:on_send_pan_change(send_index, pan, relative)
-	return r.CSurf_OnSendPanChange(self.pointer, send_index, pan, relative)
-end
-
---- On Send Volume Change. Wraps CSurf_OnSendVolumeChange.
---- @within ReaScript Wrapped Methods
---- @param send_index number
---- @param volume number
---- @param relative boolean
---- @return number
-function Track:on_send_volume_change(send_index, volume, relative)
-	return r.CSurf_OnSendVolumeChange(self.pointer, send_index, volume, relative)
-end
-
---- On Solo Change. Wraps CSurf_OnSoloChange.
---- @within ReaScript Wrapped Methods
---- @param solo number
---- @return boolean
-function Track:on_solo_change(solo)
-	return r.CSurf_OnSoloChange(self.pointer, solo)
-end
-
---- On Solo Change Ex. Wraps CSurf_OnSoloChangeEx.
---- @within ReaScript Wrapped Methods
---- @param solo number
---- @param allowgang boolean
---- @return boolean
-function Track:on_solo_change_ex(solo, allowgang)
-	return r.CSurf_OnSoloChangeEx(self.pointer, solo, allowgang)
-end
-
---- On Track Selection. Wraps CSurf_OnTrackSelection.
---- @within ReaScript Wrapped Methods
-function Track:on_track_selection()
-	return r.CSurf_OnTrackSelection(self.pointer)
-end
-
---- On Volume Change. Wraps CSurf_OnVolumeChange.
---- @within ReaScript Wrapped Methods
---- @param volume number
---- @param relative boolean
---- @return number
-function Track:on_volume_change(volume, relative)
-	return r.CSurf_OnVolumeChange(self.pointer, volume, relative)
-end
-
---- On Volume Change Ex. Wraps CSurf_OnVolumeChangeEx.
---- @within ReaScript Wrapped Methods
---- @param volume number
---- @param relative boolean
---- @param allow_gang boolean
---- @return number
-function Track:on_volume_change_ex(volume, relative, allow_gang)
-	return r.CSurf_OnVolumeChangeEx(self.pointer, volume, relative, allow_gang)
-end
-
---- On Width Change. Wraps CSurf_OnWidthChange.
---- @within ReaScript Wrapped Methods
---- @param width number
---- @param relative boolean
---- @return number
-function Track:on_width_change(width, relative)
-	return r.CSurf_OnWidthChange(self.pointer, width, relative)
-end
-
---- On Width Change Ex. Wraps CSurf_OnWidthChangeEx.
---- @within ReaScript Wrapped Methods
---- @param width number
---- @param relative boolean
---- @param allow_gang boolean
---- @return number
-function Track:on_width_change_ex(width, relative, allow_gang)
-	return r.CSurf_OnWidthChangeEx(self.pointer, width, relative, allow_gang)
-end
-
---- Set Surface Mute. Wraps CSurf_SetSurfaceMute.
---- @within ReaScript Wrapped Methods
---- @param mute boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_mute(mute, ignoresurf)
-	return r.CSurf_SetSurfaceMute(self.pointer, mute, ignoresurf)
-end
-
---- Set Surface Pan. Wraps CSurf_SetSurfacePan.
---- @within ReaScript Wrapped Methods
---- @param pan number
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_pan(pan, ignoresurf)
-	return r.CSurf_SetSurfacePan(self.pointer, pan, ignoresurf)
-end
-
---- Set Surface Rec Arm. Wraps CSurf_SetSurfacerec_arm.
---- @within ReaScript Wrapped Methods
---- @param rec_arm boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_rec_arm(rec_arm, ignoresurf)
-	return r.CSurf_SetSurfacerec_arm(self.pointer, rec_arm, ignoresurf)
-end
-
---- Set Surface Selected. Wraps CSurf_SetSurfaceSelected.
---- @within ReaScript Wrapped Methods
---- @param selected boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_selected(selected, ignoresurf)
-	return r.CSurf_SetSurfaceSelected(self.pointer, selected, ignoresurf)
-end
-
---- Set Surface Solo. Wraps CSurf_SetSurfaceSolo.
---- @within ReaScript Wrapped Methods
---- @param solo boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_solo(solo, ignoresurf)
-	return r.CSurf_SetSurfaceSolo(self.pointer, solo, ignoresurf)
-end
-
---- Set Surface Volume. Wraps CSurf_SetSurfaceVolume.
---- @within ReaScript Wrapped Methods
---- @param volume number
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_volume(volume, ignoresurf)
-	return r.CSurf_SetSurfaceVolume(self.pointer, volume, ignoresurf)
-end
-
---- Track To Id. Wraps CSurf_TrackToID.
---- @within ReaScript Wrapped Methods
---- @param mcp_view boolean
---- @return number
-function Track:track_to_id(mcp_view)
-	return r.CSurf_TrackToID(self.pointer, mcp_view)
-end
-
---- Delete Track Media Item. Wraps DeleteTrackMediaItem.
---- @within ReaScript Wrapped Methods
---- @return boolean
-function Track:delete_track_media_item()
-	return r.DeleteTrackMediaItem(self.pointer, it)
+function Track:delete_item(item)
+	return r.DeleteTrackMediaItem(self.pointer, item.pointer)
 end
 
 --- Get Fx Envelope. Wraps GetFXEnvelope.
@@ -504,13 +268,13 @@ end
 -- create=true, the envelope will be created. If the envelope already exists and is
 -- bypassed and create=true, then the envelope will be unbypassed.
 --- @within ReaScript Wrapped Methods
---- @param fxindex number
---- @param parameterindex number
+--- @param fx_idx number
+--- @param param_idx number
 --- @param create boolean
 --- @return Envelope table
-function Track:get_fx_envelope(fxindex, parameterindex, create)
+function Track:get_fx_envelope(fx_idx, param_idx, create)
 	local Envelope = require("envelope")
-	local result = r.GetFXEnvelope(self.pointer, fxindex, parameterindex, create)
+	local result = r.GetFXEnvelope(self.pointer, fx_idx, param_idx, create)
 	return Envelope:new(result)
 end
 
@@ -662,6 +426,14 @@ function Track:get_parent_track()
 	local Track = require("track")
 	local result = r.GetParentTrack(self.pointer)
 	return Track:new(result)
+end
+
+--- Get Touch State. Wraps CSurf_GetTouchState.
+--- @within ReaScript Wrapped Methods
+--- @param is_pan number
+--- @return boolean
+function Track:get_touch_state(is_pan)
+	return r.CSurf_GetTouchState(self.pointer, is_pan)
 end
 
 --- Constants for Track:get_set_info_string.
@@ -1171,6 +943,359 @@ function Track:get_track_ui_vol_pan()
 	end
 end
 
+-- Get Peak Hold DB. Wraps Track_GetPeakHoldDB.
+-- Returns meter hold state, in dB*0.01 (0 = +0dB, -0.01 = -1dB, 0.02 = +2dB, etc).
+-- If clear is set, clears the meter hold. If channel==1024 or channel==1025,
+-- returns loudness values if this is the master track or this track's VU meters
+-- are set to display loudness.
+--- @within ReaScript Wrapped Methods
+--- @param channel number
+--- @param clear boolean
+--- @return number
+function Track:get_peak_hold_db(channel, clear)
+	return r.Track_GetPeakHoldDB(self.pointer, channel, clear)
+end
+
+--- Get Peak Info. Wraps Track_GetPeakInfo.
+-- Returns peak meter value (1.0=+0dB, 0.0=-inf) for channel. If channel==1024 or
+-- channel==1025, returns loudness values if this is the master track or this
+-- track's VU meters are set to display loudness.
+--- @within ReaScript Wrapped Methods
+--- @param channel number
+--- @return number
+function Track:get_peak_info(channel)
+	return r.Track_GetPeakInfo(self.pointer, channel)
+end
+
+--- Delete Fx. Wraps TrackFX_Delete.
+-- Remove a FX from track chain (returns true on success).
+--- @within ReaScript Wrapped Methods
+--- @param fx number
+--- @return boolean
+function Track:delete_fx(fx)
+	return r.TrackFX_Delete(self.pointer, fx)
+end
+
+--- Get Fx Count. Wraps TrackFX_GetCount.
+--- @within ReaScript Wrapped Methods
+--- @return number
+function Track:get_track_fx_count()
+	return r.TrackFX_GetCount(self.pointer)
+end
+
+--- Get Freeze Count. Wraps BR_GetMediaTrackFreezeCount.
+-- [BR] Get media track freeze count (if track isn't frozen at all, returns 0).
+--- @within ReaScript Wrapped Methods
+--- @return number
+function Track:get_freeze_count()
+	return r.BR_GetMediaTrackFreezeCount(self.pointer)
+end
+
+--- Get Send Info Envelope. Wraps BR_GetMediaTrackSendInfo_Envelope.
+-- [BR] Get track envelope for send/receive/hardware output.
+--- @within ReaScript Wrapped Methods
+--- @param category number
+--- @param send_idx number
+--- @param envelope_type number
+--- @return Envelope table
+function Track:get_send_info_envelope(category, send_idx, envelope_type)
+	local Envelope = require("envelope")
+	local result = r.BR_GetMediaTrackSendInfo_Envelope(self.pointer, category, send_idx, envelope_type)
+	return Envelope:new(result)
+end
+
+--- Get Send Info Track. Wraps BR_GetMediaTrackSendInfo_Track.
+-- [BR] Get source or destination media track for send/receive.
+--- @within ReaScript Wrapped Methods
+--- @param category number
+--- @param send_idx number
+--- @param track_type number
+--- @return Track table
+function Track:get_send_info_track(category, send_idx, track_type)
+	local Track = require("track")
+	local result = r.BR_GetMediaTrackSendInfo_Track(self.pointer, category, send_idx, track_type)
+	return Track:new(result)
+end
+
+--- Get Set Track Send Info. Wraps BR_GetSetTrackSendInfo.
+-- [BR] Get or set send attributes.
+--- @within ReaScript Wrapped Methods
+--- @param category number
+--- @param send_idx number
+--- @param parm_name string
+--- @param set_new_value boolean
+--- @param new_value number
+--- @return number
+function Track:get_set_track_send_info(category, send_idx, parm_name, set_new_value, new_value)
+	return r.BR_GetSetTrackSendInfo(self.pointer, category, send_idx, parm_name, set_new_value, new_value)
+end
+
+--- Get Sws Track Notes. Wraps NF_GetSWSTrackNotes.
+--- @within ReaScript Wrapped Methods
+--- @return string
+function Track:get_sws_track_notes()
+	return r.NF_GetSWSTrackNotes(self.pointer)
+end
+
+--- On Fx Change. Wraps CSurf_OnFXChange.
+--- @within ReaScript Wrapped Methods
+--- @param en number
+--- @return boolean
+function Track:on_fx_change(en)
+	return r.CSurf_OnFXChange(self.pointer, en)
+end
+
+--- On Input Monitor Change. Wraps CSurf_OnInputMonitorChange.
+--- @within ReaScript Wrapped Methods
+--- @param monitor number
+--- @return number
+function Track:on_input_monitor_change(monitor)
+	return r.CSurf_OnInputMonitorChange(self.pointer, monitor)
+end
+
+--- On Input Monitor Change Ex. Wraps CSurf_OnInputMonitorChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param monitor number
+--- @param allowgang boolean
+--- @return number
+function Track:on_input_monitor_change_ex(monitor, allowgang)
+	return r.CSurf_OnInputMonitorChangeEx(self.pointer, monitor, allowgang)
+end
+
+--- On Mute Change. Wraps CSurf_OnMuteChange.
+--- @within ReaScript Wrapped Methods
+--- @param mute number
+--- @return boolean
+function Track:on_mute_change(mute)
+	return r.CSurf_OnMuteChange(self.pointer, mute)
+end
+
+--- On Mute Change Ex. Wraps CSurf_OnMuteChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param mute number
+--- @param allowgang boolean
+--- @return boolean
+function Track:on_mute_change_ex(mute, allowgang)
+	return r.CSurf_OnMuteChangeEx(self.pointer, mute, allowgang)
+end
+
+--- On Pan Change. Wraps CSurf_OnPanChange.
+--- @within ReaScript Wrapped Methods
+--- @param pan number
+--- @param relative boolean
+--- @return number
+function Track:on_pan_change(pan, relative)
+	return r.CSurf_OnPanChange(self.pointer, pan, relative)
+end
+
+--- On Pan Change Ex. Wraps CSurf_OnPanChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param pan number
+--- @param relative boolean
+--- @param allow_gang boolean
+--- @return number
+function Track:on_pan_change_ex(pan, relative, allow_gang)
+	return r.CSurf_OnPanChangeEx(self.pointer, pan, relative, allow_gang)
+end
+
+--- On Rec Arm Change. Wraps CSurf_Onrec_armChange.
+--- @within ReaScript Wrapped Methods
+--- @param rec_arm number
+--- @return boolean
+function Track:on_rec_arm_change(rec_arm)
+	return r.CSurf_Onrec_armChange(self.pointer, rec_arm)
+end
+
+--- On Rec Arm Change Ex. Wraps CSurf_Onrec_armChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param rec_arm number
+--- @param allowgang boolean
+--- @return boolean
+function Track:on_rec_arm_change_ex(rec_arm, allowgang)
+	return r.CSurf_Onrec_armChangeEx(self.pointer, rec_arm, allowgang)
+end
+
+--- On Recv Pan Change. Wraps CSurf_OnRecvPanChange.
+--- @within ReaScript Wrapped Methods
+--- @param recv_index number
+--- @param pan number
+--- @param relative boolean
+--- @return number
+function Track:on_recv_pan_change(recv_index, pan, relative)
+	return r.CSurf_OnRecvPanChange(self.pointer, recv_index, pan, relative)
+end
+
+--- On Recv Volume Change. Wraps CSurf_OnRecvVolumeChange.
+--- @within ReaScript Wrapped Methods
+--- @param recv_index number
+--- @param volume number
+--- @param relative boolean
+--- @return number
+function Track:on_recv_volume_change(recv_index, volume, relative)
+	return r.CSurf_OnRecvVolumeChange(self.pointer, recv_index, volume, relative)
+end
+
+--- On Selected Change. Wraps CSurf_OnSelectedChange.
+--- @within ReaScript Wrapped Methods
+--- @param selected number
+--- @return boolean
+function Track:on_selected_change(selected)
+	return r.CSurf_OnSelectedChange(self.pointer, selected)
+end
+
+--- On Send Pan Change. Wraps CSurf_OnSendPanChange.
+--- @within ReaScript Wrapped Methods
+--- @param send_index number
+--- @param pan number
+--- @param relative boolean
+--- @return number
+function Track:on_send_pan_change(send_index, pan, relative)
+	return r.CSurf_OnSendPanChange(self.pointer, send_index, pan, relative)
+end
+
+--- On Send Volume Change. Wraps CSurf_OnSendVolumeChange.
+--- @within ReaScript Wrapped Methods
+--- @param send_index number
+--- @param volume number
+--- @param relative boolean
+--- @return number
+function Track:on_send_volume_change(send_index, volume, relative)
+	return r.CSurf_OnSendVolumeChange(self.pointer, send_index, volume, relative)
+end
+
+--- On Solo Change. Wraps CSurf_OnSoloChange.
+--- @within ReaScript Wrapped Methods
+--- @param solo number
+--- @return boolean
+function Track:on_solo_change(solo)
+	return r.CSurf_OnSoloChange(self.pointer, solo)
+end
+
+--- On Solo Change Ex. Wraps CSurf_OnSoloChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param solo number
+--- @param allowgang boolean
+--- @return boolean
+function Track:on_solo_change_ex(solo, allowgang)
+	return r.CSurf_OnSoloChangeEx(self.pointer, solo, allowgang)
+end
+
+--- On Track Selection. Wraps CSurf_OnTrackSelection.
+--- @within ReaScript Wrapped Methods
+function Track:on_track_selection()
+	return r.CSurf_OnTrackSelection(self.pointer)
+end
+
+--- On Volume Change. Wraps CSurf_OnVolumeChange.
+--- @within ReaScript Wrapped Methods
+--- @param volume number
+--- @param relative boolean
+--- @return number
+function Track:on_volume_change(volume, relative)
+	return r.CSurf_OnVolumeChange(self.pointer, volume, relative)
+end
+
+--- On Volume Change Ex. Wraps CSurf_OnVolumeChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param volume number
+--- @param relative boolean
+--- @param allow_gang boolean
+--- @return number
+function Track:on_volume_change_ex(volume, relative, allow_gang)
+	return r.CSurf_OnVolumeChangeEx(self.pointer, volume, relative, allow_gang)
+end
+
+--- On Width Change. Wraps CSurf_OnWidthChange.
+--- @within ReaScript Wrapped Methods
+--- @param width number
+--- @param relative boolean
+--- @return number
+function Track:on_width_change(width, relative)
+	return r.CSurf_OnWidthChange(self.pointer, width, relative)
+end
+
+--- Remove Receives from another track. Wraps SNM_RemoveReceivesFrom.
+-- [S&M] Removes all receives from src_track. Returns false if nothing updated.
+--- @within ReaScript Wrapped Methods
+--- @param src_track MediaTrack
+--- @return boolean
+function Track:remove_receives_from(src_track)
+	return r.SNM_RemoveReceivesFrom(self.pointer, src_track.pointer)
+end
+
+--- On Width Change Ex. Wraps CSurf_OnWidthChangeEx.
+--- @within ReaScript Wrapped Methods
+--- @param width number
+--- @param relative boolean
+--- @param allow_gang boolean
+--- @return number
+function Track:on_width_change_ex(width, relative, allow_gang)
+	return r.CSurf_OnWidthChangeEx(self.pointer, width, relative, allow_gang)
+end
+
+--- Set Surface Mute. Wraps CSurf_SetSurfaceMute.
+--- @within ReaScript Wrapped Methods
+--- @param mute boolean
+--- @param ignoresurf IReaperControlSurface
+function Track:set_surface_mute(mute, ignoresurf)
+	return r.CSurf_SetSurfaceMute(self.pointer, mute, ignoresurf)
+end
+
+--- Set Surface Pan. Wraps CSurf_SetSurfacePan.
+--- @within ReaScript Wrapped Methods
+--- @param pan number
+--- @param ignoresurf IReaperControlSurface
+function Track:set_surface_pan(pan, ignoresurf)
+	return r.CSurf_SetSurfacePan(self.pointer, pan, ignoresurf)
+end
+
+--- Set Surface Rec Arm. Wraps CSurf_SetSurfacerec_arm.
+--- @within ReaScript Wrapped Methods
+--- @param rec_arm boolean
+--- @param ignoresurf IReaperControlSurface
+function Track:set_surface_rec_arm(rec_arm, ignoresurf)
+	return r.CSurf_SetSurfacerec_arm(self.pointer, rec_arm, ignoresurf)
+end
+
+--- Set Surface Selected. Wraps CSurf_SetSurfaceSelected.
+--- @within ReaScript Wrapped Methods
+--- @param selected boolean
+--- @param ignoresurf IReaperControlSurface
+function Track:set_surface_selected(selected, ignoresurf)
+	return r.CSurf_SetSurfaceSelected(self.pointer, selected, ignoresurf)
+end
+
+--- Set Surface Solo. Wraps CSurf_SetSurfaceSolo.
+--- @within ReaScript Wrapped Methods
+--- @param solo boolean
+--- @param ignoresurf IReaperControlSurface
+function Track:set_surface_solo(solo, ignoresurf)
+	return r.CSurf_SetSurfaceSolo(self.pointer, solo, ignoresurf)
+end
+
+--- Set Surface Volume. Wraps CSurf_SetSurfaceVolume.
+--- @within ReaScript Wrapped Methods
+--- @param volume number
+--- @param ignoresurf IReaperControlSurface
+function Track:set_surface_volume(volume, ignoresurf)
+	return r.CSurf_SetSurfaceVolume(self.pointer, volume, ignoresurf)
+end
+
+--- Set Sws Track Notes. Wraps NF_SetSWSTrackNotes.
+--- @within ReaScript Wrapped Methods
+--- @param str string
+function Track:set_sws_track_notes(str)
+	return r.NF_SetSWSTrackNotes(self.pointer, str)
+end
+
+--- Track To Id. Wraps CSurf_TrackToID.
+--- @within ReaScript Wrapped Methods
+--- @param mcp_view boolean
+--- @return number
+function Track:track_to_id(mcp_view)
+	return r.CSurf_TrackToID(self.pointer, mcp_view)
+end
+
 --- Is Track Selected. Wraps IsTrackSelected.
 --- @within ReaScript Wrapped Methods
 --- @return boolean
@@ -1611,127 +1736,6 @@ end
 --- @return boolean
 function Track:toggle_track_send_ui_mute(send_idx)
 	return r.ToggleTrackSendUIMute(self.pointer, send_idx)
-end
-
---- Get Peak Hold DB. Wraps Track_GetPeakHoldDB.
--- Returns meter hold state, in dB*0.01 (0 = +0dB, -0.01 = -1dB, 0.02 = +2dB, etc).
--- If clear is set, clears the meter hold. If channel==1024 or channel==1025,
--- returns loudness values if this is the master track or this track's VU meters
--- are set to display loudness.
---- @within ReaScript Wrapped Methods
---- @param channel number
---- @param clear boolean
---- @return number
-function Track:get_peak_hold_db(channel, clear)
-	return r.Track_GetPeakHoldDB(self.pointer, channel, clear)
-end
-
---- Get Peak Info. Wraps Track_GetPeakInfo.
--- Returns peak meter value (1.0=+0dB, 0.0=-inf) for channel. If channel==1024 or
--- channel==1025, returns loudness values if this is the master track or this
--- track's VU meters are set to display loudness.
---- @within ReaScript Wrapped Methods
---- @param channel number
---- @return number
-function Track:get_peak_info(channel)
-	return r.Track_GetPeakInfo(self.pointer, channel)
-end
-
---- Delete Fx. Wraps TrackFX_Delete.
--- Remove a FX from track chain (returns true on success).
---- @within ReaScript Wrapped Methods
---- @param fx number
---- @return boolean
-function Track:delete_fx(fx)
-	return r.TrackFX_Delete(self.pointer, fx)
-end
-
---- Get Fx Count. Wraps TrackFX_GetCount.
---- @within ReaScript Wrapped Methods
---- @return number
-function Track:get_track_fx_count()
-	return r.TrackFX_GetCount(self.pointer)
-end
-
---- Get Freeze Count. Wraps BR_GetMediaTrackFreezeCount.
--- [BR] Get media track freeze count (if track isn't frozen at all, returns 0).
---- @within ReaScript Wrapped Methods
---- @return number
-function Track:get_freeze_count()
-	return r.BR_GetMediaTrackFreezeCount(self.pointer)
-end
-
---- Get Send Info Envelope. Wraps BR_GetMediaTrackSendInfo_Envelope.
--- [BR] Get track envelope for send/receive/hardware output.
---- @within ReaScript Wrapped Methods
---- @param category number
---- @param send_idx number
---- @param envelope_type number
---- @return Envelope table
-function Track:get_send_info_envelope(category, send_idx, envelope_type)
-	local Envelope = require("envelope")
-	local result = r.BR_GetMediaTrackSendInfo_Envelope(self.pointer, category, send_idx, envelope_type)
-	return Envelope:new(result)
-end
-
---- Get Send Info Track. Wraps BR_GetMediaTrackSendInfo_Track.
--- [BR] Get source or destination media track for send/receive.
---- @within ReaScript Wrapped Methods
---- @param category number
---- @param send_idx number
---- @param track_type number
---- @return Track table
-function Track:get_send_info_track(category, send_idx, track_type)
-	local Track = require("track")
-	local result = r.BR_GetMediaTrackSendInfo_Track(self.pointer, category, send_idx, track_type)
-	return Track:new(result)
-end
-
---- Get Set Track Send Info. Wraps BR_GetSetTrackSendInfo.
--- [BR] Get or set send attributes.
---- @within ReaScript Wrapped Methods
---- @param category number
---- @param send_idx number
---- @param parm_name string
---- @param set_new_value boolean
---- @param new_value number
---- @return number
-function Track:get_set_track_send_info(category, send_idx, parm_name, set_new_value, new_value)
-	return r.BR_GetSetTrackSendInfo(self.pointer, category, send_idx, parm_name, set_new_value, new_value)
-end
-
---- Get Sws Track Notes. Wraps NF_GetSWSTrackNotes.
---- @within ReaScript Wrapped Methods
---- @return string
-function Track:get_sws_track_notes()
-	return r.NF_GetSWSTrackNotes(self.pointer)
-end
-
---- Set Sws Track Notes. Wraps NF_SetSWSTrackNotes.
---- @within ReaScript Wrapped Methods
---- @param str string
-function Track:set_sws_track_notes(str)
-	return r.NF_SetSWSTrackNotes(self.pointer, str)
-end
-
---- Add TCP FX Parm. Wraps SNM_AddTCPFXParm.
--- [S&M] Add an FX parameter knob in the TCP. Returns false if nothing updated
--- (invalid parameters, knob already present, etc..)
---- @within ReaScript Wrapped Methods
---- @param fx_id number
---- @param prm_id number
---- @return boolean
-function Track:add_tcp_fx_parm(fx_id, prm_id)
-	return r.SNM_AddTCPFXParm(self.pointer, fx_id, prm_id)
-end
-
---- Remove Receives from another track. Wraps SNM_RemoveReceivesFrom.
--- [S&M] Removes all receives from src_track. Returns false if nothing updated.
---- @within ReaScript Wrapped Methods
---- @param src_track MediaTrack
---- @return boolean
-function Track:remove_receives_from(src_track)
-	return r.SNM_RemoveReceivesFrom(self.pointer, src_track.pointer)
 end
 
 return Track
