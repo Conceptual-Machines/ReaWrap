@@ -36,7 +36,7 @@ end
 --- @within ReaWrap Custom Methods
 --- @return string
 function Track:__tostring()
-	return stringformat("<Track name=%s>", self:get_name())
+	return string.format("<Track name=%s>", self:get_name())
 end
 
 --- Get media items in the track.

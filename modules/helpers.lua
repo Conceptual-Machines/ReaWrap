@@ -126,7 +126,7 @@ function helpers.file_exists(fpath)
 	return f ~= nil
 end
 
---- Read a file.
+--- Read a file. Return the content as a string. If the file does not exist, throw an error.
 --- @param fpath string
 --- @return string
 function helpers.read_file(fpath)
