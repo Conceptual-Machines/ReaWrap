@@ -135,7 +135,7 @@ function helpers.read_file(fpath)
 		f:close()
 		return content
 	else
-		return nil
+		error("File not found: " .. tostring(fpath))
 	end
 end
 

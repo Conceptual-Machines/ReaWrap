@@ -231,7 +231,7 @@ function Take:get_set_info_string(param_name, string_need_big, set_new_value)
 	if ret_val then
 		return string_need_big
 	else
-		return nil
+		error("Error getting/setting take info string")
 	end
 end
 
@@ -436,7 +436,7 @@ function Take:midi_get_all_evts()
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Error getting all MIDI events")
 	end
 end
 

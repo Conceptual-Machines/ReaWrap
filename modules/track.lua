@@ -485,7 +485,7 @@ function Track:get_set_info_string(param_name, string_need_big, set_new_value)
 	if ret_val then
 		return string_need_big
 	else
-		return nil
+		error("Failed to get or set track info string.")
 	end
 end
 
@@ -845,7 +845,7 @@ function Track:get_track_send_ui_mute(send_index)
 	if ret_val then
 		return mute
 	else
-		return nil
+		error("Could not get track send ui mute")
 	end
 end
 
@@ -861,7 +861,7 @@ function Track:get_track_send_ui_vol_pan(send_index)
 	if ret_val then
 		return volume, pan
 	else
-		return nil
+		error("Could not get track send ui vol pan")
 	end
 end
 
@@ -877,7 +877,7 @@ function Track:get_track_state()
 	if ret_val then
 		return flags
 	else
-		return nil
+		error("Could not get track state")
 	end
 end
 
@@ -893,7 +893,7 @@ function Track:get_track_state_chunk(str, is_undo)
 	if ret_val then
 		return str
 	else
-		return nil
+		error("Could not get track state chunk")
 	end
 end
 
@@ -905,7 +905,7 @@ function Track:get_track_ui_mute()
 	if ret_val then
 		return mute
 	else
-		return nil
+		error("Could not get track ui mute")
 	end
 end
 
@@ -919,7 +919,7 @@ function Track:get_track_ui_pan()
 	if ret_val then
 		return pan1, pan2, pan_mode
 	else
-		return nil
+		error("Could not get track ui pan")
 	end
 end
 
@@ -932,7 +932,7 @@ function Track:get_track_ui_vol_pan()
 	if ret_val then
 		return volume, pan
 	else
-		return nil
+		error("Could not get track ui vol pan")
 	end
 end
 
@@ -1056,7 +1056,7 @@ function Track:midi_get_track_hash(notes_only)
 	if ret_val then
 		return hash
 	else
-		return nil
+		error("Could not get track hash")
 	end
 end
 
