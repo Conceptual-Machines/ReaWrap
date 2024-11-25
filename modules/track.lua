@@ -231,12 +231,15 @@ function Track:count_items()
 end
 
 --- Create Track Audio Accessor. Wraps CreateTrackAudioAccessor.
--- Create an audio accessor object for this track. Must only call from the main
--- thread. See CreateTakeAudioAccessor, DestroyAudioAccessor,
--- AudioAccessorStateChanged, GetAudioAccessorStartTime, GetAudioAccessorEndTime,
--- GetAudioAccessorSamples.
+-- Create an audio accessor object for this track. Must only call from the main thread.
 --- @within ReaScript Wrapped Methods
 --- @return userdata
+--- @see Take:create_take_audio_accessor
+--- @see AudioAccessor:destroy
+--- @see AudioAccessor:state_changed
+--- @see AudioAccessor:get_start_time
+--- @see AudioAccessor:get_end_time
+--- @see AudioAccessor:get_samples
 function Track:create_track_audio_accessor()
 	local AudioAccessor = require("audio_accessor")
 	local result = r.CreateTrackAudioAccessor(self.pointer)
