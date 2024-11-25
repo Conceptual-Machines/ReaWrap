@@ -492,8 +492,6 @@ function Track:track_to_id(mcp_view)
 	return r.CSurf_TrackToID(self.pointer, mcp_view)
 end
 
-
-
 --- Delete Track Media Item. Wraps DeleteTrackMediaItem.
 --- @within ReaScript Wrapped Methods
 --- @return boolean

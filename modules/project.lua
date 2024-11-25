@@ -358,7 +358,6 @@ function Project:edit_tempo_time_sig_marker(marker_idx)
 	return r.EditTempoTimeSigMarker(self.pointer, marker_idx)
 end
 
-
 --- Enum Project Markers. Wraps EnumProjectMarkers3.
 --- @within ReaScript Wrapped Methods
 --- @param idx number
