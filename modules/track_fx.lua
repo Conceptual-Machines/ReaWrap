@@ -136,11 +136,12 @@ end
 
 --- Get Eq. Wraps TrackFX_GetEQ.
 -- Get the index of ReaEQ in the track FX chain. If ReaEQ is not in the chain and
--- instantiate is true, it will be inserted. See TrackFX_GetInstrument,
--- TrackFX_GetByName.
+-- instantiate is true, it will be inserted.
 --- @within ReaScript Wrapped Methods
 --- @param instantiate boolean Optional.
 --- @return number
+--- @see TrackFX:get_instrument
+--- @see TrackFX:add_by_name
 function TrackFX:get_eq(instantiate)
 	local instantiate = instantiate or false
 	return r.TrackFX_GetEQ(self.track.pointer, instantiate)
@@ -246,9 +247,11 @@ end
 
 --- Get Instrument. Wraps TrackFX_GetInstrument.
 -- Get the index of the first track FX insert that is a virtual instrument, or -1
--- if none. See TrackFX_GetEQ, TrackFX_GetByName.
+-- if none.
 --- @within ReaScript Wrapped Methods
 --- @return number
+--- @see TrackFX:get_eq
+--- @see TrackFX:add_by_name
 function TrackFX:get_instrument()
 	return r.TrackFX_GetInstrument(self.track.pointer)
 end
@@ -579,9 +582,9 @@ end
 
 --- Get Preset. Wraps TrackFX_GetPreset.
 -- Get the name of the preset currently showing in the REAPER dropdown, or the full
--- path to a factory preset file for VST3 plug-ins (.vstpreset). See
--- TrackFX_SetPreset.
+-- path to a factory preset file for VST3 plug-ins (.vstpreset).
 --- @within ReaScript Wrapped Methods
+--- @see TrackFX:set_preset
 function TrackFX:get_preset()
 	local ret_val, preset_name = r.TrackFX_GetPreset(self.track.pointer, self.pointer)
 	if ret_val then
@@ -640,11 +643,12 @@ function TrackFX:navigate_presets(preset_move)
 end
 
 --- Set Enabled. Wraps TrackFX_SetEnabled.
--- See TrackFX_GetEnabled FX indices for tracks can have 0x1000000 added to them in
+-- See TrackFX:get_enabled. FX indices for tracks can have 0x1000000 added to them in
 -- order to reference record input FX (normal tracks) or hardware output FX (master
 -- track).
 --- @within ReaScript Wrapped Methods
 --- @param enabled boolean
+--- @see TrackFX:get_enabled
 function TrackFX:set_enabled(enabled)
 	return r.TrackFX_SetEnabled(self.track.pointer, self.pointer, enabled)
 end
@@ -683,17 +687,18 @@ function TrackFX:set_named_config_param(param_name, value)
 end
 
 --- Set Offline. Wraps TrackFX_SetOffline.
--- See TrackFX_GetOffline.
 --- @within ReaScript Wrapped Methods
 --- @param offline boolean
+--- @see TrackFX:get_offline
 function TrackFX:set_offline(offline)
 	return r.TrackFX_SetOffline(self.track.pointer, self.pointer, offline)
 end
 
 --- Set Open. Wraps TrackFX_SetOpen.
--- Open this FX UI. See TrackFX_GetOpen.
+-- Open this FX UI.
 --- @within ReaScript Wrapped Methods
 --- @param open boolean
+--- @see TrackFX:get_open
 function TrackFX:set_open(open)
 	return r.TrackFX_SetOpen(self.track.pointer, self.pointer, open)
 end
@@ -733,20 +738,22 @@ end
 
 --- Set Preset. Wraps TrackFX_SetPreset.
 -- Activate a preset with the name shown in the REAPER dropdown. Full paths to
--- .vst preset files are also supported for VST3 plug-ins. See TrackFX_GetPreset.
+-- .vst preset files are also supported for VST3 plug-ins.
 --- @within ReaScript Wrapped Methods
 --- @param preset_name string
 --- @return boolean
+--- @see TrackFX:get_preset
 function TrackFX:set_preset(preset_name)
 	return r.TrackFX_SetPreset(self.track.pointer, self.pointer, preset_name)
 end
 
 --- Set Preset By Index. Wraps TrackFX_SetPresetByIndex.
 -- Sets the preset idx, or the factory preset (idx==-2), or the default user preset
--- (idx==-1). Returns true on success. See TrackFX_GetPresetIndex.
+-- (idx==-1). Returns true on success.
 --- @within ReaScript Wrapped Methods
 --- @param preset_idx number The index of the preset
 --- @return boolean
+--- @see TrackFX:get_preset_index
 function TrackFX:set_preset_by_index(preset_idx)
 	return r.TrackFX_SetPresetByIndex(self.track.pointer, self.pointer, idx)
 end

@@ -981,8 +981,7 @@ end
 
 --- Save Project Ex. Wraps Main_SaveProjectEx.
 -- Save the project. options: &1=save selected tracks as track template, &2=include
--- media with track template, &4=include envelopes with track template. See
--- Main_openProject, Main_SaveProject.
+-- media with track template, &4=include envelopes with track template.
 --- @within ReaScript Wrapped Methods
 --- @param file_name string
 --- @param options number
