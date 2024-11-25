@@ -45,20 +45,20 @@ end
 -- @section ReaScript API Methods
 
 --- Count Take Envelopes. Wraps CountTakeEnvelopes.
--- See GetTakeEnvelope
 --- @within ReaScript Wrapped Methods
 --- @return number
+--- @see Take:get_envelope
 function Take:count_envelopes()
 	return r.CountTakeEnvelopes(self.pointer)
 end
 
 --- Create Take Audio Accessor. Wraps CreateTakeAudioAccessor.
 -- Create an audio accessor object for this take. Must only call from the main
--- thread. See CreateTrackAudioAccessor, DestroyAudioAccessor,
+-- thread. See DestroyAudioAccessor,
 -- AudioAccessorStateChanged, GetAudioAccessorStartTime, GetAudioAccessorEndTime,
 -- GetAudioAccessorSamples.
 --- @within ReaScript Wrapped Methods
---- @return userdata
+--- @return table AudioAccessor object
 function Take:create_take_audio_accessor()
 	local AudioAccessor = require("audio_accessor")
 	local result = r.CreateTakeAudioAccessor(self.pointer)
@@ -67,11 +67,13 @@ end
 
 --- Delete Take Marker. Wraps DeleteTakeMarker.
 -- Delete a take marker. Note that idx will change for all following take markers.
--- See GetNumTakeMarkers, GetTakeMarker, SetTakeMarker
 --- @within ReaScript Wrapped Methods
 --- @param idx number
 --- @return boolean
-function Take:delete_take_marker(idx)
+--- @see Take:get_num_markers
+--- @see Take:get_marker
+--- @see Take:set_marker
+function Take:delete_marker(idx)
 	return r.DeleteTakeMarker(self.pointer, idx)
 end
 
@@ -199,11 +201,12 @@ function Take:get_info_value(param_name)
 end
 
 --- Get Num Take Markers. Wraps GetNumTakeMarkers.
--- Returns number of take markers. See GetTakeMarker, SetTakeMarker,
--- DeleteTakeMarker
+-- Returns number of take markers.
 --- @within ReaScript Wrapped Methods
 --- @return number
-function Take:get_num_take_markers()
+--- @see Take:get_marker
+--- @see Take:set_marker
+function Take:get_num_markers()
 	return r.GetNumTakeMarkers(self.pointer)
 end
 
@@ -257,12 +260,13 @@ end
 
 --- Get Take Marker. Wraps GetTakeMarker.
 -- Get information about a take marker. Returns the position in media item source
--- time, or -1 if the take marker does not exist. See GetNumTakeMarkers,
--- SetTakeMarker, DeleteTakeMarker
+-- time, or -1 if the take marker does not exist.
 --- @within ReaScript Wrapped Methods
 --- @param idx number
 --- @return string name
 --- @return number color
+--- @see Take:get_num_markers
+--- @see Take:set_marker
 function Take:get_marker(idx)
 	local ret_val, name, integer = r.GetTakeMarker(self.pointer, idx)
 	if ret_val then
@@ -309,10 +313,10 @@ function Take:get_take_stretch_marker(idx)
 end
 
 --- Get Take Stretch Marker Slope. Wraps GetTakeStretchMarkerSlope.
--- See SetTakeStretchMarkerSlope
 --- @within ReaScript Wrapped Methods
 --- @param idx number
 --- @return number
+--- @see Take:set_take_stretch_marker_slope
 function Take:get_take_stretch_marker_slope(idx)
 	return r.GetTakeStretchMarkerSlope(self.pointer, idx)
 end
@@ -426,9 +430,10 @@ end
 -- curve data for the previous MIDI event: 1 byte for the bezier type (usually 0)
 -- and 4 bytes for the bezier tension as a float. For tick intervals longer than a
 -- 32 bit word can represent, zero-length meta events may be placed between valid
--- events. See MIDI_SetAllEvts.
+-- events.
 --- @within ReaScript Wrapped Methods
 --- @return buf string
+--- @see Take:midi_set_all_evts
 function Take:midi_get_all_evts()
 	local ret_val, buf = r.MIDI_GetAllEvts(self.pointer)
 	if ret_val then
@@ -459,11 +464,13 @@ function Take:midi_get_cc(cc_idx)
 end
 
 --- Midi Get Cc Shape. Wraps MIDI_GetCCShape.
--- Get CC shape and bezier tension. See MIDI_GetCC, MIDI_SetCCShape
+-- Get CC shape and bezier tension.
 --- @within ReaScript Wrapped Methods
 --- @param cc_idx number
 --- @return number shape
 --- @return number bez_tension
+--- @see Take:midi_set_cc_shape
+--- @see Take:midi_get_cc
 function Take:midi_get_cc_shape(cc_idx)
 	local ret_val, shape, bez_tension = r.MIDI_GetCCShape(self.pointer, cc_idx)
 	if ret_val then
@@ -507,7 +514,7 @@ end
 
 --- Midi Get Hash. Wraps MIDI_GetHash.
 -- Get a string that only changes when the MIDI data changes. If notes_only==true,
--- then the string changes only when the MIDI notes change. See MIDI_GetTrackHash
+-- then the string changes only when the MIDI notes change.
 --- @within ReaScript Wrapped Methods
 --- @param notes_only boolean
 --- @return string
@@ -618,7 +625,7 @@ end
 -- Get MIDI meta-event properties. Allowable types are -1:sysex (msg should not
 -- include bounding F0..F7), 1-14:MIDI text event types, 15=REAPER notation event.
 -- For all other meta-messages, type is returned as -2 and msg returned as all
--- zeroes. See MIDI_GetEvt.
+-- zeroes.
 --- @within ReaScript Wrapped Methods
 --- @param sysxevt_idx number
 --- @param selected boolean Optional
@@ -631,6 +638,8 @@ end
 --- @return number ppq_pos
 --- @return integer type_
 --- @return string msg
+--- @see Take:midi_get_all_evts
+--- @see Take:midi_insert_text_sysex_evt
 function Take:midi_get_text_sysex_evt(sysxevt_idx, selected, muted, ppq_pos, type_, msg)
 	local selected = selected or true
 	local muted = muted or false
@@ -729,10 +738,11 @@ end
 -- curve data for the previous MIDI event: 1 byte for the bezier type (usually 0)
 -- and 4 bytes for the bezier tension as a float. For tick intervals longer than a
 -- 32 bit word can represent, zero-length meta events may be placed between valid
--- events. See MIDI_GetAllEvts.
+-- events.
 --- @within ReaScript Wrapped Methods
 --- @param buf string
 --- @return boolean
+--- @see Take:midi_get_all_evts
 function Take:midi_set_all_evts(buf)
 	return r.MIDI_SetAllEvts(self.pointer, buf)
 end
@@ -776,13 +786,15 @@ end
 
 --- Midi Set Cc Shape. Wraps MIDI_SetCCShape.
 -- Set CC shape and bezier tension. set no_sort if setting multiple events, then
--- call MIDI_Sort when done. See MIDI_SetCC, MIDI_GetCCShape
+-- call MIDI_Sort when done.
 --- @within ReaScript Wrapped Methods
 --- @param cc_idx number
 --- @param shape number
 --- @param bez_tension number
 --- @param no_sort boolean Optional. Default false
 --- @return boolean
+--- @see Take:midi_get_cc_shape
+--- @see Take:midi_set_cc
 function Take:midi_set_cc_shape(cc_idx, shape, bez_tension, no_sort)
 	local no_sort = no_sort or false
 	return r.MIDI_SetCCShape(self.pointer, cc_idx, shape, bez_tension, no_sort)
@@ -940,15 +952,17 @@ end
 --- Set Take Marker. Wraps SetTakeMarker.
 -- Inserts or updates a take marker. If idx<0, a take marker will be added,
 -- otherwise an existing take marker will be updated. Returns the index of the new
--- or updated take marker (which may change if src_pos is updated). See
--- GetNumTakeMarkers, GetTakeMarker, DeleteTakeMarker
+-- or updated take marker (which may change if src_pos is updated).
 --- @within ReaScript Wrapped Methods
 --- @param idx number
 --- @param name_in string
 --- @param src_pos number Optional
 --- @param color_in integer Optional
 --- @return number
-function Take:set_take_marker(idx, name_in, src_pos, color_in)
+--- @see Take:get_marker
+--- @see Take:delete_marker
+--- @see Take:get_num_markers
+function Take:set_marker(idx, name_in, src_pos, color_in)
 	local src_pos = src_pos or 0
 	local color_in = color_in or 0
 	return r.SetTakeMarker(self.pointer, idx, name_in, src_pos, color_in)
@@ -973,11 +987,11 @@ function Take:set_take_stretch_marker(idx, pos, src_pos)
 end
 
 --- Set Take Stretch Marker Slope. Wraps SetTakeStretchMarkerSlope.
--- See GetTakeStretchMarkerSlope
 --- @within ReaScript Wrapped Methods
 --- @param idx number
 --- @param slope number
 --- @return boolean
+--- @see Take:get_take_stretch_marker_slope
 function Take:set_take_stretch_marker_slope(idx, slope)
 	return r.SetTakeStretchMarkerSlope(self.pointer, idx, slope)
 end
@@ -1228,7 +1242,7 @@ end
 --- Analyze Take Loudness Integrated Only. Wraps NF_AnalyzeTakeLoudness_IntegratedOnly.
 -- Does LUFS integrated analysis only. Faster than full loudness analysis
 -- (NF_AnalyzeTakeLoudness) . Use this if only LUFS integrated is required. Take
--- vol. env. is taken into account. See: Signal flow
+-- vol. env. is taken into account. See: Signal flow.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Take:analyze_take_loudness_integrated_only()
