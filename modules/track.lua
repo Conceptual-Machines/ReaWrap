@@ -393,6 +393,7 @@ function Track:on_solo_change_ex(solo, allowgang)
 end
 
 --- On Track Selection. Wraps CSurf_OnTrackSelection.
+--- @within ReaScript Wrapped Methods
 function Track:on_track_selection()
 	return r.CSurf_OnTrackSelection(self.pointer)
 end
@@ -489,12 +490,6 @@ end
 --- @return number
 function Track:track_to_id(mcp_view)
 	return r.CSurf_TrackToID(self.pointer, mcp_view)
-end
-
---- Delete Track. Wraps DeleteTrack.
--- deletes a track
-function Track:delete_track()
-	return r.DeleteTrack(self.pointer)
 end
 
 --- Delete Track Media Item. Wraps DeleteTrackMediaItem.
@@ -697,6 +692,7 @@ Track.GetSetInfoStringConstants = {
 --- Get Set Info String. Wraps GetSetMediaTrackInfo_String.
 -- Get or set track string attributes.Example: "0.0 1.0 \"\" 0.0 1.0
 -- "{xyz-...}"Example: "0.0 1.0,0.0 1.0 "{xyz-...}",1.0 2.0 "" 0.25 0.75"
+--- @within ReaScript Wrapped Methods
 --- @param parm_name string. Track.GetSetInfoStringConstants
 --- @param string_need_big string
 --- @param set_new_value boolean
@@ -850,6 +846,7 @@ end
 
 --- Get Track Automation Mode. Wraps GetTrackAutomationMode.
 -- return the track mode, regardless of global override
+--- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_automation_mode()
 	return r.GetTrackAutomationMode(self.pointer)
@@ -927,6 +924,7 @@ end
 -- triple tabs when skipping measures, flag&2: each lyric is preceded by its beat
 -- position in the project (example with flag=2: "1.1.2\tLyric for measure 1 beat
 -- 2\t2.1.1\tLyric for measure 2 beat 1      "). See SetTrackMIDILyrics
+--- @within ReaScript Wrapped Methods
 --- @param flag number
 --- @return buf string
 function Track:get_track_midi_lyrics(flag)
@@ -961,6 +959,7 @@ end
 --- Get Track Num Sends. Wraps GetTrackNumSends.
 -- returns number of sends/receives/hardware outputs - category is <0 for receives,
 -- 0=sends, >0 for hardware outputs
+--- @within ReaScript Wrapped Methods
 --- @param category number
 --- @return number
 function Track:get_track_num_sends(category)
@@ -1191,6 +1190,7 @@ end
 
 --- Mark Track Items Dirty. Wraps MarkTrackItemsDirty.
 -- If track is supplied, item is ignored
+--- @within ReaScript Wrapped Methods
 function Track:mark_track_items_dirty()
 	return r.MarkTrackItemsDirty(self.pointer, item)
 end
@@ -1391,6 +1391,7 @@ end
 
 --- Set Only Track Selected. Wraps SetOnlyTrackSelected.
 -- Set exactly one track selected, deselect all others
+--- @within ReaScript Wrapped Methods
 function Track:set_only_track_selected()
 	return r.SetOnlyTrackSelected(self.pointer)
 end
@@ -1571,6 +1572,7 @@ end
 -- solo: <0 toggles, 1 sets solo (default mode), 0=unsets solo, 2 sets solo (non-
 -- SIP), 4 sets solo (SIP). returns new value or -1 if error. ign_group_flags: &1 to
 -- prevent track grouping, &2 to prevent selection ganging
+--- @within ReaScript Wrapped Methods
 --- @param solo number
 --- @param ign_group_flags number
 --- @return number
@@ -1580,6 +1582,7 @@ end
 
 --- Set Track UI Volume. Wraps SetTrackUIVolume.
 -- ign_group_flags: &1 to prevent track grouping, &2 to prevent selection ganging
+--- @within ReaScript Wrapped Methods
 --- @param volume number
 --- @param relative boolean
 --- @param done boolean
@@ -1591,6 +1594,7 @@ end
 
 --- Set Track UI Width. Wraps SetTrackUIWidth.
 -- ign_group_flags: &1 to prevent track grouping, &2 to prevent selection ganging
+--- @within ReaScript Wrapped Methods
 --- @param width number
 --- @param relative boolean
 --- @param done boolean

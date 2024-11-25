@@ -350,6 +350,14 @@ function Project:edit_tempo_time_sig_marker(marker_idx)
 	return r.EditTempoTimeSigMarker(self.pointer, marker_idx)
 end
 
+--- Delete Track. Wraps DeleteTrack.
+-- deletes a track
+--- @within ReaScript Wrapped Methods
+--- @param track_idx number
+function Project:delete_track(track_idx)
+	return r.DeleteTrack(self.pointer, track_idx)
+end
+
 --- Enum Project Markers. Wraps EnumProjectMarkers3.
 --- @within ReaScript Wrapped Methods
 --- @param idx number
