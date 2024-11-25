@@ -311,6 +311,14 @@ function Project:count_tracks()
 	return r.CountTracks(self.pointer)
 end
 
+--- Delete Track. Wraps DeleteTrack.
+-- Deletes a track.
+--- @within ReaScript Wrapped Methods
+--- @param track_idx number
+function Project:delete_track(track_idx)
+	return r.DeleteTrack(track_idx)
+end
+
 --- Delete Project Marker. Wraps DeleteProjectMarker.
 -- Delete a marker.  proj==NULL for the active project.
 --- @within ReaScript Wrapped Methods
