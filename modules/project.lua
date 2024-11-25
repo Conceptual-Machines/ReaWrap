@@ -7,9 +7,6 @@
 local r = reaper
 local helpers = require("helpers")
 
--- @class Project
--- @field pointer_type string "ReaProject*"
--- @field pointer number The index of the project
 local Project = {}
 
 --- Create new Project instance.

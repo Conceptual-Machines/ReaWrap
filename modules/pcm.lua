@@ -7,9 +7,7 @@
 local r = reaper
 local helpers = require("helpers")
 
--- @class PCM
--- @field pointer_type string "PCM_source*"
--- @field pointer userdata Pointer to PCM_source*
+
 local PCM = {}
 
 --- Create new PCM instance.

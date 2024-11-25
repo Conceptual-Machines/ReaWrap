@@ -7,9 +7,6 @@
 local r = reaper
 local helpers = require("helpers")
 
--- @class TrackFX
--- @field pointer_type string
--- @field track Track
 local TrackFX = {}
 
 --- Create new TrackFX instance.

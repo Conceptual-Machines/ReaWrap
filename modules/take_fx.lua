@@ -7,10 +7,7 @@
 local r = reaper
 local helpers = require("helpers")
 
--- @class TakeFX
--- @field take Take. The Take object.
--- @field pointer number. The index of the FX.
--- @field pointer_type string. The type of the pointer.
+
 local TakeFX = {}
 
 --- Create new TakeFX instance.
