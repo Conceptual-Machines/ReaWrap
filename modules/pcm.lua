@@ -11,6 +11,7 @@ local helpers = require("helpers")
 local PCM = {}
 
 --- Create new PCM instance.
+--- @within ReaWrap Custom Methods
 --- @param source userdata The pointer to PCM_source*
 --- @return table PCM object
 function PCM:new(source)
@@ -23,9 +24,9 @@ function PCM:new(source)
 	return obj
 end
 
--- @section ReaWrap Custom Methods
 
 --- Log messages with the PCM logger.
+--- @within ReaWrap Custom Methods
 --- @param ... (varargs) Messages to log.
 function PCM:log(...)
 	local logger = helpers.log_func("PCM")
@@ -33,13 +34,12 @@ function PCM:log(...)
 	return nil
 end
 
--- @section ReaScript API Methods
-
 --- Calc Media Src Loudness. Wraps CalcMediaSrcLoudness.
 -- Calculates loudness statistics of media via dry run render. Statistics will be
 -- displayed to the user; call GetSetProjectInfo_String("RENDER_STATS") to retrieve
 -- via API. Returns 1 if loudness was calculated successfully, -1 if user canceled
 -- the dry run render.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function PCM:calc_media_src_loudness()
 	return r.CalcMediaSrcLoudness(self.mediasource.pointer)
@@ -51,6 +51,7 @@ end
 -- value. normalizeStart, normalizeEnd: time bounds within source media for
 -- normalization calculation. If normalizationStart=0 and normalizationEnd=0, the
 -- full duration of the media will be used for the calculation.
+--- @within ReaScript Wrapped Methods
 --- @param normalize_to number
 --- @param normalize_target number
 --- @param normalize_start number
@@ -64,6 +65,7 @@ end
 -- Get text-based metadata from a media file for a given identifier. Call with
 -- identifier="" to list all identifiers contained in the file, separated by
 -- newlines. May return "[Binary data]" for metadata that REAPER doesn't handle.
+--- @within ReaScript Wrapped Methods
 --- @param identifier string
 --- @return string buf
 function PCM:get_media_file_metadata(identifier)
@@ -76,9 +78,10 @@ function PCM:get_media_file_metadata(identifier)
 end
 
 --- Get Media Source File Name. Wraps GetMediaSourceFileName.
--- Copies the media source filename to filenamebuf. Note that in-project MIDI media
+-- Copies the media source filename to filename buf. Note that in-project MIDI media
 -- sources have no associated filename. See GetMediaSourceParent.
---- @return string filenamebuf
+--- @within ReaScript Wrapped Methods
+--- @return string
 function PCM:get_media_source_file_name()
 	return r.GetMediaSourceFileName(self.pointer)
 end
@@ -86,6 +89,7 @@ end
 --- Get Media Source Length. Wraps GetMediaSourceLength.
 -- Returns the length of the source media. If the media source is beat-based, the
 -- length will be in quarter notes, otherwise it will be in seconds.
+--- @within ReaScript Wrapped Methods
 --- @return boolean length_is_qn
 function PCM:get_media_source_length()
 	local ret_val, length_is_qn = r.GetMediaSourceLength(self.pointer)
@@ -98,6 +102,7 @@ end
 
 --- Get Media Source Num Channels. Wraps GetMediaSourceNumChannels.
 -- Returns the number of channels in the source media.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function PCM:get_media_source_num_channels()
 	return r.GetMediaSourceNumChannels(self.pointer)
@@ -106,7 +111,8 @@ end
 --- Get Media Source Parent. Wraps GetMediaSourceParent.
 -- Returns the parent source, or NULL if src is the root source. This can be used
 -- to retrieve the parent properties of sections or reversed sources for example.
---- @return userdata
+--- @within ReaScript Wrapped Methods
+--- @return table PCM object
 function PCM:get_media_source_parent()
 	local PCM_source = require("pcm_source")
 	local result = r.GetMediaSourceParent(self.pointer)
@@ -115,6 +121,7 @@ end
 
 --- Get Media Source Sample Rate. Wraps GetMediaSourceSampleRate.
 -- Returns the sample rate. MIDI source media will return zero.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function PCM:get_media_source_sample_rate()
 	return r.GetMediaSourceSampleRate(self.pointer)
@@ -122,12 +129,14 @@ end
 
 --- Get Media Source Type. Wraps GetMediaSourceType.
 -- copies the media source type ("WAV", "MIDI", etc) to typebuf
+--- @within ReaScript Wrapped Methods
 --- @return string
 function PCM:get_media_source_type()
 	return r.GetMediaSourceType(self.pointer)
 end
 
 --- Get Sub Project From Source. Wraps GetSubProjectFromSource.
+--- @within ReaScript Wrapped Methods
 --- @return table Project object
 function PCM:get_sub_project_from_source()
 	local Project = require("project")
@@ -136,15 +145,16 @@ function PCM:get_sub_project_from_source()
 end
 
 --- Get Tempo Match Play Rate. Wraps GetTempoMatchPlayRate.
--- finds the playrate and target length to insert this item stretched to a round
--- power-of-2 number of bars, between 1/8 and 256
---- @param srcscale number
+-- finds the play rate and target length to insert this item stretched to a round
+-- power-of-2 number of bars, between 1/8 and 256.
+--- @within ReaScript Wrapped Methods
+--- @param src_scale number
 --- @param position number
 --- @param mult number
 --- @return number rate
 --- @return number targetlen
-function PCM:get_tempo_match_play_rate(srcscale, position, mult)
-	local ret_val, rate, targetlen = r.GetTempoMatchPlayRate(self.pointer, srcscale, position, mult)
+function PCM:get_tempo_match_play_rate(src_scale, position, mult)
+	local ret_val, rate, targetlen = r.GetTempoMatchPlayRate(self.pointer, src_scale, position, mult)
 	if ret_val then
 		return rate, targetlen
 	else
@@ -153,6 +163,7 @@ function PCM:get_tempo_match_play_rate(srcscale, position, mult)
 end
 
 --- Sink Enum. Wraps PCM_Sink_Enum.
+--- @within ReaScript Wrapped Methods
 --- @param idx number
 --- @return string
 function PCM:sink_enum(idx)
@@ -165,6 +176,7 @@ function PCM:sink_enum(idx)
 end
 
 --- Sink Get Extension. Wraps PCM_Sink_GetExtension.
+--- @within ReaScript Wrapped Methods
 --- @param data string
 --- @return string
 function PCM:sink_get_extension(data)
@@ -172,6 +184,7 @@ function PCM:sink_get_extension(data)
 end
 
 --- Sink Show Config. Wraps PCM_Sink_ShowConfig.
+--- @within ReaScript Wrapped Methods
 --- @param cfg string
 --- @param hwnd_parent userdata HWND
 --- @return userdata HWND
@@ -187,6 +200,7 @@ end
 -- percentage of the file remaining), then call PCM_Source_BuildPeaks(src,2) to
 -- finalize. If PCM_Source_BuildPeaks(src,0) returns zero, then no further action
 -- is necessary.
+--- @within ReaScript Wrapped Methods
 --- @param mode number
 --- @return number
 function PCM:source_build_peaks(mode)
@@ -195,6 +209,7 @@ end
 
 --- Source Create From File. Wraps PCM_Source_CreateFromFile.
 -- See PCM_Source_CreateFromFileEx.
+--- @within ReaScript Wrapped Methods
 --- @param file_name string
 --- @return table PCM object
 function PCM:source_create_from_file(file_name)
@@ -205,6 +220,7 @@ end
 --- Source Create From File Ex. Wraps PCM_Source_CreateFromFileEx.
 -- Create a PCM_source from filename, and override pref of MIDI files being
 -- imported as in-project MIDI events.
+--- @within ReaScript Wrapped Methods
 --- @param file_name string
 --- @param forceno_midi_imp boolean
 --- @return table PCM object
@@ -217,6 +233,7 @@ end
 -- Create a PCM_source from a "type" (use this if you're going to load its state
 -- via LoadState/ProjectStateContext). Valid types include "WAVE", "MIDI", or
 -- whatever plug-ins define as well.
+--- @within ReaScript Wrapped Methods
 --- @param source_type string
 --- @return table PCM object
 function PCM:source_create_from_type(source_type)
@@ -225,8 +242,8 @@ function PCM:source_create_from_type(source_type)
 end
 
 --- Source Destroy. Wraps PCM_Source_Destroy.
--- Deletes a PCM_source -- be sure that you remove any project reference before
--- deleting a source
+-- Deletes a PCM_source -- be sure that you remove any project reference before deleting a source
+--- @within ReaScript Wrapped Methods
 function PCM:source_destroy()
 	return r.PCM_Source_Destroy(self.pointer)
 end
@@ -238,6 +255,7 @@ end
 -- then a bit to signify whether extra_type was available (0x1000000). extra_type
 -- can be 115 ('s') for spectral information, which will return peak samples as
 -- integers with the low 15 bits frequency, next 14 bits tonality.
+--- @within ReaScript Wrapped Methods
 --- @param peakrate number
 --- @param starttime number
 --- @param numchannels number
@@ -258,7 +276,8 @@ function PCM:source_get_peaks(peakrate, starttime, numchannels, numsamplespercha
 end
 
 --- Source Get Section Info. Wraps PCM_Source_GetSectionInfo.
--- If a section/reverse block, retrieves offset/len/reverse. return true if success
+-- If a section/reverse block, retrieves offset/len/reverse. 
+--- @within ReaScript Wrapped Methods
 --- @return number offs
 --- @return number len
 --- @return boolean rev
@@ -275,6 +294,7 @@ end
 -- Create a new preview object. Does not take ownership of the source (don't forget
 -- to destroy it unless it came from a take!). See CF_Preview_Play and the others
 -- CF_Preview_* functions.
+--- @within ReaScript Wrapped Methods
 --- @return userdata
 function PCM:create_preview()
 	return r.CF_CreatePreview(self.pointer)
@@ -282,6 +302,7 @@ end
 
 --- Enum Media Source Cues. Wraps CF_EnumMediaSourceCues.
 -- Enumerate the source's media cues. Returns the next index or 0 when finished.
+--- @within ReaScript Wrapped Methods
 --- @param index number
 --- @return number time
 --- @return number end_time
@@ -299,6 +320,7 @@ end
 
 --- Export Media Source. Wraps CF_ExportMediaSource.
 -- Export the source to the given file (MIDI only).
+--- @within ReaScript Wrapped Methods
 --- @param file_name string
 --- @return boolean
 function PCM:export_media_source(file_name)
@@ -307,6 +329,7 @@ end
 
 --- Get Media Source Bit Depth. Wraps CF_GetMediaSourceBitDepth.
 -- Returns the bit depth if available (0 otherwise).
+--- @within ReaScript Wrapped Methods
 --- @return number
 function PCM:get_media_source_bit_depth()
 	return r.CF_GetMediaSourceBitDepth(self.pointer)
@@ -315,6 +338,7 @@ end
 --- Get Media Source Bit Rate. Wraps CF_GetMediaSourceBitRate.
 -- Returns the bit rate for WAVE (wav, aif) and streaming/variable formats (mp3,
 -- ogg, opus). REAPER v6.19 or later is required for non-WAVE formats.
+--- @within ReaScript Wrapped Methods
 --- @return number
 function PCM:get_media_source_bit_rate()
 	return r.CF_GetMediaSourceBitRate(self.pointer)
@@ -323,6 +347,7 @@ end
 --- Get Media Source Metadata. Wraps CF_GetMediaSourceMetadata.
 -- Get the value of the given metadata field (eg. DESC, ORIG, ORIGREF, DATE, TIME,
 -- UMI, CODINGHISTORY for BWF).
+--- @within ReaScript Wrapped Methods
 --- @param name string
 --- @param out string
 --- @return string
@@ -337,6 +362,7 @@ end
 
 --- Get Media Source Online. Wraps CF_GetMediaSourceOnline.
 -- Returns the online/offline status of the given source.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function PCM:get_media_source_online()
 	return r.CF_GetMediaSourceOnline(self.pointer)
@@ -344,6 +370,7 @@ end
 
 --- Get Media Source Rpp. Wraps CF_GetMediaSourceRPP.
 -- Get the project associated with this source (BWF, subproject...).
+--- @within ReaScript Wrapped Methods
 --- @return string
 function PCM:get_media_source_rpp()
 	local ret_val, fn = r.CF_GetMediaSourceRPP(self.pointer)
@@ -358,6 +385,7 @@ end
 -- Give a section source created using PCM_Source_CreateFromType("SECTION"). Offset
 -- and length are ignored if 0. Negative length to subtract from the total length
 -- of the source.
+--- @within ReaScript Wrapped Methods
 --- @param section userdata PCM_source*
 --- @param offset number
 --- @param length number
@@ -371,13 +399,15 @@ end
 
 --- Set Media Source Online. Wraps CF_SetMediaSourceOnline.
 -- Set the online/offline status of the given source (closes files when set=false).
+--- @within ReaScript Wrapped Methods
 --- @param set boolean
 function PCM:set_media_source_online(set)
 	return r.CF_SetMediaSourceOnline(self.pointer, set)
 end
 
 --- Source Get Sample Value. Wraps GU_PCM_Source_GetSampleValue.
--- Gets a PCM_source's sample value at a point in time (seconds)
+-- Gets a PCM_source's sample value at a point in time (seconds).
+--- @within ReaScript Wrapped Methods
 --- @param time number
 --- @return number
 function PCM:source_get_sample_value(time)
@@ -385,7 +415,8 @@ function PCM:source_get_sample_value(time)
 end
 
 --- Source Has Region. Wraps GU_PCM_Source_HasRegion.
--- Checks if PCM_source has embedded Media Cue Markers
+-- Checks if PCM_source has embedded Media Cue Markers.
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function PCM:source_has_region()
 	return r.GU_PCM_Source_HasRegion(self.pointer)
@@ -393,6 +424,7 @@ end
 
 --- Source Is Mono. Wraps GU_PCM_Source_IsMono.
 -- Checks if PCM_source is mono by comparing all channels
+--- @within ReaScript Wrapped Methods
 --- @return boolean
 function PCM:source_is_mono()
 	return r.GU_PCM_Source_IsMono(self.pointer)
@@ -400,7 +432,8 @@ end
 
 --- Source Time To Peak. Wraps GU_PCM_Source_TimeToPeak.
 -- Returns duration in seconds for PCM_source from start til peak threshold is
--- breached. Returns -1 if invalid
+-- breached. Returns -1 if invalid.
+--- @within ReaScript Wrapped Methods
 --- @param buffer_size number
 --- @param threshold number
 --- @return number
@@ -410,7 +443,8 @@ end
 
 --- Source Time To Peak R. Wraps GU_PCM_Source_TimeToPeakR.
 -- Returns duration in seconds for PCM_source from end til peak threshold is
--- breached in reverse. Returns -1 if invalid
+-- breached in reverse. Returns -1 if invalid.
+--- @within ReaScript Wrapped Methods
 --- @param buffer_size number
 --- @param threshold number
 --- @return number
@@ -418,9 +452,10 @@ function PCM:source_time_to_peak_r(buffer_size, threshold)
 	return r.GU_PCM_Source_TimeToPeakR(self.pointer, buffer_size, threshold)
 end
 
---- Source Time To Rms. Wraps GU_PCM_Source_TimeToRMS.
+--- Source Time To RMS. Wraps GU_PCM_Source_TimeToRMS.
 -- Returns duration in seconds for PCM_source from start til RMS threshold is
--- breached. Returns -1 if invalid
+-- breached. Returns -1 if invalid.
+--- @within ReaScript Wrapped Methods
 --- @param buffer_size number
 --- @param threshold number
 --- @return number
@@ -428,34 +463,36 @@ function PCM:source_time_to_rms(buffer_size, threshold)
 	return r.GU_PCM_Source_TimeToRMS(self.pointer, buffer_size, threshold)
 end
 
---- Source Time To Rmsr. Wraps GU_PCM_Source_TimeToRMSR.
+--- Source Time To RMS Reversed. Wraps GU_PCM_Source_TimeToRMSR.
 -- Returns duration in seconds for PCM_source from end til RMS threshold is
--- breached in reverse. Returns -1 if invalid
+-- breached in reverse. Returns -1 if invalid.
+--- @within ReaScript Wrapped Methods
 --- @param buffer_size number
 --- @param threshold number
 --- @return number
-function PCM:source_time_to_rmsr(buffer_size, threshold)
+function PCM:source_time_to_rms_reversed(buffer_size, threshold)
 	return r.GU_PCM_Source_TimeToRMSR(self.pointer, buffer_size, threshold)
 end
 
 --- Get Media Source Samples. Wraps Xen_GetMediaSourceSamples.
--- Get interleaved audio data from media source
---- @param destbuf userdata
---- @param destbufoffset number
---- @param numframes number
---- @param numchans number
+-- Get interleaved audio data from media source.
+--- @within ReaScript Wrapped Methods
+--- @param dest_buf userdata
+--- @param dest_buf_offset number
+--- @param num_frames number
+--- @param num_chans number
 --- @param samplerate number
---- @param sourceposition number
+--- @param source_position number
 --- @return number
-function PCM:get_media_source_samples(destbuf, destbufoffset, numframes, numchans, samplerate, sourceposition)
+function PCM:get_media_source_samples(dest_buf, dest_buf_offset, num_frames, num_chans, samplerate, source_position)
 	return r.Xen_GetMediaSourceSamples(
 		self.pointer,
-		destbuf,
-		destbufoffset,
-		numframes,
-		numchans,
+		dest_buf,
+		dest_buf_offset,
+		num_frames,
+		num_chans,
 		samplerate,
-		sourceposition
+		source_position
 	)
 end
 
@@ -464,6 +501,7 @@ end
 -- provided to Xen_StopSourcePreview. If the given PCM_source does not belong to an
 -- existing MediaItem/Take, it will be deleted by the preview system when the
 -- preview is stopped.
+--- @within ReaScript Wrapped Methods
 --- @param gain number
 --- @param loop boolean
 --- @param output_chain_idx number Optional
