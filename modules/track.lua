@@ -246,12 +246,15 @@ end
 --- Create Track Send. Wraps CreateTrackSend.
 -- Create a send/receive (dest_track Optional!=NULL), or a hardware output
 -- (dest_track Optional==NULL) with default properties, return >=0 on success (== new
--- send/receive index). See RemoveTrackSend, GetSetTrackSendInfo,
--- GetTrackSendInfo_Value, SetTrackSendInfo_Value.
+-- send/receive index).
 --- @within ReaScript Wrapped Methods
 --- @param dest_track table Track object
 --- @return number
-function Track:create_send(dest_track)
+--- @see Track:remove_track_send
+--- @see Track:get_set_track_send_info_string
+--- @see Track:get_track_send_info_value
+--- @see Track:set_track_send_info_value
+function Track:create_track_send(dest_track)
 	return r.CreateTrackSend(self.pointer, dest_track.pointer)
 end
 
@@ -686,10 +689,11 @@ end
 -- tabs between each word. flag&1: double tabs at the end of each measure and
 -- triple tabs when skipping measures, flag&2: each lyric is preceded by its beat
 -- position in the project (example with flag=2: "1.1.2\tLyric for measure 1 beat
--- 2\t2.1.1\tLyric for measure 2 beat 1      "). See SetTrackMIDILyrics
+-- 2\t2.1.1\tLyric for measure 2 beat 1").
 --- @within ReaScript Wrapped Methods
 --- @param flag number
 --- @return string
+--- @see Track:set_track_midi_lyrics
 function Track:get_track_midi_lyrics(flag)
 	local ret_val, buf = r.GetTrackMIDILyrics(self.pointer, flag)
 	if ret_val then
@@ -730,10 +734,10 @@ function Track:get_track_num_sends(category)
 end
 
 --- Get Track Receive Name. Wraps GetTrackReceiveName.
--- See GetTrackSendName.
 --- @within ReaScript Wrapped Methods
 --- @param recv_index number
 --- @return string
+--- @see Track:get_track_send_name
 function Track:get_track_receive_name(recv_index)
 	local ret_val, buf = r.GetTrackReceiveName(self.pointer, recv_index)
 	if ret_val then
@@ -744,10 +748,10 @@ function Track:get_track_receive_name(recv_index)
 end
 
 --- Get Track Receive UI Mute. Wraps GetTrackReceiveUIMute.
--- See GetTrackSendUIMute.
 --- @within ReaScript Wrapped Methods
 --- @param recv_index number
 --- @return boolean
+--- @see Track:get_track_send_ui_mute
 function Track:get_track_receive_ui_mute(recv_index)
 	local ret_val, mute = r.GetTrackReceiveUIMute(self.pointer, recv_index)
 	if ret_val then
@@ -758,11 +762,11 @@ function Track:get_track_receive_ui_mute(recv_index)
 end
 
 --- Get Track Receive UI Vol Pan. Wraps GetTrackReceiveUIVolPan.
--- See GetTrackSendUIVolPan.
 --- @within ReaScript Wrapped Methods
 --- @param recv_index number
 --- @return number volume
 --- @return number pan
+--- @see Track:get_track_send_ui_vol_pan
 function Track:get_track_receive_ui_vol_pan(recv_index)
 	local ret_val, volume, pan = r.GetTrackReceiveUIVolPan(self.pointer, recv_index)
 	if ret_val then
@@ -806,23 +810,26 @@ Track.GetTrackSendInfoValueConstants = {
 
 --- Get Track Send Info Value. Wraps GetTrackSendInfo_Value.
 -- Get send/receive/hardware output numerical-value attributes.category is <0 for
--- receives, 0=sends, >0 for hardware outputsparameter
--- names:SeeCreateTrackSend,RemoveTrackSend,GetTrackNumSends.
+-- receives, 0=sends, >0 for hardware outputs parameter.
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
 --- @param param_name string Track.GetTrackSendInfoValueConstants
 --- @return number
 --- @see Track.GetTrackSendInfoValueConstants
+--- @see Track:create_track_send
+--- @see Track:remove_track_send
+--- @see Track:get_track_num_sends
 function Track:get_track_send_info_value(category, send_idx, param_name)
 	return r.GetTrackSendInfo_Value(self.pointer, category, send_idx, param_name)
 end
 
 --- Get Track Send Name. Wraps GetTrackSendName.
--- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends. See GetTrackReceiveName.
+-- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends.
 --- @within ReaScript Wrapped Methods
 --- @param send_index number
 --- @return string
+--- @see Track:get_track_receive_name
 function Track:get_track_send_name(send_index)
 	local ret_val, buf = r.GetTrackSendName(self.pointer, send_index)
 	if ret_val then
@@ -833,11 +840,11 @@ function Track:get_track_send_name(send_index)
 end
 
 --- Get Track Send UI Mute. Wraps GetTrackSendUIMute.
--- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends. See
--- GetTrackReceiveUIMute.
+-- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends.
 --- @within ReaScript Wrapped Methods
 --- @param send_index number
 --- @return boolean
+--- @see Track:get_track_receive_ui_mute
 function Track:get_track_send_ui_mute(send_index)
 	local ret_val, mute = r.GetTrackSendUIMute(self.pointer, send_index)
 	if ret_val then
@@ -848,12 +855,12 @@ function Track:get_track_send_ui_mute(send_index)
 end
 
 --- Get Track Send UI Vol Pan. Wraps GetTrackSendUIVolPan.
--- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends. See
--- GetTrackReceiveUIVolPan.
+-- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends.
 --- @within ReaScript Wrapped Methods
 --- @param send_index number
 --- @return volume number
 --- @return pan number
+--- @see Track:get_track_receive_ui_vol_pan
 function Track:get_track_send_ui_vol_pan(send_index)
 	local ret_val, volume, pan = r.GetTrackSendUIVolPan(self.pointer, send_index)
 	if ret_val then
@@ -1084,13 +1091,17 @@ end
 
 --- Remove Track Send. Wraps RemoveTrackSend.
 -- Remove a send/receive/hardware output, return true on success. category is <0
--- for receives, 0=sends, >0 for hardware outputs. See CreateTrackSend,
--- GetSetTrackSendInfo, GetTrackSendInfo_Value, SetTrackSendInfo_Value,
--- GetTrackNumSends.
+-- for receives, 0=sends, >0 for hardware outputs.
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
 --- @return boolean
+--- @see Track:create_track_send
+--- @see Track:get_track_send_info_value
+--- @see Track:get_set_track_send_info_string
+--- @see Track:get_track_send_info_value
+--- @see Track:set_track_send_info_value
+--- @see Track:get_track_num_sends
 function Track:remove_track_send(category, send_idx)
 	return r.RemoveTrackSend(self.pointer, category, send_idx)
 end
@@ -1289,11 +1300,12 @@ end
 -- Set all MIDI lyrics on the track. Lyrics will be stuffed into any MIDI items
 -- found in range. Flag is unused at present. str is passed in as beat position,
 -- tab, text, tab (example with flag=2: "1.1.2\tLyric for measure 1 beat
--- 2\t2.1.1\tLyric for measure 2 beat 1   "). See GetTrackMIDILyrics
+-- 2\t2.1.1\tLyric for measure 2 beat 1").
 --- @within ReaScript Wrapped Methods
 --- @param flag number
 --- @param str string
 --- @return boolean
+-- @see Track:get_track_midi_lyrics
 function Track:set_track_midi_lyrics(flag, str)
 	return r.SetTrackMIDILyrics(self.pointer, flag, str)
 end
@@ -1334,8 +1346,7 @@ Track.SetTrackSendInfoValueConstants = {
 
 --- Set Track Send Info Value. Wraps SetTrackSendInfo_Value.
 -- Set send/receive/hardware output numerical-value attributes, return true on
--- success.category is <0 for receives, 0=sends, >0 for hardware outputsparameter
--- names:SeeCreateTrackSend,RemoveTrackSend,GetTrackNumSends.
+-- success.category is <0 for receives, 0=sends, >0 for hardware outputs parameter names.
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
@@ -1343,6 +1354,9 @@ Track.SetTrackSendInfoValueConstants = {
 --- @param new_value number
 --- @return boolean
 --- @see Track.SetTrackSendInfoValueConstants
+--- @see Track:create_track_send
+--- @see Track:remove_track_send
+--- @see Track:get_track_num_sends
 function Track:set_track_send_info_value(category, send_idx, param_name, new_value)
 	return r.SetTrackSendInfo_Value(self.pointer, category, send_idx, param_name, new_value)
 end
