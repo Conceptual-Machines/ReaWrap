@@ -2,13 +2,12 @@
 -- @author Nomad Monad
 -- @license MIT
 -- @release 0.0.1
+-- @module track
+
 
 local r = reaper
 local helpers = require("helpers")
 
--- @class Track
--- @field pointer_type string "MediaTrack*"
--- @field pointer userdata. The pointer to Reaper MediaTrack*
 local Track = {}
 
 --- Create new Track instance.
@@ -38,7 +37,7 @@ end
 --- @within ReaWrap Custom Methods
 --- @return string
 function Track:__tostring()
-	return string.format("<Track name=%s>", self:get_name())
+	return stringformat("<Track name=%s>", self:get_name())
 end
 
 --- Get media items in the track.
@@ -46,7 +45,7 @@ end
 --- @return table array<Item>
 function Track:get_items()
 	local items = {}
-	local count = self:count_items(master)
+	local count = self:count_items()
 	for i = 0, count - 1 do
 		local item = self:get_item(i)
 		items[i + 1] = item
@@ -63,7 +62,7 @@ end
 
 --- Whether the track has media items.
 --- @within ReaWrap Custom Methods
----@return boolean
+--- @return boolean
 function Track:has_items()
 	return self:count_items() > 0
 end
@@ -134,7 +133,7 @@ end
 --- Add Media Item To Track. Wraps AddMediaItemToTrack.
 -- creates a new media item.
 --- @within ReaScript Wrapped Methods
---- @return Item table
+--- @return table Item object
 function Track:add_media_item()
 	local Item = require("item")
 	local result = r.AddMediaItemToTrack(self.pointer)
@@ -206,7 +205,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param start_time number
 --- @param end_time number
---- @param boolean qn_in Optional
+--- @param qn_in boolean Optional
 --- @return table Item object
 function Track:create_new_midi_item_in_proj(start_time, end_time, qn_in)
 	local qn_in = qn_in or nil
@@ -250,9 +249,19 @@ end
 -- send/receive index). See RemoveTrackSend, GetSetTrackSendInfo,
 -- GetTrackSendInfo_Value, SetTrackSendInfo_Value.
 --- @within ReaScript Wrapped Methods
+--- @param dest_track table Track object
 --- @return number
-function Track:create_send()
-	return r.CreateTrackSend(self.pointer, dest_track)
+function Track:create_send(dest_track)
+	return r.CreateTrackSend(self.pointer, dest_track.pointer)
+end
+
+--- Delete Fx. Wraps TrackFX_Delete.
+-- Remove FX from track chain (returns true on success).
+--- @within ReaScript Wrapped Methods
+--- @param fx number
+--- @return boolean
+function Track:delete_fx(fx)
+	return r.TrackFX_Delete(self.pointer, fx)
 end
 
 --- Delete Media Item. Wraps DeleteTrackMediaItem.
@@ -271,7 +280,7 @@ end
 --- @param fx_idx number
 --- @param param_idx number
 --- @param create boolean
---- @return Envelope table
+--- @return table Envelope object
 function Track:get_fx_envelope(fx_idx, param_idx, create)
 	local Envelope = require("envelope")
 	local result = r.GetFXEnvelope(self.pointer, fx_idx, param_idx, create)
@@ -279,70 +288,71 @@ function Track:get_fx_envelope(fx_idx, param_idx, create)
 end
 
 --- Constants for Track:get_info_value.
--- @field B_MUTE boolean: muted
--- @field B_PHASE boolean: track phase inverted
--- @field B_RECMON_IN_EFFECT boolean: record monitoring in effect (current audio-thread playback state, read-only)
--- @field IP_TRACKNUMBER number: track number 1-based, 0=not found, -1=master track (read-only, returns the int directly)
--- @field I_SOLO number: soloed, 0=not soloed, 1=soloed, 2=soloed in place, 5=safe soloed, 6=safe soloed in place
--- @field B_SOLO_DEFEAT boolean: when set, if anything else is soloed and this track is not muted, this track acts soloed
--- @field I_FXEN number: fx enabled, 0=bypassed, !0=fx active
--- @field I_rec_arm number: record armed, 0=not record armed, 1=record armed
--- @field I_RECINPUT number: record input, <0=no input. if 4096 set, input is MIDI and low 5 bits represent channel (0=all, 1-16=only chan), next 6 bits represent physical input (63=all, 62=VKB). If 4096 is not set, low 10 bits (0..1023) are input start channel (ReaRoute/Loopback start at 512). If 2048 is set, input is multichannel input (using track channel count), or if 1024 is set, input is stereo input, otherwise input is mono.
--- @field I_RECMODE number: record mode, 0=input, 1=stereo out, 2=none, 3=stereo out w/latency compensation, 4=midi output, 5=mono out, 6=mono out w/ latency compensation, 7=midi overdub, 8=midi replace
--- @field I_RECMODE_FLAGS number: record mode flags, &3=output recording mode (0=post fader, 1=pre-fx, 2=post-fx/pre-fader)
--- @field I_RECMON number: record monitoring, 0=off, 1=normal, 2=not when playing (tape style)
--- @field I_RECMONITEMS number: monitor items while recording, 0=off, 1=on
--- @field B_AUTO_rec_arm boolean: automatically set record arm when selected (does not immediately affect rec_arm state, script should set directly if desired)
--- @field I_VUMODE number: int *track vu mode, &1disabled, &30==0stereo peaks, &30==2multichannel peaks, &30==4stereo RMS, &30==8combined RMS, &30==12LUFS-M, &30==16LUFS-S (readout=max), &30==20LUFS-S (readout=current), &32LUFS calculation on channels 1+2 only
--- @field I_AUTOMODE number: track automation mode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch
--- @field I_NCHAN number: number of track channels, 2-128, even numbers only
--- @field I_SELECTED number: track selected, 0=unselected, 1=selected
--- @field I_WNDH number: current TCP window height in pixels including envelopes (read-only)
--- @field I_TCPH number: current TCP window height in pixels not including envelopes (read-only)
--- @field I_TCPY number: current TCP window Y-position in pixels relative to top of arrange view (read-only)
--- @field I_MCPX number: current MCP X-position in pixels relative to mixer container (read-only)
--- @field I_MCPY number: current MCP Y-position in pixels relative to mixer container (read-only)
--- @field I_MCPW number: current MCP width in pixels (read-only)
--- @field I_MCPH number: current MCP height in pixels (read-only)
--- @field I_FOLDERDEPTH number: folder depth change, 0=normal, 1=track is a folder parent, -1=track is the last in the innermost folder, -2=track is the last in the innermost and next-innermost folders, etc
--- @field I_FOLDERCOMPACT number: folder collapsed state (only valid on folders), 0=normal, 1=collapsed, 2=fully collapsed
--- @field I_MIDIHWOUT number: track midi hardware output index, <0=disabled, low 5 bits are which channels (0=all, 1-16), next 5 bits are output device index (0-31)
--- @field I_MIDI_INPUT_CHANMAP number: -1 maps to source channel, otherwise 1-16 to map to MIDI channel
--- @field I_MIDI_CTL_CHAN number: -1 no link, 0-15 link to MIDI volume/pan on channel, 16 link to MIDI volume/pan on all channels
--- @field I_MIDI_TRACKSEL_FLAG number: int *MIDI editor track list options&1=expand media items, &2=exclude from list, &4=auto-pruned
--- @field I_PERFFLAGS number: track performance flags, &1=no media buffering, &2=no anticipative FX
--- @field I_CUSTOMCOLOR number: custom color, OS dependent color|0x1000000 (i.e. ColorToNative(r,g,b)|0x1000000). If you do not |0x1000000, then it will not be used, but will store the color
--- @field I_HEIGHTOVERRIDE number: custom height override for TCP window, 0 for none, otherwise size in pixels
--- @field I_SPACER number: int *1=TCP track spacer above this trackB_HEIGHTLOCKbool *track height lock (must set I_HEIGHTOVERRIDE before locking)
--- @field D_VOL double *: trim volume of track, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
--- @field D_PAN double *: trim pan of track, -1..1
--- @field D_WIDTH double *: width of track, -1..1
--- @field D_DUALPANL double *: dualpan position 1, -1..1, only if I_pan_mode==6
--- @field D_DUALPANR double *: dualpan position 2, -1..1, only if I_pan_mode==6
--- @field I_pan_mode number: pan mode, 0=classic 3.x, 3=new balance, 5=stereo pan, 6=dual pan
--- @field D_PANLAW double *: pan law of track, <0=project default, 0.5=-6dB, 0.707..=-3dB, 1=+0dB, 1.414..=-3dB with gain compensation, 2=-6dB with gain compensation, etc
--- @field I_PANLAW_FLAGS number: pan law flags, 0=sine taper, 1=hybrid taper with deprecated behavior when gain compensation enabled, 2=linear taper, 3=hybrid taper
--- @field P_ENV <envchunkname or P_ENV: <envchunkname or P_ENV{GUID...TrackEnvelope *(read-only) chunkname can be <VOLENV, <PANENV, etc; GUID is the stringified envelope GUID.
--- @field B_SHOWINMIXER boolean: track control panel visible in mixer (do not use on master track)
--- @field B_SHOWINTCP boolean: track control panel visible in arrange view (do not use on master track)
--- @field B_MAINSEND boolean: track sends audio to parent
--- @field C_MAINSEND_OFFS string: channel offset of track send to parent
--- @field C_MAINSEND_NCH string: channel count of track send to parent (0=use all child track channels, 1=use one channel only)
--- @field I_FREEMODE number: 1=track free item positioning enabled, 2=track fixed lanes enabled (call UpdateTimeline() after changing)
--- @field I_NUMFIXEDLANES number: number of track fixed lanes (fine to call with setnew_value, but returned value is read-only)
--- @field C_LANESCOLLAPSED string: fixed lane collapse state (1=lanes collapsed, 2=track displays as non-fixed-lanes but hidden lanes exist)
--- @field C_LANESETTINGS string: fixed lane settings (&1=auto-remove empty lanes at bottom, &2=do not auto-comp new recording, &4=newly recorded lanes play exclusively (else add lanes in layers), &8=big lanes (else small lanes), &16=add new recording at bottom (else record into first available lane), &32=hide lane buttons
--- @field C_LANEPLAYS N: Nchar *on fixed lane tracks, 0=lane N does not play, 1=lane N plays exclusively, 2=lane N plays and other lanes also play (fine to call with setnew_value, but returned value is read-only)
--- @field C_ALLLANESPLAY string: on fixed lane tracks, 0=no lanes play, 1=all lanes play, 2=some lanes play (fine to call with setnew_value 0 or 1, but returned value is read-only)
--- @field C_BEATATTACHMODE string: track timebase, -1=project default, 0=time, 1=beats (position, length, rate), 2=beats (position only)
--- @field F_MCP_FXSEND_SCALE float *: scale of fx+send area in MCP (0=minimum allowed, 1=maximum allowed)
--- @field F_MCP_FXPARM_SCALE float *: scale of fx parameter area in MCP (0=minimum allowed, 1=maximum allowed)
--- @field F_MCP_SENDRGN_SCALE float *: scale of send area as proportion of the fx+send total area (0=minimum allowed, 1=maximum allowed)
--- @field F_TCP_FXPARM_SCALE float *: scale of TCP parameter area when TCP FX are embedded (0=min allowed, default, 1=max allowed)
--- @field I_PLAY_OFFSET_FLAG number: track media playback offset state, &1=bypassed, &2=offset value is measured in samples (otherwise measured in seconds)
--- @field D_PLAY_OFFSET double *: track media playback offset, units depend on I_PLAY_OFFSET_FLAG
--- @field P_PARTRACK userdata: parent track (read-only)
--- @field P_PROJECT userdata: parent project (read-only)
+--- @within Constants
+--- @field B_MUTE boolean: muted
+--- @field B_PHASE boolean: track phase inverted
+--- @field B_RECMON_IN_EFFECT boolean: record monitoring in effect (current audio-thread playback state, read-only)
+--- @field IP_TRACKNUMBER number: track number 1-based, 0=not found, -1=master track (read-only, returns the int directly)
+--- @field I_SOLO number: soloed, 0=not soloed, 1=soloed, 2=soloed in place, 5=safe soloed, 6=safe soloed in place
+--- @field B_SOLO_DEFEAT boolean: when set, if anything else is soloed and this track is not muted, this track acts soloed
+--- @field I_FXEN number: fx enabled, 0=bypassed, !0=fx active
+--- @field I_rec_arm number: record armed, 0=not record armed, 1=record armed
+--- @field I_RECINPUT number: record input, <0=no input. if 4096 set, input is MIDI and low 5 bits represent channel (0=all, 1-16=only chan), next 6 bits represent physical input (63=all, 62=VKB). If 4096 is not set, low 10 bits (0..1023) are input start channel (ReaRoute/Loopback start at 512). If 2048 is set, input is multichannel input (using track channel count), or if 1024 is set, input is stereo input, otherwise input is mono.
+--- @field I_RECMODE number: record mode, 0=input, 1=stereo out, 2=none, 3=stereo out w/latency compensation, 4=midi output, 5=mono out, 6=mono out w/ latency compensation, 7=midi overdub, 8=midi replace
+--- @field I_RECMODE_FLAGS number: record mode flags, &3=output recording mode (0=post fader, 1=pre-fx, 2=post-fx/pre-fader)
+--- @field I_RECMON number: record monitoring, 0=off, 1=normal, 2=not when playing (tape style)
+--- @field I_RECMONITEMS number: monitor items while recording, 0=off, 1=on
+--- @field B_AUTO_rec_arm boolean: automatically set record arm when selected (does not immediately affect rec_arm state, script should set directly if desired)
+--- @field I_VUMODE number: int *track vu mode, &1disabled, &30==0stereo peaks, &30==2multichannel peaks, &30==4stereo RMS, &30==8combined RMS, &30==12LUFS-M, &30==16LUFS-S (readout=max), &30==20LUFS-S (readout=current), &32LUFS calculation on channels 1+2 only
+--- @field I_AUTOMODE number: track automation mode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch
+--- @field I_NCHAN number: number of track channels, 2-128, even numbers only
+--- @field I_SELECTED number: track selected, 0=unselected, 1=selected
+--- @field I_WNDH number: current TCP window height in pixels including envelopes (read-only)
+--- @field I_TCPH number: current TCP window height in pixels not including envelopes (read-only)
+--- @field I_TCPY number: current TCP window Y-position in pixels relative to top of arrange view (read-only)
+--- @field I_MCPX number: current MCP X-position in pixels relative to mixer container (read-only)
+--- @field I_MCPY number: current MCP Y-position in pixels relative to mixer container (read-only)
+--- @field I_MCPW number: current MCP width in pixels (read-only)
+--- @field I_MCPH number: current MCP height in pixels (read-only)
+--- @field I_FOLDERDEPTH number: folder depth change, 0=normal, 1=track is a folder parent, -1=track is the last in the innermost folder, -2=track is the last in the innermost and next-innermost folders, etc
+--- @field I_FOLDERCOMPACT number: folder collapsed state (only valid on folders), 0=normal, 1=collapsed, 2=fully collapsed
+--- @field I_MIDIHWOUT number: track midi hardware output index, <0=disabled, low 5 bits are which channels (0=all, 1-16), next 5 bits are output device index (0-31)
+--- @field I_MIDI_INPUT_CHANMAP number: -1 maps to source channel, otherwise 1-16 to map to MIDI channel
+--- @field I_MIDI_CTL_CHAN number: -1 no link, 0-15 link to MIDI volume/pan on channel, 16 link to MIDI volume/pan on all channels
+--- @field I_MIDI_TRACKSEL_FLAG number: int *MIDI editor track list options&1=expand media items, &2=exclude from list, &4=auto-pruned
+--- @field I_PERFFLAGS number: track performance flags, &1=no media buffering, &2=no anticipative FX
+--- @field I_CUSTOMCOLOR number: custom color, OS dependent color|0x1000000 (i.e. ColorToNative(r,g,b)|0x1000000). If you do not |0x1000000, then it will not be used, but will store the color
+--- @field I_HEIGHTOVERRIDE number: custom height override for TCP window, 0 for none, otherwise size in pixels
+--- @field I_SPACER number: int *1=TCP track spacer above this trackB_HEIGHTLOCKbool *track height lock (must set I_HEIGHTOVERRIDE before locking)
+--- @field D_VOL number: trim volume of track, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
+--- @field D_PAN number: trim pan of track, -1..1
+--- @field D_WIDTH number: width of track, -1..1
+--- @field D_DUALPANL number: dualpan position 1, -1..1, only if I_pan_mode==6
+--- @field D_DUALPANR number: dualpan position 2, -1..1, only if I_pan_mode==6
+--- @field I_pan_mode number: pan mode, 0=classic 3.x, 3=new balance, 5=stereo pan, 6=dual pan
+--- @field D_PANLAW number: pan law of track, <0=project default, 0.5=-6dB, 0.707..=-3dB, 1=+0dB, 1.414..=-3dB with gain compensation, 2=-6dB with gain compensation, etc
+--- @field I_PANLAW_FLAGS number: pan law flags, 0=sine taper, 1=hybrid taper with deprecated behavior when gain compensation enabled, 2=linear taper, 3=hybrid taper
+--- @field P_ENV <envchunkname or P_ENV: <envchunkname or P_ENV{GUID...TrackEnvelope *(read-only) chunkname can be <VOLENV, <PANENV, etc; GUID is the stringified envelope GUID.
+--- @field B_SHOWINMIXER boolean: track control panel visible in mixer (do not use on master track)
+--- @field B_SHOWINTCP boolean: track control panel visible in arrange view (do not use on master track)
+--- @field B_MAINSEND boolean: track sends audio to parent
+--- @field C_MAINSEND_OFFS string: channel offset of track send to parent
+--- @field C_MAINSEND_NCH string: channel count of track send to parent (0=use all child track channels, 1=use one channel only)
+--- @field I_FREEMODE number: 1=track free item positioning enabled, 2=track fixed lanes enabled (call UpdateTimeline() after changing)
+--- @field I_NUMFIXEDLANES number: number of track fixed lanes (fine to call with setnew_value, but returned value is read-only)
+--- @field C_LANESCOLLAPSED string: fixed lane collapse state (1=lanes collapsed, 2=track displays as non-fixed-lanes but hidden lanes exist)
+--- @field C_LANESETTINGS string: fixed lane settings (&1=auto-remove empty lanes at bottom, &2=do not auto-comp new recording, &4=newly recorded lanes play exclusively (else add lanes in layers), &8=big lanes (else small lanes), &16=add new recording at bottom (else record into first available lane), &32=hide lane buttons
+--- @field C_LANEPLAYS N: Nchar *on fixed lane tracks, 0=lane N does not play, 1=lane N plays exclusively, 2=lane N plays and other lanes also play (fine to call with setnew_value, but returned value is read-only)
+--- @field C_ALLLANESPLAY string: on fixed lane tracks, 0=no lanes play, 1=all lanes play, 2=some lanes play (fine to call with setnew_value 0 or 1, but returned value is read-only)
+--- @field C_BEATATTACHMODE string: track timebase, -1=project default, 0=time, 1=beats (position, length, rate), 2=beats (position only)
+--- @field F_MCP_FXSEND_SCALE float *: scale of fx+send area in MCP (0=minimum allowed, 1=maximum allowed)
+--- @field F_MCP_FXPARM_SCALE float *: scale of fx parameter area in MCP (0=minimum allowed, 1=maximum allowed)
+--- @field F_MCP_SENDRGN_SCALE float *: scale of send area as proportion of the fx+send total area (0=minimum allowed, 1=maximum allowed)
+--- @field F_TCP_FXPARM_SCALE float *: scale of TCP parameter area when TCP FX are embedded (0=min allowed, default, 1=max allowed)
+--- @field I_PLAY_OFFSET_FLAG number: track media playback offset state, &1=bypassed, &2=offset value is measured in samples (otherwise measured in seconds)
+--- @field D_PLAY_OFFSET number: track media playback offset, units depend on I_PLAY_OFFSET_FLAG
+--- @field P_PARTRACK userdata: parent track (read-only)
+--- @field P_PROJECT userdata: parent project (read-only)
 Track.GetInfoValueConstants = {
 	B_MUTE = "B_MUTE",
 	B_PHASE = "B_PHASE",
@@ -413,15 +423,15 @@ Track.GetInfoValueConstants = {
 --- Get Info Value. Wraps GetMediaTrackInfo_Value.
 -- Get track numerical-value attributes.
 --- @within ReaScript Wrapped Methods
---- @param parm_name string. Track.GetInfoValueConstants
+--- @param param_name string Track.GetInfoValueConstants
 --- @return number
-function Track:get_info_value(parm_name)
-	return r.GetMediaTrackInfo_Value(self.pointer, parm_name)
+function Track:get_info_value(param_name)
+	return r.GetMediaTrackInfo_Value(self.pointer, param_name)
 end
 
 --- Get Parent Track. Wraps GetParentTrack.
 --- @within ReaScript Wrapped Methods
---- @return Track table
+--- @return table Track object
 function Track:get_parent_track()
 	local Track = require("track")
 	local result = r.GetParentTrack(self.pointer)
@@ -436,18 +446,18 @@ function Track:get_touch_state(is_pan)
 	return r.CSurf_GetTouchState(self.pointer, is_pan)
 end
 
---- Constants for Track:get_set_info_string.
+--- Constants for Track:get_set_info_string
 -- @within Constants
--- @field P_NAME string: track name (on master returns NULL)
--- @field P_ICON const char *: track icon (full filename, or relative to resource_path/data/track_icons)
--- @field P_LANENAME n: nchar *lane name (returns NULL for non-fixed-lane-tracks)
--- @field P_MCP_LAYOUT const char *: layout name
--- @field P_RAZOREDITS const char *: list of razor edit areas, as space-separated triples of start time, end time, and envelope GUID string.
--- @field P_RAZOREDITS_EXT const char *: const char *list of razor edit areas, as comma-separated sets of space-separated tuples of start time, end time, optionalenvelope GUID string, fixed/fipm top y-position, fixed/fipm bottom y-position.
--- @field P_TCP_LAYOUT const char *: layout name
--- @field P_EXT xyz: xyzchar *extension-specific persistent data
--- @field P_UI_RECT tcp.mute: tcp.mutechar *read-only, allows querying screen position + size of track WALTER elements (tcp.size queries screen position and size of entire TCP, etc).
--- @field GUID GUID *: 16-byte GUID, can query or update. If using a _String() function, GUID is a string {xyz-...}.
+--- @field P_NAME string: track name (on master returns NULL)
+--- @field P_ICON const char *: track icon (full filename, or relative to resource_path/data/track_icons)
+--- @field P_LANENAME n: nchar *lane name (returns NULL for non-fixed-lane-tracks)
+--- @field P_MCP_LAYOUT const char *: layout name
+--- @field P_RAZOREDITS const char *: list of razor edit areas, as space-separated triples of start time, end time, and envelope GUID string
+--- @field P_RAZOREDITS_EXT const char *: const char *list of razor edit areas, as comma-separated sets of space-separated tuples of start time, end time, optionalenvelope GUID string, fixed/fipm top y-position, fixed/fipm bottom y-position.
+--- @field P_TCP_LAYOUT const char *: layout name
+--- @field P_EXT xyz: xyzchar *extension-specific persistent data
+--- @field P_UI_RECT tcp.mute: tcp.mutechar *read-only, allows querying screen position + size of track WALTER elements (tcp.size queries screen position and size of entire TCP, etc).
+--- @field GUID GUID *: 16-byte GUID, can query or update. If using a _String() function, GUID is a string {xyz-...}.
 Track.GetSetInfoStringConstants = {
 	P_NAME = "P_NAME",
 	P_ICON = "P_ICON",
@@ -461,18 +471,18 @@ Track.GetSetInfoStringConstants = {
 	GUID = "GUID",
 }
 
---- Get Set Info String. Wraps GetSetMediaTrackInfo_String.
+--- Get Set Info string Wraps GetSetMediaTrackInfo_string
 -- Get or set track string attributes.Example: "0.0 1.0 \"\" 0.0 1.0
 -- "{xyz-...}"Example: "0.0 1.0,0.0 1.0 "{xyz-...}",1.0 2.0 "" 0.25 0.75"
 --- @within ReaScript Wrapped Methods
---- @param parm_name string. Track.GetSetInfoStringConstants
+--- @param param_name string Track.GetSetInfoStringConstants
 --- @param string_need_big string
 --- @param set_new_value boolean
 --- @return string_need_big string
 --- @see Track.GetSetInfoStringConstants
-function Track:get_set_info_string(parm_name, string_need_big, set_new_value)
+function Track:get_set_info_string(param_name, string_need_big, set_new_value)
 	local ret_val, string_need_big =
-		r.GetSetMediaTrackInfo_String(self.pointer, parm_name, string_need_big, set_new_value)
+		r.GetSetMediaTrackInfo_String(self.pointer, param_name, string_need_big, set_new_value)
 	if ret_val then
 		return string_need_big
 	else
@@ -507,7 +517,7 @@ end
 --- @field WIDTH_REVERSE string: width reverse grouping
 --- @field NO_LEAD_WHEN_FOLLOW string: no lead when follow
 --- @field VOLUME_VCA_FOLLOW_ISPREFX string: VCA follow is pre-fx
-Track.GroupConstants = {
+Track.GroupMembershipConstants = {
 	MEDIA_EDIT_LEAD = "MEDIA_EDIT_LEAD",
 	MEDIA_EDIT_FOLLOW = "MEDIA_EDIT_FOLLOW",
 	VOLUME_LEAD = "VOLUME_LEAD",
@@ -538,18 +548,13 @@ Track.GroupConstants = {
 --- Get Set Track Group Membership. Wraps GetSetTrackGroupMembership.
 -- Gets or modifies the group membership for a track. Returns group state prior to
 -- call (each bit represents one of the 32 group numbers). if set_mask has bits set,
--- those bits in set_value will be applied to group. Group can be one of:
--- MEDIA_EDIT_LEAD MEDIA_EDIT_FOLLOW VOLUME_LEAD VOLUME_FOLLOW VOLUME_VCA_LEAD
--- VOLUME_VCA_FOLLOW PAN_LEAD PAN_FOLLOW WIDTH_LEAD WIDTH_FOLLOW MUTE_LEAD
--- MUTE_FOLLOW SOLO_LEAD SOLO_FOLLOW rec_arm_LEAD rec_arm_FOLLOW POLARITY_LEAD
--- POLARITY_FOLLOW AUTOMODE_LEAD AUTOMODE_FOLLOW VOLUME_REVERSE PAN_REVERSE
--- WIDTH_REVERSE NO_LEAD_WHEN_FOLLOW VOLUME_VCA_FOLLOW_ISPREFX.
+-- those bits in set_value will be applied to group.
 --- @within ReaScript Wrapped Methods
---- @param group_name string. Track.GroupConstants.
+--- @param group_name string Track.GroupMembershipConstants.
 --- @param set_mask number
 --- @param set_value number
 --- @return number
---- @see Track.GroupConstants
+--- @see Track.GroupMembershipConstants
 function Track:get_set_track_group_membership(group_name, set_mask, set_value)
 	return r.GetSetTrackGroupMembership(self.pointer, group_name, set_mask, set_value)
 end
@@ -557,18 +562,14 @@ end
 --- Get Set Track Group Membership Ex. Wraps GetSetTrackGroupMembershipEx.
 -- Gets or modifies 32 bits (at offset, where 0 is the low 32 bits of the grouping)
 -- of the group membership for a track. Returns group state prior to call. if
--- set_mask has bits set, those bits in set_value will be applied to group. Group can
--- be one of: MEDIA_EDIT_LEAD MEDIA_EDIT_FOLLOW VOLUME_LEAD VOLUME_FOLLOW
--- VOLUME_VCA_LEAD VOLUME_VCA_FOLLOW PAN_LEAD PAN_FOLLOW WIDTH_LEAD WIDTH_FOLLOW
--- MUTE_LEAD MUTE_FOLLOW SOLO_LEAD SOLO_FOLLOW rec_arm_LEAD rec_arm_FOLLOW
--- POLARITY_LEAD POLARITY_FOLLOW AUTOMODE_LEAD AUTOMODE_FOLLOW VOLUME_REVERSE
--- PAN_REVERSE WIDTH_REVERSE NO_LEAD_WHEN_FOLLOW VOLUME_VCA_FOLLOW_ISPREFX.
+-- set_mask has bits set, those bits in set_value will be applied to group.
 --- @within ReaScript Wrapped Methods
---- @param group_name string. Track.GroupConstants.
+--- @param group_name string Track.GroupMembershipConstants.
 --- @param offset number
 --- @param set_mask number
 --- @param set_value number
 --- @return number
+--- @see Track.GroupMembershipConstants
 function Track:get_set_track_group_membership_ex(group_name, offset, set_mask, set_value)
 	return r.GetSetTrackGroupMembershipEx(self.pointer, group_name, offset, set_mask, set_value)
 end
@@ -576,43 +577,33 @@ end
 --- Get Set Track Group Membership High. Wraps GetSetTrackGroupMembershipHigh.
 -- Gets or modifies the group membership for a track. Returns group state prior to
 -- call (each bit represents one of the high 32 group numbers). if set_mask has bits
--- set, those bits in set_value will be applied to group. Group can be one of:
--- MEDIA_EDIT_LEAD MEDIA_EDIT_FOLLOW VOLUME_LEAD VOLUME_FOLLOW VOLUME_VCA_LEAD
--- VOLUME_VCA_FOLLOW PAN_LEAD PAN_FOLLOW WIDTH_LEAD WIDTH_FOLLOW MUTE_LEAD
--- MUTE_FOLLOW SOLO_LEAD SOLO_FOLLOW rec_arm_LEAD rec_arm_FOLLOW POLARITY_LEAD
--- POLARITY_FOLLOW AUTOMODE_LEAD AUTOMODE_FOLLOW VOLUME_REVERSE PAN_REVERSE
--- WIDTH_REVERSE NO_LEAD_WHEN_FOLLOW VOLUME_VCA_FOLLOW_ISPREFX
+-- set, those bits in set_value will be applied to group.
 --- @within ReaScript Wrapped Methods
---- @param group_name string. Track.GroupConstants
+--- @param group_name string Track.GroupMembershipConstants
 --- @param set_mask number
 --- @param set_value number
 --- @return number
+--- @see Track.GroupMembershipConstants
 function Track:get_set_track_group_membership_high(group_name, set_mask, set_value)
 	return r.GetSetTrackGroupMembershipHigh(self.pointer, group_name, set_mask, set_value)
 end
 
---- Constants for Track:get_set_track_send_info_string.
--- @field P_EXT xyz: xyzchar *extension-specific persistent data
-Track.GetSetTrackSendInfoStringConstants = {
-	P_EXT = "P_EXT",
-}
 
---- Get Set Track Send Info String. Wraps GetSetTrackSendInfo_String.
--- Gets/sets a send attribute string.
+--- Get Set Track Send Info string. Wraps GetSetTrackSendInfo_string
+-- Gets/sets a send attribute string
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
---- @param parm_name string. Track.GetSetTrackSendInfoStringConstants
 --- @param string_need_big string
 --- @param set_new_value boolean
---- @return string_need_big string
-function Track:get_set_track_send_info_string(category, send_idx, parm_name, string_need_big, set_new_value)
+--- @return string
+function Track:get_set_track_send_info_string(category, send_idx, string_need_big, set_new_value)
 	local ret_val, string_need_big =
-		r.GetSetTrackSendInfo_String(self.pointer, category, send_idx, parm_name, string_need_big, set_new_value)
+		r.GetSetTrackSendInfo_String(self.pointer, category, send_idx, "P_EXT", string_need_big, set_new_value)
 	if ret_val then
 		return string_need_big
 	else
-		return nil
+		error("Failed to get set track send info string")
 	end
 end
 
@@ -644,7 +635,7 @@ end
 --- Get Track Envelope. Wraps GetTrackEnvelope.
 --- @within ReaScript Wrapped Methods
 --- @param env_idx number
---- @return Envelope table
+--- @return table Envelope object
 function Track:get_envelope(env_idx)
 	local Envelope = require("envelope")
 	local result = r.GetTrackEnvelope(self.pointer, env_idx)
@@ -656,8 +647,8 @@ end
 -- GUID string, like "{B577250D-146F-B544-9B34-F24FBE488F1F}".
 --- @within ReaScript Wrapped Methods
 --- @param cfgchunkname_or_guid string
---- @return Envelope table
-function Track:get_track_envelope_by_chunk_name(cfgchunkname_or_guid)
+--- @return table Envelope object
+function Track:get_envelope_by_chunk_name(cfgchunkname_or_guid)
 	local Envelope = require("envelope")
 	local result = r.GetTrackEnvelopeByChunkName(self.pointer, cfgchunkname_or_guid)
 	return Envelope:new(result)
@@ -666,8 +657,8 @@ end
 --- Get Track Envelope By Name. Wraps GetTrackEnvelopeByName.
 --- @within ReaScript Wrapped Methods
 --- @param env_name string
---- @return Envelope table
-function Track:get_track_envelope_by_name(env_name)
+--- @return table Envelope object
+function Track:get_envelope_by_name(env_name)
 	local Envelope = require("envelope")
 	local result = r.GetTrackEnvelopeByName(self.pointer, env_name)
 	return Envelope:new(result)
@@ -675,7 +666,7 @@ end
 
 --- Get Track Guid. Wraps GetTrackGUID.
 --- @within ReaScript Wrapped Methods
---- @return guid string
+--- @return string
 function Track:get_guid()
 	return r.GetTrackGUID(self.pointer)
 end
@@ -683,7 +674,7 @@ end
 --- Get Track Media Item. Wraps GetTrackMediaItem.
 --- @within ReaScript Wrapped Methods
 --- @param item_idx number
---- @return Item table
+--- @return table Item object
 function Track:get_item(item_idx)
 	local Item = require("item")
 	local result = r.GetTrackMediaItem(self.pointer, item_idx)
@@ -698,26 +689,26 @@ end
 -- 2\t2.1.1\tLyric for measure 2 beat 1      "). See SetTrackMIDILyrics
 --- @within ReaScript Wrapped Methods
 --- @param flag number
---- @return buf string
+--- @return string
 function Track:get_track_midi_lyrics(flag)
 	local ret_val, buf = r.GetTrackMIDILyrics(self.pointer, flag)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get track midi lyrics")
 	end
 end
 
 --- Get Track Name. Wraps GetTrackName.
 -- Returns "MASTER" for master track, "Track N" if track has no name.
 --- @within ReaScript Wrapped Methods
---- @return buf string
+--- @return string
 function Track:get_name()
 	local ret_val, buf = r.GetTrackName(self.pointer)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Failed to get track name")
 	end
 end
 
@@ -742,13 +733,13 @@ end
 -- See GetTrackSendName.
 --- @within ReaScript Wrapped Methods
 --- @param recv_index number
---- @return buf string
+--- @return string
 function Track:get_track_receive_name(recv_index)
 	local ret_val, buf = r.GetTrackReceiveName(self.pointer, recv_index)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Could not get track receive name")
 	end
 end
 
@@ -756,13 +747,13 @@ end
 -- See GetTrackSendUIMute.
 --- @within ReaScript Wrapped Methods
 --- @param recv_index number
---- @return mute boolean
+--- @return boolean
 function Track:get_track_receive_ui_mute(recv_index)
 	local ret_val, mute = r.GetTrackReceiveUIMute(self.pointer, recv_index)
 	if ret_val then
 		return mute
 	else
-		return nil
+		error("Could not get track receive ui mute")
 	end
 end
 
@@ -770,32 +761,32 @@ end
 -- See GetTrackSendUIVolPan.
 --- @within ReaScript Wrapped Methods
 --- @param recv_index number
---- @return volume number
---- @return pan number
+--- @return number volume
+--- @return number pan
 function Track:get_track_receive_ui_vol_pan(recv_index)
 	local ret_val, volume, pan = r.GetTrackReceiveUIVolPan(self.pointer, recv_index)
 	if ret_val then
 		return volume, pan
 	else
-		return nil
+		error("Could not get track receive ui vol pan")
 	end
 end
 
 --- Constants for Track:get_track_send_info_value.
--- @field B_MUTE any: bool *
--- @field B_PHASE boolean: true to flip phase
--- @field B_MONO any: bool *
--- @field D_VOL double *: 1.0 = +0dB etc
--- @field D_PAN double *: -1..+1
--- @field D_PANLAW double *: 1.0=+0.0db, 0.5=-6dB, -1.0 = projdef etc
--- @field I_SENDMODE number: 0=post-fader, 1=pre-fx, 2=post-fx (deprecated), 3=post-fx
--- @field I_AUTOMODE number: automation mode (-1=use track automode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch)
--- @field I_SRCCHAN number: -1 for no audio send. Low 10 bits specify channel offset, and higher bits specify channel count. (srcchan>>10) == 0 for stereo, 1 for mono, 2 for 4 channel, 3 for 6 channel, etc.
--- @field I_DSTCHAN number: low 10 bits are destination index, &1024 set to mix to mono.
--- @field I_MIDIFLAGS number: low 5 bits=source channel 0=all, 1-16, 31=MIDI send disabled, next 5 bits=dest channel, 0=orig, 1-16=chan. &1024 for faders-send MIDI vol/pan. (>>14)&255 = src bus (0 for all, 1 for normal, 2+). (>>22)&255=destination bus (0 for all, 1 for normal, 2+)
--- @field P_DESTTRACK userdata: destination track, only applies for sends/recvs (read-only)
--- @field P_SRCTRACK userdata: source track, only applies for sends/recvs (read-only)
--- @field P_ENV <envchunkname: <envchunknameTrackEnvelope *call with<VOLENV,<PANENV, etc appended (read-only)
+--- @field B_MUTE boolean: true to mute
+--- @field B_PHASE boolean: true to flip phase
+--- @field B_MONO boolean: true to force mono send
+--- @field D_VOL number: 1.0 = +0dB etc
+--- @field D_PAN number: -1..+1
+--- @field D_PANLAW number: 1.0=+0.0db, 0.5=-6dB, -1.0 = projdef etc
+--- @field I_SENDMODE number: 0=post-fader, 1=pre-fx, 2=post-fx (deprecated), 3=post-fx
+--- @field I_AUTOMODE number: automation mode (-1=use track automode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch)
+--- @field I_SRCCHAN number: -1 for no audio send. Low 10 bits specify channel offset, and higher bits specify channel count. (srcchan>>10) == 0 for stereo, 1 for mono, 2 for 4 channel, 3 for 6 channel, etc.
+--- @field I_DSTCHAN number: low 10 bits are destination index, &1024 set to mix to mono.
+--- @field I_MIDIFLAGS number: low 5 bits=source channel 0=all, 1-16, 31=MIDI send disabled, next 5 bits=dest channel, 0=orig, 1-16=chan. &1024 for faders-send MIDI vol/pan. (>>14)&255 = src bus (0 for all, 1 for normal, 2+). (>>22)&255=destination bus (0 for all, 1 for normal, 2+)
+--- @field P_DESTTRACK userdata: destination track, only applies for sends/recvs (read-only)
+--- @field P_SRCTRACK userdata: source track, only applies for sends/recvs (read-only)
+--- @field P_ENV envchunkname: envchunkname TrackEnvelope *call with VOLENV, PANENV, etc appended (read-only)
 Track.GetTrackSendInfoValueConstants = {
 	B_MUTE = "B_MUTE",
 	B_PHASE = "B_PHASE",
@@ -820,24 +811,24 @@ Track.GetTrackSendInfoValueConstants = {
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
---- @param parm_name string. Track.GetTrackSendInfoValueConstants
+--- @param param_name string Track.GetTrackSendInfoValueConstants
 --- @return number
 --- @see Track.GetTrackSendInfoValueConstants
-function Track:get_track_send_info_value(category, send_idx, parm_name)
-	return r.GetTrackSendInfo_Value(self.pointer, category, send_idx, parm_name)
+function Track:get_track_send_info_value(category, send_idx, param_name)
+	return r.GetTrackSendInfo_Value(self.pointer, category, send_idx, param_name)
 end
 
 --- Get Track Send Name. Wraps GetTrackSendName.
 -- send_idx>=0 for hw outputs, >=nb_of_hw_outputs for sends. See GetTrackReceiveName.
 --- @within ReaScript Wrapped Methods
 --- @param send_index number
---- @return buf string
+--- @return string
 function Track:get_track_send_name(send_index)
 	local ret_val, buf = r.GetTrackSendName(self.pointer, send_index)
 	if ret_val then
 		return buf
 	else
-		return nil
+		error("Could not get track send name")
 	end
 end
 
@@ -846,7 +837,7 @@ end
 -- GetTrackReceiveUIMute.
 --- @within ReaScript Wrapped Methods
 --- @param send_index number
---- @return mute boolean
+--- @return boolean
 function Track:get_track_send_ui_mute(send_index)
 	local ret_val, mute = r.GetTrackSendUIMute(self.pointer, send_index)
 	if ret_val then
@@ -967,15 +958,6 @@ function Track:get_peak_info(channel)
 	return r.Track_GetPeakInfo(self.pointer, channel)
 end
 
---- Delete Fx. Wraps TrackFX_Delete.
--- Remove a FX from track chain (returns true on success).
---- @within ReaScript Wrapped Methods
---- @param fx number
---- @return boolean
-function Track:delete_fx(fx)
-	return r.TrackFX_Delete(self.pointer, fx)
-end
-
 --- Get Fx Count. Wraps TrackFX_GetCount.
 --- @within ReaScript Wrapped Methods
 --- @return number
@@ -1022,12 +1004,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
---- @param parm_name string
+--- @param param_name string
 --- @param set_new_value boolean
 --- @param new_value number
 --- @return number
-function Track:get_set_track_send_info(category, send_idx, parm_name, set_new_value, new_value)
-	return r.BR_GetSetTrackSendInfo(self.pointer, category, send_idx, parm_name, set_new_value, new_value)
+function Track:get_set_track_send_info(category, send_idx, param_name, set_new_value, new_value)
+	return r.BR_GetSetTrackSendInfo(self.pointer, category, send_idx, param_name, set_new_value, new_value)
 end
 
 --- Get Sws Track Notes. Wraps NF_GetSWSTrackNotes.
@@ -1035,6 +1017,59 @@ end
 --- @return string
 function Track:get_sws_track_notes()
 	return r.NF_GetSWSTrackNotes(self.pointer)
+end
+
+--- Is Track Selected. Wraps IsTrackSelected.
+--- @within ReaScript Wrapped Methods
+--- @return boolean
+function Track:is_track_selected()
+	return r.IsTrackSelected(self.pointer)
+end
+
+--- Is Track Visible. Wraps IsTrackVisible.
+-- If mixer==true, returns true if the track is visible in the mixer.  If
+-- mixer==false, returns true if the track is visible in the track control panel.
+--- @within ReaScript Wrapped Methods
+--- @param mixer boolean
+--- @return boolean
+function Track:is_track_visible(mixer)
+	return r.IsTrackVisible(self.pointer, mixer)
+end
+
+--- Mark Track Items Dirty. Wraps MarkTrackItemsDirty.
+-- If track is supplied, item is ignored
+--- @within ReaScript Wrapped Methods
+function Track:mark_track_items_dirty()
+	return r.MarkTrackItemsDirty(self.pointer, item)
+end
+
+--- Midi Get Track Hash. Wraps MIDI_GetTrackHash.
+-- Get a string that only changes when the MIDI data changes. If notes_only==true,
+-- then the string changes only when the MIDI notes change. See MIDI_GetHash
+--- @within ReaScript Wrapped Methods
+--- @param notes_only boolean
+--- @return hash string
+function Track:midi_get_track_hash(notes_only)
+	local ret_val, hash = r.MIDI_GetTrackHash(self.pointer, notes_only)
+	if ret_val then
+		return hash
+	else
+		return nil
+	end
+end
+
+--- Midi Editor Flags For Track. Wraps MIDIEditorFlagsForTrack.
+-- Get or set MIDI editor settings for this track. pitchwheel_range: semitones up or
+-- down. flags &1: snap pitch lane edits to semitones if pitchwheel range is
+-- defined.
+--- @within ReaScript Wrapped Methods
+--- @param pitchwheel_range number
+--- @param flags number
+--- @param is_set boolean
+--- @return number pitchwheel_range
+--- @return number flags
+function Track:midi_editor_flags_for_track(pitchwheel_range, flags, is_set)
+	return r.MIDIEditorFlagsForTrack(self.pointer, pitchwheel_range, flags, is_set)
 end
 
 --- On Fx Change. Wraps CSurf_OnFXChange.
@@ -1217,68 +1252,23 @@ end
 --- Remove Receives from another track. Wraps SNM_RemoveReceivesFrom.
 -- [S&M] Removes all receives from src_track. Returns false if nothing updated.
 --- @within ReaScript Wrapped Methods
---- @param src_track MediaTrack
+--- @param src_track table Track object
 --- @return boolean
 function Track:remove_receives_from(src_track)
 	return r.SNM_RemoveReceivesFrom(self.pointer, src_track.pointer)
 end
 
---- On Width Change Ex. Wraps CSurf_OnWidthChangeEx.
+--- Remove Track Send. Wraps RemoveTrackSend.
+-- Remove a send/receive/hardware output, return true on success. category is <0
+-- for receives, 0=sends, >0 for hardware outputs. See CreateTrackSend,
+-- GetSetTrackSendInfo, GetTrackSendInfo_Value, SetTrackSendInfo_Value,
+-- GetTrackNumSends.
 --- @within ReaScript Wrapped Methods
---- @param width number
---- @param relative boolean
---- @param allow_gang boolean
---- @return number
-function Track:on_width_change_ex(width, relative, allow_gang)
-	return r.CSurf_OnWidthChangeEx(self.pointer, width, relative, allow_gang)
-end
-
---- Set Surface Mute. Wraps CSurf_SetSurfaceMute.
---- @within ReaScript Wrapped Methods
---- @param mute boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_mute(mute, ignoresurf)
-	return r.CSurf_SetSurfaceMute(self.pointer, mute, ignoresurf)
-end
-
---- Set Surface Pan. Wraps CSurf_SetSurfacePan.
---- @within ReaScript Wrapped Methods
---- @param pan number
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_pan(pan, ignoresurf)
-	return r.CSurf_SetSurfacePan(self.pointer, pan, ignoresurf)
-end
-
---- Set Surface Rec Arm. Wraps CSurf_SetSurfacerec_arm.
---- @within ReaScript Wrapped Methods
---- @param rec_arm boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_rec_arm(rec_arm, ignoresurf)
-	return r.CSurf_SetSurfacerec_arm(self.pointer, rec_arm, ignoresurf)
-end
-
---- Set Surface Selected. Wraps CSurf_SetSurfaceSelected.
---- @within ReaScript Wrapped Methods
---- @param selected boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_selected(selected, ignoresurf)
-	return r.CSurf_SetSurfaceSelected(self.pointer, selected, ignoresurf)
-end
-
---- Set Surface Solo. Wraps CSurf_SetSurfaceSolo.
---- @within ReaScript Wrapped Methods
---- @param solo boolean
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_solo(solo, ignoresurf)
-	return r.CSurf_SetSurfaceSolo(self.pointer, solo, ignoresurf)
-end
-
---- Set Surface Volume. Wraps CSurf_SetSurfaceVolume.
---- @within ReaScript Wrapped Methods
---- @param volume number
---- @param ignoresurf IReaperControlSurface
-function Track:set_surface_volume(volume, ignoresurf)
-	return r.CSurf_SetSurfaceVolume(self.pointer, volume, ignoresurf)
+--- @param category number
+--- @param send_idx number
+--- @return boolean
+function Track:remove_track_send(category, send_idx)
+	return r.RemoveTrackSend(self.pointer, category, send_idx)
 end
 
 --- Set Sws Track Notes. Wraps NF_SetSWSTrackNotes.
@@ -1296,136 +1286,70 @@ function Track:track_to_id(mcp_view)
 	return r.CSurf_TrackToID(self.pointer, mcp_view)
 end
 
---- Is Track Selected. Wraps IsTrackSelected.
---- @within ReaScript Wrapped Methods
---- @return boolean
-function Track:is_track_selected()
-	return r.IsTrackSelected(self.pointer)
-end
-
---- Is Track Visible. Wraps IsTrackVisible.
--- If mixer==true, returns true if the track is visible in the mixer.  If
--- mixer==false, returns true if the track is visible in the track control panel.
---- @within ReaScript Wrapped Methods
---- @param mixer boolean
---- @return boolean
-function Track:is_track_visible(mixer)
-	return r.IsTrackVisible(self.pointer, mixer)
-end
-
---- Mark Track Items Dirty. Wraps MarkTrackItemsDirty.
--- If track is supplied, item is ignored
---- @within ReaScript Wrapped Methods
-function Track:mark_track_items_dirty()
-	return r.MarkTrackItemsDirty(self.pointer, item)
-end
-
---- Midi Get Track Hash. Wraps MIDI_GetTrackHash.
--- Get a string that only changes when the MIDI data changes. If notes_only==true,
--- then the string changes only when the MIDI notes change. See MIDI_GetHash
---- @within ReaScript Wrapped Methods
---- @param notes_only boolean
---- @return hash string
-function Track:midi_get_track_hash(notes_only)
-	local ret_val, hash = r.MIDI_GetTrackHash(self.pointer, notes_only)
-	if ret_val then
-		return hash
-	else
-		return nil
-	end
-end
-
---- Midi Editor Flags For Track. Wraps MIDIEditorFlagsForTrack.
--- Get or set MIDI editor settings for this track. pitchwheel_range: semitones up or
--- down. flags &1: snap pitch lane edits to semitones if pitchwheel range is
--- defined.
---- @within ReaScript Wrapped Methods
---- @param pitchwheel_range number
---- @param flags number
---- @param is_set boolean
---- @return pitchwheel_range number
---- @return flags number
-function Track:midi_editor_flags_for_track(pitchwheel_range, flags, is_set)
-	return r.MIDIEditorFlagsForTrack(self.pointer, pitchwheel_range, flags, is_set)
-end
-
---- Remove Track Send. Wraps RemoveTrackSend.
--- Remove a send/receive/hardware output, return true on success. category is <0
--- for receives, 0=sends, >0 for hardware outputs. See CreateTrackSend,
--- GetSetTrackSendInfo, GetTrackSendInfo_Value, SetTrackSendInfo_Value,
--- GetTrackNumSends.
---- @within ReaScript Wrapped Methods
---- @param category number
---- @param send_idx number
---- @return boolean
-function Track:remove_track_send(category, send_idx)
-	return r.RemoveTrackSend(self.pointer, category, send_idx)
-end
-
 --- Constants for Track:set_info_value.
--- @within Constants
--- @field B_MUTE boolean: muted
--- @field B_PHASE boolean: track phase inverted
--- @field B_RECMON_IN_EFFECT boolean: record monitoring in effect (current audio-thread playback state, read-only)
--- @field IP_TRACKNUMBER number: track number 1-based, 0=not found, -1=master track (read-only, returns the int directly)
--- @field I_SOLO number: soloed, 0=not soloed, 1=soloed, 2=soloed in place, 5=safe soloed, 6=safe soloed in place
--- @field B_SOLO_DEFEAT boolean: when set, if anything else is soloed and this track is not muted, this track acts soloed
--- @field I_FXEN number: fx enabled, 0=bypassed, !0=fx active
--- @field I_rec_arm number: record armed, 0=not record armed, 1=record armed
--- @field I_RECINPUT number: record input, <0=no input. if 4096 set, input is MIDI and low 5 bits represent channel (0=all, 1-16=only chan), next 6 bits represent physical input (63=all, 62=VKB). If 4096 is not set, low 10 bits (0..1023) are input start channel (ReaRoute/Loopback start at 512). If 2048 is set, input is multichannel input (using track channel count), or if 1024 is set, input is stereo input, otherwise input is mono.
--- @field I_RECMODE number: record mode, 0=input, 1=stereo out, 2=none, 3=stereo out w/latency compensation, 4=midi output, 5=mono out, 6=mono out w/ latency compensation, 7=midi overdub, 8=midi replace
--- @field I_RECMODE_FLAGS number: record mode flags, &3=output recording mode (0=post fader, 1=pre-fx, 2=post-fx/pre-fader)
--- @field I_RECMON number: record monitoring, 0=off, 1=normal, 2=not when playing (tape style)
--- @field I_RECMONITEMS number: monitor items while recording, 0=off, 1=on
--- @field B_AUTO_rec_arm boolean: automatically set record arm when selected (does not immediately affect rec_arm state, script should set directly if desired)
--- @field I_VUMODE number: int *track vu mode, &1disabled, &30==0stereo peaks, &30==2multichannel peaks, &30==4stereo RMS, &30==8combined RMS, &30==12LUFS-M, &30==16LUFS-S (readout=max), &30==20LUFS-S (readout=current), &32LUFS calculation on channels 1+2 only
--- @field I_AUTOMODE number: track automation mode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch
--- @field I_NCHAN number: number of track channels, 2-128, even numbers only
--- @field I_SELECTED number: track selected, 0=unselected, 1=selected
--- @field I_WNDH number: current TCP window height in pixels including envelopes (read-only)
--- @field I_TCPH number: current TCP window height in pixels not including envelopes (read-only)
--- @field I_TCPY number: current TCP window Y-position in pixels relative to top of arrange view (read-only)
--- @field I_MCPX number: current MCP X-position in pixels relative to mixer container (read-only)
--- @field I_MCPY number: current MCP Y-position in pixels relative to mixer container (read-only)
--- @field I_MCPW number: current MCP width in pixels (read-only)
--- @field I_MCPH number: current MCP height in pixels (read-only)
--- @field I_FOLDERDEPTH number: folder depth change, 0=normal, 1=track is a folder parent, -1=track is the last in the innermost folder, -2=track is the last in the innermost and next-innermost folders, etc
--- @field I_FOLDERCOMPACT number: folder collapsed state (only valid on folders), 0=normal, 1=collapsed, 2=fully collapsed
--- @field I_MIDIHWOUT number: track midi hardware output index, <0=disabled, low 5 bits are which channels (0=all, 1-16), next 5 bits are output device index (0-31)
--- @field I_MIDI_INPUT_CHANMAP number: -1 maps to source channel, otherwise 1-16 to map to MIDI channel
--- @field I_MIDI_CTL_CHAN number: -1 no link, 0-15 link to MIDI volume/pan on channel, 16 link to MIDI volume/pan on all channels
--- @field I_MIDI_TRACKSEL_FLAG number: int *MIDI editor track list options&1=expand media items, &2=exclude from list, &4=auto-pruned
--- @field I_PERFFLAGS number: track performance flags, &1=no media buffering, &2=no anticipative FX
--- @field I_CUSTOMCOLOR number: custom color, OS dependent color|0x1000000 (i.e. ColorToNative(r,g,b)|0x1000000). If you do not |0x1000000, then it will not be used, but will store the color
--- @field I_HEIGHTOVERRIDE number: custom height override for TCP window, 0 for none, otherwise size in pixels
--- @field I_SPACER number: int *1=TCP track spacer above this trackB_HEIGHTLOCKbool *track height lock (must set I_HEIGHTOVERRIDE before locking)
--- @field D_VOL double *: trim volume of track, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
--- @field D_PAN double *: trim pan of track, -1..1
--- @field D_WIDTH double *: width of track, -1..1
--- @field D_DUALPANL double *: dualpan position 1, -1..1, only if I_pan_mode==6
--- @field D_DUALPANR double *: dualpan position 2, -1..1, only if I_pan_mode==6
--- @field I_pan_mode number: pan mode, 0=classic 3.x, 3=new balance, 5=stereo pan, 6=dual pan
--- @field D_PANLAW double *: pan law of track, <0=project default, 0.5=-6dB, 0.707..=-3dB, 1=+0dB, 1.414..=-3dB with gain compensation, 2=-6dB with gain compensation, etc
--- @field I_PANLAW_FLAGS number: pan law flags, 0=sine taper, 1=hybrid taper with deprecated behavior when gain compensation enabled, 2=linear taper, 3=hybrid taper
--- @field P_ENV <envchunkname or P_ENV: <envchunkname or P_ENV{GUID...TrackEnvelope *(read-only) chunkname can be <VOLENV, <PANENV, etc; GUID is the stringified envelope GUID.
--- @field B_SHOWINMIXER boolean: track control panel visible in mixer (do not use on master track)
--- @field B_SHOWINTCP boolean: track control panel visible in arrange view (do not use on master track)
--- @field B_MAINSEND boolean: track sends audio to parent
--- @field C_MAINSEND_OFFS string: channel offset of track send to parent
--- @field C_MAINSEND_NCH string: channel count of track send to parent (0=use all child track channels, 1=use one channel only)
--- @field I_FREEMODE number: 1=track free item positioning enabled, 2=track fixed lanes enabled (call UpdateTimeline() after changing)
--- @field I_NUMFIXEDLANES number: number of track fixed lanes (fine to call with setnew_value, but returned value is read-only)
--- @field C_LANESCOLLAPSED string: fixed lane collapse state (1=lanes collapsed, 2=track displays as non-fixed-lanes but hidden lanes exist)
--- @field C_LANESETTINGS string: fixed lane settings (&1=auto-remove empty lanes at bottom, &2=do not auto-comp new recording, &4=newly recorded lanes play exclusively (else add lanes in layers), &8=big lanes (else small lanes), &16=add new recording at bottom (else record into first available lane), &32=hide lane buttons
--- @field C_LANEPLAYS N: Nchar *on fixed lane tracks, 0=lane N does not play, 1=lane N plays exclusively, 2=lane N plays and other lanes also play (fine to call with setnew_value, but returned value is read-only)
--- @field C_ALLLANESPLAY string: on fixed lane tracks, 0=no lanes play, 1=all lanes play, 2=some lanes play (fine to call with setnew_value 0 or 1, but returned value is read-only)
--- @field C_BEATATTACHMODE string: track timebase, -1=project default, 0=time, 1=beats (position, length, rate), 2=beats (position only)
--- @field F_MCP_FXSEND_SCALE float *: scale of fx+send area in MCP (0=minimum allowed, 1=maximum allowed)
--- @field F_MCP_FXPARM_SCALE float *: scale of fx parameter area in MCP (0=minimum allowed, 1=maximum allowed)
--- @field F_MCP_SENDRGN_SCALE float *: scale of send area as proportion of the fx+send total area (0=minimum allowed, 1=maximum allowed)
--- @field F_TCP_FXPARM_SCALE float *: scale of TCP parameter area when TCP FX are embedded (0=min allowed, default, 1=max allowed)
--- @field I_PLAY_OFFSET_FLAG number: track media playback offset state, &1=bypassed, &2=offset value is measured in samples (otherwise measured in seconds)
--- @field D_PLAY_OFFSET double *: track media playback offset, units depend on I_PLAY_OFFSET_FLAG
+--- @within Constants
+--- @field B_MUTE boolean: muted
+--- @field B_PHASE boolean: track phase inverted
+--- @field B_RECMON_IN_EFFECT boolean: record monitoring in effect (current audio-thread playback state, read-only)
+--- @field IP_TRACKNUMBER number: track number 1-based, 0=not found, -1=master track (read-only, returns the int directly)
+--- @field I_SOLO number: soloed, 0=not soloed, 1=soloed, 2=soloed in place, 5=safe soloed, 6=safe soloed in place
+--- @field B_SOLO_DEFEAT boolean: when set, if anything else is soloed and this track is not muted, this track acts soloed
+--- @field I_FXEN number: fx enabled, 0=bypassed, !0=fx active
+--- @field I_rec_arm number: record armed, 0=not record armed, 1=record armed
+--- @field I_RECINPUT number: record input, <0=no input. if 4096 set, input is MIDI and low 5 bits represent channel (0=all, 1-16=only chan), next 6 bits represent physical input (63=all, 62=VKB). If 4096 is not set, low 10 bits (0..1023) are input start channel (ReaRoute/Loopback start at 512). If 2048 is set, input is multichannel input (using track channel count), or if 1024 is set, input is stereo input, otherwise input is mono.
+--- @field I_RECMODE number: record mode, 0=input, 1=stereo out, 2=none, 3=stereo out w/latency compensation, 4=midi output, 5=mono out, 6=mono out w/ latency compensation, 7=midi overdub, 8=midi replace
+--- @field I_RECMODE_FLAGS number: record mode flags, &3=output recording mode (0=post fader, 1=pre-fx, 2=post-fx/pre-fader)
+--- @field I_RECMON number: record monitoring, 0=off, 1=normal, 2=not when playing (tape style)
+--- @field I_RECMONITEMS number: monitor items while recording, 0=off, 1=on
+--- @field B_AUTO_rec_arm boolean: automatically set record arm when selected (does not immediately affect rec_arm state, script should set directly if desired)
+--- @field I_VUMODE number: int *track vu mode, &1disabled, &30==0stereo peaks, &30==2multichannel peaks, &30==4stereo RMS, &30==8combined RMS, &30==12LUFS-M, &30==16LUFS-S (readout=max), &30==20LUFS-S (readout=current), &32LUFS calculation on channels 1+2 only
+--- @field I_AUTOMODE number: track automation mode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch
+--- @field I_NCHAN number: number of track channels, 2-128, even numbers only
+--- @field I_SELECTED number: track selected, 0=unselected, 1=selected
+--- @field I_WNDH number: current TCP window height in pixels including envelopes (read-only)
+--- @field I_TCPH number: current TCP window height in pixels not including envelopes (read-only)
+--- @field I_TCPY number: current TCP window Y-position in pixels relative to top of arrange view (read-only)
+--- @field I_MCPX number: current MCP X-position in pixels relative to mixer container (read-only)
+--- @field I_MCPY number: current MCP Y-position in pixels relative to mixer container (read-only)
+--- @field I_MCPW number: current MCP width in pixels (read-only)
+--- @field I_MCPH number: current MCP height in pixels (read-only)
+--- @field I_FOLDERDEPTH number: folder depth change, 0=normal, 1=track is a folder parent, -1=track is the last in the innermost folder, -2=track is the last in the innermost and next-innermost folders, etc
+--- @field I_FOLDERCOMPACT number: folder collapsed state (only valid on folders), 0=normal, 1=collapsed, 2=fully collapsed
+--- @field I_MIDIHWOUT number: track midi hardware output index, <0=disabled, low 5 bits are which channels (0=all, 1-16), next 5 bits are output device index (0-31)
+--- @field I_MIDI_INPUT_CHANMAP number: -1 maps to source channel, otherwise 1-16 to map to MIDI channel
+--- @field I_MIDI_CTL_CHAN number: -1 no link, 0-15 link to MIDI volume/pan on channel, 16 link to MIDI volume/pan on all channels
+--- @field I_MIDI_TRACKSEL_FLAG number: int *MIDI editor track list options&1=expand media items, &2=exclude from list, &4=auto-pruned
+--- @field I_PERFFLAGS number: track performance flags, &1=no media buffering, &2=no anticipative FX
+--- @field I_CUSTOMCOLOR number: custom color, OS dependent color|0x1000000 (i.e. ColorToNative(r,g,b)|0x1000000). If you do not |0x1000000, then it will not be used, but will store the color
+--- @field I_HEIGHTOVERRIDE number: custom height override for TCP window, 0 for none, otherwise size in pixels
+--- @field I_SPACER number: int *1=TCP track spacer above this trackB_HEIGHTLOCKbool *track height lock (must set I_HEIGHTOVERRIDE before locking)
+--- @field D_VOL number: trim volume of track, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc
+--- @field D_PAN number: trim pan of track, -1..1
+--- @field D_WIDTH number: width of track, -1..1
+--- @field D_DUALPANL number: dualpan position 1, -1..1, only if I_pan_mode==6
+--- @field D_DUALPANR number: dualpan position 2, -1..1, only if I_pan_mode==6
+--- @field I_pan_mode number: pan mode, 0=classic 3.x, 3=new balance, 5=stereo pan, 6=dual pan
+--- @field D_PANLAW number: pan law of track, <0=project default, 0.5=-6dB, 0.707..=-3dB, 1=+0dB, 1.414..=-3dB with gain compensation, 2=-6dB with gain compensation, etc
+--- @field I_PANLAW_FLAGS number: pan law flags, 0=sine taper, 1=hybrid taper with deprecated behavior when gain compensation enabled, 2=linear taper, 3=hybrid taper
+--- @field P_ENV <envchunkname or P_ENV: <envchunkname or P_ENV{GUID...TrackEnvelope *(read-only) chunkname can be <VOLENV, <PANENV, etc; GUID is the stringified envelope GUID.
+--- @field B_SHOWINMIXER boolean: track control panel visible in mixer (do not use on master track)
+--- @field B_SHOWINTCP boolean: track control panel visible in arrange view (do not use on master track)
+--- @field B_MAINSEND boolean: track sends audio to parent
+--- @field C_MAINSEND_OFFS string: channel offset of track send to parent
+--- @field C_MAINSEND_NCH string: channel count of track send to parent (0=use all child track channels, 1=use one channel only)
+--- @field I_FREEMODE number: 1=track free item positioning enabled, 2=track fixed lanes enabled (call UpdateTimeline() after changing)
+--- @field I_NUMFIXEDLANES number: number of track fixed lanes (fine to call with setnew_value, but returned value is read-only)
+--- @field C_LANESCOLLAPSED string: fixed lane collapse state (1=lanes collapsed, 2=track displays as non-fixed-lanes but hidden lanes exist)
+--- @field C_LANESETTINGS string: fixed lane settings (&1=auto-remove empty lanes at bottom, &2=do not auto-comp new recording, &4=newly recorded lanes play exclusively (else add lanes in layers), &8=big lanes (else small lanes), &16=add new recording at bottom (else record into first available lane), &32=hide lane buttons
+--- @field C_LANEPLAYS N: Nchar *on fixed lane tracks, 0=lane N does not play, 1=lane N plays exclusively, 2=lane N plays and other lanes also play (fine to call with setnew_value, but returned value is read-only)
+--- @field C_ALLLANESPLAY string: on fixed lane tracks, 0=no lanes play, 1=all lanes play, 2=some lanes play (fine to call with setnew_value 0 or 1, but returned value is read-only)
+--- @field C_BEATATTACHMODE string: track timebase, -1=project default, 0=time, 1=beats (position, length, rate), 2=beats (position only)
+--- @field F_MCP_FXSEND_SCALE float *: scale of fx+send area in MCP (0=minimum allowed, 1=maximum allowed)
+--- @field F_MCP_FXPARM_SCALE float *: scale of fx parameter area in MCP (0=minimum allowed, 1=maximum allowed)
+--- @field F_MCP_SENDRGN_SCALE float *: scale of send area as proportion of the fx+send total area (0=minimum allowed, 1=maximum allowed)
+--- @field F_TCP_FXPARM_SCALE float *: scale of TCP parameter area when TCP FX are embedded (0=min allowed, default, 1=max allowed)
+--- @field I_PLAY_OFFSET_FLAG number: track media playback offset state, &1=bypassed, &2=offset value is measured in samples (otherwise measured in seconds)
+--- @field D_PLAY_OFFSET number: track media playback offset, units depend on I_PLAY_OFFSET_FLAG
 Track.SetInfoValueConstants = {
 	B_MUTE = "B_MUTE",
 	B_PHASE = "B_PHASE",
@@ -1494,12 +1418,12 @@ Track.SetInfoValueConstants = {
 --- Set Info Value. Wraps SetMediaTrackInfo_Value.
 -- Set track numerical-value attributes.
 --- @within ReaScript Wrapped Methods
---- @param parm_name string. Track.SetInfoValueConstants
+--- @param param_name string Track.SetInfoValueConstants
 --- @param new_value number
 --- @return boolean
 --- @see Track.SetInfoValueConstants
-function Track:set_info_value(parm_name, new_value)
-	return r.SetMediaTrackInfo_Value(self.pointer, parm_name, new_value)
+function Track:set_info_value(param_name, new_value)
+	return r.SetMediaTrackInfo_Value(self.pointer, param_name, new_value)
 end
 
 --- Set Mixer Scroll. Wraps SetMixerScroll.
@@ -1507,7 +1431,7 @@ end
 -- the leftmost track after scrolling, which may be different from the passed-in
 -- track if there are not enough tracks to its right.
 --- @within ReaScript Wrapped Methods
---- @return Track table
+--- @return table Track object
 function Track:set_mixer_scroll()
 	local Track = require("track")
 	local result = r.SetMixerScroll(self.pointer)
@@ -1559,17 +1483,17 @@ end
 
 --- Constants for Track:set_track_send_info_value.
 --- @within Constants
--- @field B_MUTE any: bool *
--- @field B_PHASE boolean: true to flip phase
--- @field B_MONO any: bool *
--- @field D_VOL double *: 1.0 = +0dB etc
--- @field D_PAN double *: -1..+1
--- @field D_PANLAW double *: 1.0=+0.0db, 0.5=-6dB, -1.0 = projdef etc
--- @field I_SENDMODE number: 0=post-fader, 1=pre-fx, 2=post-fx (deprecated), 3=post-fx
--- @field I_AUTOMODE number: automation mode (-1=use track automode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch)
--- @field I_SRCCHAN number: -1 for no audio send. Low 10 bits specify channel offset, and higher bits specify channel count. (srcchan>>10) == 0 for stereo, 1 for mono, 2 for 4 channel, 3 for 6 channel, etc.
--- @field I_DSTCHAN number: low 10 bits are destination index, &1024 set to mix to mono.
--- @field I_MIDIFLAGS number: low 5 bits=source channel 0=all, 1-16, 31=MIDI send disabled, next 5 bits=dest channel, 0=orig, 1-16=chan. &1024 for faders-send MIDI vol/pan. (>>14)&255 = src bus (0 for all, 1 for normal, 2+). (>>22)&255=destination bus (0 for all, 1 for normal, 2+)
+--- @field B_MUTE boolean: true to mute
+--- @field B_PHASE boolean: true to flip phase
+--- @field B_MONO boolean: true for mono send
+--- @field D_VOL number: 1.0 = +0dB etc
+--- @field D_PAN number: -1..+1
+--- @field D_PANLAW number: 1.0=+0.0db, 0.5=-6dB, -1.0 = projdef etc
+--- @field I_SENDMODE number: 0=post-fader, 1=pre-fx, 2=post-fx (deprecated), 3=post-fx
+--- @field I_AUTOMODE number: automation mode (-1=use track automode, 0=trim/off, 1=read, 2=touch, 3=write, 4=latch)
+--- @field I_SRCCHAN number: -1 for no audio send. Low 10 bits specify channel offset, and higher bits specify channel count. (srcchan>>10) == 0 for stereo, 1 for mono, 2 for 4 channel, 3 for 6 channel, etc.
+--- @field I_DSTCHAN number: low 10 bits are destination index, &1024 set to mix to mono.
+--- @field I_MIDIFLAGS number: low 5 bits=source channel 0=all, 1-16, 31=MIDI send disabled, next 5 bits=dest channel, 0=orig, 1-16=chan. &1024 for faders-send MIDI vol/pan. (>>14)&255 = src bus (0 for all, 1 for normal, 2+). (>>22)&255=destination bus (0 for all, 1 for normal, 2+)
 Track.SetTrackSendInfoValueConstants = {
 	B_MUTE = "B_MUTE",
 	B_PHASE = "B_PHASE",
@@ -1591,12 +1515,12 @@ Track.SetTrackSendInfoValueConstants = {
 --- @within ReaScript Wrapped Methods
 --- @param category number
 --- @param send_idx number
---- @param parm_name string. Track.SetTrackSendInfoValueConstants
+--- @param param_name string Track.SetTrackSendInfoValueConstants
 --- @param new_value number
 --- @return boolean
 --- @see Track.SetTrackSendInfoValueConstants
-function Track:set_track_send_info_value(category, send_idx, parm_name, new_value)
-	return r.SetTrackSendInfo_Value(self.pointer, category, send_idx, parm_name, new_value)
+function Track:set_track_send_info_value(category, send_idx, param_name, new_value)
+	return r.SetTrackSendInfo_Value(self.pointer, category, send_idx, param_name, new_value)
 end
 
 --- Set Track Send UI Pan. Wraps SetTrackSendUIPan.
