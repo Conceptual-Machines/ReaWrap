@@ -121,9 +121,9 @@ function Item:get_active_take()
 end
 
 --- Get Displayed Color. Wraps GetDisplayedMediaItemColor.
--- see GetDisplayedMediaItemColor2.
 --- @within ReaScript Wrapped Methods
 --- @return number
+--- @see Item:get_displayed_color2
 function Item:get_displayed_color()
 	return r.GetDisplayedMediaItemColor(self.pointer)
 end
@@ -135,6 +135,7 @@ end
 -- means "no color", not black.
 --- @within ReaScript Wrapped Methods
 --- @return number
+--- @see Item:get_displayed_color
 function Item:get_displayed_color2()
 	return r.GetDisplayedMediaItemColor2(self.pointer, take)
 end
@@ -485,11 +486,11 @@ end
 
 --- Get Image Resource. Wraps BR_GetMediaItemImageResource.
 -- [BR] Get currently loaded image resource and its flags for a given item. Returns
--- false if there is no image resource set. To set image resource, see
--- BR_SetMediaItemImageResource.
+-- false if there is no image resource set.
 --- @within ReaScript Wrapped Methods
 --- @return string image
 --- @return number image_flags
+--- @see Item:set_image_resource
 function Item:get_image_resource()
 	local ret_val, image, image_flags = r.BR_GetMediaItemImageResource(self.pointer)
 	if ret_val then
@@ -515,11 +516,11 @@ end
 -- resource, pass imageIn as "". imageFlags: &1=0: don't display image, &1: center
 -- / tile, &3: stretch, &5: full height (REAPER 5.974+). Can also be used to
 -- display existing text in empty items unstretched (pass imageIn = "", imageFlags
--- = 0) or stretched (pass imageIn = "". imageFlags = 3). To get image resource,
--- see BR_GetMediaItemImageResource.
+-- = 0) or stretched (pass imageIn = "". imageFlags = 3).
 --- @within ReaScript Wrapped Methods
 --- @param image_in string
 --- @param image_flags number
+--- @see Item:get_image_resource
 function Item:set_image_resource(image_in, image_flags)
 	return r.BR_SetMediaItemImageResource(self.pointer, image_in, image_flags)
 end
@@ -571,10 +572,9 @@ function Item:get_max_peak()
 end
 
 --- Get Max Peak And Max Peak Pos. Wraps NF_GetMediaItemMaxPeakAndMaxPeakPos.
--- See NF_GetMediaItemMaxPeak, additionally returns maxPeakPos (relative to item
--- position).
 --- @within ReaScript Wrapped Methods
 --- @return number max_peak_pos
+--- @see Item:get_max_peak
 function Item:get_max_peak_and_max_peak_pos()
 	local ret_val, max_peak_pos = r.NF_GetMediaItemMaxPeakAndMaxPeakPos(self.pointer)
 	if ret_val then
