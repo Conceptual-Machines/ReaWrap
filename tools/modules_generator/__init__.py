@@ -131,7 +131,6 @@ ALL_FN_NAMESPACES = (
 # Some other may eventually be grouped under existing namespaces.
 # Some others may never be included.
 UNSUPPORTED_NAMESPACES = (
-    "AudioAccessor",
     "Blink",
     "CF",
     "CSurf",
