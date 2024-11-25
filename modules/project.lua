@@ -2,6 +2,7 @@
 -- @author NomadMonad
 -- @license MIT
 -- @release 0.0.1
+-- @module project
 
 local r = reaper
 local helpers = require("helpers")

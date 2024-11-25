@@ -2,6 +2,7 @@
 -- @author Nomad Monad
 -- @license MIT
 -- @release 0.0.1
+-- @module track_fx
 
 local r = reaper
 local helpers = require("helpers")
