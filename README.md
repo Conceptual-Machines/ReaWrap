@@ -5,6 +5,8 @@
 ![C++](https://img.shields.io/badge/c++-17+-blue.svg)
 ![REAPER](https://img.shields.io/badge/REAPER-6.0+-green.svg)
 
+**Object-Oriented Implementation for REAPER API**
+
 Making REAPER automation easier, faster, and more intuitive.
 
 ## History
@@ -13,7 +15,7 @@ Back in 2020, I was using REAPER and wanted to learn Lua, so I built this projec
 
 Like many side projects, I eventually gave up on it. But I always wanted to resurrect it.
 
-Fast forward to 2024, and here we are: ReaWrap has been reborn, reorganized, and expanded. The project now supports both Lua (for ReaScript) and C++ (for REAPER extensions), with a clean, object-oriented API that makes working with REAPER a joy instead of a chore.
+Fast forward to 2024, and here we are: ReaWrap has been reborn, reorganized, and expanded. The project now supports both Lua (for ReaScript) and C++ (for REAPER extensions and ReaScript API), with a clean, object-oriented API that makes working with REAPER a joy instead of a chore.
 
 ## Why ReaWrap?
 
@@ -214,12 +216,12 @@ fx->setParamNormalized(0, 0.5);  // Set first param to 50%
 ReaWrap is available in two flavors:
 
 ### Lua (ReaScript)
-For REAPER scripts and extensions written in Lua.
+For REAPER scripts written in Lua using the ReaScript API.
 
 👉 **[Read the Lua Guide →](lua/README.md)** for installation, API reference, and examples.
 
-### C++ (Extension API)
-For REAPER extensions written in C++.
+### C++ (Extension & ReaScript API)
+For REAPER extensions and ReaScript API written in C++.
 
 👉 **[Read the C++ Guide →](cpp/README.md)** for building, initialization, and API reference.
 
