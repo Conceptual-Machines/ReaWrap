@@ -231,10 +231,12 @@ For REAPER extensions and ReaScript API written in C++.
 ReaWrap/
 ├── lua/              # Lua implementation (ReaScript)
 │   ├── modules/      # Core modules (Track, Item, Take, etc.)
+│   │   └── constants.lua  # REAPER API constants
 │   ├── doc/          # Generated documentation
 │   └── tests/        # Lua tests
 ├── cpp/              # C++ implementation (Extension API)
-│   ├── include/      # Headers
+│   ├── include/ReaWrap/  # Headers (Track.h, Item.h, Project.h, etc.)
+│   │   └── Constants.h   # REAPER API constants
 │   ├── src/          # Implementation
 │   ├── examples/     # Example projects
 │   └── tests/        # C++ tests
@@ -245,6 +247,16 @@ ReaWrap/
 └── tools/            # Shared tools
     └── modules_generator/  # Auto-generate modules from REAPER docs
 ```
+
+## Using as a Submodule
+
+ReaWrap is designed to work well as a git submodule in your REAPER extension project:
+
+```bash
+git submodule add https://github.com/Conceptual-Machines/ReaWrap.git reawrap
+```
+
+See the [C++ README](cpp/README.md) for CMake integration details.
 
 ## Documentation
 

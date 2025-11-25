@@ -49,14 +49,30 @@ Track* bass = Track::create(-1, "Bass")
 
 ## Building
 
-### As Part of Your Project
+### As Part of Your Project (Submodule)
 
-Add to your `CMakeLists.txt`:
+If using ReaWrap as a git submodule, add to your `CMakeLists.txt`:
 
 ```cmake
-add_subdirectory(ReaWrap/cpp)
-target_link_libraries(your_plugin ReaWrap)
-target_include_directories(your_plugin PRIVATE ReaWrap/cpp/include)
+# Set REAPER SDK path (if not already set)
+set(REAPER_SDK_PATH "${CMAKE_CURRENT_SOURCE_DIR}/reaper-sdk/sdk")
+
+# Add ReaWrap subdirectory
+set(REAWRAP_BUILD_EXAMPLES OFF CACHE BOOL "Build ReaWrap examples" FORCE)
+set(REAWRAP_BUILD_TESTS OFF CACHE BOOL "Build ReaWrap tests" FORCE)
+if(REAPER_SDK_FOUND)
+    set(REAWRAP_REAPER_SDK_PATH ${REAPER_SDK_PATH} CACHE PATH "REAPER SDK path for ReaWrap" FORCE)
+endif()
+add_subdirectory(reawrap/cpp ReaWrap)
+
+# Link against ReaWrap
+target_link_libraries(your_plugin PRIVATE ReaWrap)
+
+# Add REAPER SDK include directory to ReaWrap if needed
+if(REAPER_SDK_FOUND AND TARGET ReaWrap)
+    target_include_directories(ReaWrap PRIVATE ${REAPER_SDK_PATH})
+    target_include_directories(ReaWrap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WDL)
+endif()
 ```
 
 ### Standalone
@@ -67,6 +83,16 @@ mkdir build && cd build
 cmake ..
 make
 ```
+
+## Type Aliases
+
+ReaWrap uses type aliases to avoid naming conflicts between REAPER SDK types and ReaWrap wrapper classes:
+
+- `ReaMediaTrack` - REAPER SDK's `MediaTrack*` type
+- `ReaMediaItem` - REAPER SDK's `MediaItem*` type  
+- `ReaMediaItemTake` - REAPER SDK's `MediaItem_Take*` type
+
+These are defined in `ReaperAPI.h` and used throughout the low-level API wrapper. The high-level classes (`Track`, `MediaItem`, etc.) are ReaWrap wrapper classes.
 
 ## API Reference
 
