@@ -3,19 +3,19 @@
 
 namespace ReaWrap {
 
-MediaItem::MediaItem(MediaItem *item, Track *track) : m_reaper_item(item), m_track(track) {}
+MediaItem::MediaItem(ReaMediaItem *item, Track *track) : m_reaper_item(item), m_track(track) {}
 
 MediaItem *MediaItem::create(Track *track, double position, double length) {
   if (!ReaperAPI::IsAvailable() || !track) {
     return nullptr;
   }
 
-  MediaTrack *reaper_track = track->getReaperTrack();
+  ReaMediaTrack *reaper_track = track->getReaperTrack();
   if (!reaper_track) {
     return nullptr;
   }
 
-  MediaItem *reaper_item = ReaperAPI::AddMediaItem(reaper_track);
+  ReaMediaItem *reaper_item = ReaperAPI::AddMediaItem(reaper_track);
   if (!reaper_item) {
     return nullptr;
   }

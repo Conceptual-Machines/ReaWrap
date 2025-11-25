@@ -5,13 +5,14 @@
 
 namespace ReaWrap {
 
-// Forward declaration
+// Forward declarations
 class Track;
+using ReaMediaItem = ::MediaItem;
 
 // High-level MediaItem (clip) object
 class MediaItem {
 private:
-  MediaItem *m_reaper_item;
+  ReaMediaItem *m_reaper_item;
   Track *m_track;
 
 public:
@@ -29,11 +30,11 @@ public:
   double getPosition() const;
   double getLength() const;
   Track *getTrack() const { return m_track; }
-  MediaItem *getReaperItem() const { return m_reaper_item; }
+  ReaMediaItem *getReaperItem() const { return m_reaper_item; }
 
 private:
   // Private constructor - use create() factory methods
-  MediaItem(MediaItem *item, Track *track);
+  MediaItem(ReaMediaItem *item, Track *track);
 };
 
 } // namespace ReaWrap
