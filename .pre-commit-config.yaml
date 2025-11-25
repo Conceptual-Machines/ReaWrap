@@ -1,4 +1,13 @@
-- repo: https://github.com/JohnnyMorganz/StyLua
-  rev: v2.0.1
-  hooks:
-    - id: stylua # or stylua-system / stylua-github
+repos:
+  - repo: https://github.com/JohnnyMorganz/StyLua
+    rev: v2.0.1
+    hooks:
+      - id: stylua
+        files: ^lua/.*\.lua$
+
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-format
+        args: [--style=file]
+        files: ^cpp/.*\.(h|cpp)$
