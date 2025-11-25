@@ -118,12 +118,12 @@ std::vector<Track *> Project::getSelectedTracks(bool includeMaster) {
 
   int count = ReaperAPI::CountSelectedTracks(includeMaster);
   for (int i = 0; i < count; i++) {
-    MediaTrack *reaper_track = ReaperAPI::GetSelectedTrack(i, includeMaster);
+    ReaMediaTrack *reaper_track = ReaperAPI::GetSelectedTrack(i, includeMaster);
     if (reaper_track) {
       // Find the track index
       int num_tracks = ReaperAPI::GetNumTracks();
       for (int j = 0; j < num_tracks; j++) {
-        MediaTrack *t = ReaperAPI::GetTrack(j);
+        ReaMediaTrack *t = ReaperAPI::GetTrack(j);
         if (t == reaper_track) {
           Track *track = Track::findByIndex(j);
           if (track) {
@@ -145,7 +145,7 @@ std::vector<MediaItem *> Project::getSelectedItems() {
 
   int count = ReaperAPI::CountSelectedMediaItems();
   for (int i = 0; i < count; i++) {
-    MediaItem *reaper_item = ReaperAPI::GetSelectedMediaItem(i);
+    ReaMediaItem *reaper_item = ReaperAPI::GetSelectedMediaItem(i);
     if (reaper_item) {
       // Create MediaItem wrapper - note: we need to find the track
       // For now, create a minimal wrapper
