@@ -9,19 +9,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(REAWRAP_BUILD_EXAMPLES "Build example programs" ON)
 option(REAWRAP_BUILD_TESTS "Build test programs" OFF)
 
-# Include directories
-include_directories(include)
-
 # Source files
 set(REAWRAP_SOURCES
     src/ReaperAPI.cpp
     src/Track.cpp
     src/Item.cpp
     src/Project.cpp
+    src/TrackFX.cpp
+    src/TakeFX.cpp
 )
 
 # Create library
 add_library(ReaWrap STATIC ${REAWRAP_SOURCES})
+
+# Set include directories using modern CMake
+target_include_directories(ReaWrap PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 # Install
 install(TARGETS ReaWrap
