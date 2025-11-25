@@ -121,7 +121,7 @@ constants.TrackInfoValue = {
 
 -- Accepted param values for Track:get_info_string(param)
 -- Type for each param is documented (original ReaScript docs).
-TrackInfoString = {
+constants.TrackInfoString = {
 	P_NAME = "P_NAME", --track name (on master returns NULL)
 	P_ICON = "P_ICON", --track icon (full filename, or relative to resource_path/data/track_icons)
 	P_MCP_LAYOUT = "P_MCP_LAYOUT", --layout name
@@ -131,7 +131,7 @@ TrackInfoString = {
 	GUID = "GUID", --globally unique identifier
 }
 
-MediaItemInfoValue = {
+constants.MediaItemInfoValue = {
 	B_MUTE = "B_MUTE", --boolean
 	B_MUTE_ACTUAL = "B_MUTE_ACTUAL", --boolean
 	C_MUTE_SOLO = "C_MUTE_SOLO", --string
@@ -163,7 +163,7 @@ MediaItemInfoValue = {
 	F_FREEMODE_H = "F_FREEMODE_H", --number
 }
 
-TrackFXNamedConfigParams = {
+constants.TrackFXNamedConfigParams = {
 	pdc = "pdc",
 	input_pin_name = "in_pin_0",
 	output_pin_name = "out_pin_0",
