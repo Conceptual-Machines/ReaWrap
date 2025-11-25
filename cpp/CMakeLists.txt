@@ -9,6 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(REAWRAP_BUILD_EXAMPLES "Build example programs" ON)
 option(REAWRAP_BUILD_TESTS "Build test programs" OFF)
 
+# REAPER SDK path (can be set by parent project)
+if(NOT REAWRAP_REAPER_SDK_PATH)
+    set(REAWRAP_REAPER_SDK_PATH "" CACHE PATH "Path to REAPER SDK (sdk/ subdirectory)")
+endif()
+
 # Source files
 set(REAWRAP_SOURCES
     src/ReaperAPI.cpp
@@ -27,6 +32,12 @@ target_include_directories(ReaWrap PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
+
+# Add REAPER SDK include directory if provided
+if(REAWRAP_REAPER_SDK_PATH AND EXISTS "${REAWRAP_REAPER_SDK_PATH}/reaper_plugin.h")
+    target_include_directories(ReaWrap PRIVATE ${REAWRAP_REAPER_SDK_PATH})
+    message(STATUS "ReaWrap: Using REAPER SDK at ${REAWRAP_REAPER_SDK_PATH}")
+endif()
 
 # Install
 install(TARGETS ReaWrap

@@ -6,6 +6,9 @@
 
 namespace ReaWrap {
 
+// Forward declare REAPER SDK types
+using ReaMediaTrack = ::MediaTrack;
+
 // Forward declarations
 class MediaItem;
 class TrackFX;
@@ -14,7 +17,7 @@ class TrackFX;
 // Supports method chaining for fluent API
 class Track {
 private:
-  MediaTrack *m_reaper_track;
+  ReaMediaTrack *m_reaper_track;
   int m_index;
 
 public:
@@ -24,7 +27,7 @@ public:
                        const char *instrument = nullptr);
 
   // Getters
-  MediaTrack *getReaperTrack() const { return m_reaper_track; }
+  ReaMediaTrack *getReaperTrack() const { return m_reaper_track; }
   int getIndex() const { return m_index; }
   bool getName(char *buf, int buf_size) const;
 
@@ -55,7 +58,7 @@ public:
 
 private:
   // Private constructor - use create() factory method
-  Track(MediaTrack *track, int index);
+  Track(ReaMediaTrack *track, int index);
 };
 
 } // namespace ReaWrap

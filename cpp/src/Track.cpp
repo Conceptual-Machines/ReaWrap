@@ -5,7 +5,7 @@
 
 namespace ReaWrap {
 
-Track::Track(MediaTrack *track, int index) : m_reaper_track(track), m_index(index) {}
+Track::Track(ReaMediaTrack *track, int index) : m_reaper_track(track), m_index(index) {}
 
 Track *Track::create(int index, const char *name, const char *instrument) {
   if (!ReaperAPI::IsAvailable()) {
@@ -19,7 +19,7 @@ Track *Track::create(int index, const char *name, const char *instrument) {
   }
 
   // Create track
-  MediaTrack *reaper_track = ReaperAPI::InsertTrack(insert_index, 1);
+  ReaMediaTrack *reaper_track = ReaperAPI::InsertTrack(insert_index, 1);
   if (!reaper_track) {
     return nullptr;
   }
@@ -93,7 +93,7 @@ Track *Track::findByIndex(int index) {
   if (!ReaperAPI::IsAvailable()) {
     return nullptr;
   }
-  MediaTrack *reaper_track = ReaperAPI::GetTrack(index);
+  ReaMediaTrack *reaper_track = ReaperAPI::GetTrack(index);
   if (!reaper_track) {
     return nullptr;
   }
@@ -107,7 +107,7 @@ Track *Track::findByName(const char *name) {
 
   int num_tracks = ReaperAPI::GetNumTracks();
   for (int i = 0; i < num_tracks; i++) {
-    MediaTrack *reaper_track = ReaperAPI::GetTrack(i);
+    ReaMediaTrack *reaper_track = ReaperAPI::GetTrack(i);
     if (reaper_track) {
       char track_name[256];
       if (ReaperAPI::GetTrackName(reaper_track, track_name, sizeof(track_name))) {
@@ -135,7 +135,7 @@ std::vector<MediaItem *> Track::getItems() const {
 
   int count = ReaperAPI::CountTrackMediaItems(m_reaper_track);
   for (int i = 0; i < count; i++) {
-    MediaItem *reaper_item = ReaperAPI::GetTrackMediaItem(m_reaper_track, i);
+    ReaMediaItem *reaper_item = ReaperAPI::GetTrackMediaItem(m_reaper_track, i);
     if (reaper_item) {
       // Create MediaItem wrapper - note: this creates new objects each time
       // In a production system, you might want to cache these
