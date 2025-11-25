@@ -22,7 +22,7 @@ jobs:
 
       - name: Check Lua formatting
         run: |
-          curl -L https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux.zip -o stylua.zip
+          curl -L https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux-x86_64.zip -o stylua.zip
           unzip stylua.zip
           chmod +x stylua
           ./stylua --check lua/
