@@ -1,4 +1,5 @@
 #include <ReaWrap/Item.h>
+#include <ReaWrap/Track.h>
 #include <ReaWrap/Project.h>
 
 namespace ReaWrap {
