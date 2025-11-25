@@ -95,6 +95,10 @@ public:
   static double BarToTime(int bar);
   static int TimeToBar(double time);
   static double BarsToTime(int bars);
+  
+  // Time map operations
+  static double GetMeasureInfo(int measure, double *qn_start, double *qn_end, 
+                                int *timesig_num, int *timesig_denom, double *tempo);
 
   // Project operations
   static void UpdateArrange();

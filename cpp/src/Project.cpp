@@ -62,10 +62,7 @@ double Project::getTempo() {
   int timesig_denom = 4;
   double tempo = 120.0;
 
-  if (ReaperAPI::s_TimeMap_GetMeasureInfo) {
-    ReaperAPI::s_TimeMap_GetMeasureInfo(nullptr, 0, &qn_start, &qn_end, &timesig_num,
-                                        &timesig_denom, &tempo);
-  }
+  ReaperAPI::GetMeasureInfo(0, &qn_start, &qn_end, &timesig_num, &timesig_denom, &tempo);
 
   return tempo;
 }
@@ -81,15 +78,10 @@ bool Project::getTimeSignature(int *numerator, int *denominator) {
   int timesig_denom = 4;
   double tempo = 120.0;
 
-  if (ReaperAPI::s_TimeMap_GetMeasureInfo) {
-    ReaperAPI::s_TimeMap_GetMeasureInfo(nullptr, 0, &qn_start, &qn_end, &timesig_num,
-                                        &timesig_denom, &tempo);
-    *numerator = timesig_num;
-    *denominator = timesig_denom;
-    return true;
-  }
-
-  return false;
+  ReaperAPI::GetMeasureInfo(0, &qn_start, &qn_end, &timesig_num, &timesig_denom, &tempo);
+  *numerator = timesig_num;
+  *denominator = timesig_denom;
+  return true;
 }
 
 void Project::updateArrange() { ReaperAPI::UpdateArrange(); }

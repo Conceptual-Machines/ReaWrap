@@ -10,24 +10,24 @@ bool ReaperAPI::s_initialized = false;
 
 // Function pointer initialization
 void (*ReaperAPI::s_InsertTrackInProject)(ReaProject *, int, int) = nullptr;
-MediaTrack *(*ReaperAPI::s_GetTrack)(ReaProject *, int) = nullptr;
+ReaMediaTrack *(*ReaperAPI::s_GetTrack)(ReaProject *, int) = nullptr;
 int (*ReaperAPI::s_GetNumTracks)(ReaProject *) = nullptr;
 void *(*ReaperAPI::s_GetSetMediaTrackInfo)(INT_PTR, const char *, void *, bool *) = nullptr;
 
-MediaItem *(*ReaperAPI::s_AddMediaItemToTrack)(MediaTrack *) = nullptr;
-bool (*ReaperAPI::s_SetMediaItemPosition)(MediaItem *, double, bool) = nullptr;
-bool (*ReaperAPI::s_SetMediaItemLength)(MediaItem *, double, bool) = nullptr;
-double (*ReaperAPI::s_GetMediaItemPosition)(MediaItem *) = nullptr;
-double (*ReaperAPI::s_GetMediaItemLength)(MediaItem *) = nullptr;
+ReaMediaItem *(*ReaperAPI::s_AddMediaItemToTrack)(ReaMediaTrack *) = nullptr;
+bool (*ReaperAPI::s_SetMediaItemPosition)(ReaMediaItem *, double, bool) = nullptr;
+bool (*ReaperAPI::s_SetMediaItemLength)(ReaMediaItem *, double, bool) = nullptr;
+double (*ReaperAPI::s_GetMediaItemPosition)(ReaMediaItem *) = nullptr;
+double (*ReaperAPI::s_GetMediaItemLength)(ReaMediaItem *) = nullptr;
 
-bool (*ReaperAPI::s_GetTrackUIVolPan)(MediaTrack *, double *, double *) = nullptr;
-bool (*ReaperAPI::s_SetTrackUIVolPan)(MediaTrack *, double, double) = nullptr;
-bool (*ReaperAPI::s_GetTrackUIMute)(MediaTrack *, bool *) = nullptr;
-bool (*ReaperAPI::s_SetTrackUIMute)(MediaTrack *, bool) = nullptr;
-bool (*ReaperAPI::s_GetTrackUISolo)(MediaTrack *, bool *) = nullptr;
-bool (*ReaperAPI::s_SetTrackUISolo)(MediaTrack *, bool) = nullptr;
+bool (*ReaperAPI::s_GetTrackUIVolPan)(ReaMediaTrack *, double *, double *) = nullptr;
+bool (*ReaperAPI::s_SetTrackUIVolPan)(ReaMediaTrack *, double, double) = nullptr;
+bool (*ReaperAPI::s_GetTrackUIMute)(ReaMediaTrack *, bool *) = nullptr;
+bool (*ReaperAPI::s_SetTrackUIMute)(ReaMediaTrack *, bool) = nullptr;
+bool (*ReaperAPI::s_GetTrackUISolo)(ReaMediaTrack *, bool *) = nullptr;
+bool (*ReaperAPI::s_SetTrackUISolo)(ReaMediaTrack *, bool) = nullptr;
 
-int (*ReaperAPI::s_TrackFX_AddByName)(MediaTrack *, const char *, bool, int) = nullptr;
+int (*ReaperAPI::s_TrackFX_AddByName)(ReaMediaTrack *, const char *, bool, int) = nullptr;
 
 double (*ReaperAPI::s_TimeMap_GetMeasureInfo)(ReaProject *, int, double *, double *, int *, int *,
                                               double *) = nullptr;
@@ -45,73 +45,73 @@ bool ReaperAPI::Initialize(reaper_plugin_info_t *rec) {
 
   // Cache all function pointers
   s_InsertTrackInProject = (void (*)(ReaProject *, int, int))rec->GetFunc("InsertTrackInProject");
-  s_GetTrack = (MediaTrack * (*)(ReaProject *, int)) rec->GetFunc("GetTrack");
+  s_GetTrack = (ReaMediaTrack * (*)(ReaProject *, int)) rec->GetFunc("GetTrack");
   s_GetNumTracks = (int (*)(ReaProject *))rec->GetFunc("GetNumTracks");
   s_GetSetMediaTrackInfo =
       (void *(*)(INT_PTR, const char *, void *, bool *))rec->GetFunc("GetSetMediaTrackInfo");
   s_GetSelectedTrack2 =
-      (MediaTrack * (*)(ReaProject *, int, bool)) rec->GetFunc("GetSelectedTrack2");
+      (ReaMediaTrack * (*)(ReaProject *, int, bool)) rec->GetFunc("GetSelectedTrack2");
   s_CountSelectedTracks2 = (int (*)(ReaProject *, bool))rec->GetFunc("CountSelectedTracks2");
 
-  s_AddMediaItemToTrack = (MediaItem * (*)(MediaTrack *)) rec->GetFunc("AddMediaItemToTrack");
-  s_GetTrackMediaItem = (MediaItem * (*)(MediaTrack *, int)) rec->GetFunc("GetTrackMediaItem");
-  s_CountTrackMediaItems = (int (*)(MediaTrack *))rec->GetFunc("CountTrackMediaItems");
+  s_AddMediaItemToTrack = (ReaMediaItem * (*)(ReaMediaTrack *)) rec->GetFunc("AddMediaItemToTrack");
+  s_GetTrackMediaItem = (ReaMediaItem * (*)(ReaMediaTrack *, int)) rec->GetFunc("GetTrackMediaItem");
+  s_CountTrackMediaItems = (int (*)(ReaMediaTrack *))rec->GetFunc("CountTrackMediaItems");
   s_GetSelectedMediaItem =
-      (MediaItem * (*)(ReaProject *, int)) rec->GetFunc("GetSelectedMediaItem");
+      (ReaMediaItem * (*)(ReaProject *, int)) rec->GetFunc("GetSelectedMediaItem");
   s_CountSelectedMediaItems = (int (*)(ReaProject *))rec->GetFunc("CountSelectedMediaItems");
   s_SetMediaItemPosition =
-      (bool (*)(MediaItem *, double, bool))rec->GetFunc("SetMediaItemPosition");
-  s_SetMediaItemLength = (bool (*)(MediaItem *, double, bool))rec->GetFunc("SetMediaItemLength");
-  s_GetMediaItemPosition = (double (*)(MediaItem *))rec->GetFunc("GetMediaItemPosition");
-  s_GetMediaItemLength = (double (*)(MediaItem *))rec->GetFunc("GetMediaItemLength");
+      (bool (*)(ReaMediaItem *, double, bool))rec->GetFunc("SetMediaItemPosition");
+  s_SetMediaItemLength = (bool (*)(ReaMediaItem *, double, bool))rec->GetFunc("SetMediaItemLength");
+  s_GetMediaItemPosition = (double (*)(ReaMediaItem *))rec->GetFunc("GetMediaItemPosition");
+  s_GetMediaItemLength = (double (*)(ReaMediaItem *))rec->GetFunc("GetMediaItemLength");
 
-  s_GetTrackUIVolPan = (bool (*)(MediaTrack *, double *, double *))rec->GetFunc("GetTrackUIVolPan");
-  s_SetTrackUIVolPan = (bool (*)(MediaTrack *, double, double))rec->GetFunc("SetTrackUIVolPan");
-  s_GetTrackUIMute = (bool (*)(MediaTrack *, bool *))rec->GetFunc("GetTrackUIMute");
-  s_SetTrackUIMute = (bool (*)(MediaTrack *, bool))rec->GetFunc("SetTrackUIMute");
-  s_GetTrackUISolo = (bool (*)(MediaTrack *, bool *))rec->GetFunc("GetTrackUISolo");
-  s_SetTrackUISolo = (bool (*)(MediaTrack *, bool))rec->GetFunc("SetTrackUISolo");
+  s_GetTrackUIVolPan = (bool (*)(ReaMediaTrack *, double *, double *))rec->GetFunc("GetTrackUIVolPan");
+  s_SetTrackUIVolPan = (bool (*)(ReaMediaTrack *, double, double))rec->GetFunc("SetTrackUIVolPan");
+  s_GetTrackUIMute = (bool (*)(ReaMediaTrack *, bool *))rec->GetFunc("GetTrackUIMute");
+  s_SetTrackUIMute = (bool (*)(ReaMediaTrack *, bool))rec->GetFunc("SetTrackUIMute");
+  s_GetTrackUISolo = (bool (*)(ReaMediaTrack *, bool *))rec->GetFunc("GetTrackUISolo");
+  s_SetTrackUISolo = (bool (*)(ReaMediaTrack *, bool))rec->GetFunc("SetTrackUISolo");
 
   s_TrackFX_AddByName =
-      (int (*)(MediaTrack *, const char *, bool, int))rec->GetFunc("TrackFX_AddByName");
-  s_TrackFX_GetFXName = (bool (*)(MediaTrack *, int, char *, int))rec->GetFunc("TrackFX_GetFXName");
-  s_TrackFX_GetCount = (int (*)(MediaTrack *))rec->GetFunc("TrackFX_GetCount");
-  s_TrackFX_GetNumParams = (int (*)(MediaTrack *, int))rec->GetFunc("TrackFX_GetNumParams");
+      (int (*)(ReaMediaTrack *, const char *, bool, int))rec->GetFunc("TrackFX_AddByName");
+  s_TrackFX_GetFXName = (bool (*)(ReaMediaTrack *, int, char *, int))rec->GetFunc("TrackFX_GetFXName");
+  s_TrackFX_GetCount = (int (*)(ReaMediaTrack *))rec->GetFunc("TrackFX_GetCount");
+  s_TrackFX_GetNumParams = (int (*)(ReaMediaTrack *, int))rec->GetFunc("TrackFX_GetNumParams");
   s_TrackFX_GetParamName =
-      (bool (*)(MediaTrack *, int, int, char *, int))rec->GetFunc("TrackFX_GetParamName");
+      (bool (*)(ReaMediaTrack *, int, int, char *, int))rec->GetFunc("TrackFX_GetParamName");
   s_TrackFX_GetParam =
-      (double (*)(MediaTrack *, int, int, double *, double *))rec->GetFunc("TrackFX_GetParam");
-  s_TrackFX_SetParam = (bool (*)(MediaTrack *, int, int, double))rec->GetFunc("TrackFX_SetParam");
+      (double (*)(ReaMediaTrack *, int, int, double *, double *))rec->GetFunc("TrackFX_GetParam");
+  s_TrackFX_SetParam = (bool (*)(ReaMediaTrack *, int, int, double))rec->GetFunc("TrackFX_SetParam");
   s_TrackFX_GetParamNormalized =
-      (double (*)(MediaTrack *, int, int))rec->GetFunc("TrackFX_GetParamNormalized");
+      (double (*)(ReaMediaTrack *, int, int))rec->GetFunc("TrackFX_GetParamNormalized");
   s_TrackFX_SetParamNormalized =
-      (bool (*)(MediaTrack *, int, int, double))rec->GetFunc("TrackFX_SetParamNormalized");
-  s_TrackFX_FormatParamValue = (bool (*)(MediaTrack *, int, int, double, char *, int))rec->GetFunc(
+      (bool (*)(ReaMediaTrack *, int, int, double))rec->GetFunc("TrackFX_SetParamNormalized");
+  s_TrackFX_FormatParamValue = (bool (*)(ReaMediaTrack *, int, int, double, char *, int))rec->GetFunc(
       "TrackFX_FormatParamValue");
-  s_TrackFX_GetEnabled = (bool (*)(MediaTrack *, int))rec->GetFunc("TrackFX_GetEnabled");
-  s_TrackFX_SetEnabled = (bool (*)(MediaTrack *, int, bool))rec->GetFunc("TrackFX_SetEnabled");
-  s_TrackFX_Delete = (bool (*)(MediaTrack *, int))rec->GetFunc("TrackFX_Delete");
+  s_TrackFX_GetEnabled = (bool (*)(ReaMediaTrack *, int))rec->GetFunc("TrackFX_GetEnabled");
+  s_TrackFX_SetEnabled = (bool (*)(ReaMediaTrack *, int, bool))rec->GetFunc("TrackFX_SetEnabled");
+  s_TrackFX_Delete = (bool (*)(ReaMediaTrack *, int))rec->GetFunc("TrackFX_Delete");
 
   s_TakeFX_AddByName =
-      (int (*)(MediaItem_Take *, const char *, int))rec->GetFunc("TakeFX_AddByName");
+      (int (*)(ReaMediaItemTake *, const char *, int))rec->GetFunc("TakeFX_AddByName");
   s_TakeFX_GetFXName =
-      (bool (*)(MediaItem_Take *, int, char *, int))rec->GetFunc("TakeFX_GetFXName");
-  s_TakeFX_GetCount = (int (*)(MediaItem_Take *))rec->GetFunc("TakeFX_GetCount");
-  s_TakeFX_GetNumParams = (int (*)(MediaItem_Take *, int))rec->GetFunc("TakeFX_GetNumParams");
+      (bool (*)(ReaMediaItemTake *, int, char *, int))rec->GetFunc("TakeFX_GetFXName");
+  s_TakeFX_GetCount = (int (*)(ReaMediaItemTake *))rec->GetFunc("TakeFX_GetCount");
+  s_TakeFX_GetNumParams = (int (*)(ReaMediaItemTake *, int))rec->GetFunc("TakeFX_GetNumParams");
   s_TakeFX_GetParamName =
-      (bool (*)(MediaItem_Take *, int, int, char *, int))rec->GetFunc("TakeFX_GetParamName");
+      (bool (*)(ReaMediaItemTake *, int, int, char *, int))rec->GetFunc("TakeFX_GetParamName");
   s_TakeFX_GetParam =
-      (double (*)(MediaItem_Take *, int, int, double *, double *))rec->GetFunc("TakeFX_GetParam");
-  s_TakeFX_SetParam = (bool (*)(MediaItem_Take *, int, int, double))rec->GetFunc("TakeFX_SetParam");
+      (double (*)(ReaMediaItemTake *, int, int, double *, double *))rec->GetFunc("TakeFX_GetParam");
+  s_TakeFX_SetParam = (bool (*)(ReaMediaItemTake *, int, int, double))rec->GetFunc("TakeFX_SetParam");
   s_TakeFX_GetParamNormalized =
-      (double (*)(MediaItem_Take *, int, int))rec->GetFunc("TakeFX_GetParamNormalized");
+      (double (*)(ReaMediaItemTake *, int, int))rec->GetFunc("TakeFX_GetParamNormalized");
   s_TakeFX_SetParamNormalized =
-      (bool (*)(MediaItem_Take *, int, int, double))rec->GetFunc("TakeFX_SetParamNormalized");
-  s_TakeFX_FormatParamValue = (bool (*)(MediaItem_Take *, int, int, double, char *,
-                                        int))rec->GetFunc("TakeFX_FormatParamValue");
-  s_TakeFX_GetEnabled = (bool (*)(MediaItem_Take *, int))rec->GetFunc("TakeFX_GetEnabled");
-  s_TakeFX_SetEnabled = (bool (*)(MediaItem_Take *, int, bool))rec->GetFunc("TakeFX_SetEnabled");
-  s_TakeFX_Delete = (bool (*)(MediaItem_Take *, int))rec->GetFunc("TakeFX_Delete");
+      (bool (*)(ReaMediaItemTake *, int, int, double))rec->GetFunc("TakeFX_SetParamNormalized");
+  s_TakeFX_FormatParamValue = (bool (*)(ReaMediaItemTake *, int, int, double, char *,
+                                      int))rec->GetFunc("TakeFX_FormatParamValue");
+  s_TakeFX_GetEnabled = (bool (*)(ReaMediaItemTake *, int))rec->GetFunc("TakeFX_GetEnabled");
+  s_TakeFX_SetEnabled = (bool (*)(ReaMediaItemTake *, int, bool))rec->GetFunc("TakeFX_SetEnabled");
+  s_TakeFX_Delete = (bool (*)(ReaMediaItemTake *, int))rec->GetFunc("TakeFX_Delete");
 
   s_TimeMap_GetMeasureInfo = (double (*)(ReaProject *, int, double *, double *, int *, int *,
                                          double *))rec->GetFunc("TimeMap_GetMeasureInfo");
@@ -182,49 +182,49 @@ MediaItem *ReaperAPI::AddMediaItem(MediaTrack *track) {
   return s_AddMediaItemToTrack(track);
 }
 
-bool ReaperAPI::SetMediaItemPosition(MediaItem *item, double position) {
+bool ReaperAPI::SetMediaItemPosition(ReaMediaItem *item, double position) {
   if (!IsAvailable() || !item || !s_SetMediaItemPosition) {
     return false;
   }
   return s_SetMediaItemPosition(item, position, false);
 }
 
-bool ReaperAPI::SetMediaItemLength(MediaItem *item, double length) {
+bool ReaperAPI::SetMediaItemLength(ReaMediaItem *item, double length) {
   if (!IsAvailable() || !item || !s_SetMediaItemLength) {
     return false;
   }
   return s_SetMediaItemLength(item, length, false);
 }
 
-double ReaperAPI::GetMediaItemPosition(MediaItem *item) {
+double ReaperAPI::GetMediaItemPosition(ReaMediaItem *item) {
   if (!IsAvailable() || !item || !s_GetMediaItemPosition) {
     return 0.0;
   }
   return s_GetMediaItemPosition(item);
 }
 
-double ReaperAPI::GetMediaItemLength(MediaItem *item) {
+double ReaperAPI::GetMediaItemLength(ReaMediaItem *item) {
   if (!IsAvailable() || !item || !s_GetMediaItemLength) {
     return 0.0;
   }
   return s_GetMediaItemLength(item);
 }
 
-MediaItem *ReaperAPI::GetTrackMediaItem(MediaTrack *track, int item_idx) {
+ReaMediaItem *ReaperAPI::GetTrackMediaItem(ReaMediaTrack *track, int item_idx) {
   if (!IsAvailable() || !track || !s_GetTrackMediaItem) {
     return nullptr;
   }
   return s_GetTrackMediaItem(track, item_idx);
 }
 
-int ReaperAPI::CountTrackMediaItems(MediaTrack *track) {
+int ReaperAPI::CountTrackMediaItems(ReaMediaTrack *track) {
   if (!IsAvailable() || !track || !s_CountTrackMediaItems) {
     return 0;
   }
   return s_CountTrackMediaItems(track);
 }
 
-MediaItem *ReaperAPI::GetSelectedMediaItem(int sel_idx) {
+ReaMediaItem *ReaperAPI::GetSelectedMediaItem(int sel_idx) {
   if (!IsAvailable() || !s_GetSelectedMediaItem) {
     return nullptr;
   }
@@ -238,7 +238,7 @@ int ReaperAPI::CountSelectedMediaItems() {
   return s_CountSelectedMediaItems(nullptr);
 }
 
-MediaTrack *ReaperAPI::GetSelectedTrack(int sel_idx, bool want_master) {
+ReaMediaTrack *ReaperAPI::GetSelectedTrack(int sel_idx, bool want_master) {
   if (!IsAvailable() || !s_GetSelectedTrack2) {
     return nullptr;
   }
@@ -252,7 +252,7 @@ int ReaperAPI::CountSelectedTracks(bool want_master) {
   return s_CountSelectedTracks2(nullptr, want_master);
 }
 
-bool ReaperAPI::SetTrackVolume(MediaTrack *track, double volume_db) {
+bool ReaperAPI::SetTrackVolume(ReaMediaTrack *track, double volume_db) {
   if (!IsAvailable() || !track || !s_SetTrackUIVolPan) {
     return false;
   }
@@ -265,7 +265,7 @@ bool ReaperAPI::SetTrackVolume(MediaTrack *track, double volume_db) {
   return s_SetTrackUIVolPan(track, volume_linear, pan);
 }
 
-bool ReaperAPI::SetTrackPan(MediaTrack *track, double pan) {
+bool ReaperAPI::SetTrackPan(ReaMediaTrack *track, double pan) {
   if (!IsAvailable() || !track || !s_SetTrackUIVolPan) {
     return false;
   }
@@ -276,21 +276,21 @@ bool ReaperAPI::SetTrackPan(MediaTrack *track, double pan) {
   return s_SetTrackUIVolPan(track, vol, pan);
 }
 
-bool ReaperAPI::SetTrackMute(MediaTrack *track, bool mute) {
+bool ReaperAPI::SetTrackMute(ReaMediaTrack *track, bool mute) {
   if (!IsAvailable() || !track || !s_SetTrackUIMute) {
     return false;
   }
   return s_SetTrackUIMute(track, mute);
 }
 
-bool ReaperAPI::SetTrackSolo(MediaTrack *track, bool solo) {
+bool ReaperAPI::SetTrackSolo(ReaMediaTrack *track, bool solo) {
   if (!IsAvailable() || !track || !s_SetTrackUISolo) {
     return false;
   }
   return s_SetTrackUISolo(track, solo);
 }
 
-bool ReaperAPI::GetTrackVolume(MediaTrack *track, double *volume_db) {
+bool ReaperAPI::GetTrackVolume(ReaMediaTrack *track, double *volume_db) {
   if (!IsAvailable() || !track || !volume_db || !s_GetTrackUIVolPan) {
     return false;
   }
@@ -303,28 +303,28 @@ bool ReaperAPI::GetTrackVolume(MediaTrack *track, double *volume_db) {
   return false;
 }
 
-bool ReaperAPI::GetTrackPan(MediaTrack *track, double *pan) {
+bool ReaperAPI::GetTrackPan(ReaMediaTrack *track, double *pan) {
   if (!IsAvailable() || !track || !pan || !s_GetTrackUIVolPan) {
     return false;
   }
   return s_GetTrackUIVolPan(track, nullptr, pan);
 }
 
-bool ReaperAPI::GetTrackMute(MediaTrack *track, bool *mute) {
+bool ReaperAPI::GetTrackMute(ReaMediaTrack *track, bool *mute) {
   if (!IsAvailable() || !track || !mute || !s_GetTrackUIMute) {
     return false;
   }
   return s_GetTrackUIMute(track, mute);
 }
 
-bool ReaperAPI::GetTrackSolo(MediaTrack *track, bool *solo) {
+bool ReaperAPI::GetTrackSolo(ReaMediaTrack *track, bool *solo) {
   if (!IsAvailable() || !track || !solo || !s_GetTrackUISolo) {
     return false;
   }
   return s_GetTrackUISolo(track, solo);
 }
 
-int ReaperAPI::AddTrackFX(MediaTrack *track, const char *fxname, bool recFX) {
+int ReaperAPI::AddTrackFX(ReaMediaTrack *track, const char *fxname, bool recFX) {
   if (!IsAvailable() || !track || !fxname || !s_TrackFX_AddByName) {
     return -1;
   }
@@ -382,6 +382,26 @@ double ReaperAPI::BarsToTime(int bars) {
   return time_end - time_start;
 }
 
+double ReaperAPI::GetMeasureInfo(int measure, double *qn_start, double *qn_end, 
+                                  int *timesig_num, int *timesig_denom, double *tempo) {
+  if (!IsAvailable() || !s_TimeMap_GetMeasureInfo) {
+    return 0.0;
+  }
+  double default_tempo = 120.0;
+  int default_num = 4;
+  int default_denom = 4;
+  double default_qn_start = 0.0;
+  double default_qn_end = 0.0;
+  
+  double result = s_TimeMap_GetMeasureInfo(nullptr, measure, 
+                                           qn_start ? qn_start : &default_qn_start,
+                                           qn_end ? qn_end : &default_qn_end,
+                                           timesig_num ? timesig_num : &default_num,
+                                           timesig_denom ? timesig_denom : &default_denom,
+                                           tempo ? tempo : &default_tempo);
+  return result;
+}
+
 void ReaperAPI::UpdateArrange() {
   if (IsAvailable() && s_UpdateArrange) {
     s_UpdateArrange();
@@ -389,14 +409,14 @@ void ReaperAPI::UpdateArrange() {
 }
 
 // TrackFX wrapper methods
-bool ReaperAPI::TrackFX_GetFXName(MediaTrack *track, int fx_index, char *buf, int buf_size) {
+bool ReaperAPI::TrackFX_GetFXName(ReaMediaTrack *track, int fx_index, char *buf, int buf_size) {
   if (!IsAvailable() || !track || !buf || buf_size <= 0 || !s_TrackFX_GetFXName) {
     return false;
   }
   return s_TrackFX_GetFXName(track, fx_index, buf, buf_size);
 }
 
-int ReaperAPI::TrackFX_GetCount(MediaTrack *track, bool isInputFX) {
+int ReaperAPI::TrackFX_GetCount(ReaMediaTrack *track, bool isInputFX) {
   if (!IsAvailable() || !track || !s_TrackFX_GetCount) {
     return 0;
   }
@@ -405,14 +425,14 @@ int ReaperAPI::TrackFX_GetCount(MediaTrack *track, bool isInputFX) {
   return s_TrackFX_GetCount(track);
 }
 
-int ReaperAPI::TrackFX_GetNumParams(MediaTrack *track, int fx_index) {
+int ReaperAPI::TrackFX_GetNumParams(ReaMediaTrack *track, int fx_index) {
   if (!IsAvailable() || !track || !s_TrackFX_GetNumParams) {
     return 0;
   }
   return s_TrackFX_GetNumParams(track, fx_index);
 }
 
-bool ReaperAPI::TrackFX_GetParamName(MediaTrack *track, int fx_index, int param_index, char *buf,
+bool ReaperAPI::TrackFX_GetParamName(ReaMediaTrack *track, int fx_index, int param_index, char *buf,
                                      int buf_size) {
   if (!IsAvailable() || !track || !buf || buf_size <= 0 || !s_TrackFX_GetParamName) {
     return false;
@@ -420,7 +440,7 @@ bool ReaperAPI::TrackFX_GetParamName(MediaTrack *track, int fx_index, int param_
   return s_TrackFX_GetParamName(track, fx_index, param_index, buf, buf_size);
 }
 
-double ReaperAPI::TrackFX_GetParam(MediaTrack *track, int fx_index, int param_index,
+double ReaperAPI::TrackFX_GetParam(ReaMediaTrack *track, int fx_index, int param_index,
                                    double *minvalOut, double *maxvalOut) {
   if (!IsAvailable() || !track || !s_TrackFX_GetParam) {
     return 0.0;
@@ -428,21 +448,21 @@ double ReaperAPI::TrackFX_GetParam(MediaTrack *track, int fx_index, int param_in
   return s_TrackFX_GetParam(track, fx_index, param_index, minvalOut, maxvalOut);
 }
 
-bool ReaperAPI::TrackFX_SetParam(MediaTrack *track, int fx_index, int param_index, double value) {
+bool ReaperAPI::TrackFX_SetParam(ReaMediaTrack *track, int fx_index, int param_index, double value) {
   if (!IsAvailable() || !track || !s_TrackFX_SetParam) {
     return false;
   }
   return s_TrackFX_SetParam(track, fx_index, param_index, value);
 }
 
-double ReaperAPI::TrackFX_GetParamNormalized(MediaTrack *track, int fx_index, int param_index) {
+double ReaperAPI::TrackFX_GetParamNormalized(ReaMediaTrack *track, int fx_index, int param_index) {
   if (!IsAvailable() || !track || !s_TrackFX_GetParamNormalized) {
     return 0.0;
   }
   return s_TrackFX_GetParamNormalized(track, fx_index, param_index);
 }
 
-bool ReaperAPI::TrackFX_SetParamNormalized(MediaTrack *track, int fx_index, int param_index,
+bool ReaperAPI::TrackFX_SetParamNormalized(ReaMediaTrack *track, int fx_index, int param_index,
                                            double value) {
   if (!IsAvailable() || !track || !s_TrackFX_SetParamNormalized) {
     return false;
@@ -450,7 +470,7 @@ bool ReaperAPI::TrackFX_SetParamNormalized(MediaTrack *track, int fx_index, int 
   return s_TrackFX_SetParamNormalized(track, fx_index, param_index, value);
 }
 
-bool ReaperAPI::TrackFX_FormatParamValue(MediaTrack *track, int fx_index, int param_index,
+bool ReaperAPI::TrackFX_FormatParamValue(ReaMediaTrack *track, int fx_index, int param_index,
                                          double value, char *buf, int buf_size) {
   if (!IsAvailable() || !track || !buf || buf_size <= 0 || !s_TrackFX_FormatParamValue) {
     return false;
@@ -458,21 +478,21 @@ bool ReaperAPI::TrackFX_FormatParamValue(MediaTrack *track, int fx_index, int pa
   return s_TrackFX_FormatParamValue(track, fx_index, param_index, value, buf, buf_size);
 }
 
-bool ReaperAPI::TrackFX_GetEnabled(MediaTrack *track, int fx_index) {
+bool ReaperAPI::TrackFX_GetEnabled(ReaMediaTrack *track, int fx_index) {
   if (!IsAvailable() || !track || !s_TrackFX_GetEnabled) {
     return false;
   }
   return s_TrackFX_GetEnabled(track, fx_index);
 }
 
-bool ReaperAPI::TrackFX_SetEnabled(MediaTrack *track, int fx_index, bool enabled) {
+bool ReaperAPI::TrackFX_SetEnabled(ReaMediaTrack *track, int fx_index, bool enabled) {
   if (!IsAvailable() || !track || !s_TrackFX_SetEnabled) {
     return false;
   }
   return s_TrackFX_SetEnabled(track, fx_index, enabled);
 }
 
-bool ReaperAPI::TrackFX_Delete(MediaTrack *track, int fx_index) {
+bool ReaperAPI::TrackFX_Delete(ReaMediaTrack *track, int fx_index) {
   if (!IsAvailable() || !track || !s_TrackFX_Delete) {
     return false;
   }
@@ -480,35 +500,35 @@ bool ReaperAPI::TrackFX_Delete(MediaTrack *track, int fx_index) {
 }
 
 // TakeFX wrapper methods
-int ReaperAPI::TakeFX_AddByName(MediaItem_Take *take, const char *fxname, int instantiate) {
+int ReaperAPI::TakeFX_AddByName(ReaMediaItemTake *take, const char *fxname, int instantiate) {
   if (!IsAvailable() || !take || !fxname || !s_TakeFX_AddByName) {
     return -1;
   }
   return s_TakeFX_AddByName(take, fxname, instantiate);
 }
 
-bool ReaperAPI::TakeFX_GetFXName(MediaItem_Take *take, int fx_index, char *buf, int buf_size) {
+bool ReaperAPI::TakeFX_GetFXName(ReaMediaItemTake *take, int fx_index, char *buf, int buf_size) {
   if (!IsAvailable() || !take || !buf || buf_size <= 0 || !s_TakeFX_GetFXName) {
     return false;
   }
   return s_TakeFX_GetFXName(take, fx_index, buf, buf_size);
 }
 
-int ReaperAPI::TakeFX_GetCount(MediaItem_Take *take) {
+int ReaperAPI::TakeFX_GetCount(ReaMediaItemTake *take) {
   if (!IsAvailable() || !take || !s_TakeFX_GetCount) {
     return 0;
   }
   return s_TakeFX_GetCount(take);
 }
 
-int ReaperAPI::TakeFX_GetNumParams(MediaItem_Take *take, int fx_index) {
+int ReaperAPI::TakeFX_GetNumParams(ReaMediaItemTake *take, int fx_index) {
   if (!IsAvailable() || !take || !s_TakeFX_GetNumParams) {
     return 0;
   }
   return s_TakeFX_GetNumParams(take, fx_index);
 }
 
-bool ReaperAPI::TakeFX_GetParamName(MediaItem_Take *take, int fx_index, int param_index, char *buf,
+bool ReaperAPI::TakeFX_GetParamName(ReaMediaItemTake *take, int fx_index, int param_index, char *buf,
                                     int buf_size) {
   if (!IsAvailable() || !take || !buf || buf_size <= 0 || !s_TakeFX_GetParamName) {
     return false;
@@ -516,7 +536,7 @@ bool ReaperAPI::TakeFX_GetParamName(MediaItem_Take *take, int fx_index, int para
   return s_TakeFX_GetParamName(take, fx_index, param_index, buf, buf_size);
 }
 
-double ReaperAPI::TakeFX_GetParam(MediaItem_Take *take, int fx_index, int param_index,
+double ReaperAPI::TakeFX_GetParam(ReaMediaItemTake *take, int fx_index, int param_index,
                                   double *minvalOut, double *maxvalOut) {
   if (!IsAvailable() || !take || !s_TakeFX_GetParam) {
     return 0.0;
@@ -524,21 +544,21 @@ double ReaperAPI::TakeFX_GetParam(MediaItem_Take *take, int fx_index, int param_
   return s_TakeFX_GetParam(take, fx_index, param_index, minvalOut, maxvalOut);
 }
 
-bool ReaperAPI::TakeFX_SetParam(MediaItem_Take *take, int fx_index, int param_index, double value) {
+bool ReaperAPI::TakeFX_SetParam(ReaMediaItemTake *take, int fx_index, int param_index, double value) {
   if (!IsAvailable() || !take || !s_TakeFX_SetParam) {
     return false;
   }
   return s_TakeFX_SetParam(take, fx_index, param_index, value);
 }
 
-double ReaperAPI::TakeFX_GetParamNormalized(MediaItem_Take *take, int fx_index, int param_index) {
+double ReaperAPI::TakeFX_GetParamNormalized(ReaMediaItemTake *take, int fx_index, int param_index) {
   if (!IsAvailable() || !take || !s_TakeFX_GetParamNormalized) {
     return 0.0;
   }
   return s_TakeFX_GetParamNormalized(take, fx_index, param_index);
 }
 
-bool ReaperAPI::TakeFX_SetParamNormalized(MediaItem_Take *take, int fx_index, int param_index,
+bool ReaperAPI::TakeFX_SetParamNormalized(ReaMediaItemTake *take, int fx_index, int param_index,
                                           double value) {
   if (!IsAvailable() || !take || !s_TakeFX_SetParamNormalized) {
     return false;
@@ -546,7 +566,7 @@ bool ReaperAPI::TakeFX_SetParamNormalized(MediaItem_Take *take, int fx_index, in
   return s_TakeFX_SetParamNormalized(take, fx_index, param_index, value);
 }
 
-bool ReaperAPI::TakeFX_FormatParamValue(MediaItem_Take *take, int fx_index, int param_index,
+bool ReaperAPI::TakeFX_FormatParamValue(ReaMediaItemTake *take, int fx_index, int param_index,
                                         double value, char *buf, int buf_size) {
   if (!IsAvailable() || !take || !buf || buf_size <= 0 || !s_TakeFX_FormatParamValue) {
     return false;
@@ -554,21 +574,21 @@ bool ReaperAPI::TakeFX_FormatParamValue(MediaItem_Take *take, int fx_index, int 
   return s_TakeFX_FormatParamValue(take, fx_index, param_index, value, buf, buf_size);
 }
 
-bool ReaperAPI::TakeFX_GetEnabled(MediaItem_Take *take, int fx_index) {
+bool ReaperAPI::TakeFX_GetEnabled(ReaMediaItemTake *take, int fx_index) {
   if (!IsAvailable() || !take || !s_TakeFX_GetEnabled) {
     return false;
   }
   return s_TakeFX_GetEnabled(take, fx_index);
 }
 
-bool ReaperAPI::TakeFX_SetEnabled(MediaItem_Take *take, int fx_index, bool enabled) {
+bool ReaperAPI::TakeFX_SetEnabled(ReaMediaItemTake *take, int fx_index, bool enabled) {
   if (!IsAvailable() || !take || !s_TakeFX_SetEnabled) {
     return false;
   }
   return s_TakeFX_SetEnabled(take, fx_index, enabled);
 }
 
-bool ReaperAPI::TakeFX_Delete(MediaItem_Take *take, int fx_index) {
+bool ReaperAPI::TakeFX_Delete(ReaMediaItemTake *take, int fx_index) {
   if (!IsAvailable() || !take || !s_TakeFX_Delete) {
     return false;
   }
