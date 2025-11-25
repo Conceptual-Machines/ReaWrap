@@ -1,5 +1,10 @@
 # ReaWrap
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Lua](https://img.shields.io/badge/lua-5.1+-blue.svg)
+![C++](https://img.shields.io/badge/c++-17+-blue.svg)
+![REAPER](https://img.shields.io/badge/REAPER-6.0+-green.svg)
+
 Making REAPER automation easier, faster, and more intuitive.
 
 ## History
