@@ -378,13 +378,13 @@ function TrackFX.NamedConfigParamConstants:create(params)
 		PARAM_X_CONTAINER_MAP_HINT_ID = string.format("param.%s.container_map.hint_id", params.param_idx),
 		PARAM_X_CONTAINER_MAP_DELETE = string.format("param.%s.container_map.delete", params.param_idx),
 		CONTAINER_MAP_ADD = "container_map.add",
-		CONTAINER_MAP_ADD_FXID_PARMIDX = string.format("container_map.add.%s.%s", params.fx_idx, param_idx),
-		CONTAINER_MAP_GET_FXID_PARMIDX = string.format("container_map.get.%s.%s", fx_idx, param_idx),
+		CONTAINER_MAP_ADD_FXID_PARMIDX = string.format("container_map.add.%s.%s", params.fx_idx or "X", params.param_idx or "X"),
+		CONTAINER_MAP_GET_FXID_PARMIDX = string.format("container_map.get.%s.%s", params.fx_idx or "X", params.param_idx or "X"),
 		CHAIN_PDC_ACTUAL = "chain_pdc_actual",
 		CHAIN_PDC_REPORTING = "chain_pdc_reporting",
 		VST_CHUNK_PROGRAM = "vst_chunk[_program]",
 		CLAP_CHUNK = "clap_chunk",
-		PARAM_X_LFO = string.format("param.%s.lfo.%s", param_idx, param_value),
+		PARAM_X_LFO = string.format("param.%s.lfo.%s", params.param_idx or "X", params.param_value or "X"),
 		PARAM_X_ACS = "param.X.acs.[active,dir,strength,attack,release,dblo,dbhi,chan,stereo,x2,y2]",
 		PARAM_X_PLINK = "param.X.plink.[active,scale,offset,effect,param,midi_bus,midi_chan,midi_msg,midi_msg2]",
 		PARAM_X_MOD = "param.X.mod.[active,baseline,visible]",
@@ -570,7 +570,7 @@ end
 --- @param pin number
 --- @return number high32
 function TrackFX:get_pin_mappings(is_output, pin)
-	local ret_val, high32 = r.TrackFX_GetPinMappings(self.tr.pointer, self.pointer, is_output, pin)
+	local ret_val, high32 = r.TrackFX_GetPinMappings(self.track.pointer, self.pointer, is_output, pin)
 	if ret_val then
 		return high32
 	else
@@ -753,7 +753,7 @@ end
 --- @return boolean
 --- @see TrackFX:get_preset_index
 function TrackFX:set_preset_by_index(preset_idx)
-	return r.TrackFX_SetPresetByIndex(self.track.pointer, self.pointer, idx)
+	return r.TrackFX_SetPresetByIndex(self.track.pointer, self.pointer, preset_idx)
 end
 
 TrackFX.ShowFlagsConstants = {

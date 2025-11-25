@@ -1,0 +1,62 @@
+#pragma once
+
+#include "reaper_plugin.h"
+#include "ReaperAPI.h"
+#include <vector>
+
+namespace ReaWrap {
+
+// Forward declarations
+class MediaItem;
+class TrackFX;
+
+// High-level Track object
+// Supports method chaining for fluent API
+class Track {
+private:
+  MediaTrack *m_reaper_track;
+  int m_index;
+
+public:
+  // Factory method - creates track and returns object
+  // index: -1 to append at end, otherwise insert at index
+  static Track *create(int index = -1, const char *name = nullptr,
+                       const char *instrument = nullptr);
+
+  // Getters
+  MediaTrack *getReaperTrack() const { return m_reaper_track; }
+  int getIndex() const { return m_index; }
+  bool getName(char *buf, int buf_size) const;
+
+  // Operations (return Track* for chaining)
+  Track *setName(const char *name);
+  Track *addInstrument(const char *fxname);
+  Track *addFX(const char *fxname);
+  MediaItem *addClip(double position, double length);
+  MediaItem *addClipAtBar(int bar, int length_bars = 4);
+
+  Track *setVolume(double volume_db);
+  Track *setPan(double pan);
+  Track *setMute(bool mute);
+  Track *setSolo(bool solo);
+
+  // Iterator support - get collections
+  std::vector<MediaItem *> getItems() const;
+  std::vector<TrackFX *> getFXChain() const;
+  
+  // Iterator support - check if collections have items
+  bool hasItems() const;
+  bool hasFX() const;
+
+  // Static helpers
+  static Track *findByIndex(int index);
+  static Track *findByName(const char *name);
+  static int getCount();
+
+private:
+  // Private constructor - use create() factory method
+  Track(MediaTrack *track, int index);
+};
+
+} // namespace ReaWrap
+

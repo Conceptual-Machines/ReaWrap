@@ -15,14 +15,15 @@ local function test_iter_sel_tracks()
         p:log(sel_track)
         for fx in sel_track:iter_track_fx_chain() do
             p:log(fx)
-            p:log("PDC: ", fx:get_named_config_param(fx.NamedConfigParamConstants:create().PDC))
---             p:log("FX_TYPE: ", fx:get_named_config_param(fx.NamedConfigParamConstants().FX_TYPE))
+--             p:log("PDC: ", fx:get_named_config_param(fx.NamedConfigParamConstants:create().PDC))
+            p:log("FX_TYPE: ", fx:get_named_config_param(fx.NamedConfigParamConstants:create().FX_TYPE))
 --             p:log("FX_IDENT: ", fx:get_named_config_param(fx.NamedConfigParamConstants().FX_IDENT))
 --             p:log("FX_NAME: ", fx:get_named_config_param(fx.NamedConfigParamConstants().FX_NAME))
 --             p:log("GAIN_REDUCTION_DB: ", fx:get_named_config_param(fx.NamedConfigParamConstants().GAINREDUCTION_DB))
-            local cont_item = fx.NamedConfigParamConstants:create({container_idx = 0}).CONTAINER_ITEM_X
-            local fx_idx = fx:get_named_config_param(cont_item)
-            p:log(fx:get_name(fx_idx))
+--             local cont_item = fx.NamedConfigParamConstants:create({container_idx = 0}).CONTAINER_ITEM_X
+--             p:log(cont_item)
+--             local fx_idx = fx:get_named_config_param(cont_item)
+--             p:log(fx:get_name(fx_idx))
 --             p:log("PARENT_CONTAINER: ", fx:get_named_config_param(fx.NamedConfigParamConstants().PARENT_CONTAINER))
 --             p:log("CONTAINER_COUNT: ", fx:get_named_config_param(fx.NamedConfigParamConstants().CONTAINER_COUNT))
         end

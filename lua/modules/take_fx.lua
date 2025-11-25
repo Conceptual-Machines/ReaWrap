@@ -37,7 +37,7 @@ end
 --- String representation of the TakeFX instance.
 --- @within ReaWrap Custom Methods
 --- @return string
-function TakeFX:_tostring()
+function TakeFX:__tostring()
 	return string.format("<TakeFX name=%s>", self:get_name())
 end
 
@@ -56,7 +56,7 @@ end
 --- @param dest_fx number
 --- @param is_move boolean
 function TakeFX:copy_to_take(dest_take, dest_fx, is_move)
-	return r.TakeFX_CopyToTake(self.src_take.pointer, src_fx, dest_take.pointer, dest_fx, is_move)
+	return r.TakeFX_CopyToTake(self.take.pointer, self.pointer, dest_take.pointer, dest_fx, is_move)
 end
 
 --- Copy To Track. Wraps TakeFX_CopyToTrack.
@@ -65,7 +65,7 @@ end
 --- @param dest_fx number
 --- @param is_move boolean
 function TakeFX:copy_to_track(dest_track, dest_fx, is_move)
-	return r.TakeFX_CopyToTrack(self.src_take.pointer, src_fx, dest_track.pointer, dest_fx, is_move)
+	return r.TakeFX_CopyToTrack(self.take.pointer, self.pointer, dest_track.pointer, dest_fx, is_move)
 end
 
 --- End Param Edit. Wraps TakeFX_EndParamEdit.
@@ -138,7 +138,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return userdata HWND
 function TakeFX:get_floating_window()
-	return r.TakeFX_GetFloatingWindow(self.take.pointer, index)
+	return r.TakeFX_GetFloatingWindow(self.take.pointer, self.pointer)
 end
 
 --- Get Formatted Param Value. Wraps TakeFX_GetFormattedParamValue.
@@ -308,6 +308,46 @@ function TakeFX:get_param_normalized(param)
 	return r.TakeFX_GetParamNormalized(self.take.pointer, self.pointer, param)
 end
 
+--- Get param values from TakeFX.
+--- @within ReaWrap Custom Methods
+--- @return table array of param values (min_val, max_val)
+function TakeFX:get_param_values()
+	local params = {}
+	local count = self:get_num_params()
+	for i = 0, count - 1 do
+		local min_val, max_val = self:get_param(i)
+		params[i + 1] = { min_val, max_val }
+	end
+	return params
+end
+
+--- Iterate over TakeFX param values.
+--- @within ReaWrap Custom Methods
+--- @return function iterator
+function TakeFX:iter_param_values()
+	return helpers.iter(self:get_param_values())
+end
+
+--- Get param names from TakeFX.
+--- @within ReaWrap Custom Methods
+--- @return table array of param names
+function TakeFX:get_param_names()
+	local params = {}
+	local count = self:get_num_params()
+	for i = 0, count - 1 do
+		local param_name = self:get_param_name(i)
+		params[i + 1] = param_name
+	end
+	return params
+end
+
+--- Iterate over TakeFX param names.
+--- @within ReaWrap Custom Methods
+--- @return function iterator
+function TakeFX:iter_param_names()
+	return helpers.iter(self:get_param_names())
+end
+
 --- Get Pin Mappings. Wraps TakeFX_GetPinMappings.
 --- @within ReaScript Wrapped Methods
 --- @param is_output number
@@ -433,9 +473,10 @@ end
 
 --- Set Preset By Index. Wraps TakeFX_SetPresetByIndex.
 --- @within ReaScript Wrapped Methods
+--- @param preset_idx number The index of the preset
 --- @return boolean
-function TakeFX:set_preset_by_index()
-	return r.TakeFX_SetPresetByIndex(self.take.pointer, self.pointer, idx)
+function TakeFX:set_preset_by_index(preset_idx)
+	return r.TakeFX_SetPresetByIndex(self.take.pointer, self.pointer, preset_idx)
 end
 
 --- Show. Wraps TakeFX_Show.
