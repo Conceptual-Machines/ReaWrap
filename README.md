@@ -5,7 +5,7 @@
 ![C++](https://img.shields.io/badge/c++-17+-blue.svg)
 ![REAPER](https://img.shields.io/badge/REAPER-6.0+-green.svg)
 
-**Object-Oriented Implementation for REAPER API**
+**Object-Oriented Implementation for ReaScript API**
 
 Making REAPER automation easier, faster, and more intuitive.
 
