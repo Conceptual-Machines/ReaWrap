@@ -139,7 +139,9 @@ std::vector<MediaItem *> Track::getItems() const {
     if (reaper_item) {
       // Create MediaItem wrapper - note: this creates new objects each time
       // In a production system, you might want to cache these
-      items.push_back(MediaItem::create(this, ReaperAPI::GetMediaItemPosition(reaper_item),
+      // const_cast is safe here - we're not modifying the track, just creating a wrapper
+      items.push_back(MediaItem::create(const_cast<Track *>(this),
+                                        ReaperAPI::GetMediaItemPosition(reaper_item),
                                         ReaperAPI::GetMediaItemLength(reaper_item)));
     }
   }
