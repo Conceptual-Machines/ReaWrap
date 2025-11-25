@@ -17,29 +17,29 @@ local Take = {}
 --- @param take userdata. The pointer to Reaper MediaItem_Take*
 --- @return Take table.
 function Take:new(take)
-	local obj = {
-		pointer_type = "MediaItemTake*",
-		pointer = take,
-	}
-	setmetatable(obj, self)
-	self.__index = self
-	return obj
+  local obj = {
+    pointer_type = "MediaItemTake*",
+    pointer = take,
+  }
+  setmetatable(obj, self)
+  self.__index = self
+  return obj
 end
 
 --- Log messages with the Take logger.
 --- @within ReaWrap Custom Methods
 --- @param ... (varargs) Messages to log.
 function Take:log(...)
-	local logger = helpers.log_func("Take")
-	logger(...)
-	return nil
+  local logger = helpers.log_func("Take")
+  logger(...)
+  return nil
 end
 
 --- String representation of the Take instance.
 --- @within ReaWrap Custom Methods
 --- @return string
 function Take:__tostring()
-	return string.format("<Take name=%s>", self:get_name())
+  return string.format("<Take name=%s>", self:get_name())
 end
 
 -- @section ReaScript API Methods
@@ -49,7 +49,7 @@ end
 --- @return number
 --- @see Take:get_envelope
 function Take:count_envelopes()
-	return r.CountTakeEnvelopes(self.pointer)
+  return r.CountTakeEnvelopes(self.pointer)
 end
 
 --- Create Take Audio Accessor. Wraps CreateTakeAudioAccessor.
@@ -57,9 +57,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table AudioAccessor object
 function Take:create_take_audio_accessor()
-	local AudioAccessor = require("audio_accessor")
-	local result = r.CreateTakeAudioAccessor(self.pointer)
-	return AudioAccessor:new(result)
+  local AudioAccessor = require("audio_accessor")
+  local result = r.CreateTakeAudioAccessor(self.pointer)
+  return AudioAccessor:new(result)
 end
 
 --- Delete Take Marker. Wraps DeleteTakeMarker.
@@ -71,7 +71,7 @@ end
 --- @see Take:get_marker
 --- @see Take:set_marker
 function Take:delete_marker(idx)
-	return r.DeleteTakeMarker(self.pointer, idx)
+  return r.DeleteTakeMarker(self.pointer, idx)
 end
 
 --- Delete Take Stretch Markers. Wraps DeleteTakeStretchMarkers.
@@ -81,8 +81,8 @@ end
 --- @param integer countIn Optional
 --- @return number
 function Take:delete_take_stretch_markers(idx, integer)
-	local integer = integer or nil
-	return r.DeleteTakeStretchMarkers(self.pointer, idx, integer)
+  local integer = integer or nil
+  return r.DeleteTakeStretchMarkers(self.pointer, idx, integer)
 end
 
 --- Get Item. Wraps GetMediaItemTake_Item.
@@ -90,9 +90,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return Item table
 function Take:get_item()
-	local Item = require("item")
-	local result = r.GetMediaItemTake_Item(self.pointer)
-	return Item:new(result)
+  local Item = require("item")
+  local result = r.GetMediaItemTake_Item(self.pointer)
+  return Item:new(result)
 end
 
 --- Get Peaks. Wraps GetMediaItemTake_Peaks.
@@ -110,16 +110,23 @@ end
 --- @param want_extra_type number
 --- @param buf reaper.array
 --- @return number
-function Take:get_peaks(peak_rate, start_time, num_channels, samples_per_channel, want_extra_type, buf)
-	return r.GetMediaItemTake_Peaks(
-		self.pointer,
-		peak_rate,
-		start_time,
-		num_channels,
-		samples_per_channel,
-		want_extra_type,
-		buf
-	)
+function Take:get_peaks(
+  peak_rate,
+  start_time,
+  num_channels,
+  samples_per_channel,
+  want_extra_type,
+  buf
+)
+  return r.GetMediaItemTake_Peaks(
+    self.pointer,
+    peak_rate,
+    start_time,
+    num_channels,
+    samples_per_channel,
+    want_extra_type,
+    buf
+  )
 end
 
 --- Get Source. Wraps GetMediaItemTake_Source.
@@ -127,9 +134,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return userdata
 function Take:get_source()
-	local PCM_source = require("pcm_source")
-	local result = r.GetMediaItemTake_Source(self.pointer)
-	return PCM_source:new(result)
+  local PCM_source = require("pcm_source")
+  local result = r.GetMediaItemTake_Source(self.pointer)
+  return PCM_source:new(result)
 end
 
 --- Get Track. Wraps GetMediaItemTake_Track.
@@ -137,9 +144,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return Track table
 function Take:get_track()
-	local Track = require("track")
-	local result = r.GetMediaItemTake_Track(self.pointer)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.GetMediaItemTake_Track(self.pointer)
+  return Track:new(result)
 end
 
 --- Constants for Take:get_info_value.
@@ -165,26 +172,26 @@ end
 --- @field P_ITEM userdata: pointer to MediaItem (read-only)
 --- @field P_SOURCE userdata: PCM_source *. Note that if setting this, you should first retrieve the old source, set the new, THEN delete the old.
 Take.GetInfoValueConstants = {
-	D_STARTOFFS = "D_STARTOFFS",
-	D_VOL = "D_VOL",
-	D_PAN = "D_PAN",
-	D_PANLAW = "D_PANLAW",
-	D_PLAYRATE = "D_PLAYRATE",
-	D_PITCH = "D_PITCH",
-	B_PPITCH = "B_PPITCH",
-	I_LASTY = "I_LASTY",
-	I_LASTH = "I_LASTH",
-	I_CHANMODE = "I_CHANMODE",
-	I_PITCHMODE = "I_PITCHMODE",
-	I_STRETCHFLAGS = "I_STRETCHFLAGS",
-	F_STRETCHFADESIZE = "F_STRETCHFADESIZE",
-	I_RECPASSID = "I_RECPASSID",
-	I_TAKEFX_NCH = "I_TAKEFX_NCH",
-	I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
-	IP_TAKENUMBER = "IP_TAKENUMBER",
-	P_TRACK = "P_TRACK",
-	P_ITEM = "P_ITEM",
-	P_SOURCE = "P_SOURCE",
+  D_STARTOFFS = "D_STARTOFFS",
+  D_VOL = "D_VOL",
+  D_PAN = "D_PAN",
+  D_PANLAW = "D_PANLAW",
+  D_PLAYRATE = "D_PLAYRATE",
+  D_PITCH = "D_PITCH",
+  B_PPITCH = "B_PPITCH",
+  I_LASTY = "I_LASTY",
+  I_LASTH = "I_LASTH",
+  I_CHANMODE = "I_CHANMODE",
+  I_PITCHMODE = "I_PITCHMODE",
+  I_STRETCHFLAGS = "I_STRETCHFLAGS",
+  F_STRETCHFADESIZE = "F_STRETCHFADESIZE",
+  I_RECPASSID = "I_RECPASSID",
+  I_TAKEFX_NCH = "I_TAKEFX_NCH",
+  I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
+  IP_TAKENUMBER = "IP_TAKENUMBER",
+  P_TRACK = "P_TRACK",
+  P_ITEM = "P_ITEM",
+  P_SOURCE = "P_SOURCE",
 }
 
 --- Get Info Value. Wraps GetMediaItemTakeInfo_Value.
@@ -194,7 +201,7 @@ Take.GetInfoValueConstants = {
 --- @return number
 --- @see Take.GetInfoValueConstants
 function Take:get_info_value(param_name)
-	return r.GetMediaItemTakeInfo_Value(self.pointer, param_name)
+  return r.GetMediaItemTakeInfo_Value(self.pointer, param_name)
 end
 
 --- Get Num Take Markers. Wraps GetNumTakeMarkers.
@@ -204,7 +211,7 @@ end
 --- @see Take:get_marker
 --- @see Take:set_marker
 function Take:get_num_markers()
-	return r.GetNumTakeMarkers(self.pointer)
+  return r.GetNumTakeMarkers(self.pointer)
 end
 
 --- Constants for Take:get_set_info_string.
@@ -213,9 +220,9 @@ end
 --- @field P_EXT xyz: xyzchar *extension-specific persistent data
 --- @field GUID GUID *: 16-byte GUID, can query or update. If using a _String() function, GUID is a string {xyz-...}.
 Take.GetSetInfoStringConstants = {
-	P_NAME = "P_NAME",
-	P_EXT = "P_EXT",
-	GUID = "GUID",
+  P_NAME = "P_NAME",
+  P_EXT = "P_EXT",
+  GUID = "GUID",
 }
 
 --- Get Set Info String. Wraps GetSetMediaItemTakeInfo_String.
@@ -226,13 +233,13 @@ Take.GetSetInfoStringConstants = {
 --- @param set_new_value boolean
 --- @return string
 function Take:get_set_info_string(param_name, string_need_big, set_new_value)
-	local ret_val, string_need_big =
-		r.GetSetMediaItemTakeInfo_String(self.pointer, param_name, string_need_big, set_new_value)
-	if ret_val then
-		return string_need_big
-	else
-		error("Error getting/setting take info string")
-	end
+  local ret_val, string_need_big =
+    r.GetSetMediaItemTakeInfo_String(self.pointer, param_name, string_need_big, set_new_value)
+  if ret_val then
+    return string_need_big
+  else
+    error("Error getting/setting take info string")
+  end
 end
 
 --- Get Take Envelope by index. Wraps GetTakeEnvelope.
@@ -240,9 +247,9 @@ end
 --- @param env_idx number
 --- @return table Envelope object
 function Take:get_envelope(env_idx)
-	local Envelope = require("envelope")
-	local result = r.GetTakeEnvelope(self.pointer, env_idx)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetTakeEnvelope(self.pointer, env_idx)
+  return Envelope:new(result)
 end
 
 --- Get Take Envelope By Name. Wraps GetTakeEnvelopeByName.
@@ -250,9 +257,9 @@ end
 --- @param env_name string
 --- @return table Envelope object
 function Take:get_envelope_by_name(env_name)
-	local Envelope = require("envelope")
-	local result = r.GetTakeEnvelopeByName(self.pointer, env_name)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetTakeEnvelopeByName(self.pointer, env_name)
+  return Envelope:new(result)
 end
 
 --- Get Take Marker. Wraps GetTakeMarker.
@@ -265,12 +272,12 @@ end
 --- @see Take:get_num_markers
 --- @see Take:set_marker
 function Take:get_marker(idx)
-	local ret_val, name, integer = r.GetTakeMarker(self.pointer, idx)
-	if ret_val then
-		return name, integer
-	else
-		error("Error getting take marker")
-	end
+  local ret_val, name, integer = r.GetTakeMarker(self.pointer, idx)
+  if ret_val then
+    return name, integer
+  else
+    error("Error getting take marker")
+  end
 end
 
 --- Get Take Name. Wraps GetTakeName.
@@ -278,7 +285,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Take:get_name()
-	return r.GetTakeName(self.pointer)
+  return r.GetTakeName(self.pointer)
 end
 
 --- Get Take Num Stretch Markers. Wraps GetTakeNumStretchMarkers.
@@ -286,7 +293,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Take:get_take_num_stretch_markers()
-	return r.GetTakeNumStretchMarkers(self.pointer)
+  return r.GetTakeNumStretchMarkers(self.pointer)
 end
 
 --- Get Take Stretch Marker. Wraps GetTakeStretchMarker.
@@ -301,12 +308,12 @@ end
 --- @return number pos
 --- @return number srcpos
 function Take:get_take_stretch_marker(idx)
-	local ret_val, pos, srcpos = r.GetTakeStretchMarker(self.pointer, idx)
-	if ret_val then
-		return pos, srcpos
-	else
-		error("Error getting take stretch marker")
-	end
+  local ret_val, pos, srcpos = r.GetTakeStretchMarker(self.pointer, idx)
+  if ret_val then
+    return pos, srcpos
+  else
+    error("Error getting take stretch marker")
+  end
 end
 
 --- Get Take Stretch Marker Slope. Wraps GetTakeStretchMarkerSlope.
@@ -315,7 +322,7 @@ end
 --- @return number
 --- @see Take:set_take_stretch_marker_slope
 function Take:get_take_stretch_marker_slope(idx)
-	return r.GetTakeStretchMarkerSlope(self.pointer, idx)
+  return r.GetTakeStretchMarkerSlope(self.pointer, idx)
 end
 
 --- Midi Count Evts. Wraps MIDI_CountEvts.
@@ -326,12 +333,12 @@ end
 --- @return number ccevtcnt
 --- @return number textsyxevtcnt
 function Take:midi_count_evts()
-	local ret_val, notecnt, ccevtcnt, textsyxevtcnt = r.MIDI_CountEvts(self.pointer)
-	if ret_val then
-		return notecnt, ccevtcnt, textsyxevtcnt
-	else
-		error("Error counting MIDI events")
-	end
+  local ret_val, notecnt, ccevtcnt, textsyxevtcnt = r.MIDI_CountEvts(self.pointer)
+  if ret_val then
+    return notecnt, ccevtcnt, textsyxevtcnt
+  else
+    error("Error counting MIDI events")
+  end
 end
 
 --- Midi Delete Cc. Wraps MIDI_DeleteCC.
@@ -340,7 +347,7 @@ end
 --- @param cc_idx number
 --- @return boolean
 function Take:midi_delete_cc(cc_idx)
-	return r.MIDI_DeleteCC(self.pointer, cc_idx)
+  return r.MIDI_DeleteCC(self.pointer, cc_idx)
 end
 
 --- Midi Delete Evt. Wraps MIDI_DeleteEvt.
@@ -349,7 +356,7 @@ end
 --- @param evt_idx number
 --- @return boolean
 function Take:midi_delete_evt(evt_idx)
-	return r.MIDI_DeleteEvt(self.pointer, evt_idx)
+  return r.MIDI_DeleteEvt(self.pointer, evt_idx)
 end
 
 --- Midi Delete Note. Wraps MIDI_DeleteNote.
@@ -358,7 +365,7 @@ end
 --- @param note_idx number
 --- @return boolean
 function Take:midi_delete_note(note_idx)
-	return r.MIDI_DeleteNote(self.pointer, note_idx)
+  return r.MIDI_DeleteNote(self.pointer, note_idx)
 end
 
 --- Midi Delete Text Sysex Evt. Wraps MIDI_DeleteTextSysexEvt.
@@ -367,7 +374,7 @@ end
 --- @param sysxevt_idx number
 --- @return boolean
 function Take:midi_delete_text_sysex_evt(sysxevt_idx)
-	return r.MIDI_DeleteTextSysexEvt(self.pointer, sysxevt_idx)
+  return r.MIDI_DeleteTextSysexEvt(self.pointer, sysxevt_idx)
 end
 
 --- Midi Disable Sort. Wraps MIDI_DisableSort.
@@ -375,7 +382,7 @@ end
 -- MIDI_Sort is called.
 --- @within ReaScript Wrapped Methods
 function Take:midi_disable_sort()
-	return r.MIDI_DisableSort(self.pointer)
+  return r.MIDI_DisableSort(self.pointer)
 end
 
 --- Midi Enum Sel Cc. Wraps MIDI_EnumSelCC.
@@ -385,7 +392,7 @@ end
 --- @param cc_idx number
 --- @return number
 function Take:midi_enum_sel_cc(cc_idx)
-	return r.MIDI_EnumSelCC(self.pointer, cc_idx)
+  return r.MIDI_EnumSelCC(self.pointer, cc_idx)
 end
 
 --- Midi Enum Sel Evts. Wraps MIDI_EnumSelEvts.
@@ -395,7 +402,7 @@ end
 --- @param evt_idx number
 --- @return number
 function Take:midi_enum_sel_evts(evt_idx)
-	return r.MIDI_EnumSelEvts(self.pointer, evt_idx)
+  return r.MIDI_EnumSelEvts(self.pointer, evt_idx)
 end
 
 --- Midi Enum Sel Notes. Wraps MIDI_EnumSelNotes.
@@ -405,7 +412,7 @@ end
 --- @param note_idx number
 --- @return number
 function Take:midi_enum_sel_notes(note_idx)
-	return r.MIDI_EnumSelNotes(self.pointer, note_idx)
+  return r.MIDI_EnumSelNotes(self.pointer, note_idx)
 end
 
 --- Midi Enum Sel Text Sysex Evts. Wraps MIDI_EnumSelTextSysexEvts.
@@ -415,7 +422,7 @@ end
 --- @param textsyx_idx number
 --- @return number
 function Take:midi_enum_sel_text_sysex_evts(textsyx_idx)
-	return r.MIDI_EnumSelTextSysexEvts(self.pointer, textsyx_idx)
+  return r.MIDI_EnumSelTextSysexEvts(self.pointer, textsyx_idx)
 end
 
 --- Midi Get All Evts. Wraps MIDI_GetAllEvts.
@@ -432,12 +439,12 @@ end
 --- @return buf string
 --- @see Take:midi_set_all_evts
 function Take:midi_get_all_evts()
-	local ret_val, buf = r.MIDI_GetAllEvts(self.pointer)
-	if ret_val then
-		return buf
-	else
-		error("Error getting all MIDI events")
-	end
+  local ret_val, buf = r.MIDI_GetAllEvts(self.pointer)
+  if ret_val then
+    return buf
+  else
+    error("Error getting all MIDI events")
+  end
 end
 
 --- Midi Get Cc. Wraps MIDI_GetCC.
@@ -452,12 +459,13 @@ end
 --- @return number msg2
 --- @return number msg3
 function Take:midi_get_cc(cc_idx)
-	local ret_val, selected, muted, ppq_pos, chan_msg, chan, msg2, msg3 = r.MIDI_GetCC(self.pointer, cc_idx)
-	if ret_val then
-		return selected, muted, ppq_pos, chan_msg, chan, msg2, msg3
-	else
-		error("Error getting MIDI CC")
-	end
+  local ret_val, selected, muted, ppq_pos, chan_msg, chan, msg2, msg3 =
+    r.MIDI_GetCC(self.pointer, cc_idx)
+  if ret_val then
+    return selected, muted, ppq_pos, chan_msg, chan, msg2, msg3
+  else
+    error("Error getting MIDI CC")
+  end
 end
 
 --- Midi Get Cc Shape. Wraps MIDI_GetCCShape.
@@ -469,12 +477,12 @@ end
 --- @see Take:midi_set_cc_shape
 --- @see Take:midi_get_cc
 function Take:midi_get_cc_shape(cc_idx)
-	local ret_val, shape, bez_tension = r.MIDI_GetCCShape(self.pointer, cc_idx)
-	if ret_val then
-		return shape, bez_tension
-	else
-		error("Error getting MIDI CC shape")
-	end
+  local ret_val, shape, bez_tension = r.MIDI_GetCCShape(self.pointer, cc_idx)
+  if ret_val then
+    return shape, bez_tension
+  else
+    error("Error getting MIDI CC shape")
+  end
 end
 
 --- Midi Get Evt. Wraps MIDI_GetEvt.
@@ -486,12 +494,12 @@ end
 --- @return number ppq_pos
 --- @return string msg
 function Take:midi_get_evt(evt_idx)
-	local ret_val, selected, muted, ppq_pos, msg = r.MIDI_GetEvt(self.pointer, evt_idx)
-	if ret_val then
-		return selected, muted, ppq_pos, msg
-	else
-		error("Error getting MIDI event")
-	end
+  local ret_val, selected, muted, ppq_pos, msg = r.MIDI_GetEvt(self.pointer, evt_idx)
+  if ret_val then
+    return selected, muted, ppq_pos, msg
+  else
+    error("Error getting MIDI event")
+  end
 end
 
 --- Midi Get Grid. Wraps MIDI_GetGrid.
@@ -501,12 +509,12 @@ end
 --- @return number swing
 --- @return number noteLen
 function Take:midi_get_grid()
-	local ret_val, number, number = r.MIDI_GetGrid(self.pointer)
-	if ret_val then
-		return number, number
-	else
-		error("Error getting MIDI grid")
-	end
+  local ret_val, number, number = r.MIDI_GetGrid(self.pointer)
+  if ret_val then
+    return number, number
+  else
+    error("Error getting MIDI grid")
+  end
 end
 
 --- Midi Get Hash. Wraps MIDI_GetHash.
@@ -516,12 +524,12 @@ end
 --- @param notes_only boolean
 --- @return string
 function Take:midi_get_hash(notes_only)
-	local ret_val, hash = r.MIDI_GetHash(self.pointer, notes_only)
-	if ret_val then
-		return hash
-	else
-		error("Error getting MIDI hash")
-	end
+  local ret_val, hash = r.MIDI_GetHash(self.pointer, notes_only)
+  if ret_val then
+    return hash
+  else
+    error("Error getting MIDI hash")
+  end
 end
 
 --- Midi Get Note. Wraps MIDI_GetNote.
@@ -536,12 +544,13 @@ end
 --- @return number pitch
 --- @return number vel
 function Take:midi_get_note(note_idx)
-	local ret_val, selected, muted, start_ppq, end_ppq, chan, pitch, vel = r.MIDI_GetNote(self.pointer, note_idx)
-	if ret_val then
-		return selected, muted, start_ppq, end_ppq, chan, pitch, vel
-	else
-		error("Error getting MIDI note")
-	end
+  local ret_val, selected, muted, start_ppq, end_ppq, chan, pitch, vel =
+    r.MIDI_GetNote(self.pointer, note_idx)
+  if ret_val then
+    return selected, muted, start_ppq, end_ppq, chan, pitch, vel
+  else
+    error("Error getting MIDI note")
+  end
 end
 
 --- Midi Get Ppq Pos End Of Measure. Wraps MIDI_GetPPQPos_EndOfMeasure.
@@ -550,7 +559,7 @@ end
 --- @param ppq_pos number
 --- @return number
 function Take:midi_get_ppq_pos_end_of_measure(ppq_pos)
-	return r.MIDI_GetPPQPos_EndOfMeasure(self.pointer, ppq_pos)
+  return r.MIDI_GetPPQPos_EndOfMeasure(self.pointer, ppq_pos)
 end
 
 --- Midi Get Ppq Pos Start Of Measure. Wraps MIDI_GetPPQPos_StartOfMeasure.
@@ -559,7 +568,7 @@ end
 --- @param ppq_pos number
 --- @return number
 function Take:midi_get_ppq_pos_start_of_measure(ppq_pos)
-	return r.MIDI_GetPPQPos_StartOfMeasure(self.pointer, ppq_pos)
+  return r.MIDI_GetPPQPos_StartOfMeasure(self.pointer, ppq_pos)
 end
 
 --- Midi Get Ppq Pos From Proj Qn. Wraps MIDI_GetPPQPosFromProjQN.
@@ -569,7 +578,7 @@ end
 --- @param projqn number
 --- @return number
 function Take:midi_get_ppq_pos_from_proj_qn(projqn)
-	return r.MIDI_GetPPQPosFromProjQN(self.pointer, projqn)
+  return r.MIDI_GetPPQPosFromProjQN(self.pointer, projqn)
 end
 
 --- Midi Get Ppq Pos From Proj Time. Wraps MIDI_GetPPQPosFromProjTime.
@@ -579,7 +588,7 @@ end
 --- @param projtime number
 --- @return number
 function Take:midi_get_ppq_pos_from_proj_time(projtime)
-	return r.MIDI_GetPPQPosFromProjTime(self.pointer, projtime)
+  return r.MIDI_GetPPQPosFromProjTime(self.pointer, projtime)
 end
 
 --- Midi Get Proj Qn From Ppq Pos. Wraps MIDI_GetProjQNFromPPQPos.
@@ -589,7 +598,7 @@ end
 --- @param ppq_pos number
 --- @return number
 function Take:midi_get_proj_qn_from_ppq_pos(ppq_pos)
-	return r.MIDI_GetProjQNFromPPQPos(self.pointer, ppq_pos)
+  return r.MIDI_GetProjQNFromPPQPos(self.pointer, ppq_pos)
 end
 
 --- Midi Get Proj Time From Ppq Pos. Wraps MIDI_GetProjTimeFromPPQPos.
@@ -599,7 +608,7 @@ end
 --- @param ppq_pos number
 --- @return number
 function Take:midi_get_proj_time_from_ppq_pos(ppq_pos)
-	return r.MIDI_GetProjTimeFromPPQPos(self.pointer, ppq_pos)
+  return r.MIDI_GetProjTimeFromPPQPos(self.pointer, ppq_pos)
 end
 
 --- Midi Get Scale. Wraps MIDI_GetScale.
@@ -610,12 +619,12 @@ end
 --- @return number scale
 --- @return string name
 function Take:midi_get_scale()
-	local ret_val, root, scale, name = r.MIDI_GetScale(self.pointer)
-	if ret_val then
-		return root, scale, name
-	else
-		error("Error getting MIDI scale")
-	end
+  local ret_val, root, scale, name = r.MIDI_GetScale(self.pointer)
+  if ret_val then
+    return root, scale, name
+  else
+    error("Error getting MIDI scale")
+  end
 end
 
 --- Midi Get Text Sysex Evt. Wraps MIDI_GetTextSysexEvt.
@@ -638,17 +647,17 @@ end
 --- @see Take:midi_get_all_evts
 --- @see Take:midi_insert_text_sysex_evt
 function Take:midi_get_text_sysex_evt(sysxevt_idx, selected, muted, ppq_pos, type_, msg)
-	local selected = selected or true
-	local muted = muted or false
-	local ppq_pos = ppq_pos or 0
-	local msg = msg or ""
-	local ret_val, selected, muted, ppq_pos, type, msg =
-		r.MIDI_GetTextSysexEvt(self.pointer, sysxevt_idx, selected, muted, ppq_pos, type_, msg)
-	if ret_val then
-		return selected, muted, ppq_pos, type, msg
-	else
-		error("Error getting MIDI text sysex event")
-	end
+  local selected = selected or true
+  local muted = muted or false
+  local ppq_pos = ppq_pos or 0
+  local msg = msg or ""
+  local ret_val, selected, muted, ppq_pos, type, msg =
+    r.MIDI_GetTextSysexEvt(self.pointer, sysxevt_idx, selected, muted, ppq_pos, type_, msg)
+  if ret_val then
+    return selected, muted, ppq_pos, type, msg
+  else
+    error("Error getting MIDI text sysex event")
+  end
 end
 
 --- Midi Insert Cc. Wraps MIDI_InsertCC.
@@ -663,7 +672,7 @@ end
 --- @param msg3 number
 --- @return boolean
 function Take:midi_insert_cc(selected, muted, ppq_pos, chan_msg, chan, msg2, msg3)
-	return r.MIDI_InsertCC(self.pointer, selected, muted, ppq_pos, chan_msg, chan, msg2, msg3)
+  return r.MIDI_InsertCC(self.pointer, selected, muted, ppq_pos, chan_msg, chan, msg2, msg3)
 end
 
 --- Midi Insert Evt. Wraps MIDI_InsertEvt.
@@ -675,7 +684,7 @@ end
 --- @param bytestr string
 --- @return boolean
 function Take:midi_insert_evt(selected, muted, ppq_pos, bytestr)
-	return r.MIDI_InsertEvt(self.pointer, selected, muted, ppq_pos, bytestr)
+  return r.MIDI_InsertEvt(self.pointer, selected, muted, ppq_pos, bytestr)
 end
 
 --- Midi Insert Note. Wraps MIDI_InsertNote.
@@ -692,8 +701,18 @@ end
 --- @param no_sort boolean Optional
 --- @return boolean
 function Take:midi_insert_note(selected, muted, start_ppq, end_ppq, chan, pitch, vel, no_sort)
-	local no_sort = no_sort or false
-	return r.MIDI_InsertNote(self.pointer, selected, muted, start_ppq, end_ppq, chan, pitch, vel, no_sort)
+  local no_sort = no_sort or false
+  return r.MIDI_InsertNote(
+    self.pointer,
+    selected,
+    muted,
+    start_ppq,
+    end_ppq,
+    chan,
+    pitch,
+    vel,
+    no_sort
+  )
 end
 
 --- Midi Insert Text Sysex Evt. Wraps MIDI_InsertTextSysexEvt.
@@ -708,14 +727,14 @@ end
 --- @param bytestr string
 --- @return boolean
 function Take:midi_insert_text_sysex_evt(selected, muted, ppq_pos, type, bytestr)
-	return r.MIDI_InsertTextSysexEvt(self.pointer, selected, muted, ppq_pos, type, bytestr)
+  return r.MIDI_InsertTextSysexEvt(self.pointer, selected, muted, ppq_pos, type, bytestr)
 end
 
 --- Midi Refresh Editors. Wraps MIDI_RefreshEditors.
 -- Synchronously updates any open MIDI editors for MIDI take
 --- @within ReaScript Wrapped Methods
 function Take:midi_refresh_editors()
-	return r.MIDI_RefreshEditors(self.pointer)
+  return r.MIDI_RefreshEditors(self.pointer)
 end
 
 --- Midi Select All. Wraps MIDI_SelectAll.
@@ -723,7 +742,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param select boolean
 function Take:midi_select_all(select)
-	return r.MIDI_SelectAll(self.pointer, select)
+  return r.MIDI_SelectAll(self.pointer, select)
 end
 
 --- Midi Set All Evts. Wraps MIDI_SetAllEvts.
@@ -741,7 +760,7 @@ end
 --- @return boolean
 --- @see Take:midi_get_all_evts
 function Take:midi_set_all_evts(buf)
-	return r.MIDI_SetAllEvts(self.pointer, buf)
+  return r.MIDI_SetAllEvts(self.pointer, buf)
 end
 
 --- Midi Set Cc. Wraps MIDI_SetCC.
@@ -758,27 +777,37 @@ end
 --- @param msg3_in number Optional. Default 0
 --- @param no_sort boolean Optional. Default false
 --- @return boolean
-function Take:midi_set_cc(cc_idx, selected_in, muted_in, ppq_pos_in, chan_msg_in, chan_in, msg2_in, msg3_in, no_sort)
-	local selected_in = selected_in or true
-	local muted_in = muted_in or false
-	local ppq_pos_in = ppq_pos_in or 0
-	local chan_msg_in = chan_msg_in or 0xB0
-	local chan_in = chan_in or 0
-	local msg2_in = msg2_in or 0
-	local msg3_in = msg3_in or 0
-	local no_sort = no_sort or false
-	return r.MIDI_SetCC(
-		self.pointer,
-		cc_idx,
-		selected_in,
-		muted_in,
-		ppq_pos_in,
-		chan_msg_in,
-		chan_in,
-		msg2_in,
-		msg3_in,
-		no_sort
-	)
+function Take:midi_set_cc(
+  cc_idx,
+  selected_in,
+  muted_in,
+  ppq_pos_in,
+  chan_msg_in,
+  chan_in,
+  msg2_in,
+  msg3_in,
+  no_sort
+)
+  local selected_in = selected_in or true
+  local muted_in = muted_in or false
+  local ppq_pos_in = ppq_pos_in or 0
+  local chan_msg_in = chan_msg_in or 0xB0
+  local chan_in = chan_in or 0
+  local msg2_in = msg2_in or 0
+  local msg3_in = msg3_in or 0
+  local no_sort = no_sort or false
+  return r.MIDI_SetCC(
+    self.pointer,
+    cc_idx,
+    selected_in,
+    muted_in,
+    ppq_pos_in,
+    chan_msg_in,
+    chan_in,
+    msg2_in,
+    msg3_in,
+    no_sort
+  )
 end
 
 --- Midi Set Cc Shape. Wraps MIDI_SetCCShape.
@@ -793,8 +822,8 @@ end
 --- @see Take:midi_get_cc_shape
 --- @see Take:midi_set_cc
 function Take:midi_set_cc_shape(cc_idx, shape, bez_tension, no_sort)
-	local no_sort = no_sort or false
-	return r.MIDI_SetCCShape(self.pointer, cc_idx, shape, bez_tension, no_sort)
+  local no_sort = no_sort or false
+  return r.MIDI_SetCCShape(self.pointer, cc_idx, shape, bez_tension, no_sort)
 end
 
 --- Midi Set Evt. Wraps MIDI_SetEvt.
@@ -809,12 +838,12 @@ end
 --- @param no_sort boolean Optional. Default false.
 --- @return boolean
 function Take:midi_set_evt(evt_idx, selected_in, muted, ppq_pos, msg, no_sort)
-	local selected_in = selected_in or true
-	local muted = muted or false
-	local ppq_pos = ppq_pos or 0
-	local msg = msg or ""
-	local no_sort = no_sort or false
-	return r.MIDI_SetEvt(self.pointer, evt_idx, selected_in, muted, ppq_pos, msg, no_sort)
+  local selected_in = selected_in or true
+  local muted = muted or false
+  local ppq_pos = ppq_pos or 0
+  local msg = msg or ""
+  local no_sort = no_sort or false
+  return r.MIDI_SetEvt(self.pointer, evt_idx, selected_in, muted, ppq_pos, msg, no_sort)
 end
 
 --- Midi Set Note. Wraps MIDI_SetNote.
@@ -833,16 +862,37 @@ end
 --- @param velocity integer Optional
 --- @param no_sort boolean Optional
 --- @return boolean
-function Take:midi_set_note(note_idx, selected, muted, start_ppq, end_ppq, chan, pitch, velocity, no_sort)
-	local selected = selected or true
-	local muted = muted or false
-	local start_ppq = start_ppq or 0
-	local end_ppq = end_ppq or 0
-	local chan = chan or 1
-	local pitch = pitch or 1
-	local velocity = velocity or 1
-	local no_sort = no_sort or false
-	return r.MIDI_SetNote(self.pointer, note_idx, boolean, boolean, number, number, integer, integer, integer, boolean)
+function Take:midi_set_note(
+  note_idx,
+  selected,
+  muted,
+  start_ppq,
+  end_ppq,
+  chan,
+  pitch,
+  velocity,
+  no_sort
+)
+  local selected = selected or true
+  local muted = muted or false
+  local start_ppq = start_ppq or 0
+  local end_ppq = end_ppq or 0
+  local chan = chan or 1
+  local pitch = pitch or 1
+  local velocity = velocity or 1
+  local no_sort = no_sort or false
+  return r.MIDI_SetNote(
+    self.pointer,
+    note_idx,
+    boolean,
+    boolean,
+    number,
+    number,
+    integer,
+    integer,
+    integer,
+    boolean
+  )
 end
 
 --- Midi Set Text Sysex Evt. Wraps MIDI_SetTextSysexEvt.
@@ -860,27 +910,36 @@ end
 --- @param no_sort boolean Optional
 --- @return boolean
 function Take:midi_set_text_sysex_evt(sysxevt_idx, selected, muted, ppq_pos, type, msg, no_sort)
-	local selected = selected or true
-	local muted = muted or false
-	local ppq_pos = ppq_pos or 0
-	local type = type or 0
-	local msg = msg or ""
-	local no_sort = no_sort or false
-	return r.MIDI_SetTextSysexEvt(self.pointer, sysxevt_idx, selected, muted, ppq_pos, type, msg, no_sort)
+  local selected = selected or true
+  local muted = muted or false
+  local ppq_pos = ppq_pos or 0
+  local type = type or 0
+  local msg = msg or ""
+  local no_sort = no_sort or false
+  return r.MIDI_SetTextSysexEvt(
+    self.pointer,
+    sysxevt_idx,
+    selected,
+    muted,
+    ppq_pos,
+    type,
+    msg,
+    no_sort
+  )
 end
 
 --- Midi Sort. Wraps MIDI_Sort.
 -- Sort MIDI events after multiple calls to MIDI_SetNote, MIDI_SetCC, etc.
 --- @within ReaScript Wrapped Methods
 function Take:midi_sort()
-	return r.MIDI_Sort(self.pointer)
+  return r.MIDI_Sort(self.pointer)
 end
 
 --- Set Active Take. Wraps SetActiveTake.
 -- set this take active in this media item
 --- @within ReaScript Wrapped Methods
 function Take:set_active_take()
-	return r.SetActiveTake(self.pointer)
+  return r.SetActiveTake(self.pointer)
 end
 
 --- Set Source. Wraps SetMediaItemTake_Source.
@@ -893,7 +952,7 @@ end
 --- @param source userdata PCM_source *
 --- @return boolean
 function Take:set_source(source)
-	return r.SetMediaItemTake_Source(self.pointer, source)
+  return r.SetMediaItemTake_Source(self.pointer, source)
 end
 
 --- Constants for Take:set_info_value.
@@ -916,23 +975,23 @@ end
 --- @field I_CUSTOMCOLOR number: custom color, OS dependent color|0x1000000 (i.e. ColorToNative(r,g,b)|0x1000000). If you do not |0x1000000, then it will not be used, but will store the color
 --- @field IP_TAKENUMBER number: take number (read-only, returns the take number directly)
 Take.SetInfoValueConstants = {
-	D_STARTOFFS = "D_STARTOFFS",
-	D_VOL = "D_VOL",
-	D_PAN = "D_PAN",
-	D_PANLAW = "D_PANLAW",
-	D_PLAYRATE = "D_PLAYRATE",
-	D_PITCH = "D_PITCH",
-	B_PPITCH = "B_PPITCH",
-	I_LASTY = "I_LASTY",
-	I_LASTH = "I_LASTH",
-	I_CHANMODE = "I_CHANMODE",
-	I_PITCHMODE = "I_PITCHMODE",
-	I_STRETCHFLAGS = "I_STRETCHFLAGS",
-	F_STRETCHFADESIZE = "F_STRETCHFADESIZE",
-	I_RECPASSID = "I_RECPASSID",
-	I_TAKEFX_NCH = "I_TAKEFX_NCH",
-	I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
-	IP_TAKENUMBER = "IP_TAKENUMBER",
+  D_STARTOFFS = "D_STARTOFFS",
+  D_VOL = "D_VOL",
+  D_PAN = "D_PAN",
+  D_PANLAW = "D_PANLAW",
+  D_PLAYRATE = "D_PLAYRATE",
+  D_PITCH = "D_PITCH",
+  B_PPITCH = "B_PPITCH",
+  I_LASTY = "I_LASTY",
+  I_LASTH = "I_LASTH",
+  I_CHANMODE = "I_CHANMODE",
+  I_PITCHMODE = "I_PITCHMODE",
+  I_STRETCHFLAGS = "I_STRETCHFLAGS",
+  F_STRETCHFADESIZE = "F_STRETCHFADESIZE",
+  I_RECPASSID = "I_RECPASSID",
+  I_TAKEFX_NCH = "I_TAKEFX_NCH",
+  I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
+  IP_TAKENUMBER = "IP_TAKENUMBER",
 }
 
 --- Set Info Value. Wraps SetMediaItemTakeInfo_Value.
@@ -943,7 +1002,7 @@ Take.SetInfoValueConstants = {
 --- @return boolean
 --- @see Take.SetInfoValueConstants
 function Take:set_info_value(param_name, new_value)
-	return r.SetMediaItemTakeInfo_Value(self.pointer, param_name, new_value)
+  return r.SetMediaItemTakeInfo_Value(self.pointer, param_name, new_value)
 end
 
 --- Set Take Marker. Wraps SetTakeMarker.
@@ -960,9 +1019,9 @@ end
 --- @see Take:delete_marker
 --- @see Take:get_num_markers
 function Take:set_marker(idx, name_in, src_pos, color_in)
-	local src_pos = src_pos or 0
-	local color_in = color_in or 0
-	return r.SetTakeMarker(self.pointer, idx, name_in, src_pos, color_in)
+  local src_pos = src_pos or 0
+  local color_in = color_in or 0
+  return r.SetTakeMarker(self.pointer, idx, name_in, src_pos, color_in)
 end
 
 --- Set Take Stretch Marker. Wraps SetTakeStretchMarker.
@@ -979,8 +1038,8 @@ end
 --- @param src_pos number Optional
 --- @return number
 function Take:set_take_stretch_marker(idx, pos, src_pos)
-	local src_pos = src_pos or 0
-	return r.SetTakeStretchMarker(self.pointer, idx, pos, src_pos)
+  local src_pos = src_pos or 0
+  return r.SetTakeStretchMarker(self.pointer, idx, pos, src_pos)
 end
 
 --- Set Take Stretch Marker Slope. Wraps SetTakeStretchMarkerSlope.
@@ -990,7 +1049,7 @@ end
 --- @return boolean
 --- @see Take:get_take_stretch_marker_slope
 function Take:set_take_stretch_marker_slope(idx, slope)
-	return r.SetTakeStretchMarkerSlope(self.pointer, idx, slope)
+  return r.SetTakeStretchMarkerSlope(self.pointer, idx, slope)
 end
 
 --- Delete Fx. Wraps TakeFX_Delete.
@@ -999,14 +1058,14 @@ end
 --- @param fx number
 --- @return boolean
 function Take:delete_fx(fx)
-	return r.TakeFX_Delete(self.pointer, fx)
+  return r.TakeFX_Delete(self.pointer, fx)
 end
 
 --- Get Fx Count. Wraps TakeFX_GetCount.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Take:get_fx_count()
-	return r.TakeFX_GetCount(self.pointer)
+  return r.TakeFX_GetCount(self.pointer)
 end
 
 --- Take Is Midi. Wraps TakeIsMIDI.
@@ -1014,7 +1073,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Take:take_is_midi()
-	return r.TakeIsMIDI(self.pointer)
+  return r.TakeIsMIDI(self.pointer)
 end
 
 --- Get Guid. Wraps BR_GetMediaItemTakeGUID.
@@ -1023,7 +1082,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Take:get_guid()
-	return r.BR_GetMediaItemTakeGUID(self.pointer)
+  return r.BR_GetMediaItemTakeGUID(self.pointer)
 end
 
 --- Get Media Source Properties. Wraps BR_GetMediaSourceProperties.
@@ -1037,12 +1096,12 @@ end
 --- @return number fade
 --- @return boolean reverse
 function Take:get_media_source_properties()
-	local ret_val, section, start, length, fade, reverse = r.BR_GetMediaSourceProperties(self.pointer)
-	if ret_val then
-		return section, start, length, fade, reverse
-	else
-		error("Error getting media source properties")
-	end
+  local ret_val, section, start, length, fade, reverse = r.BR_GetMediaSourceProperties(self.pointer)
+  if ret_val then
+    return section, start, length, fade, reverse
+  else
+    error("Error getting media source properties")
+  end
 end
 
 --- Get Midi Source Len Ppq. Wraps BR_GetMidiSourceLenPPQ.
@@ -1051,7 +1110,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Take:get_midi_source_len_ppq()
-	return r.BR_GetMidiSourceLenPPQ(self.pointer)
+  return r.BR_GetMidiSourceLenPPQ(self.pointer)
 end
 
 --- Get Midi Take Pool Guid. Wraps BR_GetMidiTakePoolGUID.
@@ -1060,12 +1119,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Take:get_midi_take_pool_guid()
-	local ret_val, guid_string = r.BR_GetMidiTakePoolGUID(self.pointer)
-	if ret_val then
-		return guid_string
-	else
-		error("Error getting MIDI take pool GUID")
-	end
+  local ret_val, guid_string = r.BR_GetMidiTakePoolGUID(self.pointer)
+  if ret_val then
+    return guid_string
+  else
+    error("Error getting MIDI take pool GUID")
+  end
 end
 
 --- Get Midi Take Tempo Info. Wraps BR_GetMidiTakeTempoInfo.
@@ -1077,12 +1136,12 @@ end
 --- @return number num
 --- @return number den
 function Take:get_midi_take_tempo_info()
-	local ret_val, ignore_proj_tempo, bpm, num, den = r.BR_GetMidiTakeTempoInfo(self.pointer)
-	if ret_val then
-		return ignore_proj_tempo, bpm, num, den
-	else
-		error("Error getting MIDI take tempo info")
-	end
+  local ret_val, ignore_proj_tempo, bpm, num, den = r.BR_GetMidiTakeTempoInfo(self.pointer)
+  if ret_val then
+    return ignore_proj_tempo, bpm, num, den
+  else
+    error("Error getting MIDI take tempo info")
+  end
 end
 
 --- Is Midi Open In Inline Editor. Wraps BR_IsMidiOpenInInlineEditor.
@@ -1090,7 +1149,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Take:is_midi_open_in_inline_editor()
-	return r.BR_IsMidiOpenInInlineEditor(self.pointer)
+  return r.BR_IsMidiOpenInInlineEditor(self.pointer)
 end
 
 --- Is Take Midi. Wraps BR_IsTakeMidi.
@@ -1099,12 +1158,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Take:is_take_midi()
-	local ret_val, in_project_midi = r.BR_IsTakeMidi(self.pointer)
-	if ret_val then
-		return in_project_midi
-	else
-		error("Error checking if take is MIDI")
-	end
+  local ret_val, in_project_midi = r.BR_IsTakeMidi(self.pointer)
+  if ret_val then
+    return in_project_midi
+  else
+    error("Error checking if take is MIDI")
+  end
 end
 
 --- Set Media Source Properties. Wraps BR_SetMediaSourceProperties.
@@ -1119,7 +1178,7 @@ end
 --- @param reverse boolean
 --- @return boolean
 function Take:set_media_source_properties(section, start, length, fade, reverse)
-	return r.BR_SetMediaSourceProperties(self.pointer, section, start, length, fade, reverse)
+  return r.BR_SetMediaSourceProperties(self.pointer, section, start, length, fade, reverse)
 end
 
 --- Set Midi Take Tempo Info. Wraps BR_SetMidiTakeTempoInfo.
@@ -1132,7 +1191,7 @@ end
 --- @param den number
 --- @return boolean
 function Take:set_midi_take_tempo_info(ignore_proj_tempo, bpm, num, den)
-	return r.BR_SetMidiTakeTempoInfo(self.pointer, ignore_proj_tempo, bpm, num, den)
+  return r.BR_SetMidiTakeTempoInfo(self.pointer, ignore_proj_tempo, bpm, num, den)
 end
 
 --- Set Take Source From File. Wraps BR_SetTakeSourceFromFile.
@@ -1146,7 +1205,7 @@ end
 --- @param in_project_data boolean
 --- @return boolean
 function Take:set_take_source_from_file(filename_in, in_project_data)
-	return r.BR_SetTakeSourceFromFile(self.pointer, filename_in, in_project_data)
+  return r.BR_SetTakeSourceFromFile(self.pointer, filename_in, in_project_data)
 end
 
 --- Set Take Source From File2. Wraps BR_SetTakeSourceFromFile2.
@@ -1158,7 +1217,12 @@ end
 --- @param keep_source_properties boolean
 --- @return boolean
 function Take:set_take_source_from_file2(filename_in, in_project_data, keep_source_properties)
-	return r.BR_SetTakeSourceFromFile2(self.pointer, filename_in, in_project_data, keep_source_properties)
+  return r.BR_SetTakeSourceFromFile2(
+    self.pointer,
+    filename_in,
+    in_project_data,
+    keep_source_properties
+  )
 end
 
 --- Alloc Midi Take. Wraps FNG_AllocMidiTake.
@@ -1167,7 +1231,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return userdata RprMidiTake
 function Take:alloc_midi_take()
-	return r.FNG_AllocMidiTake(self.pointer)
+  return r.FNG_AllocMidiTake(self.pointer)
 end
 
 --- Wildcard Parse Take. Wraps GU_WildcardParseTake.
@@ -1176,7 +1240,7 @@ end
 --- @param input string
 --- @return string
 function Take:wildcard_parse_take(input)
-	return r.GU_WildcardParseTake(self.pointer, input)
+  return r.GU_WildcardParseTake(self.pointer, input)
 end
 
 --- Analyze Take Loudness. Wraps NF_AnalyzeTakeLoudness.
@@ -1196,13 +1260,13 @@ end
 --- @return number short_term_max
 --- @return number momentary_max
 function Take:analyze_take_loudness(analyze_true_peak)
-	local ret_val, lufs_integrated, range, true_peak, true_peak_pos, short_term_max, momentary_max =
-		r.NF_AnalyzeTakeLoudness(self.pointer, analyze_true_peak)
-	if ret_val then
-		return lufs_integrated, range, true_peak, true_peak_pos, short_term_max, momentary_max
-	else
-		error("Error analyzing take loudness")
-	end
+  local ret_val, lufs_integrated, range, true_peak, true_peak_pos, short_term_max, momentary_max =
+    r.NF_AnalyzeTakeLoudness(self.pointer, analyze_true_peak)
+  if ret_val then
+    return lufs_integrated, range, true_peak, true_peak_pos, short_term_max, momentary_max
+  else
+    error("Error analyzing take loudness")
+  end
 end
 
 --- Analyze Take Loudness2. Wraps NF_AnalyzeTakeLoudness2.
@@ -1220,20 +1284,20 @@ end
 --- @return number short_term_max_pos
 --- @return number momentary_max_pos
 function Take:analyze_take_loudness2(analyze_true_peak)
-	local ret_val, lufs_integrated, range, true_peak, true_peak_pos, short_term_max, momentary_max, short_term_max_pos, momentary_max_pos =
-		r.NF_AnalyzeTakeLoudness2(self.pointer, analyze_true_peak)
-	if ret_val then
-		return lufs_integrated,
-			range,
-			true_peak,
-			true_peak_pos,
-			short_term_max,
-			momentary_max,
-			short_term_max_pos,
-			momentary_max_pos
-	else
-		error("Error analyzing take loudness")
-	end
+  local ret_val, lufs_integrated, range, true_peak, true_peak_pos, short_term_max, momentary_max, short_term_max_pos, momentary_max_pos =
+    r.NF_AnalyzeTakeLoudness2(self.pointer, analyze_true_peak)
+  if ret_val then
+    return lufs_integrated,
+      range,
+      true_peak,
+      true_peak_pos,
+      short_term_max,
+      momentary_max,
+      short_term_max_pos,
+      momentary_max_pos
+  else
+    error("Error analyzing take loudness")
+  end
 end
 
 --- Analyze Take Loudness Integrated Only. Wraps NF_AnalyzeTakeLoudness_IntegratedOnly.
@@ -1243,12 +1307,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Take:analyze_take_loudness_integrated_only()
-	local ret_val, lufs_integrated = r.NF_AnalyzeTakeLoudness_IntegratedOnly(self.pointer)
-	if ret_val then
-		return lufs_integrated
-	else
-		error("Error analyzing take loudness")
-	end
+  local ret_val, lufs_integrated = r.NF_AnalyzeTakeLoudness_IntegratedOnly(self.pointer)
+  if ret_val then
+    return lufs_integrated
+  else
+    error("Error analyzing take loudness")
+  end
 end
 
 --- Get Set Source State2. Wraps SNM_GetSetSourceState2.
@@ -1259,7 +1323,7 @@ end
 --- @param new_value boolean
 --- @return boolean
 function Take:get_set_source_state2(state, new_value)
-	return r.SNM_GetSetSourceState2(self.pointer, state, new_value)
+  return r.SNM_GetSetSourceState2(self.pointer, state, new_value)
 end
 
 return Take

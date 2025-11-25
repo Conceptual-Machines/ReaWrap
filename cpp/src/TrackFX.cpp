@@ -1,5 +1,5 @@
-#include <ReaWrap/TrackFX.h>
 #include <ReaWrap/Track.h>
+#include <ReaWrap/TrackFX.h>
 #include <cstring>
 
 namespace ReaWrap {
@@ -130,7 +130,8 @@ bool TrackFX::formatParamValue(int param_index, double value, char *buf, int buf
   if (!reaper_track) {
     return false;
   }
-  return ReaperAPI::TrackFX_FormatParamValue(reaper_track, m_fx_index, param_index, value, buf, buf_size);
+  return ReaperAPI::TrackFX_FormatParamValue(reaper_track, m_fx_index, param_index, value, buf,
+                                             buf_size);
 }
 
 bool TrackFX::isEnabled() const {
@@ -171,25 +172,25 @@ std::vector<ParamInfo> TrackFX::getParamValues() const {
   if (!m_track) {
     return params;
   }
-  
+
   int num_params = getNumParams();
   for (int i = 0; i < num_params; i++) {
     ParamInfo info;
     info.index = i;
-    
+
     // Get parameter name
     char name_buf[256];
     if (getParamName(i, name_buf, sizeof(name_buf))) {
       info.name = std::string(name_buf);
     }
-    
+
     // Get parameter value and range
     double min_val = 0.0, max_val = 0.0;
     info.value = getParam(i, &min_val, &max_val);
     info.minValue = min_val;
     info.maxValue = max_val;
     info.normalizedValue = getParamNormalized(i);
-    
+
     params.push_back(info);
   }
   return params;
@@ -200,7 +201,7 @@ std::vector<std::string> TrackFX::getParamNames() const {
   if (!m_track) {
     return names;
   }
-  
+
   int num_params = getNumParams();
   for (int i = 0; i < num_params; i++) {
     char name_buf[256];
@@ -214,4 +215,3 @@ std::vector<std::string> TrackFX::getParamNames() const {
 }
 
 } // namespace ReaWrap
-

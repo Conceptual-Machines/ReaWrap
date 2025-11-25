@@ -1,7 +1,7 @@
 #pragma once
 
-#include "reaper_plugin.h"
 #include "ReaperAPI.h"
+#include "reaper_plugin.h"
 #include <vector>
 
 namespace ReaWrap {
@@ -28,7 +28,7 @@ public:
   static std::vector<Track *> getTracks();
   static std::vector<Track *> getSelectedTracks(bool includeMaster = false);
   static std::vector<MediaItem *> getSelectedItems();
-  
+
   // Iterator support - check if collections have items
   static bool hasTracks();
   static bool hasSelectedTracks(bool includeMaster = false);
@@ -39,4 +39,3 @@ public:
 };
 
 } // namespace ReaWrap
-

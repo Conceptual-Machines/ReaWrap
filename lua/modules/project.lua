@@ -14,30 +14,30 @@ local Project = {}
 --- @param project_idx number Optional. The index of the project
 --- @return table Project instance
 function Project:new(project_idx)
-	local project_idx = project_idx or 0
-	local obj = {
-		pointer_type = "ReaProject*",
-		pointer = project_idx,
-	}
-	setmetatable(obj, self)
-	self.__index = self
-	return obj
+  local project_idx = project_idx or 0
+  local obj = {
+    pointer_type = "ReaProject*",
+    pointer = project_idx,
+  }
+  setmetatable(obj, self)
+  self.__index = self
+  return obj
 end
 
 --- Log messages with the Project logger.
 --- @within ReaWrap Custom Methods
 --- @param ... (varargs) Messages to log.
 function Project:log(...)
-	local logger = helpers.log_func("Project")
-	logger(...)
-	return nil
+  local logger = helpers.log_func("Project")
+  logger(...)
+  return nil
 end
 
 --- String representation of the Project instance.
 --- @within ReaWrap Custom Methods
 --- @return string
 function Project:__tostring()
-	return string.format("<Project name=%s>", self:get_name())
+  return string.format("<Project name=%s>", self:get_name())
 end
 
 --- Get all selected tracks.
@@ -45,14 +45,14 @@ end
 --- @param master boolean Whether to include the master track. Optional (Default is false).
 --- @return table array<Track>
 function Project:get_selected_tracks(master)
-	master = master or false
-	local tracks = {}
-	local count = self:count_selected_tracks(master)
-	for i = 0, count - 1 do
-		local track = self:get_selected_track(i, master)
-		tracks[i + 1] = track
-	end
-	return tracks
+  master = master or false
+  local tracks = {}
+  local count = self:count_selected_tracks(master)
+  for i = 0, count - 1 do
+    local track = self:get_selected_track(i, master)
+    tracks[i + 1] = track
+  end
+  return tracks
 end
 
 --- Iterate over selected tracks.
@@ -60,8 +60,8 @@ end
 --- @param master boolean Whether to include the master track. Optional (Default is false).
 --- @return function iterator
 function Project:iter_selected_tracks(master)
-	master = master or false
-	return helpers.iter(self:get_selected_tracks(master))
+  master = master or false
+  return helpers.iter(self:get_selected_tracks(master))
 end
 
 --- Whether there is at least one selected track.
@@ -69,86 +69,86 @@ end
 --- @param master boolean Whether to include the master track. Optional (Default is false).
 ---@return boolean
 function Project:has_selected_tracks(master)
-	master = master or false
-	return self:count_selected_tracks(master) > 0
+  master = master or false
+  return self:count_selected_tracks(master) > 0
 end
 
 --- Get all selected media items.
 --- @within ReaWrap Custom Methods
 --- @return table array of Item objects
 function Project:get_selected_media_items()
-	local selected_media_items = {}
-	for i = 0, self:count_selected_media_items() - 1 do
-		local media_item = self:get_selected_media_item(i)
-		selected_media_items[i + 1] = media_item
-	end
-	return selected_media_items
+  local selected_media_items = {}
+  for i = 0, self:count_selected_media_items() - 1 do
+    local media_item = self:get_selected_media_item(i)
+    selected_media_items[i + 1] = media_item
+  end
+  return selected_media_items
 end
 
 --- Iterate over selected media items.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Project:iter_selected_media_items()
-	return helpers.iter(self:get_selected_media_items())
+  return helpers.iter(self:get_selected_media_items())
 end
 
 --- Whether there are any selected media items.
 --- @within ReaWrap Custom Methods
 --- @return boolean
 function Project:has_selected_media_items()
-	return self:count_selected_media_items() > 0
+  return self:count_selected_media_items() > 0
 end
 
 --- Get all tracks in the project.
 --- @within ReaWrap Custom Methods
 --- @return table array of Track objects
 function Project:get_tracks()
-	local tracks = {}
-	for i = 0, self:count_tracks() - 1 do
-		local track = self:get_track(i)
-		tracks[i + 1] = track
-	end
-	return tracks
+  local tracks = {}
+  for i = 0, self:count_tracks() - 1 do
+    local track = self:get_track(i)
+    tracks[i + 1] = track
+  end
+  return tracks
 end
 
 --- Iterate over all tracks in the project.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Project:iter_tracks()
-	return helpers.iter(self:get_tracks())
+  return helpers.iter(self:get_tracks())
 end
 
 --- Whether there is at least one track in the project.
 --- @within ReaWrap Custom Methods
 --- @return boolean
 function Project:has_tracks()
-	return self:count_tracks() > 0
+  return self:count_tracks() > 0
 end
 
 --- Get all TCP FX params.
 --- @within ReaWrap Custom Methods
 --- @return table array
 function Project:get_tcp_fx_params()
-	local tcp_fx_params = {}
-	for i = 0, self:count_tcp_fx_params() - 1 do
-		local fx_idx, param_idx = self:get_tcp_fx_param(i)
-		tcp_fx_params[i + 1] = { fx_idx, param_idx }
-	end
-	return tcp_fx_params
+  local tcp_fx_params = {}
+  for i = 0, self:count_tcp_fx_params() - 1 do
+    local fx_idx, param_idx = self:get_tcp_fx_param(i)
+    tcp_fx_params[i + 1] = { fx_idx, param_idx }
+  end
+  return tcp_fx_params
 end
 
 --- Iterate over all TCP FX params in the project.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Project:iter_tcp_fx_params()
-	return helpers.iter(self:get_tcp_fx_params())
+  return helpers.iter(self:get_tcp_fx_params())
 end
 
 --- Whether there is at least one TCP FX Param in the project.
 --- @within ReaWrap Custom Methods
 --- @return boolean
 function Project:has_tcp_fx_params()
-	return self:count_tcp_fx_params() > 0
+  return self:count_tcp_fx_params() > 0
 end
 
 --- Add Project Marker. Wraps AddProjectMarker2.
@@ -165,14 +165,14 @@ end
 --- @param color number
 --- @return number
 function Project:add_project_marker(is_rgn, pos, rgn_end, name, want_idx, color)
-	return r.AddProjectMarker2(self.pointer, is_rgn, pos, rgn_end, name, want_idx, color)
+  return r.AddProjectMarker2(self.pointer, is_rgn, pos, rgn_end, name, want_idx, color)
 end
 
 --- Any Track Solo. Wraps AnyTrackSolo.
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Project:any_track_solo()
-	return r.AnyTrackSolo(self.pointer)
+  return r.AnyTrackSolo(self.pointer)
 end
 
 --- Project.NudgeConstants: A table of constants for nudge operations.
@@ -187,8 +187,8 @@ Project.NudgeConstants = {}
 --- @field SET_TO_VALUE number The "Set to value" flag.
 --- @field SNAP number The "Snap" flag.
 Project.NudgeConstants.FLAG = {
-	SET_TO_VALUE = 1,
-	SNAP = 2,
+  SET_TO_VALUE = 1,
+  SNAP = 2,
 }
 --- Targets for nudge operations.
 --- @within Constants
@@ -200,13 +200,13 @@ Project.NudgeConstants.FLAG = {
 --- @field DUPLICATE number The duplicate target.
 --- @field EDIT_CURSOR number The edit cursor target.
 Project.NudgeConstants.WHAT = {
-	POSITION = 0,
-	LEFT_TRIM = 1,
-	LEFT_EDGE = 2,
-	RIGHT_EDGE = 3,
-	CONTENTS = 4,
-	DUPLICATE = 5,
-	EDIT_CURSOR = 6,
+  POSITION = 0,
+  LEFT_TRIM = 1,
+  LEFT_EDGE = 2,
+  RIGHT_EDGE = 3,
+  CONTENTS = 4,
+  DUPLICATE = 5,
+  EDIT_CURSOR = 6,
 }
 --- Units for nudge operations.
 --- @within Constants
@@ -222,17 +222,17 @@ Project.NudgeConstants.WHAT = {
 --- @field ITEM_LENGTHS number Item lengths unit.
 --- @field ITEM_SELECTIONS number Item selections unit.
 Project.NudgeConstants.UNIT = {
-	MS = 0,
-	SECONDS = 1,
-	GRID = 2,
-	_256TH_NOTES = 3,
-	_1 = 15,
-	MEASURES_BEATS = 16,
-	SAMPLES = 17,
-	FRAMES = 18,
-	PIXELS = 19,
-	ITEM_LENGTHS = 20,
-	ITEM_SELECTIONS = 21,
+  MS = 0,
+  SECONDS = 1,
+  GRID = 2,
+  _256TH_NOTES = 3,
+  _1 = 15,
+  MEASURES_BEATS = 16,
+  SAMPLES = 17,
+  FRAMES = 18,
+  PIXELS = 19,
+  ITEM_LENGTHS = 20,
+  ITEM_SELECTIONS = 21,
 }
 
 --- Apply Nudge. Wraps ApplyNudge.
@@ -248,7 +248,7 @@ Project.NudgeConstants.UNIT = {
 --- @see Project.NudgeConstants.WHAT
 --- @see Project.NudgeConstants.UNIT
 function Project:apply_nudge(nudge_flag, nudge_what, nudge_units, value, reverse, copies)
-	return r.ApplyNudge(self.pointer, nudge_flag, nudge_what, nudge_units, value, reverse, copies)
+  return r.ApplyNudge(self.pointer, nudge_flag, nudge_what, nudge_units, value, reverse, copies)
 end
 
 --- Count Media Items. Wraps CountMediaItems.
@@ -256,7 +256,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:count_media_items()
-	return r.CountMediaItems(self.pointer)
+  return r.CountMediaItems(self.pointer)
 end
 
 --- Count Project Markers. Wraps CountProjectMarkers.
@@ -265,12 +265,12 @@ end
 --- @return number num_markers
 --- @return number num_regions
 function Project:count_project_markers()
-	local ret_val, num_markers, num_regions = r.CountProjectMarkers(self.pointer)
-	if ret_val then
-		return num_markers, num_regions
-	else
-		error("Error in CountProjectMarkers")
-	end
+  local ret_val, num_markers, num_regions = r.CountProjectMarkers(self.pointer)
+  if ret_val then
+    return num_markers, num_regions
+  else
+    error("Error in CountProjectMarkers")
+  end
 end
 
 --- Count Selected Tracks. Wraps CountSelectedTracks2.
@@ -279,8 +279,8 @@ end
 --- @param want_master boolean Optional
 --- @return number
 function Project:count_selected_tracks(want_master)
-	local want_master = want_master or false
-	return r.CountSelectedTracks2(self.pointer, want_master)
+  local want_master = want_master or false
+  return r.CountSelectedTracks2(self.pointer, want_master)
 end
 
 --- Count TCP FX Params. Wraps CountTCPFXParms.
@@ -289,7 +289,7 @@ end
 --- @param track table Track object
 --- @return number
 function Project:count_tcp_fx_params(track)
-	return r.CountTCPFXParms(self.pointer, track.pointer)
+  return r.CountTCPFXParms(self.pointer, track.pointer)
 end
 
 --- Count Tempo Time Sig Markers. Wraps CountTempoTimeSigMarkers.
@@ -299,7 +299,7 @@ end
 --- @see Project:get_tempo_time_sig_marker
 --- @see Project:set_tempo_time_sig_marker
 function Project:count_tempo_time_sig_markers()
-	return r.CountTempoTimeSigMarkers(self.pointer)
+  return r.CountTempoTimeSigMarkers(self.pointer)
 end
 
 --- Count Tracks. Wraps CountTracks.
@@ -307,7 +307,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:count_tracks()
-	return r.CountTracks(self.pointer)
+  return r.CountTracks(self.pointer)
 end
 
 --- Delete Track. Wraps DeleteTrack.
@@ -315,7 +315,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param track_idx number
 function Project:delete_track(track_idx)
-	return r.DeleteTrack(track_idx)
+  return r.DeleteTrack(track_idx)
 end
 
 --- Delete Project Marker. Wraps DeleteProjectMarker.
@@ -325,7 +325,7 @@ end
 --- @param is_rgn boolean
 --- @return boolean
 function Project:delete_project_marker(mark_rgn_idx, is_rgn)
-	return r.DeleteProjectMarker(self.pointer, mark_rgn_idx, is_rgn)
+  return r.DeleteProjectMarker(self.pointer, mark_rgn_idx, is_rgn)
 end
 
 --- Delete Project Marker By Index. Wraps DeleteProjectMarkerByIndex.
@@ -336,7 +336,7 @@ end
 --- @param mark_rgn_idx number
 --- @return boolean
 function Project:delete_project_marker_by_index(mark_rgn_idx)
-	return r.DeleteProjectMarkerByIndex(self.pointer, mark_rgn_idx)
+  return r.DeleteProjectMarkerByIndex(self.pointer, mark_rgn_idx)
 end
 
 --- Delete Tempo Time Sig Marker. Wraps DeleteTempoTimeSigMarker.
@@ -345,7 +345,7 @@ end
 --- @param marker_idx number
 --- @return boolean
 function Project:delete_tempo_time_sig_marker(marker_idx)
-	return r.DeleteTempoTimeSigMarker(self.pointer, marker_idx)
+  return r.DeleteTempoTimeSigMarker(self.pointer, marker_idx)
 end
 
 --- Edit Tempo Time Sig Marker. Wraps EditTempoTimeSigMarker.
@@ -354,7 +354,7 @@ end
 --- @param marker_idx number
 --- @return boolean
 function Project:edit_tempo_time_sig_marker(marker_idx)
-	return r.EditTempoTimeSigMarker(self.pointer, marker_idx)
+  return r.EditTempoTimeSigMarker(self.pointer, marker_idx)
 end
 
 --- Enum Project Markers. Wraps EnumProjectMarkers3.
@@ -367,12 +367,13 @@ end
 --- @return number mark_rgn_idx
 --- @return number color
 function Project:enum_project_markers(idx)
-	local ret_val, is_rgn, pos, rgn_end, name, mark_rgn_idx, color = r.EnumProjectMarkers3(self.pointer, idx)
-	if ret_val then
-		return is_rgn, pos, rgn_end, name, mark_rgn_idx, color
-	else
-		error("Error in EnumProjectMarkers3")
-	end
+  local ret_val, is_rgn, pos, rgn_end, name, mark_rgn_idx, color =
+    r.EnumProjectMarkers3(self.pointer, idx)
+  if ret_val then
+    return is_rgn, pos, rgn_end, name, mark_rgn_idx, color
+  else
+    error("Error in EnumProjectMarkers3")
+  end
 end
 
 --- Enum Proj Ext State. Wraps EnumProjExtState.
@@ -386,12 +387,12 @@ end
 --- @see Project:set_proj_ext_state
 --- @see Project:get_proj_ext_state
 function Project:enum_proj_ext_state(ext_name, idx)
-	local ret_val, key, val = r.EnumProjExtState(self.pointer, ext_name, idx)
-	if ret_val then
-		return key, val
-	else
-		error("Error in EnumProjExtState")
-	end
+  local ret_val, key, val = r.EnumProjExtState(self.pointer, ext_name, idx)
+  if ret_val then
+    return key, val
+  else
+    error("Error in EnumProjExtState")
+  end
 end
 
 --- Enum Region Render Matrix. Wraps EnumRegionRenderMatrix.
@@ -405,9 +406,9 @@ end
 --- @param render_track number
 --- @return table Track object
 function Project:enum_region_render_matrix(region_idx, render_track)
-	local Track = require("track")
-	local result = r.EnumRegionRenderMatrix(self.pointer, region_idx, render_track)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.EnumRegionRenderMatrix(self.pointer, region_idx, render_track)
+  return Track:new(result)
 end
 
 --- Enum Track Midi Program Names Ex. Wraps EnumTrackMIDIProgramNamesEx.
@@ -419,13 +420,13 @@ end
 --- @param program_name string
 --- @return string program_name
 function Project:enum_track_midi_program_names_ex(track, program_number, program_name)
-	local ret_val, program_name =
-		r.EnumTrackMIDIProgramNamesEx(self.pointer, track.pointer, program_number, program_name)
-	if ret_val then
-		return program_name
-	else
-		error("Error in EnumTrackMIDIProgramNamesEx")
-	end
+  local ret_val, program_name =
+    r.EnumTrackMIDIProgramNamesEx(self.pointer, track.pointer, program_number, program_name)
+  if ret_val then
+    return program_name
+  else
+    error("Error in EnumTrackMIDIProgramNamesEx")
+  end
 end
 
 --- Find Tempo Time Sig Marker. Wraps FindTempoTimeSigMarker.
@@ -435,7 +436,7 @@ end
 --- @param time number
 --- @return number
 function Project:find_tempo_time_sig_marker(time)
-	return r.FindTempoTimeSigMarker(self.pointer, time)
+  return r.FindTempoTimeSigMarker(self.pointer, time)
 end
 
 --- Get All Project Play States. Wraps GetAllProjectPlayStates.
@@ -444,7 +445,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_all_project_play_states()
-	return r.GetAllProjectPlayStates(self.pointer)
+  return r.GetAllProjectPlayStates(self.pointer)
 end
 
 --- Get Cursor Position Ex. Wraps GetCursorPositionEx.
@@ -452,7 +453,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_cursor_position_ex()
-	return r.GetCursorPositionEx(self.pointer)
+  return r.GetCursorPositionEx(self.pointer)
 end
 
 --- Get Free Disk Space For Record Path. Wraps GetFreeDiskSpaceForRecordPath.
@@ -461,7 +462,7 @@ end
 --- @param path_idx number
 --- @return number
 function Project:get_free_disk_space_for_record_path(path_idx)
-	return r.GetFreeDiskSpaceForRecordPath(self.pointer, path_idx)
+  return r.GetFreeDiskSpaceForRecordPath(self.pointer, path_idx)
 end
 
 --- Get Last Marker And Cur Region. Wraps GetLastMarkerAndCurRegion.
@@ -475,16 +476,16 @@ end
 --- @return number region_idx
 --- @see Project:enum_project_markers
 function Project:get_last_marker_and_cur_region(time)
-	return r.GetLastMarkerAndCurRegion(self.pointer, time)
+  return r.GetLastMarkerAndCurRegion(self.pointer, time)
 end
 
 --- Get Master Track. Wraps GetMasterTrack.
 --- @within ReaScript Wrapped Methods
 --- @return table Track object
 function Project:get_master_track()
-	local Track = require("track")
-	local result = r.GetMasterTrack(self.pointer)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.GetMasterTrack(self.pointer)
+  return Track:new(result)
 end
 
 --- Get Media Item. Wraps GetMediaItem.
@@ -494,9 +495,9 @@ end
 --- @param item_idx number
 --- @return table Item object
 function Project:get_media_item(item_idx)
-	local Item = require("item")
-	local result = r.GetMediaItem(self.pointer, item_idx)
-	return Item:new(result)
+  local Item = require("item")
+  local result = r.GetMediaItem(self.pointer, item_idx)
+  return Item:new(result)
 end
 
 --- Get Media Item Take By Guid. Wraps GetMediaItemTakeByGUID.
@@ -504,9 +505,9 @@ end
 --- @param guid string
 --- @return table Take object
 function Project:get_media_item_take_by_guid(guid)
-	local Take = require("take")
-	local result = r.GetMediaItemTakeByGUID(self.pointer, guid)
-	return Take:new(result)
+  local Take = require("take")
+  local result = r.GetMediaItemTakeByGUID(self.pointer, guid)
+  return Take:new(result)
 end
 
 --- Get Play Position. Wraps GetPlayPosition2Ex.
@@ -514,7 +515,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_play_position()
-	return r.GetPlayPosition2Ex(self.pointer)
+  return r.GetPlayPosition2Ex(self.pointer)
 end
 
 --- Get Play Position Lat Comp. Wraps GetPlayPositionEx.
@@ -522,7 +523,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_play_position_lat_comp()
-	return r.GetPlayPositionEx(self.pointer)
+  return r.GetPlayPositionEx(self.pointer)
 end
 
 --- Get Play State Ex. Wraps GetPlayStateEx.
@@ -530,7 +531,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_play_state_ex()
-	return r.GetPlayStateEx(self.pointer)
+  return r.GetPlayStateEx(self.pointer)
 end
 
 --- Get Project Length. Wraps GetProjectLength.
@@ -539,14 +540,14 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_project_length()
-	return r.GetProjectLength(self.pointer)
+  return r.GetProjectLength(self.pointer)
 end
 
 --- Get Name. Wraps GetProjectName.
 --- @within ReaScript Wrapped Methods
 --- @return string name
 function Project:get_name()
-	return r.GetProjectName(self.pointer)
+  return r.GetProjectName(self.pointer)
 end
 
 --- Get Project Path Ex. Wraps GetProjectPathEx.
@@ -554,7 +555,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string path
 function Project:get_project_path_ex()
-	return r.GetProjectPathEx(self.pointer)
+  return r.GetProjectPathEx(self.pointer)
 end
 
 --- Get Project State Change Count. Wraps GetProjectStateChangeCount.
@@ -562,7 +563,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_project_state_change_count()
-	return r.GetProjectStateChangeCount(self.pointer)
+  return r.GetProjectStateChangeCount(self.pointer)
 end
 
 --- Get Project Time Offset. Wraps GetProjectTimeOffset.
@@ -572,7 +573,7 @@ end
 --- @param rnd_frame boolean
 --- @return number
 function Project:get_project_time_offset(rnd_frame)
-	return r.GetProjectTimeOffset(self.pointer, rnd_frame)
+  return r.GetProjectTimeOffset(self.pointer, rnd_frame)
 end
 
 --- Get Project Time Signature. Wraps GetProjectTimeSignature2.
@@ -583,7 +584,7 @@ end
 --- @return number bpm
 --- @return number bpi
 function Project:get_project_time_signature()
-	return r.GetProjectTimeSignature2(self.pointer)
+  return r.GetProjectTimeSignature2(self.pointer)
 end
 
 --- Get Proj Ext State. Wraps GetProjExtState.
@@ -596,12 +597,12 @@ end
 --- @see Project:set_proj_ext_state
 --- @see Project:enum_proj_ext_state
 function Project:get_proj_ext_state(ext_name, key)
-	local ret_val, val = r.GetProjExtState(self.pointer, ext_name, key)
-	if ret_val then
-		return val
-	else
-		error("Error in GetProjExtState")
-	end
+  local ret_val, val = r.GetProjExtState(self.pointer, ext_name, key)
+  if ret_val then
+    return val
+  else
+    error("Error in GetProjExtState")
+  end
 end
 
 --- Get Selected Envelope. Wraps GetSelectedEnvelope.
@@ -609,9 +610,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Envelope object
 function Project:get_selected_envelope()
-	local Envelope = require("envelope")
-	local result = r.GetSelectedEnvelope(self.pointer)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetSelectedEnvelope(self.pointer)
+  return Envelope:new(result)
 end
 
 --- Get Selected Track. Wraps GetSelectedTrack2.
@@ -622,10 +623,10 @@ end
 --- @param want_master boolean Optional
 --- @return table Track object
 function Project:get_selected_track(seltrack_idx, want_master)
-	local want_master = want_master or false
-	local Track = require("track")
-	local result = r.GetSelectedTrack2(self.pointer, seltrack_idx, want_master)
-	return Track:new(result)
+  local want_master = want_master or false
+  local Track = require("track")
+  local result = r.GetSelectedTrack2(self.pointer, seltrack_idx, want_master)
+  return Track:new(result)
 end
 
 --- Get Selected Track Envelope. Wraps GetSelectedTrackEnvelope.
@@ -634,9 +635,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Envelope object
 function Project:get_selected_track_envelope()
-	local Envelope = require("envelope")
-	local result = r.GetSelectedTrackEnvelope(self.pointer)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetSelectedTrackEnvelope(self.pointer)
+  return Envelope:new(result)
 end
 
 --- Get Set Arrange View2. Wraps GetSet_ArrangeView2.
@@ -651,7 +652,14 @@ end
 --- @return number start_time
 --- @return number end_time
 function Project:get_set_arrange_view2(is_set, screen_x_start, screen_x_end, start_time, end_time)
-	return r.GetSet_ArrangeView2(self.pointer, is_set, screen_x_start, screen_x_end, start_time, end_time)
+  return r.GetSet_ArrangeView2(
+    self.pointer,
+    is_set,
+    screen_x_start,
+    screen_x_end,
+    start_time,
+    end_time
+  )
 end
 
 --- Get Set Loop Time Range2. Wraps GetSet_LoopTimeRange2.
@@ -664,7 +672,7 @@ end
 --- @return number start
 --- @return number end_
 function Project:get_set_loop_time_range2(is_set, is_loop, start, end_, allowautoseek)
-	return r.GetSet_LoopTimeRange2(self.pointer, is_set, is_loop, start, end_, allowautoseek)
+  return r.GetSet_LoopTimeRange2(self.pointer, is_set, is_loop, start, end_, allowautoseek)
 end
 
 --- Get Set Project Grid. Wraps GetSetProjectGrid.
@@ -680,15 +688,16 @@ end
 --- @return integer swingmode
 --- @return number swingamt
 function Project:get_set_project_grid(set, division, swingmode, swingamt)
-	local division = division or nil
-	local swingmode = swingmode or nil
-	local swingamt = swingamt or nil
-	local ret_val, division, swingmode, swingamt = r.GetSetProjectGrid(self.pointer, set, division, swingmode, swingamt)
-	if ret_val then
-		return division, swingmode, swingamt
-	else
-		error("Error in GetSetProjectGrid")
-	end
+  local division = division or nil
+  local swingmode = swingmode or nil
+  local swingamt = swingamt or nil
+  local ret_val, division, swingmode, swingamt =
+    r.GetSetProjectGrid(self.pointer, set, division, swingmode, swingamt)
+  if ret_val then
+    return division, swingmode, swingamt
+  else
+    error("Error in GetSetProjectGrid")
+  end
 end
 
 --- Constants for Project:get_set_project_info.
@@ -713,25 +722,25 @@ end
 --- @field PROJECT_SRATE any: sample rate (ignored unless PROJECT_SRATE_USE set)
 --- @field PROJECT_SRATE_USE any: set to 1 if project sample rate is used
 Project.GetSetProjectInfoConstants = {
-	RENDER_SETTINGS = "RENDER_SETTINGS",
-	RENDER_BOUNDSFLAG = "RENDER_BOUNDSFLAG",
-	RENDER_CHANNELS = "RENDER_CHANNELS",
-	RENDER_SRATE = "RENDER_SRATE",
-	RENDER_STARTPOS = "RENDER_STARTPOS",
-	RENDER_ENDPOS = "RENDER_ENDPOS",
-	RENDER_TAILFLAG = "RENDER_TAILFLAG",
-	RENDER_TAILMS = "RENDER_TAILMS",
-	RENDER_ADDTOPROJ = "RENDER_ADDTOPROJ",
-	RENDER_DITHER = "RENDER_DITHER",
-	RENDER_NORMALIZE = "RENDER_NORMALIZE",
-	RENDER_NORMALIZE_TARGET = "RENDER_NORMALIZE_TARGET",
-	RENDER_BRICKWALL = "RENDER_BRICKWALL",
-	RENDER_FADEIN = "RENDER_FADEIN",
-	RENDER_FADEOUT = "RENDER_FADEOUT",
-	RENDER_FADEINSHAPE = "RENDER_FADEINSHAPE",
-	RENDER_FADEOUTSHAPE = "RENDER_FADEOUTSHAPE",
-	PROJECT_SRATE = "PROJECT_SRATE",
-	PROJECT_SRATE_USE = "PROJECT_SRATE_USE",
+  RENDER_SETTINGS = "RENDER_SETTINGS",
+  RENDER_BOUNDSFLAG = "RENDER_BOUNDSFLAG",
+  RENDER_CHANNELS = "RENDER_CHANNELS",
+  RENDER_SRATE = "RENDER_SRATE",
+  RENDER_STARTPOS = "RENDER_STARTPOS",
+  RENDER_ENDPOS = "RENDER_ENDPOS",
+  RENDER_TAILFLAG = "RENDER_TAILFLAG",
+  RENDER_TAILMS = "RENDER_TAILMS",
+  RENDER_ADDTOPROJ = "RENDER_ADDTOPROJ",
+  RENDER_DITHER = "RENDER_DITHER",
+  RENDER_NORMALIZE = "RENDER_NORMALIZE",
+  RENDER_NORMALIZE_TARGET = "RENDER_NORMALIZE_TARGET",
+  RENDER_BRICKWALL = "RENDER_BRICKWALL",
+  RENDER_FADEIN = "RENDER_FADEIN",
+  RENDER_FADEOUT = "RENDER_FADEOUT",
+  RENDER_FADEINSHAPE = "RENDER_FADEINSHAPE",
+  RENDER_FADEOUTSHAPE = "RENDER_FADEOUTSHAPE",
+  PROJECT_SRATE = "PROJECT_SRATE",
+  PROJECT_SRATE_USE = "PROJECT_SRATE_USE",
 }
 
 --- Get Set Project Info. Wraps GetSetProjectInfo.
@@ -742,7 +751,7 @@ Project.GetSetProjectInfoConstants = {
 --- @param is_set boolean
 --- @return number
 function Project:get_set_project_info(desc, value, is_set)
-	return r.GetSetProjectInfo(self.pointer, desc, value, is_set)
+  return r.GetSetProjectInfo(self.pointer, desc, value, is_set)
 end
 
 --- Constants for Project:get_set_project_info_string.
@@ -765,23 +774,23 @@ end
 --- @field RENDER_STATS any: (read-only) semicolon separated list of statistics for the most recently rendered files. call with valuestr="XXX" to run an action (for example, "42437"=dry run render selected items) before returning statistics.
 --- @field RENDER_FORMAT string: base64-encoded sink configuration (see project files, etc). Callers can also pass a simple 4-byte string (non-base64-encoded), e.g. "evaw" or "l3pm", to use default settings for that sink type.
 Project.GetSetProjectInfoStringConstants = {
-	PROJECT_NAME = "PROJECT_NAME",
-	PROJECT_TITLE = "PROJECT_TITLE",
-	PROJECT_AUTHOR = "PROJECT_AUTHOR",
-	TRACK_GROUP_NAME = "TRACK_GROUP_NAME",
-	MARKER_GUID = "MARKER_GUID",
-	MARKER_INDEX_FROM_GUID = "MARKER_INDEX_FROM_GUID",
-	OPENCOPY_CFGIDX = "OPENCOPY_CFGIDX",
-	RECORD_PATH = "RECORD_PATH",
-	RECORD_PATH_SECONDARY = "RECORD_PATH_SECONDARY",
-	RECORD_FORMAT = "RECORD_FORMAT",
-	APPLYFX_FORMAT = "APPLYFX_FORMAT",
-	RENDER_FILE = "RENDER_FILE",
-	RENDER_PATTERN = "RENDER_PATTERN",
-	RENDER_METADATA = "RENDER_METADATA",
-	RENDER_TARGETS = "RENDER_TARGETS",
-	RENDER_STATS = "RENDER_STATS",
-	RENDER_FORMAT = "RENDER_FORMAT",
+  PROJECT_NAME = "PROJECT_NAME",
+  PROJECT_TITLE = "PROJECT_TITLE",
+  PROJECT_AUTHOR = "PROJECT_AUTHOR",
+  TRACK_GROUP_NAME = "TRACK_GROUP_NAME",
+  MARKER_GUID = "MARKER_GUID",
+  MARKER_INDEX_FROM_GUID = "MARKER_INDEX_FROM_GUID",
+  OPENCOPY_CFGIDX = "OPENCOPY_CFGIDX",
+  RECORD_PATH = "RECORD_PATH",
+  RECORD_PATH_SECONDARY = "RECORD_PATH_SECONDARY",
+  RECORD_FORMAT = "RECORD_FORMAT",
+  APPLYFX_FORMAT = "APPLYFX_FORMAT",
+  RENDER_FILE = "RENDER_FILE",
+  RENDER_PATTERN = "RENDER_PATTERN",
+  RENDER_METADATA = "RENDER_METADATA",
+  RENDER_TARGETS = "RENDER_TARGETS",
+  RENDER_STATS = "RENDER_STATS",
+  RENDER_FORMAT = "RENDER_FORMAT",
 }
 
 --- Get Set Project Info String. Wraps GetSetProjectInfo_String.
@@ -797,12 +806,12 @@ Project.GetSetProjectInfoStringConstants = {
 --- @param is_set boolean
 --- @return string valuestr
 function Project:get_set_project_info_string(desc, valuestr, is_set)
-	local ret_val, valuestr = r.GetSetProjectInfo_String(self.pointer, desc, valuestr, is_set)
-	if ret_val then
-		return valuestr
-	else
-		error("Error in GetSetProjectInfo_String")
-	end
+  local ret_val, valuestr = r.GetSetProjectInfo_String(self.pointer, desc, valuestr, is_set)
+  if ret_val then
+    return valuestr
+  else
+    error("Error in GetSetProjectInfo_String")
+  end
 end
 
 --- Get Set Project Notes. Wraps GetSetProjectNotes.
@@ -812,7 +821,7 @@ end
 --- @param notes string
 --- @return string
 function Project:get_set_project_notes(is_set, notes)
-	return r.GetSetProjectNotes(self.pointer, is_set, notes)
+  return r.GetSetProjectNotes(self.pointer, is_set, notes)
 end
 
 --- Get Set Repeat Ex. Wraps GetSetRepeatEx.
@@ -821,7 +830,7 @@ end
 --- @param val number
 --- @return number
 function Project:get_set_repeat_ex(val)
-	return r.GetSetRepeatEx(self.pointer, val)
+  return r.GetSetRepeatEx(self.pointer, val)
 end
 
 --- Get Set Tempo Time Sig Marker Flag. Wraps GetSetTempoTimeSigMarkerFlag.
@@ -835,7 +844,7 @@ end
 --- @param is_set boolean
 --- @return number
 function Project:get_set_tempo_time_sig_marker_flag(point_index, flag, is_set)
-	return r.GetSetTempoTimeSigMarkerFlag(self.pointer, point_index, flag, is_set)
+  return r.GetSetTempoTimeSigMarkerFlag(self.pointer, point_index, flag, is_set)
 end
 
 --- Get TCP FX Param. Wraps GetTCPFXParm.
@@ -846,12 +855,12 @@ end
 --- @return number fx_idx
 --- @return number param_idx
 function Project:get_tcp_fx_param(track, index)
-	local ret_val, fx_idx, param_idx = r.GetTCPFXParm(self.pointer, track.pointer, index)
-	if ret_val then
-		return fx_idx, param_idx
-	else
-		error("Error in GetTCPFXParm")
-	end
+  local ret_val, fx_idx, param_idx = r.GetTCPFXParm(self.pointer, track.pointer, index)
+  if ret_val then
+    return fx_idx, param_idx
+  else
+    error("Error in GetTCPFXParm")
+  end
 end
 
 --- Get Tempo Time Sig Marker. Wraps GetTempoTimeSigMarker.
@@ -868,13 +877,13 @@ end
 --- @see Project:count_tempo_time_sig_markers
 --- @see Project:set_tempo_time_sig_marker
 function Project:get_tempo_time_sig_marker(pt_idx)
-	local ret_val, time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo =
-		r.GetTempoTimeSigMarker(self.pointer, pt_idx)
-	if ret_val then
-		return time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo
-	else
-		error("Error in GetTempoTimeSigMarker")
-	end
+  local ret_val, time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo =
+    r.GetTempoTimeSigMarker(self.pointer, pt_idx)
+  if ret_val then
+    return time_pos, measure_pos, beat_pos, bpm, time_sig_num, time_sig_denom, linear_tempo
+  else
+    error("Error in GetTempoTimeSigMarker")
+  end
 end
 
 --- Get Track. Wraps GetTrack.
@@ -884,9 +893,9 @@ end
 --- @param track_idx number
 --- @return table Track object
 function Project:get_track(track_idx)
-	local Track = require("track")
-	local result = r.GetTrack(self.pointer, track_idx)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.GetTrack(self.pointer, track_idx)
+  return Track:new(result)
 end
 
 --- Get Track Midi Note Name Ex. Wraps GetTrackMIDINoteNameEx.
@@ -898,7 +907,7 @@ end
 --- @return string
 --- @see Project:set_track_midi_note_name_ex
 function Project:get_track_midi_note_name_ex(track, pitch, chan)
-	return r.GetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan)
+  return r.GetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan)
 end
 
 --- Get Track Midi Note Range. Wraps GetTrackMIDINoteRange.
@@ -907,7 +916,7 @@ end
 --- @return number note_lo
 --- @return number note_hi
 function Project:get_track_midi_note_range(track)
-	return r.GetTrackMIDINoteRange(self.pointer, track.pointer)
+  return r.GetTrackMIDINoteRange(self.pointer, track.pointer)
 end
 
 --- Go To Marker. Wraps GoToMarker.
@@ -918,7 +927,7 @@ end
 --- @param marker_index number
 --- @param use_timeline_order boolean
 function Project:go_to_marker(marker_index, use_timeline_order)
-	return r.GoToMarker(self.pointer, marker_index, use_timeline_order)
+  return r.GoToMarker(self.pointer, marker_index, use_timeline_order)
 end
 
 --- Go To Region. Wraps GoToRegion.
@@ -930,7 +939,7 @@ end
 --- @param region_index number
 --- @param use_timeline_order boolean
 function Project:go_to_region(region_index, use_timeline_order)
-	return r.GoToRegion(self.pointer, region_index, use_timeline_order)
+  return r.GoToRegion(self.pointer, region_index, use_timeline_order)
 end
 
 --- Has Track Midi Programs. Wraps HasTrackMIDIProgramsEx.
@@ -939,7 +948,7 @@ end
 --- @param track table Track object
 --- @return string
 function Project:has_track_midi_programs(track)
-	return r.HasTrackMIDIProgramsEx(self.pointer, track.pointer)
+  return r.HasTrackMIDIProgramsEx(self.pointer, track.pointer)
 end
 
 --- Insert Track In Project. Wraps InsertTrackInProject.
@@ -950,7 +959,7 @@ end
 --- @param idx number
 --- @param flags number
 function Project:insert_track_in_project(idx, flags)
-	return r.InsertTrackInProject(self.pointer, idx, flags)
+  return r.InsertTrackInProject(self.pointer, idx, flags)
 end
 
 --- Is Project Dirty. Wraps IsProjectDirty.
@@ -959,7 +968,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:is_project_dirty()
-	return r.IsProjectDirty(self.pointer)
+  return r.IsProjectDirty(self.pointer)
 end
 
 --- On Arrow. Wraps Loop_OnArrow.
@@ -968,7 +977,7 @@ end
 --- @param direction number
 --- @return boolean
 function Project:on_arrow(direction)
-	return r.Loop_OnArrow(self.pointer, direction)
+  return r.Loop_OnArrow(self.pointer, direction)
 end
 
 --- Save Project. Wraps Main_SaveProject.
@@ -976,7 +985,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param force_save_as_in boolean
 function Project:save_project(force_save_as_in)
-	return r.Main_SaveProject(self.pointer, force_save_as_in)
+  return r.Main_SaveProject(self.pointer, force_save_as_in)
 end
 
 --- Save Project Ex. Wraps Main_SaveProjectEx.
@@ -986,55 +995,55 @@ end
 --- @param file_name string
 --- @param options number
 function Project:save_project_ex(file_name, options)
-	return r.Main_SaveProjectEx(self.pointer, file_name, options)
+  return r.Main_SaveProjectEx(self.pointer, file_name, options)
 end
 
 --- Mark Project Dirty. Wraps MarkProjectDirty.
 -- Marks project as dirty (needing save) if 'undo/prompt to save' is enabled in preferences.
 --- @within ReaScript Wrapped Methods
 function Project:mark_project_dirty()
-	return r.MarkProjectDirty(self.pointer)
+  return r.MarkProjectDirty(self.pointer)
 end
 
 --- Get Play Rate. Wraps Master_GetPlayRate.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:get_play_rate()
-	return r.Master_GetPlayRate(self.pointer)
+  return r.Master_GetPlayRate(self.pointer)
 end
 
 --- On Pause Button Ex. Wraps OnPauseButtonEx.
 -- direct way to simulate pause button hit
 --- @within ReaScript Wrapped Methods
 function Project:on_pause_button_ex()
-	return r.OnPauseButtonEx(self.pointer)
+  return r.OnPauseButtonEx(self.pointer)
 end
 
 --- On Play Button Ex. Wraps OnPlayButtonEx.
 -- direct way to simulate play button hit
 --- @within ReaScript Wrapped Methods
 function Project:on_play_button_ex()
-	return r.OnPlayButtonEx(self.pointer)
+  return r.OnPlayButtonEx(self.pointer)
 end
 
 --- On Stop Button Ex. Wraps OnStopButtonEx.
 -- direct way to simulate stop button hit
 --- @within ReaScript Wrapped Methods
 function Project:on_stop_button_ex()
-	return r.OnStopButtonEx(self.pointer)
+  return r.OnStopButtonEx(self.pointer)
 end
 
 --- Select All Media Items. Wraps SelectAllMediaItems.
 --- @within ReaScript Wrapped Methods
 --- @param selected boolean
 function Project:select_all_media_items(selected)
-	return r.SelectAllMediaItems(self.pointer, selected)
+  return r.SelectAllMediaItems(self.pointer, selected)
 end
 
 --- Select Project Instance. Wraps SelectProjectInstance.
 --- @within ReaScript Wrapped Methods
 function Project:select_project_instance()
-	return r.SelectProjectInstance(self.pointer)
+  return r.SelectProjectInstance(self.pointer)
 end
 
 --- Set Current Bpm. Wraps SetCurrentBPM.
@@ -1043,7 +1052,7 @@ end
 --- @param bpm number
 --- @param want_undo boolean
 function Project:set_current_bpm(bpm, want_undo)
-	return r.SetCurrentBPM(self.pointer, bpm, want_undo)
+  return r.SetCurrentBPM(self.pointer, bpm, want_undo)
 end
 
 --- Set Edit Cur Pos2. Wraps SetEditCurPos2.
@@ -1052,7 +1061,7 @@ end
 --- @param moveview boolean
 --- @param seekplay boolean
 function Project:set_edit_cur_pos2(time, moveview, seekplay)
-	return r.SetEditCurPos2(self.pointer, time, moveview, seekplay)
+  return r.SetEditCurPos2(self.pointer, time, moveview, seekplay)
 end
 
 --- Set Midi Editor Grid. Wraps SetMIDIEditorGrid.
@@ -1061,7 +1070,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param division number
 function Project:set_midi_editor_grid(division)
-	return r.SetMIDIEditorGrid(self.pointer, division)
+  return r.SetMIDIEditorGrid(self.pointer, division)
 end
 
 --- Set Project Grid. Wraps SetProjectGrid.
@@ -1070,7 +1079,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param division number
 function Project:set_project_grid(division)
-	return r.SetProjectGrid(self.pointer, division)
+  return r.SetProjectGrid(self.pointer, division)
 end
 
 --- Set Project Marker2. Wraps SetProjectMarker2.
@@ -1084,7 +1093,7 @@ end
 --- @param name string
 --- @return boolean
 function Project:set_project_marker2(markr_rgn_idx, is_rgn, pos, rgn_end, name)
-	return r.SetProjectMarker2(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name)
+  return r.SetProjectMarker2(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name)
 end
 
 --- Set Project Marker3. Wraps SetProjectMarker3.
@@ -1099,7 +1108,7 @@ end
 --- @param color number
 --- @return boolean
 function Project:set_project_marker3(markr_rgn_idx, is_rgn, pos, rgn_end, name, color)
-	return r.SetProjectMarker3(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name, color)
+  return r.SetProjectMarker3(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name, color)
 end
 
 --- Set Project Marker4. Wraps SetProjectMarker4.
@@ -1115,7 +1124,7 @@ end
 --- @param flags number
 --- @return boolean
 function Project:set_project_marker4(markr_rgn_idx, is_rgn, pos, rgn_end, name, color, flags)
-	return r.SetProjectMarker4(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name, color, flags)
+  return r.SetProjectMarker4(self.pointer, markr_rgn_idx, is_rgn, pos, rgn_end, name, color, flags)
 end
 
 --- Set Project Marker By Index. Wraps SetProjectMarkerByIndex.
@@ -1129,8 +1138,25 @@ end
 --- @param color number
 --- @return boolean
 --- @see Project:set_project_marker_by_index2
-function Project:set_project_marker_by_index(mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color)
-	return r.SetProjectMarkerByIndex(self.pointer, mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color)
+function Project:set_project_marker_by_index(
+  mark_rgn_idx,
+  is_rgn,
+  pos,
+  rgn_end,
+  id_num,
+  name,
+  color
+)
+  return r.SetProjectMarkerByIndex(
+    self.pointer,
+    mark_rgn_idx,
+    is_rgn,
+    pos,
+    rgn_end,
+    id_num,
+    name,
+    color
+  )
 end
 
 --- Set Project Marker By Index2. Wraps SetProjectMarkerByIndex2.
@@ -1153,8 +1179,27 @@ end
 --- @param flags number
 --- @return boolean
 --- @see Project:set_project_marker_by_index
-function Project:set_project_marker_by_index2(mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color, flags)
-	return r.SetProjectMarkerByIndex2(self.pointer, mark_rgn_idx, is_rgn, pos, rgn_end, id_num, name, color, flags)
+function Project:set_project_marker_by_index2(
+  mark_rgn_idx,
+  is_rgn,
+  pos,
+  rgn_end,
+  id_num,
+  name,
+  color,
+  flags
+)
+  return r.SetProjectMarkerByIndex2(
+    self.pointer,
+    mark_rgn_idx,
+    is_rgn,
+    pos,
+    rgn_end,
+    id_num,
+    name,
+    color,
+    flags
+  )
 end
 
 --- Set Proj Ext State. Wraps SetProjExtState.
@@ -1171,7 +1216,7 @@ end
 --- @see Project:get_proj_ext_state
 --- @see Project:enum_proj_ext_state
 function Project:set_proj_ext_state(ext_name, key, value)
-	return r.SetProjExtState(self.pointer, ext_name, key, value)
+  return r.SetProjExtState(self.pointer, ext_name, key, value)
 end
 
 --- Set Region Render Matrix. Wraps SetRegionRenderMatrix.
@@ -1183,7 +1228,7 @@ end
 --- @param track table Track object
 --- @param flag number
 function Project:set_region_render_matrix(region_idx, track, flag)
-	return r.SetRegionRenderMatrix(self.pointer, region_idx, track.pointer, flag)
+  return r.SetRegionRenderMatrix(self.pointer, region_idx, track.pointer, flag)
 end
 
 --- Set Tempo Time Sig Marker. Wraps SetTempoTimeSigMarker.
@@ -1204,26 +1249,26 @@ end
 --- @see Project:get_tempo_time_sig_marker
 --- @see Project:count_tempo_time_sig_markers
 function Project:set_tempo_time_sig_marker(
-	pt_idx,
-	time_pos,
-	measure_pos,
-	beat_pos,
-	bpm,
-	time_sig_num,
-	time_sig_denom,
-	linear_tempo
+  pt_idx,
+  time_pos,
+  measure_pos,
+  beat_pos,
+  bpm,
+  time_sig_num,
+  time_sig_denom,
+  linear_tempo
 )
-	return r.SetTempoTimeSigMarker(
-		self.pointer,
-		pt_idx,
-		time_pos,
-		measure_pos,
-		beat_pos,
-		bpm,
-		time_sig_num,
-		time_sig_denom,
-		linear_tempo
-	)
+  return r.SetTempoTimeSigMarker(
+    self.pointer,
+    pt_idx,
+    time_pos,
+    measure_pos,
+    beat_pos,
+    bpm,
+    time_sig_num,
+    time_sig_denom,
+    linear_tempo
+  )
 end
 
 --- Set Track Midi Note Name Ex. Wraps SetTrackMIDINoteNameEx.
@@ -1236,7 +1281,7 @@ end
 --- @param name string
 --- @return boolean
 function Project:set_track_midi_note_name_ex(track, pitch, chan, name)
-	return r.SetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan, name)
+  return r.SetTrackMIDINoteNameEx(self.pointer, track.pointer, pitch, chan, name)
 end
 
 --- Snap To Grid. Wraps SnapToGrid.
@@ -1244,7 +1289,7 @@ end
 --- @param time_pos number
 --- @return number
 function Project:snap_to_grid(time_pos)
-	return r.SnapToGrid(self.pointer, time_pos)
+  return r.SnapToGrid(self.pointer, time_pos)
 end
 
 --- Beats To Time. Wraps TimeMap2_beatsToTime.
@@ -1255,8 +1300,8 @@ end
 --- @param measures integer Optional
 --- @return number
 function Project:beats_to_time(tpos, measures)
-	local measures = measures or nil
-	return r.TimeMap2_beatsToTime(self.pointer, tpos, measures)
+  local measures = measures or nil
+  return r.TimeMap2_beatsToTime(self.pointer, tpos, measures)
 end
 
 --- Get Divided Bpm At Time. Wraps TimeMap2_GetDividedBpmAtTime.
@@ -1265,7 +1310,7 @@ end
 --- @param time number
 --- @return number
 function Project:get_divided_bpm_at_time(time)
-	return r.TimeMap2_GetDividedBpmAtTime(self.pointer, time)
+  return r.TimeMap2_GetDividedBpmAtTime(self.pointer, time)
 end
 
 --- Get Next Change Time. Wraps TimeMap2_GetNextChangeTime.
@@ -1274,7 +1319,7 @@ end
 --- @param time number
 --- @return number
 function Project:get_next_change_time(time)
-	return r.TimeMap2_GetNextChangeTime(self.pointer, time)
+  return r.TimeMap2_GetNextChangeTime(self.pointer, time)
 end
 
 --- Qn To Time. Wraps TimeMap2_QNToTime.
@@ -1283,7 +1328,7 @@ end
 --- @param qn number
 --- @return number
 function Project:qn_to_time(qn)
-	return r.TimeMap2_QNToTime(self.pointer, qn)
+  return r.TimeMap2_QNToTime(self.pointer, qn)
 end
 
 --- Time To Beats. Wraps TimeMap2_timeToBeats.
@@ -1300,12 +1345,12 @@ end
 --- @return number full_beats
 --- @return number cdenom
 function Project:time_to_beats(tpos)
-	local ret_val, measures, cml, full_beats, cdenom = r.TimeMap2_timeToBeats(self.pointer, tpos)
-	if ret_val then
-		return measures, cml, full_beats, cdenom
-	else
-		error("Error in Project:time_to_beats")
-	end
+  local ret_val, measures, cml, full_beats, cdenom = r.TimeMap2_timeToBeats(self.pointer, tpos)
+  if ret_val then
+    return measures, cml, full_beats, cdenom
+  else
+    error("Error in Project:time_to_beats")
+  end
 end
 
 --- Time To Qn. Wraps TimeMap2_timeToQN.
@@ -1314,7 +1359,7 @@ end
 --- @param tpos number
 --- @return number
 function Project:time_to_qn(tpos)
-	return r.TimeMap2_timeToQN(self.pointer, tpos)
+  return r.TimeMap2_timeToQN(self.pointer, tpos)
 end
 
 --- Cur Frame Rate. Wraps TimeMap_curFrameRate.
@@ -1322,12 +1367,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return boolean drop_frame
 function Project:cur_frame_rate()
-	local ret_val, drop_frame = r.TimeMap_curFrameRate(self.pointer)
-	if ret_val then
-		return drop_frame
-	else
-		error("Error in Project:cur_frame_rate")
-	end
+  local ret_val, drop_frame = r.TimeMap_curFrameRate(self.pointer)
+  if ret_val then
+    return drop_frame
+  else
+    error("Error in Project:cur_frame_rate")
+  end
 end
 
 --- Get Measure Info. Wraps TimeMap_GetMeasureInfo.
@@ -1341,12 +1386,13 @@ end
 --- @return number time_sig_denom
 --- @return number tempo
 function Project:get_measure_info(measure)
-	local ret_val, qn_start, qn_end, num, time_sig_denom, tempo = r.TimeMap_GetMeasureInfo(self.pointer, measure)
-	if ret_val then
-		return qn_start, qn_end, num, time_sig_denom, tempo
-	else
-		error("Error in Project:get_measure_info")
-	end
+  local ret_val, qn_start, qn_end, num, time_sig_denom, tempo =
+    r.TimeMap_GetMeasureInfo(self.pointer, measure)
+  if ret_val then
+    return qn_start, qn_end, num, time_sig_denom, tempo
+  else
+    error("Error in Project:get_measure_info")
+  end
 end
 
 --- Get Metronome Pattern. Wraps TimeMap_GetMetronomePattern.
@@ -1359,12 +1405,12 @@ end
 --- @param pattern string
 --- @return string pattern
 function Project:get_metronome_pattern(time, pattern)
-	local ret_val, pattern = r.TimeMap_GetMetronomePattern(self.pointer, time, pattern)
-	if ret_val then
-		return pattern
-	else
-		error("Error in Project:get_metronome_pattern")
-	end
+  local ret_val, pattern = r.TimeMap_GetMetronomePattern(self.pointer, time, pattern)
+  if ret_val then
+    return pattern
+  else
+    error("Error in Project:get_metronome_pattern")
+  end
 end
 
 --- Get Time Sig At Time. Wraps TimeMap_GetTimeSigAtTime.
@@ -1375,7 +1421,7 @@ end
 --- @return number time_sig_denom
 --- @return number tempo
 function Project:get_time_sig_at_time(time)
-	return r.TimeMap_GetTimeSigAtTime(self.pointer, time)
+  return r.TimeMap_GetTimeSigAtTime(self.pointer, time)
 end
 
 --- Qn To Measures. Wraps TimeMap_QNToMeasures.
@@ -1385,12 +1431,12 @@ end
 --- @return number qn_measure_start
 --- @return number qn_measure_end
 function Project:qn_to_measures(qn)
-	local ret_val, qn_measure_start, qn_measure_end = r.TimeMap_QNToMeasures(self.pointer, qn)
-	if ret_val then
-		return qn_measure_start, qn_measure_end
-	else
-		error("Error in Project:qn_to_measures")
-	end
+  local ret_val, qn_measure_start, qn_measure_end = r.TimeMap_QNToMeasures(self.pointer, qn)
+  if ret_val then
+    return qn_measure_start, qn_measure_end
+  else
+    error("Error in Project:qn_to_measures")
+  end
 end
 
 --- Qn To Time Abs. Wraps TimeMap_QNToTime_abs.
@@ -1401,7 +1447,7 @@ end
 --- @return number
 --- @see Project:qn_to_time
 function Project:qn_to_time_abs(qn)
-	return r.TimeMap_QNToTime_abs(self.pointer, qn)
+  return r.TimeMap_QNToTime_abs(self.pointer, qn)
 end
 
 --- Time To Qn Abs. Wraps TimeMap_timeToQN_abs.
@@ -1412,14 +1458,14 @@ end
 --- @return number
 --- @see Project:time_to_qn
 function Project:time_to_qn_abs(tpos)
-	return r.TimeMap_timeToQN_abs(self.pointer, tpos)
+  return r.TimeMap_timeToQN_abs(self.pointer, tpos)
 end
 
 --- Undo Begin Block2. Wraps Undo_BeginBlock2.
 -- call to start a new block
 --- @within ReaScript Wrapped Methods
 function Project:undo_begin_block2()
-	return r.Undo_BeginBlock2(self.pointer)
+  return r.Undo_BeginBlock2(self.pointer)
 end
 
 --- Undo Can Redo2. Wraps Undo_CanRedo2.
@@ -1427,7 +1473,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Project:undo_can_redo2()
-	return r.Undo_CanRedo2(self.pointer)
+  return r.Undo_CanRedo2(self.pointer)
 end
 
 --- Undo Can Undo2. Wraps Undo_CanUndo2.
@@ -1435,7 +1481,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Project:undo_can_undo2()
-	return r.Undo_CanUndo2(self.pointer)
+  return r.Undo_CanUndo2(self.pointer)
 end
 
 --- Undo Do Redo2. Wraps Undo_DoRedo2.
@@ -1443,7 +1489,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:undo_do_redo2()
-	return r.Undo_DoRedo2(self.pointer)
+  return r.Undo_DoRedo2(self.pointer)
 end
 
 --- Undo Do Undo2. Wraps Undo_DoUndo2.
@@ -1451,7 +1497,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Project:undo_do_undo2()
-	return r.Undo_DoUndo2(self.pointer)
+  return r.Undo_DoUndo2(self.pointer)
 end
 
 --- Undo End Block2. Wraps Undo_EndBlock2.
@@ -1460,7 +1506,7 @@ end
 --- @param desc_change string
 --- @param extraflags number
 function Project:undo_end_block2(desc_change, extraflags)
-	return r.Undo_EndBlock2(self.pointer, desc_change, extraflags)
+  return r.Undo_EndBlock2(self.pointer, desc_change, extraflags)
 end
 
 --- Undo On State Change2. Wraps Undo_OnStateChange2.
@@ -1468,7 +1514,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param desc_change string
 function Project:undo_on_state_change2(desc_change)
-	return r.Undo_OnStateChange2(self.pointer, desc_change)
+  return r.Undo_OnStateChange2(self.pointer, desc_change)
 end
 
 --- Undo On State Change Item. Wraps Undo_OnStateChange_Item.
@@ -1476,7 +1522,7 @@ end
 --- @param name string
 --- @param item table Item object
 function Project:undo_on_state_change_item(name, item)
-	return r.Undo_OnStateChange_Item(self.pointer, name, item.pointer)
+  return r.Undo_OnStateChange_Item(self.pointer, name, item.pointer)
 end
 
 --- Undo On State Change Ex2. Wraps Undo_OnStateChangeEx2.
@@ -1486,7 +1532,7 @@ end
 --- @param which_state number
 --- @param track_param number
 function Project:undo_on_state_change_ex2(desc_change, which_state, track_param)
-	return r.Undo_OnStateChangeEx2(self.pointer, desc_change, which_state, track_param)
+  return r.Undo_OnStateChangeEx2(self.pointer, desc_change, which_state, track_param)
 end
 
 --- Update Item Lanes. Wraps UpdateItemLanes.
@@ -1495,7 +1541,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Project:update_item_lanes()
-	return r.UpdateItemLanes(self.pointer)
+  return r.UpdateItemLanes(self.pointer)
 end
 
 --- Validate Pointer. Wraps ValidatePtr2.
@@ -1507,7 +1553,7 @@ end
 --- @param ctype_name string
 --- @return boolean
 function Project:validate_ptr(identifier, ctype_name)
-	return r.ValidatePtr2(self.pointer, identifier, ctype_name)
+  return r.ValidatePtr2(self.pointer, identifier, ctype_name)
 end
 
 --- Get Media Item By Guid. Wraps BR_GetMediaItemByGUID.
@@ -1517,9 +1563,9 @@ end
 --- @param guid_string_in string
 --- @return table Item object
 function Project:get_media_item_by_guid(guid_string_in)
-	local Item = require("item")
-	local result = r.BR_GetMediaItemByGUID(self.pointer, guid_string_in)
-	return Item:new(result)
+  local Item = require("item")
+  local result = r.BR_GetMediaItemByGUID(self.pointer, guid_string_in)
+  return Item:new(result)
 end
 
 --- Get Media Track By Guid. Wraps BR_GetMediaTrackByGUID.
@@ -1529,23 +1575,23 @@ end
 --- @param guid_string_in string
 --- @return table Track object
 function Project:get_media_track_by_guid(guid_string_in)
-	local Track = require("track")
-	local result = r.BR_GetMediaTrackByGUID(self.pointer, guid_string_in)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.BR_GetMediaTrackByGUID(self.pointer, guid_string_in)
+  return Track:new(result)
 end
 
 --- Get Sws Extra Project Notes. Wraps JB_GetSWSExtraProjectNotes.
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Project:get_sws_extra_project_notes()
-	return r.JB_GetSWSExtraProjectNotes(self.pointer)
+  return r.JB_GetSWSExtraProjectNotes(self.pointer)
 end
 
 --- Set Sws Extra Project Notes. Wraps JB_SetSWSExtraProjectNotes.
 --- @within ReaScript Wrapped Methods
 --- @param str string
 function Project:set_sws_extra_project_notes(str)
-	return r.JB_SetSWSExtraProjectNotes(self.pointer, str)
+  return r.JB_SetSWSExtraProjectNotes(self.pointer, str)
 end
 
 --- Get Double Config Var Ex. Wraps SNM_GetDoubleConfigVarEx.
@@ -1554,7 +1600,7 @@ end
 --- @param err_value number
 --- @return number
 function Project:get_double_config_var_ex(var_name, err_value)
-	return r.SNM_GetDoubleConfigVarEx(self.pointer, var_name, err_value)
+  return r.SNM_GetDoubleConfigVarEx(self.pointer, var_name, err_value)
 end
 
 --- Get Int Config Var Ex. Wraps SNM_GetIntConfigVarEx.
@@ -1563,7 +1609,7 @@ end
 --- @param err_value number
 --- @return number
 function Project:get_int_config_var_ex(var_name, err_value)
-	return r.SNM_GetIntConfigVarEx(self.pointer, var_name, err_value)
+  return r.SNM_GetIntConfigVarEx(self.pointer, var_name, err_value)
 end
 
 --- Get Long Config Var Ex. Wraps SNM_GetLongConfigVarEx.
@@ -1572,12 +1618,12 @@ end
 --- @return number high
 --- @return number low
 function Project:get_long_config_var_ex(var_name)
-	local ret_val, high, low = r.SNM_GetLongConfigVarEx(self.pointer, var_name)
-	if ret_val then
-		return high, low
-	else
-		error("Error in GetLongConfigVarEx")
-	end
+  local ret_val, high, low = r.SNM_GetLongConfigVarEx(self.pointer, var_name)
+  if ret_val then
+    return high, low
+  else
+    error("Error in GetLongConfigVarEx")
+  end
 end
 
 --- Get Project Marker Name. Wraps SNM_GetProjectMarkerName.
@@ -1588,7 +1634,7 @@ end
 --- @param name userdata WDL_FastString
 --- @return boolean
 function Project:get_project_marker_name(num, is_rgn, name)
-	return r.SNM_GetProjectMarkerName(self.pointer, num, is_rgn, name)
+  return r.SNM_GetProjectMarkerName(self.pointer, num, is_rgn, name)
 end
 
 --- Set Double Config Var Ex. Wraps SNM_SetDoubleConfigVarEx.
@@ -1597,7 +1643,7 @@ end
 --- @param new_value number
 --- @return boolean
 function Project:set_double_config_var_ex(var_name, new_value)
-	return r.SNM_SetDoubleConfigVarEx(self.pointer, var_name, new_value)
+  return r.SNM_SetDoubleConfigVarEx(self.pointer, var_name, new_value)
 end
 
 --- Set Int Config Var Ex. Wraps SNM_SetIntConfigVarEx.
@@ -1606,7 +1652,7 @@ end
 --- @param new_value number
 --- @return boolean
 function Project:set_int_config_var_ex(var_name, new_value)
-	return r.SNM_SetIntConfigVarEx(self.pointer, var_name, new_value)
+  return r.SNM_SetIntConfigVarEx(self.pointer, var_name, new_value)
 end
 
 --- Set Long Config Var Ex. Wraps SNM_SetLongConfigVarEx.
@@ -1616,7 +1662,7 @@ end
 --- @param new_low_value number
 --- @return boolean
 function Project:set_long_config_var_ex(var_name, new_high_value, new_low_value)
-	return r.SNM_SetLongConfigVarEx(self.pointer, var_name, new_high_value, new_low_value)
+  return r.SNM_SetLongConfigVarEx(self.pointer, var_name, new_high_value, new_low_value)
 end
 
 return Project

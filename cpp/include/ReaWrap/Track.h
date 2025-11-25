@@ -1,7 +1,7 @@
 #pragma once
 
-#include "reaper_plugin.h"
 #include "ReaperAPI.h"
+#include "reaper_plugin.h"
 #include <vector>
 
 namespace ReaWrap {
@@ -43,7 +43,7 @@ public:
   // Iterator support - get collections
   std::vector<MediaItem *> getItems() const;
   std::vector<TrackFX *> getFXChain() const;
-  
+
   // Iterator support - check if collections have items
   bool hasItems() const;
   bool hasFX() const;
@@ -59,4 +59,3 @@ private:
 };
 
 } // namespace ReaWrap
-

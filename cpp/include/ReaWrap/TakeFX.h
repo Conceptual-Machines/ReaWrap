@@ -1,9 +1,9 @@
 #pragma once
 
-#include "reaper_plugin.h"
 #include "ReaperAPI.h"
-#include <vector>
+#include "reaper_plugin.h"
 #include <string>
+#include <vector>
 
 namespace ReaWrap {
 
@@ -76,4 +76,3 @@ private:
 };
 
 } // namespace ReaWrap
-

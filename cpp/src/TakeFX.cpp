@@ -1,5 +1,5 @@
-#include <ReaWrap/TakeFX.h>
 #include <ReaWrap/Take.h>
+#include <ReaWrap/TakeFX.h>
 #include <cstring>
 
 namespace ReaWrap {
@@ -129,7 +129,8 @@ bool TakeFX::formatParamValue(int param_index, double value, char *buf, int buf_
   if (!reaper_take) {
     return false;
   }
-  return ReaperAPI::TakeFX_FormatParamValue(reaper_take, m_fx_index, param_index, value, buf, buf_size);
+  return ReaperAPI::TakeFX_FormatParamValue(reaper_take, m_fx_index, param_index, value, buf,
+                                            buf_size);
 }
 
 bool TakeFX::isEnabled() const {
@@ -170,25 +171,25 @@ std::vector<ParamInfo> TakeFX::getParamValues() const {
   if (!m_take) {
     return params;
   }
-  
+
   int num_params = getNumParams();
   for (int i = 0; i < num_params; i++) {
     ParamInfo info;
     info.index = i;
-    
+
     // Get parameter name
     char name_buf[256];
     if (getParamName(i, name_buf, sizeof(name_buf))) {
       info.name = std::string(name_buf);
     }
-    
+
     // Get parameter value and range
     double min_val = 0.0, max_val = 0.0;
     info.value = getParam(i, &min_val, &max_val);
     info.minValue = min_val;
     info.maxValue = max_val;
     info.normalizedValue = getParamNormalized(i);
-    
+
     params.push_back(info);
   }
   return params;
@@ -199,7 +200,7 @@ std::vector<std::string> TakeFX::getParamNames() const {
   if (!m_take) {
     return names;
   }
-  
+
   int num_params = getNumParams();
   for (int i = 0; i < num_params; i++) {
     char name_buf[256];
@@ -213,4 +214,3 @@ std::vector<std::string> TakeFX::getParamNames() const {
 }
 
 } // namespace ReaWrap
-

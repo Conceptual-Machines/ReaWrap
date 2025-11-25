@@ -14,56 +14,56 @@ local Item = {}
 --- @param item userdata The pointer to Reaper MediaItem*
 --- @return table Item instance
 function Item:new(item)
-	local obj = {
-		pointer_type = "MediaItem*",
-		pointer = item,
-	}
-	setmetatable(obj, self)
-	self.__index = self
-	return obj
+  local obj = {
+    pointer_type = "MediaItem*",
+    pointer = item,
+  }
+  setmetatable(obj, self)
+  self.__index = self
+  return obj
 end
 
 --- Log messages with the Item logger.
 --- @within ReaWrap Custom Methods
 --- @param ... (varargs) Messages to log.
 function Item:log(...)
-	local logger = helpers.log_func("Item")
-	logger(...)
-	return nil
+  local logger = helpers.log_func("Item")
+  logger(...)
+  return nil
 end
 
 --- String representation of the Item instance.
 --- @within ReaWrap Custom Methods
 --- @return string
 function Item:__tostring()
-	return string.format("<Item GUID=%s>", self:get_guid())
+  return string.format("<Item GUID=%s>", self:get_guid())
 end
 
 --- Get all takes.
 --- @within ReaWrap Custom Methods
 --- @return table array<Take>
 function Item:get_takes()
-	local takes = {}
-	local count = self:count_takes()
-	for i = 0, count - 1 do
-		local take = self:get_take(i)
-		takes[i + 1] = take
-	end
-	return takes
+  local takes = {}
+  local count = self:count_takes()
+  for i = 0, count - 1 do
+    local take = self:get_take(i)
+    takes[i + 1] = take
+  end
+  return takes
 end
 
 --- Iterate over takes.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Item:iter_takes()
-	return helpers.iter(self:get_takes())
+  return helpers.iter(self:get_takes())
 end
 
 --- Whether there is at least one take in the item.
 --- @within ReaWrap Custom Methods
 --- @return boolean
 function Item:has_takes()
-	return self:count_takes() > 0
+  return self:count_takes() > 0
 end
 
 --- Set Length in Beats.
@@ -73,10 +73,10 @@ end
 --- @param refresh_ui boolean Optional (default true).
 --- @return boolean
 function Item:set_length_beats(length, refresh_ui)
-	local project = self:get_project_context()
-	local beats_to_seconds = project:beats_to_time(length)
-	local refresh_ui = refresh_ui or true
-	return r.SetMediaItemLength(self.pointer, beats_to_seconds, refresh_ui)
+  local project = self:get_project_context()
+  local beats_to_seconds = project:beats_to_time(length)
+  local refresh_ui = refresh_ui or true
+  return r.SetMediaItemLength(self.pointer, beats_to_seconds, refresh_ui)
 end
 
 --- Set Position in Beats.
@@ -86,10 +86,10 @@ end
 --- @param refresh_ui boolean Optional (default true).
 --- @return boolean
 function Item:set_position_beats(position, refresh_ui)
-	local project = self:get_project_context()
-	local beats_to_seconds = project:beats_to_time(position)
-	local refresh_ui = refresh_ui or true
-	return r.SetMediaItemLength(self.pointer, beats_to_seconds, refresh_ui)
+  local project = self:get_project_context()
+  local beats_to_seconds = project:beats_to_time(position)
+  local refresh_ui = refresh_ui or true
+  return r.SetMediaItemLength(self.pointer, beats_to_seconds, refresh_ui)
 end
 
 --- Add Take. Wraps AddTakeToMediaItem.
@@ -97,9 +97,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Take instance
 function Item:add_take()
-	local Take = require("take")
-	local result = r.AddTakeToMediaItem(self.pointer)
-	return Take:new(result)
+  local Take = require("take")
+  local result = r.AddTakeToMediaItem(self.pointer)
+  return Take:new(result)
 end
 
 --- Count Takes. Wraps CountTakes.
@@ -107,7 +107,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:count_takes()
-	return r.CountTakes(self.pointer)
+  return r.CountTakes(self.pointer)
 end
 
 --- Get Active Take. Wraps GetActiveTake.
@@ -115,9 +115,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Take instance
 function Item:get_active_take()
-	local Take = require("take")
-	local result = r.GetActiveTake(self.pointer)
-	return Take:new(result)
+  local Take = require("take")
+  local result = r.GetActiveTake(self.pointer)
+  return Take:new(result)
 end
 
 --- Get Displayed Color. Wraps GetDisplayedMediaItemColor.
@@ -125,7 +125,7 @@ end
 --- @return number
 --- @see Item:get_displayed_color2
 function Item:get_displayed_color()
-	return r.GetDisplayedMediaItemColor(self.pointer)
+  return r.GetDisplayedMediaItemColor(self.pointer)
 end
 
 --- Get Displayed Color2. Wraps GetDisplayedMediaItemColor2.
@@ -137,16 +137,16 @@ end
 --- @return number
 --- @see Item:get_displayed_color
 function Item:get_displayed_color2()
-	return r.GetDisplayedMediaItemColor2(self.pointer, take)
+  return r.GetDisplayedMediaItemColor2(self.pointer, take)
 end
 
 --- Get Item Project Context. Wraps GetItemProjectContext.
 --- @within ReaScript Wrapped Methods
 --- @return table Project instance
 function Item:get_project_context()
-	local Project = require("project")
-	local result = r.GetItemProjectContext(self.pointer)
-	return Project:new(result)
+  local Project = require("project")
+  local result = r.GetItemProjectContext(self.pointer)
+  return Project:new(result)
 end
 
 --- Get Item State Chunk. Wraps GetItemStateChunk.
@@ -157,12 +157,12 @@ end
 --- @param is_undo boolean
 --- @return string
 function Item:get_state_chunk(str, is_undo)
-	local ret_val, chunk = r.GetItemStateChunk(self.pointer, str, is_undo)
-	if ret_val then
-		return chunk
-	else
-		error("Failed to get item state chunk.")
-	end
+  local ret_val, chunk = r.GetItemStateChunk(self.pointer, str, is_undo)
+  if ret_val then
+    return chunk
+  else
+    error("Failed to get item state chunk.")
+  end
 end
 
 --- Get Track. Wraps GetMediaItem_Track.
@@ -170,9 +170,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Track object
 function Item:get_track()
-	local Track = require("track")
-	local result = r.GetMediaItem_Track(self.pointer)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.GetMediaItem_Track(self.pointer)
+  return Track:new(result)
 end
 
 --- Constants for Item:get_info_value.
@@ -211,39 +211,39 @@ end
 --- @field B_FIXEDLANE_HIDDEN boolean: true if displaying only one fixed lane and this item is in a different lane (read-only)
 --- @field P_TRACK userdata: (read-only)
 Item.GetInfoValueConstants = {
-	B_MUTE = "B_MUTE",
-	B_MUTE_ACTUAL = "B_MUTE_ACTUAL",
-	C_LANEPLAYS = "C_LANEPLAYS",
-	C_MUTE_SOLO = "C_MUTE_SOLO",
-	B_LOOPSRC = "B_LOOPSRC",
-	B_ALLTAKESPLAY = "B_ALLTAKESPLAY",
-	B_UISEL = "B_UISEL",
-	C_BEATATTACHMODE = "C_BEATATTACHMODE",
-	C_AUTOSTRETCH = "C_AUTOSTRETCH",
-	C_LOCK = "C_LOCK",
-	D_VOL = "D_VOL",
-	D_POSITION = "D_POSITION",
-	D_LENGTH = "D_LENGTH",
-	D_SNAPOFFSET = "D_SNAPOFFSET",
-	D_FADEINLEN = "D_FADEINLEN",
-	D_FADEOUTLEN = "D_FADEOUTLEN",
-	D_FADEINDIR = "D_FADEINDIR",
-	D_FADEOUTDIR = "D_FADEOUTDIR",
-	D_FADEINLEN_AUTO = "D_FADEINLEN_AUTO",
-	D_FADEOUTLEN_AUTO = "D_FADEOUTLEN_AUTO",
-	C_FADEINSHAPE = "C_FADEINSHAPE",
-	C_FADEOUTSHAPE = "C_FADEOUTSHAPE",
-	I_GROUPID = "I_GROUPID",
-	I_LASTY = "I_LASTY",
-	I_LASTH = "I_LASTH",
-	I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
-	I_CURTAKE = "I_CURTAKE",
-	IP_ITEMNUMBER = "IP_ITEMNUMBER",
-	F_FREEMODE_Y = "F_FREEMODE_Y",
-	F_FREEMODE_H = "F_FREEMODE_H",
-	I_FIXEDLANE = "I_FIXEDLANE",
-	B_FIXEDLANE_HIDDEN = "B_FIXEDLANE_HIDDEN",
-	P_TRACK = "P_TRACK",
+  B_MUTE = "B_MUTE",
+  B_MUTE_ACTUAL = "B_MUTE_ACTUAL",
+  C_LANEPLAYS = "C_LANEPLAYS",
+  C_MUTE_SOLO = "C_MUTE_SOLO",
+  B_LOOPSRC = "B_LOOPSRC",
+  B_ALLTAKESPLAY = "B_ALLTAKESPLAY",
+  B_UISEL = "B_UISEL",
+  C_BEATATTACHMODE = "C_BEATATTACHMODE",
+  C_AUTOSTRETCH = "C_AUTOSTRETCH",
+  C_LOCK = "C_LOCK",
+  D_VOL = "D_VOL",
+  D_POSITION = "D_POSITION",
+  D_LENGTH = "D_LENGTH",
+  D_SNAPOFFSET = "D_SNAPOFFSET",
+  D_FADEINLEN = "D_FADEINLEN",
+  D_FADEOUTLEN = "D_FADEOUTLEN",
+  D_FADEINDIR = "D_FADEINDIR",
+  D_FADEOUTDIR = "D_FADEOUTDIR",
+  D_FADEINLEN_AUTO = "D_FADEINLEN_AUTO",
+  D_FADEOUTLEN_AUTO = "D_FADEOUTLEN_AUTO",
+  C_FADEINSHAPE = "C_FADEINSHAPE",
+  C_FADEOUTSHAPE = "C_FADEOUTSHAPE",
+  I_GROUPID = "I_GROUPID",
+  I_LASTY = "I_LASTY",
+  I_LASTH = "I_LASTH",
+  I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
+  I_CURTAKE = "I_CURTAKE",
+  IP_ITEMNUMBER = "IP_ITEMNUMBER",
+  F_FREEMODE_Y = "F_FREEMODE_Y",
+  F_FREEMODE_H = "F_FREEMODE_H",
+  I_FIXEDLANE = "I_FIXEDLANE",
+  B_FIXEDLANE_HIDDEN = "B_FIXEDLANE_HIDDEN",
+  P_TRACK = "P_TRACK",
 }
 
 --- Get Info Value. Wraps GetMediaItemInfo_Value.
@@ -253,14 +253,14 @@ Item.GetInfoValueConstants = {
 --- @return number
 --- @see Item.GetInfoValueConstants
 function Item:get_info_value(param_name)
-	return r.GetMediaItemInfo_Value(self.pointer, param_name)
+  return r.GetMediaItemInfo_Value(self.pointer, param_name)
 end
 
 --- Get Num Takes. Wraps GetMediaItemNumTakes.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:get_num_takes()
-	return r.GetMediaItemNumTakes(self.pointer)
+  return r.GetMediaItemNumTakes(self.pointer)
 end
 
 --- Get Take. Wraps GetMediaItemTake.
@@ -268,9 +268,9 @@ end
 --- @param tk number
 --- @return Take table
 function Item:get_take(tk)
-	local Take = require("take")
-	local result = r.GetMediaItemTake(self.pointer, tk)
-	return Take:new(result)
+  local Take = require("take")
+  local result = r.GetMediaItemTake(self.pointer, tk)
+  return Take:new(result)
 end
 
 --- Constants for Item:get_set_info_string.
@@ -279,9 +279,9 @@ end
 --- @field P_EXT xyz: xyzchar *extension-specific persistent data
 --- @field GUID GUID *: 16-byte GUID, can query or update. If using a _String() function, GUID is a string {xyz-...}.
 Item.GetSetInfoStringConstants = {
-	P_NOTES = "P_NOTES",
-	P_EXT = "P_EXT",
-	GUID = "GUID",
+  P_NOTES = "P_NOTES",
+  P_EXT = "P_EXT",
+  GUID = "GUID",
 }
 
 --- Get Set Info String. Wraps GetSetMediaItemInfo_String.
@@ -293,20 +293,20 @@ Item.GetSetInfoStringConstants = {
 --- @return string info
 --- @see Item.GetSetInfoStringConstants
 function Item:get_set_info_string(param_name, info, set_value)
-	local set_value = set_value or false
-	local ret_val, info = r.GetSetMediaItemInfo_String(self.pointer, param_name, info, set_value)
-	if ret_val then
-		return info
-	else
-		error("Failed to get/set item info string.")
-	end
+  local set_value = set_value or false
+  local ret_val, info = r.GetSetMediaItemInfo_String(self.pointer, param_name, info, set_value)
+  if ret_val then
+    return info
+  else
+    error("Failed to get/set item info string.")
+  end
 end
 
 --- Is Selected. Wraps IsMediaItemSelected.
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Item:is_selected()
-	return r.IsMediaItemSelected(self.pointer)
+  return r.IsMediaItemSelected(self.pointer)
 end
 
 --- Descends From Track. Wraps MediaItemDescendsFromTrack.
@@ -315,7 +315,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:descends_from_track()
-	return r.MediaItemDescendsFromTrack(self.pointer, track)
+  return r.MediaItemDescendsFromTrack(self.pointer, track)
 end
 
 --- Midi Set Item Extents. Wraps MIDI_SetItemExtents.
@@ -325,7 +325,7 @@ end
 --- @param end_qn number
 --- @return boolean
 function Item:midi_set_item_extents(start_qn, end_qn)
-	return r.MIDI_SetItemExtents(self.pointer, start_qn, end_qn)
+  return r.MIDI_SetItemExtents(self.pointer, start_qn, end_qn)
 end
 
 --- Move To Track. Wraps MoveMediaItemToTrack.
@@ -334,7 +334,7 @@ end
 --- @param dest_track table Track
 --- @return boolean
 function Item:move_to_track(dest_track)
-	return r.MoveMediaItemToTrack(self.pointer, dest_track.pointer)
+  return r.MoveMediaItemToTrack(self.pointer, dest_track.pointer)
 end
 
 --- Set Item State Chunk. Wraps SetItemStateChunk.
@@ -345,7 +345,7 @@ end
 --- @param is_undo boolean
 --- @return boolean
 function Item:set_item_state_chunk(str, is_undo)
-	return r.SetItemStateChunk(self.pointer, str, is_undo)
+  return r.SetItemStateChunk(self.pointer, str, is_undo)
 end
 
 --- Constants for Item:set_info_value.
@@ -383,38 +383,38 @@ end
 --- @field I_FIXEDLANE number: fixed lane of item (fine to call with setNewValue, but returned value is read-only)
 --- @field B_FIXEDLANE_HIDDEN boolean: true if displaying only one fixed lane and this item is in a different lane (read-only)
 Item.SetInfoValueConstants = {
-	B_MUTE = "B_MUTE",
-	B_MUTE_ACTUAL = "B_MUTE_ACTUAL",
-	C_LANEPLAYS = "C_LANEPLAYS",
-	C_MUTE_SOLO = "C_MUTE_SOLO",
-	B_LOOPSRC = "B_LOOPSRC",
-	B_ALLTAKESPLAY = "B_ALLTAKESPLAY",
-	B_UISEL = "B_UISEL",
-	C_BEATATTACHMODE = "C_BEATATTACHMODE",
-	C_AUTOSTRETCH = "C_AUTOSTRETCH",
-	C_LOCK = "C_LOCK",
-	D_VOL = "D_VOL",
-	D_POSITION = "D_POSITION",
-	D_LENGTH = "D_LENGTH",
-	D_SNAPOFFSET = "D_SNAPOFFSET",
-	D_FADEINLEN = "D_FADEINLEN",
-	D_FADEOUTLEN = "D_FADEOUTLEN",
-	D_FADEINDIR = "D_FADEINDIR",
-	D_FADEOUTDIR = "D_FADEOUTDIR",
-	D_FADEINLEN_AUTO = "D_FADEINLEN_AUTO",
-	D_FADEOUTLEN_AUTO = "D_FADEOUTLEN_AUTO",
-	C_FADEINSHAPE = "C_FADEINSHAPE",
-	C_FADEOUTSHAPE = "C_FADEOUTSHAPE",
-	I_GROUPID = "I_GROUPID",
-	I_LASTY = "I_LASTY",
-	I_LASTH = "I_LASTH",
-	I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
-	I_CURTAKE = "I_CURTAKE",
-	IP_ITEMNUMBER = "IP_ITEMNUMBER",
-	F_FREEMODE_Y = "F_FREEMODE_Y",
-	F_FREEMODE_H = "F_FREEMODE_H",
-	I_FIXEDLANE = "I_FIXEDLANE",
-	B_FIXEDLANE_HIDDEN = "B_FIXEDLANE_HIDDEN",
+  B_MUTE = "B_MUTE",
+  B_MUTE_ACTUAL = "B_MUTE_ACTUAL",
+  C_LANEPLAYS = "C_LANEPLAYS",
+  C_MUTE_SOLO = "C_MUTE_SOLO",
+  B_LOOPSRC = "B_LOOPSRC",
+  B_ALLTAKESPLAY = "B_ALLTAKESPLAY",
+  B_UISEL = "B_UISEL",
+  C_BEATATTACHMODE = "C_BEATATTACHMODE",
+  C_AUTOSTRETCH = "C_AUTOSTRETCH",
+  C_LOCK = "C_LOCK",
+  D_VOL = "D_VOL",
+  D_POSITION = "D_POSITION",
+  D_LENGTH = "D_LENGTH",
+  D_SNAPOFFSET = "D_SNAPOFFSET",
+  D_FADEINLEN = "D_FADEINLEN",
+  D_FADEOUTLEN = "D_FADEOUTLEN",
+  D_FADEINDIR = "D_FADEINDIR",
+  D_FADEOUTDIR = "D_FADEOUTDIR",
+  D_FADEINLEN_AUTO = "D_FADEINLEN_AUTO",
+  D_FADEOUTLEN_AUTO = "D_FADEOUTLEN_AUTO",
+  C_FADEINSHAPE = "C_FADEINSHAPE",
+  C_FADEOUTSHAPE = "C_FADEOUTSHAPE",
+  I_GROUPID = "I_GROUPID",
+  I_LASTY = "I_LASTY",
+  I_LASTH = "I_LASTH",
+  I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
+  I_CURTAKE = "I_CURTAKE",
+  IP_ITEMNUMBER = "IP_ITEMNUMBER",
+  F_FREEMODE_Y = "F_FREEMODE_Y",
+  F_FREEMODE_H = "F_FREEMODE_H",
+  I_FIXEDLANE = "I_FIXEDLANE",
+  B_FIXEDLANE_HIDDEN = "B_FIXEDLANE_HIDDEN",
 }
 
 --- Set Info Value. Wraps SetMediaItemInfo_Value.
@@ -425,7 +425,7 @@ Item.SetInfoValueConstants = {
 --- @return boolean
 --- @see Item.SetInfoValueConstants
 function Item:set_info_value(param_name, new_value)
-	return r.SetMediaItemInfo_Value(self.pointer, param_name, new_value)
+  return r.SetMediaItemInfo_Value(self.pointer, param_name, new_value)
 end
 
 --- Set Length in seconds. Wraps SetMediaItemLength.
@@ -435,8 +435,8 @@ end
 --- @param refresh_ui boolean Optional (default true)
 --- @return boolean
 function Item:set_length_seconds(length, refresh_ui)
-	local refresh_ui = refresh_ui or true
-	return r.SetMediaItemLength(self.pointer, length, refresh_ui)
+  local refresh_ui = refresh_ui or true
+  return r.SetMediaItemLength(self.pointer, length, refresh_ui)
 end
 
 --- Set Position in seconds. Wraps SetMediaItemPosition.
@@ -446,15 +446,15 @@ end
 --- @param refresh_ui boolean Optional (default true).
 --- @return boolean
 function Item:set_position_seconds(position, refresh_ui)
-	local refresh_ui = refresh_ui or true
-	return r.SetMediaItemPosition(self.pointer, position, refresh_ui)
+  local refresh_ui = refresh_ui or true
+  return r.SetMediaItemPosition(self.pointer, position, refresh_ui)
 end
 
 --- Set Selected. Wraps SetMediaItemSelected.
 --- @within ReaScript Wrapped Methods
 --- @param selected boolean
 function Item:set_selected(selected)
-	return r.SetMediaItemSelected(self.pointer, selected)
+  return r.SetMediaItemSelected(self.pointer, selected)
 end
 
 --- Split. Wraps SplitMediaItem.
@@ -464,15 +464,15 @@ end
 --- @param position number
 --- @return Item table
 function Item:split(position)
-	local Item = require("item")
-	local result = r.SplitMediaItem(self.pointer, position)
-	return Item:new(result)
+  local Item = require("item")
+  local result = r.SplitMediaItem(self.pointer, position)
+  return Item:new(result)
 end
 
 --- Update Item In Project. Wraps UpdateItemInProject.
 --- @within ReaScript Wrapped Methods
 function Item:update_item_in_project()
-	return r.UpdateItemInProject(self.pointer)
+  return r.UpdateItemInProject(self.pointer)
 end
 
 --- Get Guid. Wraps BR_GetMediaItemGUID.
@@ -481,7 +481,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string guid_string
 function Item:get_guid()
-	return r.BR_GetMediaItemGUID(self.pointer)
+  return r.BR_GetMediaItemGUID(self.pointer)
 end
 
 --- Get Image Resource. Wraps BR_GetMediaItemImageResource.
@@ -492,12 +492,12 @@ end
 --- @return number image_flags
 --- @see Item:set_image_resource
 function Item:get_image_resource()
-	local ret_val, image, image_flags = r.BR_GetMediaItemImageResource(self.pointer)
-	if ret_val then
-		return image, image_flags
-	else
-		error("Failed to get image resource.")
-	end
+  local ret_val, image, image_flags = r.BR_GetMediaItemImageResource(self.pointer)
+  if ret_val then
+    return image, image_flags
+  else
+    error("Failed to get image resource.")
+  end
 end
 
 --- Set Item Edges. Wraps BR_SetItemEdges.
@@ -508,7 +508,7 @@ end
 --- @param end_time number
 --- @return boolean
 function Item:set_item_edges(start_time, end_time)
-	return r.BR_SetItemEdges(self.pointer, start_time, end_time)
+  return r.BR_SetItemEdges(self.pointer, start_time, end_time)
 end
 
 --- Set Image Resource. Wraps BR_SetMediaItemImageResource.
@@ -522,7 +522,7 @@ end
 --- @param image_flags number
 --- @see Item:get_image_resource
 function Item:set_image_resource(image_in, image_flags)
-	return r.BR_SetMediaItemImageResource(self.pointer, image_in, image_flags)
+  return r.BR_SetMediaItemImageResource(self.pointer, image_in, image_flags)
 end
 
 --- Analyze Peak And Rms. Wraps NF_AnalyzeMediaItemPeakAndRMS.
@@ -539,7 +539,7 @@ end
 --- @param rms_pos userdata
 --- @return boolean
 function Item:analyze_peak_and_rms(win_size, peaks, peaks_pos, rms, rms_pos)
-	return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, win_size, peaks, peaks_pos, rms, rms_pos)
+  return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, win_size, peaks, peaks_pos, rms, rms_pos)
 end
 
 --- Delete Take From Item. Wraps NF_DeleteTakeFromItem.
@@ -548,7 +548,7 @@ end
 --- @param take_idx number
 --- @return boolean
 function Item:delete_take_from_item(take_idx)
-	return r.NF_DeleteTakeFromItem(self.pointer, take_idx)
+  return r.NF_DeleteTakeFromItem(self.pointer, take_idx)
 end
 
 --- Get Average Rms. Wraps NF_GetMediaItemAverageRMS.
@@ -558,7 +558,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:get_average_rms()
-	return r.NF_GetMediaItemAverageRMS(self.pointer)
+  return r.NF_GetMediaItemAverageRMS(self.pointer)
 end
 
 --- Get Max Peak. Wraps NF_GetMediaItemMaxPeak.
@@ -568,7 +568,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:get_max_peak()
-	return r.NF_GetMediaItemMaxPeak(self.pointer)
+  return r.NF_GetMediaItemMaxPeak(self.pointer)
 end
 
 --- Get Max Peak And Max Peak Pos. Wraps NF_GetMediaItemMaxPeakAndMaxPeakPos.
@@ -576,12 +576,12 @@ end
 --- @return number max_peak_pos
 --- @see Item:get_max_peak
 function Item:get_max_peak_and_max_peak_pos()
-	local ret_val, max_peak_pos = r.NF_GetMediaItemMaxPeakAndMaxPeakPos(self.pointer)
-	if ret_val then
-		return max_peak_pos
-	else
-		error("Failed to get max peak and max peak pos.")
-	end
+  local ret_val, max_peak_pos = r.NF_GetMediaItemMaxPeakAndMaxPeakPos(self.pointer)
+  if ret_val then
+    return max_peak_pos
+  else
+    error("Failed to get max peak and max peak pos.")
+  end
 end
 
 --- Get Peak Rms Non Windowed. Wraps NF_GetMediaItemPeakRMS_NonWindowed.
@@ -592,7 +592,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:get_peak_rms_non_windowed()
-	return r.NF_GetMediaItemPeakRMS_NonWindowed(self.pointer)
+  return r.NF_GetMediaItemPeakRMS_NonWindowed(self.pointer)
 end
 
 --- Get Peak Rms Windowed. Wraps NF_GetMediaItemPeakRMS_Windowed.
@@ -604,7 +604,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Item:get_peak_rms_windowed()
-	return r.NF_GetMediaItemPeakRMS_Windowed(self.pointer)
+  return r.NF_GetMediaItemPeakRMS_Windowed(self.pointer)
 end
 
 --- Get Set Source State. Wraps SNM_GetSetSourceState.
@@ -618,7 +618,7 @@ end
 --- @param new_value boolean
 --- @return boolean
 function Item:get_set_source_state(take_idx, state, new_value)
-	return r.SNM_GetSetSourceState(self.pointer, take_idx, state, new_value)
+  return r.SNM_GetSetSourceState(self.pointer, take_idx, state, new_value)
 end
 
 return Item

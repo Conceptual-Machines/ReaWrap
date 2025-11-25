@@ -14,83 +14,83 @@ local Track = {}
 --- @param track userdata The pointer to Reaper MediaTrack*
 --- @return table Track instance
 function Track:new(track)
-	local obj = {
-		pointer_type = "MediaTrack*",
-		pointer = track,
-	}
-	setmetatable(obj, self)
-	self.__index = self
-	return obj
+  local obj = {
+    pointer_type = "MediaTrack*",
+    pointer = track,
+  }
+  setmetatable(obj, self)
+  self.__index = self
+  return obj
 end
 
 --- Log messages with the Track logger.
 --- @within ReaWrap Custom Methods
 --- @param ... (varargs) Messages to log.
 function Track:log(...)
-	local logger = helpers.log_func("Track")
-	logger(...)
-	return nil
+  local logger = helpers.log_func("Track")
+  logger(...)
+  return nil
 end
 
 --- String representation of the Track instance.
 --- @within ReaWrap Custom Methods
 --- @return string
 function Track:__tostring()
-	return string.format("<Track name=%s>", self:get_name())
+  return string.format("<Track name=%s>", self:get_name())
 end
 
 --- Get media items in the track.
 --- @within ReaWrap Custom Methods
 --- @return table array<Item>
 function Track:get_items()
-	local items = {}
-	local count = self:count_items()
-	for i = 0, count - 1 do
-		local item = self:get_item(i)
-		items[i + 1] = item
-	end
-	return items
+  local items = {}
+  local count = self:count_items()
+  for i = 0, count - 1 do
+    local item = self:get_item(i)
+    items[i + 1] = item
+  end
+  return items
 end
 
 --- Iterate over media items.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Track:iter_items()
-	return helpers.iter(self:get_items())
+  return helpers.iter(self:get_items())
 end
 
 --- Whether the track has media items.
 --- @within ReaWrap Custom Methods
 --- @return boolean
 function Track:has_items()
-	return self:count_items() > 0
+  return self:count_items() > 0
 end
 
 --- Get envelopes in the track.
 --- @within ReaWrap Custom Methods
 --- @return table array<Envelope>
 function Track:get_envelopes()
-	local envelopes = {}
-	local count = self:count_envelopes()
-	for i = 0, count - 1 do
-		local envelope = self:get_envelope(i)
-		envelopes[i + 1] = envelope
-	end
-	return envelopes
+  local envelopes = {}
+  local count = self:count_envelopes()
+  for i = 0, count - 1 do
+    local envelope = self:get_envelope(i)
+    envelopes[i + 1] = envelope
+  end
+  return envelopes
 end
 
 --- Iterate over track envelopes.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Track:iter_envelopes()
-	return helpers.iter(self:get_envelopes())
+  return helpers.iter(self:get_envelopes())
 end
 
 --- Whether the track has envelopes.
 --- @within ReaWrap Custom Methods
 ---@return boolean
 function Track:has_envelopes()
-	return self:count_envelopes() > 0
+  return self:count_envelopes() > 0
 end
 
 --- Get TrackFX by index.
@@ -98,35 +98,35 @@ end
 --- @param fx_idx number
 --- @return table TrackFX
 function Track:get_track_fx(fx_idx)
-	local TrackFX = require("track_fx")
-	return TrackFX:new(self, fx_idx)
+  local TrackFX = require("track_fx")
+  return TrackFX:new(self, fx_idx)
 end
 
 --- Get all TrackFX in the track
 --- @within ReaWrap Custom Methods
 --- @return table array<TrackFX>
 function Track:get_track_fx_chain()
-	local fxs = {}
-	local count = self:get_track_fx_count()
-	for i = 0, count - 1 do
-		local track_fx = self:get_track_fx(i)
-		fxs[i + 1] = track_fx
-	end
-	return fxs
+  local fxs = {}
+  local count = self:get_track_fx_count()
+  for i = 0, count - 1 do
+    local track_fx = self:get_track_fx(i)
+    fxs[i + 1] = track_fx
+  end
+  return fxs
 end
 
 --- Iterate over all TrackFX.
 --- @within ReaWrap Custom Methods
 --- @return function iterator
 function Track:iter_track_fx_chain()
-	return helpers.iter(self:get_track_fx_chain())
+  return helpers.iter(self:get_track_fx_chain())
 end
 
 --- Whether the track has TrackFX.
 --- @within ReaWrap Custom Methods
 ---@return boolean
 function Track:has_track_fx()
-	return self:get_track_fx_count() > 0
+  return self:get_track_fx_count() > 0
 end
 
 --- Add Media Item To Track. Wraps AddMediaItemToTrack.
@@ -134,9 +134,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Item object
 function Track:add_media_item()
-	local Item = require("item")
-	local result = r.AddMediaItemToTrack(self.pointer)
-	return Item:new(result)
+  local Item = require("item")
+  local result = r.AddMediaItemToTrack(self.pointer)
+  return Item:new(result)
 end
 
 --- Add By Name. Wraps TrackFX_AddByName.
@@ -156,9 +156,9 @@ end
 --- @param instantiate number
 --- @return table TrackFX object
 function Track:add_fx_by_name(fx_name, rec_fx, instantiate)
-	local TrackFX = require("track_fx")
-	local result = r.TrackFX_AddByName(self.pointer, fx_name, rec_fx, instantiate)
-	return TrackFX:new(self, result)
+  local TrackFX = require("track_fx")
+  local result = r.TrackFX_AddByName(self.pointer, fx_name, rec_fx, instantiate)
+  return TrackFX:new(self, result)
 end
 
 --- Add TCP FX Parm. Wraps SNM_AddTCPFXParm.
@@ -169,7 +169,7 @@ end
 --- @param prm_id number
 --- @return boolean
 function Track:add_tcp_fx_parm(fx_id, prm_id)
-	return r.SNM_AddTCPFXParm(self.pointer, fx_id, prm_id)
+  return r.SNM_AddTCPFXParm(self.pointer, fx_id, prm_id)
 end
 
 --- Copy FX To Take. Wraps TrackFX_CopyToTake.
@@ -181,8 +181,8 @@ end
 --- @param dest_fx number
 --- @param is_move boolean Optional
 function Track:copy_fx_to_take(src_fx, dest_take, dest_fx, is_move)
-	local is_move = is_move or false
-	return r.TrackFX_CopyToTake(self.pointer, src_fx, dest_take.pointer, dest_fx, is_move)
+  local is_move = is_move or false
+  return r.TrackFX_CopyToTake(self.pointer, src_fx, dest_take.pointer, dest_fx, is_move)
 end
 
 --- Copy FX To Track. Wraps TrackFX_CopyToTrack.
@@ -194,8 +194,8 @@ end
 --- @param dest_fx number
 --- @param is_move boolean Optional
 function Track:copy_fx_to_track(src_fx, dest_track, dest_fx, is_move)
-	local is_move = is_move or false
-	return r.TrackFX_CopyToTrack(self.pointer, src_fx, dest_track.pointer, dest_fx, is_move)
+  local is_move = is_move or false
+  return r.TrackFX_CopyToTrack(self.pointer, src_fx, dest_track.pointer, dest_fx, is_move)
 end
 
 --- Create New Midi Item In Proj. Wraps CreateNewMIDIItemInProj.
@@ -207,10 +207,10 @@ end
 --- @param qn_in boolean Optional
 --- @return table Item object
 function Track:create_new_midi_item_in_proj(start_time, end_time, qn_in)
-	local qn_in = qn_in or nil
-	local Item = require("item")
-	local result = r.CreateNewMIDIItemInProj(self.pointer, start_time, end_time, qn_in)
-	return Item:new(result)
+  local qn_in = qn_in or nil
+  local Item = require("item")
+  local result = r.CreateNewMIDIItemInProj(self.pointer, start_time, end_time, qn_in)
+  return Item:new(result)
 end
 
 --- Count Track Envelopes. Wraps CountTrackEnvelopes.
@@ -218,7 +218,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:count_envelopes()
-	return r.CountTrackEnvelopes(self.pointer)
+  return r.CountTrackEnvelopes(self.pointer)
 end
 
 --- Count Media Items. Wraps CountTrackMediaItems.
@@ -226,7 +226,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:count_items()
-	return r.CountTrackMediaItems(self.pointer)
+  return r.CountTrackMediaItems(self.pointer)
 end
 
 --- Create Track Audio Accessor. Wraps CreateTrackAudioAccessor.
@@ -234,9 +234,9 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return userdata
 function Track:create_track_audio_accessor()
-	local AudioAccessor = require("audio_accessor")
-	local result = r.CreateTrackAudioAccessor(self.pointer)
-	return AudioAccessor:new(result)
+  local AudioAccessor = require("audio_accessor")
+  local result = r.CreateTrackAudioAccessor(self.pointer)
+  return AudioAccessor:new(result)
 end
 
 --- Create Track Send. Wraps CreateTrackSend.
@@ -251,7 +251,7 @@ end
 --- @see Track:get_track_send_info_value
 --- @see Track:set_track_send_info_value
 function Track:create_track_send(dest_track)
-	return r.CreateTrackSend(self.pointer, dest_track.pointer)
+  return r.CreateTrackSend(self.pointer, dest_track.pointer)
 end
 
 --- Delete Fx. Wraps TrackFX_Delete.
@@ -260,7 +260,7 @@ end
 --- @param fx number
 --- @return boolean
 function Track:delete_fx(fx)
-	return r.TrackFX_Delete(self.pointer, fx)
+  return r.TrackFX_Delete(self.pointer, fx)
 end
 
 --- Delete Media Item. Wraps DeleteTrackMediaItem.
@@ -268,7 +268,7 @@ end
 --- @param item table Item object
 --- @return boolean
 function Track:delete_item(item)
-	return r.DeleteTrackMediaItem(self.pointer, item.pointer)
+  return r.DeleteTrackMediaItem(self.pointer, item.pointer)
 end
 
 --- Get Fx Envelope. Wraps GetFXEnvelope.
@@ -281,9 +281,9 @@ end
 --- @param create boolean
 --- @return table Envelope object
 function Track:get_fx_envelope(fx_idx, param_idx, create)
-	local Envelope = require("envelope")
-	local result = r.GetFXEnvelope(self.pointer, fx_idx, param_idx, create)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetFXEnvelope(self.pointer, fx_idx, param_idx, create)
+  return Envelope:new(result)
 end
 
 --- Constants for Track:get_info_value.
@@ -353,70 +353,70 @@ end
 --- @field P_PARTRACK userdata: parent track (read-only)
 --- @field P_PROJECT userdata: parent project (read-only)
 Track.GetInfoValueConstants = {
-	B_MUTE = "B_MUTE",
-	B_PHASE = "B_PHASE",
-	B_RECMON_IN_EFFECT = "B_RECMON_IN_EFFECT",
-	IP_TRACKNUMBER = "IP_TRACKNUMBER",
-	I_SOLO = "I_SOLO",
-	B_SOLO_DEFEAT = "B_SOLO_DEFEAT",
-	I_FXEN = "I_FXEN",
-	I_rec_arm = "I_rec_arm",
-	I_RECINPUT = "I_RECINPUT",
-	I_RECMODE = "I_RECMODE",
-	I_RECMODE_FLAGS = "I_RECMODE_FLAGS",
-	I_RECMON = "I_RECMON",
-	I_RECMONITEMS = "I_RECMONITEMS",
-	B_AUTO_rec_arm = "B_AUTO_rec_arm",
-	I_VUMODE = "I_VUMODE",
-	I_AUTOMODE = "I_AUTOMODE",
-	I_NCHAN = "I_NCHAN",
-	I_SELECTED = "I_SELECTED",
-	I_WNDH = "I_WNDH",
-	I_TCPH = "I_TCPH",
-	I_TCPY = "I_TCPY",
-	I_MCPX = "I_MCPX",
-	I_MCPY = "I_MCPY",
-	I_MCPW = "I_MCPW",
-	I_MCPH = "I_MCPH",
-	I_FOLDERDEPTH = "I_FOLDERDEPTH",
-	I_FOLDERCOMPACT = "I_FOLDERCOMPACT",
-	I_MIDIHWOUT = "I_MIDIHWOUT",
-	I_MIDI_INPUT_CHANMAP = "I_MIDI_INPUT_CHANMAP",
-	I_MIDI_CTL_CHAN = "I_MIDI_CTL_CHAN",
-	I_MIDI_TRACKSEL_FLAG = "I_MIDI_TRACKSEL_FLAG",
-	I_PERFFLAGS = "I_PERFFLAGS",
-	I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
-	I_HEIGHTOVERRIDE = "I_HEIGHTOVERRIDE",
-	I_SPACER = "I_SPACER",
-	D_VOL = "D_VOL",
-	D_PAN = "D_PAN",
-	D_WIDTH = "D_WIDTH",
-	D_DUALPANL = "D_DUALPANL",
-	D_DUALPANR = "D_DUALPANR",
-	I_pan_mode = "I_pan_mode",
-	D_PANLAW = "D_PANLAW",
-	I_PANLAW_FLAGS = "I_PANLAW_FLAGS",
-	P_ENV = "P_ENV",
-	B_SHOWINMIXER = "B_SHOWINMIXER",
-	B_SHOWINTCP = "B_SHOWINTCP",
-	B_MAINSEND = "B_MAINSEND",
-	C_MAINSEND_OFFS = "C_MAINSEND_OFFS",
-	C_MAINSEND_NCH = "C_MAINSEND_NCH",
-	I_FREEMODE = "I_FREEMODE",
-	I_NUMFIXEDLANES = "I_NUMFIXEDLANES",
-	C_LANESCOLLAPSED = "C_LANESCOLLAPSED",
-	C_LANESETTINGS = "C_LANESETTINGS",
-	C_LANEPLAYS = "C_LANEPLAYS",
-	C_ALLLANESPLAY = "C_ALLLANESPLAY",
-	C_BEATATTACHMODE = "C_BEATATTACHMODE",
-	F_MCP_FXSEND_SCALE = "F_MCP_FXSEND_SCALE",
-	F_MCP_FXPARM_SCALE = "F_MCP_FXPARM_SCALE",
-	F_MCP_SENDRGN_SCALE = "F_MCP_SENDRGN_SCALE",
-	F_TCP_FXPARM_SCALE = "F_TCP_FXPARM_SCALE",
-	I_PLAY_OFFSET_FLAG = "I_PLAY_OFFSET_FLAG",
-	D_PLAY_OFFSET = "D_PLAY_OFFSET",
-	P_PARTRACK = "P_PARTRACK",
-	P_PROJECT = "P_PROJECT",
+  B_MUTE = "B_MUTE",
+  B_PHASE = "B_PHASE",
+  B_RECMON_IN_EFFECT = "B_RECMON_IN_EFFECT",
+  IP_TRACKNUMBER = "IP_TRACKNUMBER",
+  I_SOLO = "I_SOLO",
+  B_SOLO_DEFEAT = "B_SOLO_DEFEAT",
+  I_FXEN = "I_FXEN",
+  I_rec_arm = "I_rec_arm",
+  I_RECINPUT = "I_RECINPUT",
+  I_RECMODE = "I_RECMODE",
+  I_RECMODE_FLAGS = "I_RECMODE_FLAGS",
+  I_RECMON = "I_RECMON",
+  I_RECMONITEMS = "I_RECMONITEMS",
+  B_AUTO_rec_arm = "B_AUTO_rec_arm",
+  I_VUMODE = "I_VUMODE",
+  I_AUTOMODE = "I_AUTOMODE",
+  I_NCHAN = "I_NCHAN",
+  I_SELECTED = "I_SELECTED",
+  I_WNDH = "I_WNDH",
+  I_TCPH = "I_TCPH",
+  I_TCPY = "I_TCPY",
+  I_MCPX = "I_MCPX",
+  I_MCPY = "I_MCPY",
+  I_MCPW = "I_MCPW",
+  I_MCPH = "I_MCPH",
+  I_FOLDERDEPTH = "I_FOLDERDEPTH",
+  I_FOLDERCOMPACT = "I_FOLDERCOMPACT",
+  I_MIDIHWOUT = "I_MIDIHWOUT",
+  I_MIDI_INPUT_CHANMAP = "I_MIDI_INPUT_CHANMAP",
+  I_MIDI_CTL_CHAN = "I_MIDI_CTL_CHAN",
+  I_MIDI_TRACKSEL_FLAG = "I_MIDI_TRACKSEL_FLAG",
+  I_PERFFLAGS = "I_PERFFLAGS",
+  I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
+  I_HEIGHTOVERRIDE = "I_HEIGHTOVERRIDE",
+  I_SPACER = "I_SPACER",
+  D_VOL = "D_VOL",
+  D_PAN = "D_PAN",
+  D_WIDTH = "D_WIDTH",
+  D_DUALPANL = "D_DUALPANL",
+  D_DUALPANR = "D_DUALPANR",
+  I_pan_mode = "I_pan_mode",
+  D_PANLAW = "D_PANLAW",
+  I_PANLAW_FLAGS = "I_PANLAW_FLAGS",
+  P_ENV = "P_ENV",
+  B_SHOWINMIXER = "B_SHOWINMIXER",
+  B_SHOWINTCP = "B_SHOWINTCP",
+  B_MAINSEND = "B_MAINSEND",
+  C_MAINSEND_OFFS = "C_MAINSEND_OFFS",
+  C_MAINSEND_NCH = "C_MAINSEND_NCH",
+  I_FREEMODE = "I_FREEMODE",
+  I_NUMFIXEDLANES = "I_NUMFIXEDLANES",
+  C_LANESCOLLAPSED = "C_LANESCOLLAPSED",
+  C_LANESETTINGS = "C_LANESETTINGS",
+  C_LANEPLAYS = "C_LANEPLAYS",
+  C_ALLLANESPLAY = "C_ALLLANESPLAY",
+  C_BEATATTACHMODE = "C_BEATATTACHMODE",
+  F_MCP_FXSEND_SCALE = "F_MCP_FXSEND_SCALE",
+  F_MCP_FXPARM_SCALE = "F_MCP_FXPARM_SCALE",
+  F_MCP_SENDRGN_SCALE = "F_MCP_SENDRGN_SCALE",
+  F_TCP_FXPARM_SCALE = "F_TCP_FXPARM_SCALE",
+  I_PLAY_OFFSET_FLAG = "I_PLAY_OFFSET_FLAG",
+  D_PLAY_OFFSET = "D_PLAY_OFFSET",
+  P_PARTRACK = "P_PARTRACK",
+  P_PROJECT = "P_PROJECT",
 }
 
 --- Get Info Value. Wraps GetMediaTrackInfo_Value.
@@ -425,16 +425,16 @@ Track.GetInfoValueConstants = {
 --- @param param_name string Track.GetInfoValueConstants
 --- @return number
 function Track:get_info_value(param_name)
-	return r.GetMediaTrackInfo_Value(self.pointer, param_name)
+  return r.GetMediaTrackInfo_Value(self.pointer, param_name)
 end
 
 --- Get Parent Track. Wraps GetParentTrack.
 --- @within ReaScript Wrapped Methods
 --- @return table Track object
 function Track:get_parent_track()
-	local Track = require("track")
-	local result = r.GetParentTrack(self.pointer)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.GetParentTrack(self.pointer)
+  return Track:new(result)
 end
 
 --- Get Touch State. Wraps CSurf_GetTouchState.
@@ -442,7 +442,7 @@ end
 --- @param is_pan number
 --- @return boolean
 function Track:get_touch_state(is_pan)
-	return r.CSurf_GetTouchState(self.pointer, is_pan)
+  return r.CSurf_GetTouchState(self.pointer, is_pan)
 end
 
 --- Constants for Track:get_set_info_string
@@ -458,16 +458,16 @@ end
 --- @field P_UI_RECT tcp.mute: tcp.mutechar *read-only, allows querying screen position + size of track WALTER elements (tcp.size queries screen position and size of entire TCP, etc).
 --- @field GUID GUID *: 16-byte GUID, can query or update. If using a _String() function, GUID is a string {xyz-...}.
 Track.GetSetInfoStringConstants = {
-	P_NAME = "P_NAME",
-	P_ICON = "P_ICON",
-	P_LANENAME = "P_LANENAME",
-	P_MCP_LAYOUT = "P_MCP_LAYOUT",
-	P_RAZOREDITS = "P_RAZOREDITS",
-	P_RAZOREDITS_EXT = "P_RAZOREDITS_EXT",
-	P_TCP_LAYOUT = "P_TCP_LAYOUT",
-	P_EXT = "P_EXT",
-	P_UI_RECT = "P_UI_RECT",
-	GUID = "GUID",
+  P_NAME = "P_NAME",
+  P_ICON = "P_ICON",
+  P_LANENAME = "P_LANENAME",
+  P_MCP_LAYOUT = "P_MCP_LAYOUT",
+  P_RAZOREDITS = "P_RAZOREDITS",
+  P_RAZOREDITS_EXT = "P_RAZOREDITS_EXT",
+  P_TCP_LAYOUT = "P_TCP_LAYOUT",
+  P_EXT = "P_EXT",
+  P_UI_RECT = "P_UI_RECT",
+  GUID = "GUID",
 }
 
 --- Get Set Info string Wraps GetSetMediaTrackInfo_string
@@ -480,13 +480,13 @@ Track.GetSetInfoStringConstants = {
 --- @return string_need_big string
 --- @see Track.GetSetInfoStringConstants
 function Track:get_set_info_string(param_name, string_need_big, set_new_value)
-	local ret_val, string_need_big =
-		r.GetSetMediaTrackInfo_String(self.pointer, param_name, string_need_big, set_new_value)
-	if ret_val then
-		return string_need_big
-	else
-		error("Failed to get or set track info string.")
-	end
+  local ret_val, string_need_big =
+    r.GetSetMediaTrackInfo_String(self.pointer, param_name, string_need_big, set_new_value)
+  if ret_val then
+    return string_need_big
+  else
+    error("Failed to get or set track info string.")
+  end
 end
 
 --- Constants for Track:get_set_track_group_membership.
@@ -517,31 +517,31 @@ end
 --- @field NO_LEAD_WHEN_FOLLOW string: no lead when follow
 --- @field VOLUME_VCA_FOLLOW_ISPREFX string: VCA follow is pre-fx
 Track.GroupMembershipConstants = {
-	MEDIA_EDIT_LEAD = "MEDIA_EDIT_LEAD",
-	MEDIA_EDIT_FOLLOW = "MEDIA_EDIT_FOLLOW",
-	VOLUME_LEAD = "VOLUME_LEAD",
-	VOLUME_FOLLOW = "VOLUME_FOLLOW",
-	VOLUME_VCA_LEAD = "VOLUME_VCA_LEAD",
-	VOLUME_VCA_FOLLOW = "VOLUME_VCA_FOLLOW",
-	PAN_LEAD = "PAN_LEAD",
-	PAN_FOLLOW = "PAN_FOLLOW",
-	WIDTH_LEAD = "WIDTH_LEAD",
-	WIDTH_FOLLOW = "WIDTH_FOLLOW",
-	MUTE_LEAD = "MUTE_LEAD",
-	MUTE_FOLLOW = "MUTE_FOLLOW",
-	SOLO_LEAD = "SOLO_LEAD",
-	SOLO_FOLLOW = "SOLO_FOLLOW",
-	rec_arm_LEAD = "rec_arm_LEAD",
-	rec_arm_FOLLOW = "rec_arm_FOLLOW",
-	POLARITY_LEAD = "POLARITY_LEAD",
-	POLARITY_FOLLOW = "POLARITY_FOLLOW",
-	AUTOMODE_LEAD = "AUTOMODE_LEAD",
-	AUTOMODE_FOLLOW = "AUTOMODE_FOLLOW",
-	VOLUME_REVERSE = "VOLUME_REVERSE",
-	PAN_REVERSE = "PAN_REVERSE",
-	WIDTH_REVERSE = "WIDTH_REVERSE",
-	NO_LEAD_WHEN_FOLLOW = "NO_LEAD_WHEN_FOLLOW",
-	VOLUME_VCA_FOLLOW_ISPREFX = "VOLUME_VCA_FOLLOW_ISPREFX",
+  MEDIA_EDIT_LEAD = "MEDIA_EDIT_LEAD",
+  MEDIA_EDIT_FOLLOW = "MEDIA_EDIT_FOLLOW",
+  VOLUME_LEAD = "VOLUME_LEAD",
+  VOLUME_FOLLOW = "VOLUME_FOLLOW",
+  VOLUME_VCA_LEAD = "VOLUME_VCA_LEAD",
+  VOLUME_VCA_FOLLOW = "VOLUME_VCA_FOLLOW",
+  PAN_LEAD = "PAN_LEAD",
+  PAN_FOLLOW = "PAN_FOLLOW",
+  WIDTH_LEAD = "WIDTH_LEAD",
+  WIDTH_FOLLOW = "WIDTH_FOLLOW",
+  MUTE_LEAD = "MUTE_LEAD",
+  MUTE_FOLLOW = "MUTE_FOLLOW",
+  SOLO_LEAD = "SOLO_LEAD",
+  SOLO_FOLLOW = "SOLO_FOLLOW",
+  rec_arm_LEAD = "rec_arm_LEAD",
+  rec_arm_FOLLOW = "rec_arm_FOLLOW",
+  POLARITY_LEAD = "POLARITY_LEAD",
+  POLARITY_FOLLOW = "POLARITY_FOLLOW",
+  AUTOMODE_LEAD = "AUTOMODE_LEAD",
+  AUTOMODE_FOLLOW = "AUTOMODE_FOLLOW",
+  VOLUME_REVERSE = "VOLUME_REVERSE",
+  PAN_REVERSE = "PAN_REVERSE",
+  WIDTH_REVERSE = "WIDTH_REVERSE",
+  NO_LEAD_WHEN_FOLLOW = "NO_LEAD_WHEN_FOLLOW",
+  VOLUME_VCA_FOLLOW_ISPREFX = "VOLUME_VCA_FOLLOW_ISPREFX",
 }
 
 --- Get Set Track Group Membership. Wraps GetSetTrackGroupMembership.
@@ -555,7 +555,7 @@ Track.GroupMembershipConstants = {
 --- @return number
 --- @see Track.GroupMembershipConstants
 function Track:get_set_track_group_membership(group_name, set_mask, set_value)
-	return r.GetSetTrackGroupMembership(self.pointer, group_name, set_mask, set_value)
+  return r.GetSetTrackGroupMembership(self.pointer, group_name, set_mask, set_value)
 end
 
 --- Get Set Track Group Membership Ex. Wraps GetSetTrackGroupMembershipEx.
@@ -570,7 +570,7 @@ end
 --- @return number
 --- @see Track.GroupMembershipConstants
 function Track:get_set_track_group_membership_ex(group_name, offset, set_mask, set_value)
-	return r.GetSetTrackGroupMembershipEx(self.pointer, group_name, offset, set_mask, set_value)
+  return r.GetSetTrackGroupMembershipEx(self.pointer, group_name, offset, set_mask, set_value)
 end
 
 --- Get Set Track Group Membership High. Wraps GetSetTrackGroupMembershipHigh.
@@ -584,7 +584,7 @@ end
 --- @return number
 --- @see Track.GroupMembershipConstants
 function Track:get_set_track_group_membership_high(group_name, set_mask, set_value)
-	return r.GetSetTrackGroupMembershipHigh(self.pointer, group_name, set_mask, set_value)
+  return r.GetSetTrackGroupMembershipHigh(self.pointer, group_name, set_mask, set_value)
 end
 
 --- Get Set Track Send Info string. Wraps GetSetTrackSendInfo_string
@@ -596,13 +596,19 @@ end
 --- @param set_new_value boolean
 --- @return string
 function Track:get_set_track_send_info_string(category, send_idx, string_need_big, set_new_value)
-	local ret_val, string_need_big =
-		r.GetSetTrackSendInfo_String(self.pointer, category, send_idx, "P_EXT", string_need_big, set_new_value)
-	if ret_val then
-		return string_need_big
-	else
-		error("Failed to get set track send info string")
-	end
+  local ret_val, string_need_big = r.GetSetTrackSendInfo_String(
+    self.pointer,
+    category,
+    send_idx,
+    "P_EXT",
+    string_need_big,
+    set_new_value
+  )
+  if ret_val then
+    return string_need_big
+  else
+    error("Failed to get set track send info string")
+  end
 end
 
 --- Get Track Automation Mode. Wraps GetTrackAutomationMode.
@@ -610,7 +616,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_automation_mode()
-	return r.GetTrackAutomationMode(self.pointer)
+  return r.GetTrackAutomationMode(self.pointer)
 end
 
 --- Get Track Color. Wraps GetTrackColor.
@@ -620,14 +626,14 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_color()
-	return r.GetTrackColor(self.pointer)
+  return r.GetTrackColor(self.pointer)
 end
 
 --- Get Track Depth. Wraps GetTrackDepth.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_depth()
-	return r.GetTrackDepth(self.pointer)
+  return r.GetTrackDepth(self.pointer)
 end
 
 --- Get Track Envelope. Wraps GetTrackEnvelope.
@@ -635,9 +641,9 @@ end
 --- @param env_idx number
 --- @return table Envelope object
 function Track:get_envelope(env_idx)
-	local Envelope = require("envelope")
-	local result = r.GetTrackEnvelope(self.pointer, env_idx)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetTrackEnvelope(self.pointer, env_idx)
+  return Envelope:new(result)
 end
 
 --- Get Track Envelope By Chunk Name. Wraps GetTrackEnvelopeByChunkName.
@@ -647,9 +653,9 @@ end
 --- @param cfgchunkname_or_guid string
 --- @return table Envelope object
 function Track:get_envelope_by_chunk_name(cfgchunkname_or_guid)
-	local Envelope = require("envelope")
-	local result = r.GetTrackEnvelopeByChunkName(self.pointer, cfgchunkname_or_guid)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetTrackEnvelopeByChunkName(self.pointer, cfgchunkname_or_guid)
+  return Envelope:new(result)
 end
 
 --- Get Track Envelope By Name. Wraps GetTrackEnvelopeByName.
@@ -657,16 +663,16 @@ end
 --- @param env_name string
 --- @return table Envelope object
 function Track:get_envelope_by_name(env_name)
-	local Envelope = require("envelope")
-	local result = r.GetTrackEnvelopeByName(self.pointer, env_name)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result = r.GetTrackEnvelopeByName(self.pointer, env_name)
+  return Envelope:new(result)
 end
 
 --- Get Track Guid. Wraps GetTrackGUID.
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Track:get_guid()
-	return r.GetTrackGUID(self.pointer)
+  return r.GetTrackGUID(self.pointer)
 end
 
 --- Get Track Media Item. Wraps GetTrackMediaItem.
@@ -674,9 +680,9 @@ end
 --- @param item_idx number
 --- @return table Item object
 function Track:get_item(item_idx)
-	local Item = require("item")
-	local result = r.GetTrackMediaItem(self.pointer, item_idx)
-	return Item:new(result)
+  local Item = require("item")
+  local result = r.GetTrackMediaItem(self.pointer, item_idx)
+  return Item:new(result)
 end
 
 --- Get Track Midi Lyrics. Wraps GetTrackMIDILyrics.
@@ -690,12 +696,12 @@ end
 --- @return string
 --- @see Track:set_track_midi_lyrics
 function Track:get_track_midi_lyrics(flag)
-	local ret_val, buf = r.GetTrackMIDILyrics(self.pointer, flag)
-	if ret_val then
-		return buf
-	else
-		error("Failed to get track midi lyrics")
-	end
+  local ret_val, buf = r.GetTrackMIDILyrics(self.pointer, flag)
+  if ret_val then
+    return buf
+  else
+    error("Failed to get track midi lyrics")
+  end
 end
 
 --- Get Track Name. Wraps GetTrackName.
@@ -703,19 +709,19 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Track:get_name()
-	local ret_val, buf = r.GetTrackName(self.pointer)
-	if ret_val then
-		return buf
-	else
-		error("Failed to get track name")
-	end
+  local ret_val, buf = r.GetTrackName(self.pointer)
+  if ret_val then
+    return buf
+  else
+    error("Failed to get track name")
+  end
 end
 
 --- Get Track Num Media Items. Wraps GetTrackNumMediaItems.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_track_num_media_items()
-	return r.GetTrackNumMediaItems(self.pointer)
+  return r.GetTrackNumMediaItems(self.pointer)
 end
 
 --- Get Track Num Sends. Wraps GetTrackNumSends.
@@ -725,7 +731,7 @@ end
 --- @param category number
 --- @return number
 function Track:get_track_num_sends(category)
-	return r.GetTrackNumSends(self.pointer, category)
+  return r.GetTrackNumSends(self.pointer, category)
 end
 
 --- Get Track Receive Name. Wraps GetTrackReceiveName.
@@ -734,12 +740,12 @@ end
 --- @return string
 --- @see Track:get_track_send_name
 function Track:get_track_receive_name(recv_index)
-	local ret_val, buf = r.GetTrackReceiveName(self.pointer, recv_index)
-	if ret_val then
-		return buf
-	else
-		error("Could not get track receive name")
-	end
+  local ret_val, buf = r.GetTrackReceiveName(self.pointer, recv_index)
+  if ret_val then
+    return buf
+  else
+    error("Could not get track receive name")
+  end
 end
 
 --- Get Track Receive UI Mute. Wraps GetTrackReceiveUIMute.
@@ -748,12 +754,12 @@ end
 --- @return boolean
 --- @see Track:get_track_send_ui_mute
 function Track:get_track_receive_ui_mute(recv_index)
-	local ret_val, mute = r.GetTrackReceiveUIMute(self.pointer, recv_index)
-	if ret_val then
-		return mute
-	else
-		error("Could not get track receive ui mute")
-	end
+  local ret_val, mute = r.GetTrackReceiveUIMute(self.pointer, recv_index)
+  if ret_val then
+    return mute
+  else
+    error("Could not get track receive ui mute")
+  end
 end
 
 --- Get Track Receive UI Vol Pan. Wraps GetTrackReceiveUIVolPan.
@@ -763,12 +769,12 @@ end
 --- @return number pan
 --- @see Track:get_track_send_ui_vol_pan
 function Track:get_track_receive_ui_vol_pan(recv_index)
-	local ret_val, volume, pan = r.GetTrackReceiveUIVolPan(self.pointer, recv_index)
-	if ret_val then
-		return volume, pan
-	else
-		error("Could not get track receive ui vol pan")
-	end
+  local ret_val, volume, pan = r.GetTrackReceiveUIVolPan(self.pointer, recv_index)
+  if ret_val then
+    return volume, pan
+  else
+    error("Could not get track receive ui vol pan")
+  end
 end
 
 --- Constants for Track:get_track_send_info_value.
@@ -787,20 +793,20 @@ end
 --- @field P_SRCTRACK userdata: source track, only applies for sends/recvs (read-only)
 --- @field P_ENV envchunkname: envchunkname TrackEnvelope *call with VOLENV, PANENV, etc appended (read-only)
 Track.GetTrackSendInfoValueConstants = {
-	B_MUTE = "B_MUTE",
-	B_PHASE = "B_PHASE",
-	B_MONO = "B_MONO",
-	D_VOL = "D_VOL",
-	D_PAN = "D_PAN",
-	D_PANLAW = "D_PANLAW",
-	I_SENDMODE = "I_SENDMODE",
-	I_AUTOMODE = "I_AUTOMODE",
-	I_SRCCHAN = "I_SRCCHAN",
-	I_DSTCHAN = "I_DSTCHAN",
-	I_MIDIFLAGS = "I_MIDIFLAGS",
-	P_DESTTRACK = "P_DESTTRACK",
-	P_SRCTRACK = "P_SRCTRACK",
-	P_ENV = "P_ENV",
+  B_MUTE = "B_MUTE",
+  B_PHASE = "B_PHASE",
+  B_MONO = "B_MONO",
+  D_VOL = "D_VOL",
+  D_PAN = "D_PAN",
+  D_PANLAW = "D_PANLAW",
+  I_SENDMODE = "I_SENDMODE",
+  I_AUTOMODE = "I_AUTOMODE",
+  I_SRCCHAN = "I_SRCCHAN",
+  I_DSTCHAN = "I_DSTCHAN",
+  I_MIDIFLAGS = "I_MIDIFLAGS",
+  P_DESTTRACK = "P_DESTTRACK",
+  P_SRCTRACK = "P_SRCTRACK",
+  P_ENV = "P_ENV",
 }
 
 --- Get Track Send Info Value. Wraps GetTrackSendInfo_Value.
@@ -816,7 +822,7 @@ Track.GetTrackSendInfoValueConstants = {
 --- @see Track:remove_track_send
 --- @see Track:get_track_num_sends
 function Track:get_track_send_info_value(category, send_idx, param_name)
-	return r.GetTrackSendInfo_Value(self.pointer, category, send_idx, param_name)
+  return r.GetTrackSendInfo_Value(self.pointer, category, send_idx, param_name)
 end
 
 --- Get Track Send Name. Wraps GetTrackSendName.
@@ -826,12 +832,12 @@ end
 --- @return string
 --- @see Track:get_track_receive_name
 function Track:get_track_send_name(send_index)
-	local ret_val, buf = r.GetTrackSendName(self.pointer, send_index)
-	if ret_val then
-		return buf
-	else
-		error("Could not get track send name")
-	end
+  local ret_val, buf = r.GetTrackSendName(self.pointer, send_index)
+  if ret_val then
+    return buf
+  else
+    error("Could not get track send name")
+  end
 end
 
 --- Get Track Send UI Mute. Wraps GetTrackSendUIMute.
@@ -841,12 +847,12 @@ end
 --- @return boolean
 --- @see Track:get_track_receive_ui_mute
 function Track:get_track_send_ui_mute(send_index)
-	local ret_val, mute = r.GetTrackSendUIMute(self.pointer, send_index)
-	if ret_val then
-		return mute
-	else
-		error("Could not get track send ui mute")
-	end
+  local ret_val, mute = r.GetTrackSendUIMute(self.pointer, send_index)
+  if ret_val then
+    return mute
+  else
+    error("Could not get track send ui mute")
+  end
 end
 
 --- Get Track Send UI Vol Pan. Wraps GetTrackSendUIVolPan.
@@ -857,12 +863,12 @@ end
 --- @return pan number
 --- @see Track:get_track_receive_ui_vol_pan
 function Track:get_track_send_ui_vol_pan(send_index)
-	local ret_val, volume, pan = r.GetTrackSendUIVolPan(self.pointer, send_index)
-	if ret_val then
-		return volume, pan
-	else
-		error("Could not get track send ui vol pan")
-	end
+  local ret_val, volume, pan = r.GetTrackSendUIVolPan(self.pointer, send_index)
+  if ret_val then
+    return volume, pan
+  else
+    error("Could not get track send ui vol pan")
+  end
 end
 
 --- Get Track State. Wraps GetTrackState.
@@ -873,12 +879,12 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return flags number
 function Track:get_track_state()
-	local ret_val, flags = r.GetTrackState(self.pointer)
-	if ret_val then
-		return flags
-	else
-		error("Could not get track state")
-	end
+  local ret_val, flags = r.GetTrackState(self.pointer)
+  if ret_val then
+    return flags
+  else
+    error("Could not get track state")
+  end
 end
 
 --- Get Track State Chunk. Wraps GetTrackStateChunk.
@@ -889,24 +895,24 @@ end
 --- @param is_undo boolean
 --- @return str string
 function Track:get_track_state_chunk(str, is_undo)
-	local ret_val, str = r.GetTrackStateChunk(self.pointer, str, is_undo)
-	if ret_val then
-		return str
-	else
-		error("Could not get track state chunk")
-	end
+  local ret_val, str = r.GetTrackStateChunk(self.pointer, str, is_undo)
+  if ret_val then
+    return str
+  else
+    error("Could not get track state chunk")
+  end
 end
 
 --- Get Track UI Mute. Wraps GetTrackUIMute.
 --- @within ReaScript Wrapped Methods
 --- @return mute boolean
 function Track:get_track_ui_mute()
-	local ret_val, mute = r.GetTrackUIMute(self.pointer)
-	if ret_val then
-		return mute
-	else
-		error("Could not get track ui mute")
-	end
+  local ret_val, mute = r.GetTrackUIMute(self.pointer)
+  if ret_val then
+    return mute
+  else
+    error("Could not get track ui mute")
+  end
 end
 
 --- Get Track UI Pan. Wraps GetTrackUIPan.
@@ -915,12 +921,12 @@ end
 --- @return pan2 number
 --- @return pan_mode number
 function Track:get_track_ui_pan()
-	local ret_val, pan1, pan2, pan_mode = r.GetTrackUIPan(self.pointer)
-	if ret_val then
-		return pan1, pan2, pan_mode
-	else
-		error("Could not get track ui pan")
-	end
+  local ret_val, pan1, pan2, pan_mode = r.GetTrackUIPan(self.pointer)
+  if ret_val then
+    return pan1, pan2, pan_mode
+  else
+    error("Could not get track ui pan")
+  end
 end
 
 --- Get Track UI Vol Pan. Wraps GetTrackUIVolPan.
@@ -928,12 +934,12 @@ end
 --- @return volume number
 --- @return pan number
 function Track:get_track_ui_vol_pan()
-	local ret_val, volume, pan = r.GetTrackUIVolPan(self.pointer)
-	if ret_val then
-		return volume, pan
-	else
-		error("Could not get track ui vol pan")
-	end
+  local ret_val, volume, pan = r.GetTrackUIVolPan(self.pointer)
+  if ret_val then
+    return volume, pan
+  else
+    error("Could not get track ui vol pan")
+  end
 end
 
 -- Get Peak Hold DB. Wraps Track_GetPeakHoldDB.
@@ -946,7 +952,7 @@ end
 --- @param clear boolean
 --- @return number
 function Track:get_peak_hold_db(channel, clear)
-	return r.Track_GetPeakHoldDB(self.pointer, channel, clear)
+  return r.Track_GetPeakHoldDB(self.pointer, channel, clear)
 end
 
 --- Get Peak Info. Wraps Track_GetPeakInfo.
@@ -957,14 +963,14 @@ end
 --- @param channel number
 --- @return number
 function Track:get_peak_info(channel)
-	return r.Track_GetPeakInfo(self.pointer, channel)
+  return r.Track_GetPeakInfo(self.pointer, channel)
 end
 
 --- Get Fx Count. Wraps TrackFX_GetCount.
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_track_fx_count()
-	return r.TrackFX_GetCount(self.pointer)
+  return r.TrackFX_GetCount(self.pointer)
 end
 
 --- Get Freeze Count. Wraps BR_GetMediaTrackFreezeCount.
@@ -972,7 +978,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return number
 function Track:get_freeze_count()
-	return r.BR_GetMediaTrackFreezeCount(self.pointer)
+  return r.BR_GetMediaTrackFreezeCount(self.pointer)
 end
 
 --- Get Send Info Envelope. Wraps BR_GetMediaTrackSendInfo_Envelope.
@@ -983,9 +989,10 @@ end
 --- @param envelope_type number
 --- @return Envelope table
 function Track:get_send_info_envelope(category, send_idx, envelope_type)
-	local Envelope = require("envelope")
-	local result = r.BR_GetMediaTrackSendInfo_Envelope(self.pointer, category, send_idx, envelope_type)
-	return Envelope:new(result)
+  local Envelope = require("envelope")
+  local result =
+    r.BR_GetMediaTrackSendInfo_Envelope(self.pointer, category, send_idx, envelope_type)
+  return Envelope:new(result)
 end
 
 --- Get Send Info Track. Wraps BR_GetMediaTrackSendInfo_Track.
@@ -996,9 +1003,9 @@ end
 --- @param track_type number
 --- @return Track table
 function Track:get_send_info_track(category, send_idx, track_type)
-	local Track = require("track")
-	local result = r.BR_GetMediaTrackSendInfo_Track(self.pointer, category, send_idx, track_type)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.BR_GetMediaTrackSendInfo_Track(self.pointer, category, send_idx, track_type)
+  return Track:new(result)
 end
 
 --- Get Set Track Send Info. Wraps BR_GetSetTrackSendInfo.
@@ -1011,21 +1018,28 @@ end
 --- @param new_value number
 --- @return number
 function Track:get_set_track_send_info(category, send_idx, param_name, set_new_value, new_value)
-	return r.BR_GetSetTrackSendInfo(self.pointer, category, send_idx, param_name, set_new_value, new_value)
+  return r.BR_GetSetTrackSendInfo(
+    self.pointer,
+    category,
+    send_idx,
+    param_name,
+    set_new_value,
+    new_value
+  )
 end
 
 --- Get Sws Track Notes. Wraps NF_GetSWSTrackNotes.
 --- @within ReaScript Wrapped Methods
 --- @return string
 function Track:get_sws_track_notes()
-	return r.NF_GetSWSTrackNotes(self.pointer)
+  return r.NF_GetSWSTrackNotes(self.pointer)
 end
 
 --- Is Track Selected. Wraps IsTrackSelected.
 --- @within ReaScript Wrapped Methods
 --- @return boolean
 function Track:is_track_selected()
-	return r.IsTrackSelected(self.pointer)
+  return r.IsTrackSelected(self.pointer)
 end
 
 --- Is Track Visible. Wraps IsTrackVisible.
@@ -1035,14 +1049,14 @@ end
 --- @param mixer boolean
 --- @return boolean
 function Track:is_track_visible(mixer)
-	return r.IsTrackVisible(self.pointer, mixer)
+  return r.IsTrackVisible(self.pointer, mixer)
 end
 
 --- Mark Track Items Dirty. Wraps MarkTrackItemsDirty.
 -- If track is supplied, item is ignored
 --- @within ReaScript Wrapped Methods
 function Track:mark_track_items_dirty()
-	return r.MarkTrackItemsDirty(self.pointer, item)
+  return r.MarkTrackItemsDirty(self.pointer, item)
 end
 
 --- Midi Get Track Hash. Wraps MIDI_GetTrackHash.
@@ -1052,12 +1066,12 @@ end
 --- @param notes_only boolean
 --- @return hash string
 function Track:midi_get_track_hash(notes_only)
-	local ret_val, hash = r.MIDI_GetTrackHash(self.pointer, notes_only)
-	if ret_val then
-		return hash
-	else
-		error("Could not get track hash")
-	end
+  local ret_val, hash = r.MIDI_GetTrackHash(self.pointer, notes_only)
+  if ret_val then
+    return hash
+  else
+    error("Could not get track hash")
+  end
 end
 
 --- Midi Editor Flags For Track. Wraps MIDIEditorFlagsForTrack.
@@ -1071,7 +1085,7 @@ end
 --- @return number pitchwheel_range
 --- @return number flags
 function Track:midi_editor_flags_for_track(pitchwheel_range, flags, is_set)
-	return r.MIDIEditorFlagsForTrack(self.pointer, pitchwheel_range, flags, is_set)
+  return r.MIDIEditorFlagsForTrack(self.pointer, pitchwheel_range, flags, is_set)
 end
 
 --- Remove Receives from another track. Wraps SNM_RemoveReceivesFrom.
@@ -1080,7 +1094,7 @@ end
 --- @param src_track table Track object
 --- @return boolean
 function Track:remove_receives_from(src_track)
-	return r.SNM_RemoveReceivesFrom(self.pointer, src_track.pointer)
+  return r.SNM_RemoveReceivesFrom(self.pointer, src_track.pointer)
 end
 
 --- Remove Track Send. Wraps RemoveTrackSend.
@@ -1097,14 +1111,14 @@ end
 --- @see Track:set_track_send_info_value
 --- @see Track:get_track_num_sends
 function Track:remove_track_send(category, send_idx)
-	return r.RemoveTrackSend(self.pointer, category, send_idx)
+  return r.RemoveTrackSend(self.pointer, category, send_idx)
 end
 
 --- Set Sws Track Notes. Wraps NF_SetSWSTrackNotes.
 --- @within ReaScript Wrapped Methods
 --- @param str string
 function Track:set_sws_track_notes(str)
-	return r.NF_SetSWSTrackNotes(self.pointer, str)
+  return r.NF_SetSWSTrackNotes(self.pointer, str)
 end
 
 --- Track To Id. Wraps CSurf_TrackToID.
@@ -1112,7 +1126,7 @@ end
 --- @param mcp_view boolean
 --- @return number
 function Track:track_to_id(mcp_view)
-	return r.CSurf_TrackToID(self.pointer, mcp_view)
+  return r.CSurf_TrackToID(self.pointer, mcp_view)
 end
 
 --- Constants for Track:set_info_value.
@@ -1180,68 +1194,68 @@ end
 --- @field I_PLAY_OFFSET_FLAG number: track media playback offset state, &1=bypassed, &2=offset value is measured in samples (otherwise measured in seconds)
 --- @field D_PLAY_OFFSET number: track media playback offset, units depend on I_PLAY_OFFSET_FLAG
 Track.SetInfoValueConstants = {
-	B_MUTE = "B_MUTE",
-	B_PHASE = "B_PHASE",
-	B_RECMON_IN_EFFECT = "B_RECMON_IN_EFFECT",
-	IP_TRACKNUMBER = "IP_TRACKNUMBER",
-	I_SOLO = "I_SOLO",
-	B_SOLO_DEFEAT = "B_SOLO_DEFEAT",
-	I_FXEN = "I_FXEN",
-	I_rec_arm = "I_rec_arm",
-	I_RECINPUT = "I_RECINPUT",
-	I_RECMODE = "I_RECMODE",
-	I_RECMODE_FLAGS = "I_RECMODE_FLAGS",
-	I_RECMON = "I_RECMON",
-	I_RECMONITEMS = "I_RECMONITEMS",
-	B_AUTO_rec_arm = "B_AUTO_rec_arm",
-	I_VUMODE = "I_VUMODE",
-	I_AUTOMODE = "I_AUTOMODE",
-	I_NCHAN = "I_NCHAN",
-	I_SELECTED = "I_SELECTED",
-	I_WNDH = "I_WNDH",
-	I_TCPH = "I_TCPH",
-	I_TCPY = "I_TCPY",
-	I_MCPX = "I_MCPX",
-	I_MCPY = "I_MCPY",
-	I_MCPW = "I_MCPW",
-	I_MCPH = "I_MCPH",
-	I_FOLDERDEPTH = "I_FOLDERDEPTH",
-	I_FOLDERCOMPACT = "I_FOLDERCOMPACT",
-	I_MIDIHWOUT = "I_MIDIHWOUT",
-	I_MIDI_INPUT_CHANMAP = "I_MIDI_INPUT_CHANMAP",
-	I_MIDI_CTL_CHAN = "I_MIDI_CTL_CHAN",
-	I_MIDI_TRACKSEL_FLAG = "I_MIDI_TRACKSEL_FLAG",
-	I_PERFFLAGS = "I_PERFFLAGS",
-	I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
-	I_HEIGHTOVERRIDE = "I_HEIGHTOVERRIDE",
-	I_SPACER = "I_SPACER",
-	D_VOL = "D_VOL",
-	D_PAN = "D_PAN",
-	D_WIDTH = "D_WIDTH",
-	D_DUALPANL = "D_DUALPANL",
-	D_DUALPANR = "D_DUALPANR",
-	I_pan_mode = "I_pan_mode",
-	D_PANLAW = "D_PANLAW",
-	I_PANLAW_FLAGS = "I_PANLAW_FLAGS",
-	P_ENV = "P_ENV",
-	B_SHOWINMIXER = "B_SHOWINMIXER",
-	B_SHOWINTCP = "B_SHOWINTCP",
-	B_MAINSEND = "B_MAINSEND",
-	C_MAINSEND_OFFS = "C_MAINSEND_OFFS",
-	C_MAINSEND_NCH = "C_MAINSEND_NCH",
-	I_FREEMODE = "I_FREEMODE",
-	I_NUMFIXEDLANES = "I_NUMFIXEDLANES",
-	C_LANESCOLLAPSED = "C_LANESCOLLAPSED",
-	C_LANESETTINGS = "C_LANESETTINGS",
-	C_LANEPLAYS = "C_LANEPLAYS",
-	C_ALLLANESPLAY = "C_ALLLANESPLAY",
-	C_BEATATTACHMODE = "C_BEATATTACHMODE",
-	F_MCP_FXSEND_SCALE = "F_MCP_FXSEND_SCALE",
-	F_MCP_FXPARM_SCALE = "F_MCP_FXPARM_SCALE",
-	F_MCP_SENDRGN_SCALE = "F_MCP_SENDRGN_SCALE",
-	F_TCP_FXPARM_SCALE = "F_TCP_FXPARM_SCALE",
-	I_PLAY_OFFSET_FLAG = "I_PLAY_OFFSET_FLAG",
-	D_PLAY_OFFSET = "D_PLAY_OFFSET",
+  B_MUTE = "B_MUTE",
+  B_PHASE = "B_PHASE",
+  B_RECMON_IN_EFFECT = "B_RECMON_IN_EFFECT",
+  IP_TRACKNUMBER = "IP_TRACKNUMBER",
+  I_SOLO = "I_SOLO",
+  B_SOLO_DEFEAT = "B_SOLO_DEFEAT",
+  I_FXEN = "I_FXEN",
+  I_rec_arm = "I_rec_arm",
+  I_RECINPUT = "I_RECINPUT",
+  I_RECMODE = "I_RECMODE",
+  I_RECMODE_FLAGS = "I_RECMODE_FLAGS",
+  I_RECMON = "I_RECMON",
+  I_RECMONITEMS = "I_RECMONITEMS",
+  B_AUTO_rec_arm = "B_AUTO_rec_arm",
+  I_VUMODE = "I_VUMODE",
+  I_AUTOMODE = "I_AUTOMODE",
+  I_NCHAN = "I_NCHAN",
+  I_SELECTED = "I_SELECTED",
+  I_WNDH = "I_WNDH",
+  I_TCPH = "I_TCPH",
+  I_TCPY = "I_TCPY",
+  I_MCPX = "I_MCPX",
+  I_MCPY = "I_MCPY",
+  I_MCPW = "I_MCPW",
+  I_MCPH = "I_MCPH",
+  I_FOLDERDEPTH = "I_FOLDERDEPTH",
+  I_FOLDERCOMPACT = "I_FOLDERCOMPACT",
+  I_MIDIHWOUT = "I_MIDIHWOUT",
+  I_MIDI_INPUT_CHANMAP = "I_MIDI_INPUT_CHANMAP",
+  I_MIDI_CTL_CHAN = "I_MIDI_CTL_CHAN",
+  I_MIDI_TRACKSEL_FLAG = "I_MIDI_TRACKSEL_FLAG",
+  I_PERFFLAGS = "I_PERFFLAGS",
+  I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
+  I_HEIGHTOVERRIDE = "I_HEIGHTOVERRIDE",
+  I_SPACER = "I_SPACER",
+  D_VOL = "D_VOL",
+  D_PAN = "D_PAN",
+  D_WIDTH = "D_WIDTH",
+  D_DUALPANL = "D_DUALPANL",
+  D_DUALPANR = "D_DUALPANR",
+  I_pan_mode = "I_pan_mode",
+  D_PANLAW = "D_PANLAW",
+  I_PANLAW_FLAGS = "I_PANLAW_FLAGS",
+  P_ENV = "P_ENV",
+  B_SHOWINMIXER = "B_SHOWINMIXER",
+  B_SHOWINTCP = "B_SHOWINTCP",
+  B_MAINSEND = "B_MAINSEND",
+  C_MAINSEND_OFFS = "C_MAINSEND_OFFS",
+  C_MAINSEND_NCH = "C_MAINSEND_NCH",
+  I_FREEMODE = "I_FREEMODE",
+  I_NUMFIXEDLANES = "I_NUMFIXEDLANES",
+  C_LANESCOLLAPSED = "C_LANESCOLLAPSED",
+  C_LANESETTINGS = "C_LANESETTINGS",
+  C_LANEPLAYS = "C_LANEPLAYS",
+  C_ALLLANESPLAY = "C_ALLLANESPLAY",
+  C_BEATATTACHMODE = "C_BEATATTACHMODE",
+  F_MCP_FXSEND_SCALE = "F_MCP_FXSEND_SCALE",
+  F_MCP_FXPARM_SCALE = "F_MCP_FXPARM_SCALE",
+  F_MCP_SENDRGN_SCALE = "F_MCP_SENDRGN_SCALE",
+  F_TCP_FXPARM_SCALE = "F_TCP_FXPARM_SCALE",
+  I_PLAY_OFFSET_FLAG = "I_PLAY_OFFSET_FLAG",
+  D_PLAY_OFFSET = "D_PLAY_OFFSET",
 }
 
 --- Set Info Value. Wraps SetMediaTrackInfo_Value.
@@ -1252,7 +1266,7 @@ Track.SetInfoValueConstants = {
 --- @return boolean
 --- @see Track.SetInfoValueConstants
 function Track:set_info_value(param_name, new_value)
-	return r.SetMediaTrackInfo_Value(self.pointer, param_name, new_value)
+  return r.SetMediaTrackInfo_Value(self.pointer, param_name, new_value)
 end
 
 --- Set Mixer Scroll. Wraps SetMixerScroll.
@@ -1262,23 +1276,23 @@ end
 --- @within ReaScript Wrapped Methods
 --- @return table Track object
 function Track:set_mixer_scroll()
-	local Track = require("track")
-	local result = r.SetMixerScroll(self.pointer)
-	return Track:new(result)
+  local Track = require("track")
+  local result = r.SetMixerScroll(self.pointer)
+  return Track:new(result)
 end
 
 --- Set Only Track Selected. Wraps SetOnlyTrackSelected.
 -- Set exactly one track selected, deselect all others
 --- @within ReaScript Wrapped Methods
 function Track:set_only_track_selected()
-	return r.SetOnlyTrackSelected(self.pointer)
+  return r.SetOnlyTrackSelected(self.pointer)
 end
 
 --- Set Track Automation Mode. Wraps SetTrackAutomationMode.
 --- @within ReaScript Wrapped Methods
 --- @param mode number
 function Track:set_track_automation_mode(mode)
-	return r.SetTrackAutomationMode(self.pointer, mode)
+  return r.SetTrackAutomationMode(self.pointer, mode)
 end
 
 --- Set Track Color. Wraps SetTrackColor.
@@ -1287,7 +1301,7 @@ end
 --- @within ReaScript Wrapped Methods
 --- @param color number
 function Track:set_track_color(color)
-	return r.SetTrackColor(self.pointer, color)
+  return r.SetTrackColor(self.pointer, color)
 end
 
 --- Set Track Midi Lyrics. Wraps SetTrackMIDILyrics.
@@ -1301,14 +1315,14 @@ end
 --- @return boolean
 -- @see Track:get_track_midi_lyrics
 function Track:set_track_midi_lyrics(flag, str)
-	return r.SetTrackMIDILyrics(self.pointer, flag, str)
+  return r.SetTrackMIDILyrics(self.pointer, flag, str)
 end
 
 --- Set Track Selected. Wraps SetTrackSelected.
 --- @within ReaScript Wrapped Methods
 --- @param selected boolean
 function Track:set_track_selected(selected)
-	return r.SetTrackSelected(self.pointer, selected)
+  return r.SetTrackSelected(self.pointer, selected)
 end
 
 --- Constants for Track:set_track_send_info_value.
@@ -1325,17 +1339,17 @@ end
 --- @field I_DSTCHAN number: low 10 bits are destination index, &1024 set to mix to mono.
 --- @field I_MIDIFLAGS number: low 5 bits=source channel 0=all, 1-16, 31=MIDI send disabled, next 5 bits=dest channel, 0=orig, 1-16=chan. &1024 for faders-send MIDI vol/pan. (>>14)&255 = src bus (0 for all, 1 for normal, 2+). (>>22)&255=destination bus (0 for all, 1 for normal, 2+)
 Track.SetTrackSendInfoValueConstants = {
-	B_MUTE = "B_MUTE",
-	B_PHASE = "B_PHASE",
-	B_MONO = "B_MONO",
-	D_VOL = "D_VOL",
-	D_PAN = "D_PAN",
-	D_PANLAW = "D_PANLAW",
-	I_SENDMODE = "I_SENDMODE",
-	I_AUTOMODE = "I_AUTOMODE",
-	I_SRCCHAN = "I_SRCCHAN",
-	I_DSTCHAN = "I_DSTCHAN",
-	I_MIDIFLAGS = "I_MIDIFLAGS",
+  B_MUTE = "B_MUTE",
+  B_PHASE = "B_PHASE",
+  B_MONO = "B_MONO",
+  D_VOL = "D_VOL",
+  D_PAN = "D_PAN",
+  D_PANLAW = "D_PANLAW",
+  I_SENDMODE = "I_SENDMODE",
+  I_AUTOMODE = "I_AUTOMODE",
+  I_SRCCHAN = "I_SRCCHAN",
+  I_DSTCHAN = "I_DSTCHAN",
+  I_MIDIFLAGS = "I_MIDIFLAGS",
 }
 
 --- Set Track Send Info Value. Wraps SetTrackSendInfo_Value.
@@ -1352,7 +1366,7 @@ Track.SetTrackSendInfoValueConstants = {
 --- @see Track:remove_track_send
 --- @see Track:get_track_num_sends
 function Track:set_track_send_info_value(category, send_idx, param_name, new_value)
-	return r.SetTrackSendInfo_Value(self.pointer, category, send_idx, param_name, new_value)
+  return r.SetTrackSendInfo_Value(self.pointer, category, send_idx, param_name, new_value)
 end
 
 --- Set Track Send UI Pan. Wraps SetTrackSendUIPan.
@@ -1364,7 +1378,7 @@ end
 --- @param is_end number
 --- @return boolean
 function Track:set_track_send_ui_pan(send_idx, pan, is_end)
-	return r.SetTrackSendUIPan(self.pointer, send_idx, pan, is_end)
+  return r.SetTrackSendUIPan(self.pointer, send_idx, pan, is_end)
 end
 
 --- Set Track Send UI Vol. Wraps SetTrackSendUIVol.
@@ -1376,7 +1390,7 @@ end
 --- @param is_end number
 --- @return boolean
 function Track:set_track_send_ui_vol(send_idx, vol, is_end)
-	return r.SetTrackSendUIVol(self.pointer, send_idx, vol, is_end)
+  return r.SetTrackSendUIVol(self.pointer, send_idx, vol, is_end)
 end
 
 --- Set Track State Chunk. Wraps SetTrackStateChunk.
@@ -1387,7 +1401,7 @@ end
 --- @param is_undo boolean
 --- @return boolean
 function Track:set_track_state_chunk(str, is_undo)
-	return r.SetTrackStateChunk(self.pointer, str, is_undo)
+  return r.SetTrackStateChunk(self.pointer, str, is_undo)
 end
 
 --- Set Track UI Input Monitor. Wraps SetTrackUIInputMonitor.
@@ -1399,7 +1413,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_input_monitor(monitor, ign_group_flags)
-	return r.SetTrackUIInputMonitor(self.pointer, monitor, ign_group_flags)
+  return r.SetTrackUIInputMonitor(self.pointer, monitor, ign_group_flags)
 end
 
 --- Set Track UI Mute. Wraps SetTrackUIMute.
@@ -1410,7 +1424,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_mute(mute, ign_group_flags)
-	return r.SetTrackUIMute(self.pointer, mute, ign_group_flags)
+  return r.SetTrackUIMute(self.pointer, mute, ign_group_flags)
 end
 
 --- Set Track UI Pan. Wraps SetTrackUIPan.
@@ -1422,7 +1436,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_pan(pan, relative, done, ign_group_flags)
-	return r.SetTrackUIPan(self.pointer, pan, relative, done, ign_group_flags)
+  return r.SetTrackUIPan(self.pointer, pan, relative, done, ign_group_flags)
 end
 
 --- Set Track UI Polarity. Wraps SetTrackUIPolarity.
@@ -1434,7 +1448,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_polarity(polarity, ign_group_flags)
-	return r.SetTrackUIPolarity(self.pointer, polarity, ign_group_flags)
+  return r.SetTrackUIPolarity(self.pointer, polarity, ign_group_flags)
 end
 
 --- Set Track UI Rec Arm. Wraps SetTrackUIrec_arm.
@@ -1446,7 +1460,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_rec_arm(rec_arm, ign_group_flags)
-	return r.SetTrackUIrec_arm(self.pointer, rec_arm, ign_group_flags)
+  return r.SetTrackUIrec_arm(self.pointer, rec_arm, ign_group_flags)
 end
 
 --- Set Track UI Solo. Wraps SetTrackUISolo.
@@ -1458,7 +1472,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_solo(solo, ign_group_flags)
-	return r.SetTrackUISolo(self.pointer, solo, ign_group_flags)
+  return r.SetTrackUISolo(self.pointer, solo, ign_group_flags)
 end
 
 --- Set Track UI Volume. Wraps SetTrackUIVolume.
@@ -1470,7 +1484,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_volume(volume, relative, done, ign_group_flags)
-	return r.SetTrackUIVolume(self.pointer, volume, relative, done, ign_group_flags)
+  return r.SetTrackUIVolume(self.pointer, volume, relative, done, ign_group_flags)
 end
 
 --- Set Track UI Width. Wraps SetTrackUIWidth.
@@ -1482,7 +1496,7 @@ end
 --- @param ign_group_flags number
 --- @return number
 function Track:set_track_ui_width(width, relative, done, ign_group_flags)
-	return r.SetTrackUIWidth(self.pointer, width, relative, done, ign_group_flags)
+  return r.SetTrackUIWidth(self.pointer, width, relative, done, ign_group_flags)
 end
 
 --- Toggle Track Send UI Mute. Wraps ToggleTrackSendUIMute.
@@ -1491,7 +1505,7 @@ end
 --- @param send_idx number
 --- @return boolean
 function Track:toggle_track_send_ui_mute(send_idx)
-	return r.ToggleTrackSendUIMute(self.pointer, send_idx)
+  return r.ToggleTrackSendUIMute(self.pointer, send_idx)
 end
 
 return Track

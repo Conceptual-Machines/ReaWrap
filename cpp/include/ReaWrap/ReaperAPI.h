@@ -44,35 +44,43 @@ public:
 
   // FX operations
   static int AddTrackFX(MediaTrack *track, const char *fxname, bool recFX = false);
-  
+
   // TrackFX operations
   static bool TrackFX_GetFXName(MediaTrack *track, int fx_index, char *buf, int buf_size);
   static int TrackFX_GetCount(MediaTrack *track, bool isInputFX = false);
   static int TrackFX_GetNumParams(MediaTrack *track, int fx_index);
-  static bool TrackFX_GetParamName(MediaTrack *track, int fx_index, int param_index, char *buf, int buf_size);
+  static bool TrackFX_GetParamName(MediaTrack *track, int fx_index, int param_index, char *buf,
+                                   int buf_size);
   // GetParam returns the value and outputs min/max via pointers
-  static double TrackFX_GetParam(MediaTrack *track, int fx_index, int param_index, double *minvalOut, double *maxvalOut);
+  static double TrackFX_GetParam(MediaTrack *track, int fx_index, int param_index,
+                                 double *minvalOut, double *maxvalOut);
   static bool TrackFX_SetParam(MediaTrack *track, int fx_index, int param_index, double value);
   // GetParamNormalized returns the value directly (0.0-1.0)
   static double TrackFX_GetParamNormalized(MediaTrack *track, int fx_index, int param_index);
-  static bool TrackFX_SetParamNormalized(MediaTrack *track, int fx_index, int param_index, double value);
-  static bool TrackFX_FormatParamValue(MediaTrack *track, int fx_index, int param_index, double value, char *buf, int buf_size);
+  static bool TrackFX_SetParamNormalized(MediaTrack *track, int fx_index, int param_index,
+                                         double value);
+  static bool TrackFX_FormatParamValue(MediaTrack *track, int fx_index, int param_index,
+                                       double value, char *buf, int buf_size);
   static bool TrackFX_GetEnabled(MediaTrack *track, int fx_index);
   static bool TrackFX_SetEnabled(MediaTrack *track, int fx_index, bool enabled);
   static bool TrackFX_Delete(MediaTrack *track, int fx_index);
-  
+
   // TakeFX operations
   static bool TakeFX_GetFXName(MediaItem_Take *take, int fx_index, char *buf, int buf_size);
   static int TakeFX_GetCount(MediaItem_Take *take);
   static int TakeFX_GetNumParams(MediaItem_Take *take, int fx_index);
-  static bool TakeFX_GetParamName(MediaItem_Take *take, int fx_index, int param_index, char *buf, int buf_size);
+  static bool TakeFX_GetParamName(MediaItem_Take *take, int fx_index, int param_index, char *buf,
+                                  int buf_size);
   // GetParam returns the value and outputs min/max via pointers
-  static double TakeFX_GetParam(MediaItem_Take *take, int fx_index, int param_index, double *minvalOut, double *maxvalOut);
+  static double TakeFX_GetParam(MediaItem_Take *take, int fx_index, int param_index,
+                                double *minvalOut, double *maxvalOut);
   static bool TakeFX_SetParam(MediaItem_Take *take, int fx_index, int param_index, double value);
   // GetParamNormalized returns the value directly (0.0-1.0)
   static double TakeFX_GetParamNormalized(MediaItem_Take *take, int fx_index, int param_index);
-  static bool TakeFX_SetParamNormalized(MediaItem_Take *take, int fx_index, int param_index, double value);
-  static bool TakeFX_FormatParamValue(MediaItem_Take *take, int fx_index, int param_index, double value, char *buf, int buf_size);
+  static bool TakeFX_SetParamNormalized(MediaItem_Take *take, int fx_index, int param_index,
+                                        double value);
+  static bool TakeFX_FormatParamValue(MediaItem_Take *take, int fx_index, int param_index,
+                                      double value, char *buf, int buf_size);
   static bool TakeFX_GetEnabled(MediaItem_Take *take, int fx_index);
   static bool TakeFX_SetEnabled(MediaItem_Take *take, int fx_index, bool enabled);
   static bool TakeFX_Delete(MediaItem_Take *take, int fx_index);
@@ -131,7 +139,7 @@ private:
   static bool (*s_TrackFX_GetEnabled)(MediaTrack *, int);
   static bool (*s_TrackFX_SetEnabled)(MediaTrack *, int, bool);
   static bool (*s_TrackFX_Delete)(MediaTrack *, int);
-  
+
   static int (*s_TakeFX_AddByName)(MediaItem_Take *, const char *, int);
   static bool (*s_TakeFX_GetFXName)(MediaItem_Take *, int, char *, int);
   static int (*s_TakeFX_GetCount)(MediaItem_Take *);
@@ -146,8 +154,8 @@ private:
   static bool (*s_TakeFX_SetEnabled)(MediaItem_Take *, int, bool);
   static bool (*s_TakeFX_Delete)(MediaItem_Take *, int);
 
-  static double (*s_TimeMap_GetMeasureInfo)(ReaProject *, int, double *, double *,
-                                            int *, int *, double *);
+  static double (*s_TimeMap_GetMeasureInfo)(ReaProject *, int, double *, double *, int *, int *,
+                                            double *);
   static double (*s_TimeMap2_QNToTime)(ReaProject *, double);
   static double (*s_TimeMap2_timeToQN)(ReaProject *, double);
 
@@ -155,4 +163,3 @@ private:
 };
 
 } // namespace ReaWrap
-

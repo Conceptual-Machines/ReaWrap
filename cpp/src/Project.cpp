@@ -1,6 +1,6 @@
+#include <ReaWrap/Item.h>
 #include <ReaWrap/Project.h>
 #include <ReaWrap/Track.h>
-#include <ReaWrap/Item.h>
 #include <cstring>
 
 namespace ReaWrap {
@@ -63,7 +63,8 @@ double Project::getTempo() {
   double tempo = 120.0;
 
   if (ReaperAPI::s_TimeMap_GetMeasureInfo) {
-    ReaperAPI::s_TimeMap_GetMeasureInfo(nullptr, 0, &qn_start, &qn_end, &timesig_num, &timesig_denom, &tempo);
+    ReaperAPI::s_TimeMap_GetMeasureInfo(nullptr, 0, &qn_start, &qn_end, &timesig_num,
+                                        &timesig_denom, &tempo);
   }
 
   return tempo;
@@ -81,7 +82,8 @@ bool Project::getTimeSignature(int *numerator, int *denominator) {
   double tempo = 120.0;
 
   if (ReaperAPI::s_TimeMap_GetMeasureInfo) {
-    ReaperAPI::s_TimeMap_GetMeasureInfo(nullptr, 0, &qn_start, &qn_end, &timesig_num, &timesig_denom, &tempo);
+    ReaperAPI::s_TimeMap_GetMeasureInfo(nullptr, 0, &qn_start, &qn_end, &timesig_num,
+                                        &timesig_denom, &tempo);
     *numerator = timesig_num;
     *denominator = timesig_denom;
     return true;
@@ -97,7 +99,7 @@ std::vector<Track *> Project::getTracks() {
   if (!ReaperAPI::IsAvailable()) {
     return tracks;
   }
-  
+
   int count = ReaperAPI::GetNumTracks();
   for (int i = 0; i < count; i++) {
     Track *track = Track::findByIndex(i);
@@ -113,7 +115,7 @@ std::vector<Track *> Project::getSelectedTracks(bool includeMaster) {
   if (!ReaperAPI::IsAvailable()) {
     return tracks;
   }
-  
+
   int count = ReaperAPI::CountSelectedTracks(includeMaster);
   for (int i = 0; i < count; i++) {
     MediaTrack *reaper_track = ReaperAPI::GetSelectedTrack(i, includeMaster);
@@ -140,7 +142,7 @@ std::vector<MediaItem *> Project::getSelectedItems() {
   if (!ReaperAPI::IsAvailable()) {
     return items;
   }
-  
+
   int count = ReaperAPI::CountSelectedMediaItems();
   for (int i = 0; i < count; i++) {
     MediaItem *reaper_item = ReaperAPI::GetSelectedMediaItem(i);
@@ -179,4 +181,3 @@ bool Project::hasSelectedItems() {
 }
 
 } // namespace ReaWrap
-

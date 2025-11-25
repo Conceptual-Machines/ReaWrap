@@ -1,5 +1,5 @@
-#include <ReaWrap/Track.h>
 #include <ReaWrap/Item.h>
+#include <ReaWrap/Track.h>
 #include <ReaWrap/TrackFX.h>
 #include <cstring>
 
@@ -132,16 +132,15 @@ std::vector<MediaItem *> Track::getItems() const {
   if (!m_reaper_track || !ReaperAPI::IsAvailable()) {
     return items;
   }
-  
+
   int count = ReaperAPI::CountTrackMediaItems(m_reaper_track);
   for (int i = 0; i < count; i++) {
     MediaItem *reaper_item = ReaperAPI::GetTrackMediaItem(m_reaper_track, i);
     if (reaper_item) {
       // Create MediaItem wrapper - note: this creates new objects each time
       // In a production system, you might want to cache these
-      items.push_back(MediaItem::create(this, 
-        ReaperAPI::GetMediaItemPosition(reaper_item),
-        ReaperAPI::GetMediaItemLength(reaper_item)));
+      items.push_back(MediaItem::create(this, ReaperAPI::GetMediaItemPosition(reaper_item),
+                                        ReaperAPI::GetMediaItemLength(reaper_item)));
     }
   }
   return items;
@@ -152,7 +151,7 @@ std::vector<TrackFX *> Track::getFXChain() const {
   if (!m_reaper_track || !ReaperAPI::IsAvailable()) {
     return fx_chain;
   }
-  
+
   int count = ReaperAPI::TrackFX_GetCount(m_reaper_track, false);
   for (int i = 0; i < count; i++) {
     TrackFX *fx = TrackFX::getByIndex(const_cast<Track *>(this), i, false);
@@ -178,4 +177,3 @@ bool Track::hasFX() const {
 }
 
 } // namespace ReaWrap
-
