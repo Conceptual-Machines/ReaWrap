@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="Conceptual Machines" commit="HEAD">
+<index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="Object-Oriented Wrapper for REAPER's Lua API">
       <version name="0.3.0" author="Nomad Monad" time="2024-12-31T00:00:00Z">
