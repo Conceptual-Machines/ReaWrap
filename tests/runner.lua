@@ -37,6 +37,7 @@ end
 
 -- Add paths
 package.path = root_path .. "lua/?.lua;" .. package.path
+package.path = root_path .. "lua/?/init.lua;" .. package.path
 package.path = root_path .. "tests/?.lua;" .. package.path
 
 --------------------------------------------------------------------------------
@@ -62,6 +63,7 @@ local test_modules = {
     "unit.test_track",
     "unit.test_track_fx",
     "unit.test_version",
+    "unit.test_imgui",
 }
 
 --------------------------------------------------------------------------------

@@ -486,19 +486,354 @@ function M.runloop(func)
 end
 
 --------------------------------------------------------------------------------
--- ImGui Stubs (return nil/false for most)
+-- ImGui Stubs (comprehensive mock for testing)
 --------------------------------------------------------------------------------
 
+-- Context
 function M.ImGui_CreateContext(name)
-    return {}
+    return { name = name, _mock = true }
 end
 
 function M.ImGui_DestroyContext(ctx)
 end
 
 function M.ImGui_GetVersion()
-    return "0.0.0-mock"
+    return "0.9.0-mock"
 end
+
+function M.ImGui_SetConfigFlags(ctx, flags)
+end
+
+-- Window functions
+function M.ImGui_Begin(ctx, title, p_open, flags)
+    return true, p_open
+end
+
+function M.ImGui_End(ctx)
+end
+
+function M.ImGui_SetNextWindowSize(ctx, w, h, cond)
+end
+
+function M.ImGui_SetNextWindowPos(ctx, x, y, cond)
+end
+
+function M.ImGui_BeginChild(ctx, id, w, h, flags)
+    return true
+end
+
+function M.ImGui_EndChild(ctx)
+end
+
+function M.ImGui_GetWindowSize(ctx)
+    return 400, 300
+end
+
+function M.ImGui_GetWindowPos(ctx)
+    return 100, 100
+end
+
+-- Widget functions
+function M.ImGui_Text(ctx, text)
+end
+
+function M.ImGui_TextDisabled(ctx, text)
+end
+
+function M.ImGui_TextColored(ctx, color, text)
+end
+
+function M.ImGui_TextWrapped(ctx, text)
+end
+
+function M.ImGui_Button(ctx, label, w, h)
+    return false
+end
+
+function M.ImGui_SmallButton(ctx, label)
+    return false
+end
+
+function M.ImGui_InvisibleButton(ctx, id, w, h)
+    return false
+end
+
+function M.ImGui_Checkbox(ctx, label, value)
+    return false, value
+end
+
+function M.ImGui_RadioButton(ctx, label, active)
+    return false
+end
+
+function M.ImGui_Selectable(ctx, label, selected, flags)
+    return false
+end
+
+function M.ImGui_InputText(ctx, label, value, flags)
+    return false, value
+end
+
+function M.ImGui_InputInt(ctx, label, value, step, step_fast)
+    return false, value
+end
+
+function M.ImGui_InputDouble(ctx, label, value, step, step_fast, format)
+    return false, value
+end
+
+function M.ImGui_SliderInt(ctx, label, value, min, max, format)
+    return false, value
+end
+
+function M.ImGui_SliderDouble(ctx, label, value, min, max, format)
+    return false, value
+end
+
+-- Layout
+function M.ImGui_SameLine(ctx, offset, spacing)
+end
+
+function M.ImGui_Spacing(ctx)
+end
+
+function M.ImGui_Separator(ctx)
+end
+
+function M.ImGui_NewLine(ctx)
+end
+
+function M.ImGui_BeginGroup(ctx)
+end
+
+function M.ImGui_EndGroup(ctx)
+end
+
+function M.ImGui_PushItemWidth(ctx, width)
+end
+
+function M.ImGui_PopItemWidth(ctx)
+end
+
+function M.ImGui_SetCursorPosX(ctx, x)
+end
+
+function M.ImGui_SetCursorPosY(ctx, y)
+end
+
+function M.ImGui_GetCursorPosX(ctx)
+    return 0
+end
+
+function M.ImGui_GetCursorPosY(ctx)
+    return 0
+end
+
+function M.ImGui_Indent(ctx, width)
+end
+
+function M.ImGui_Unindent(ctx, width)
+end
+
+function M.ImGui_GetContentRegionAvail(ctx)
+    return 380, 280
+end
+
+-- Tables
+function M.ImGui_BeginTable(ctx, id, columns, flags)
+    return true
+end
+
+function M.ImGui_EndTable(ctx)
+end
+
+function M.ImGui_TableNextRow(ctx, flags, min_height)
+end
+
+function M.ImGui_TableNextColumn(ctx)
+    return true
+end
+
+function M.ImGui_TableSetupColumn(ctx, label, flags, init_width)
+end
+
+function M.ImGui_TableHeadersRow(ctx)
+end
+
+-- Trees
+function M.ImGui_TreeNode(ctx, label, flags)
+    return false
+end
+
+function M.ImGui_TreePop(ctx)
+end
+
+function M.ImGui_CollapsingHeader(ctx, label, p_visible, flags)
+    return false
+end
+
+-- Popups
+function M.ImGui_BeginPopup(ctx, id, flags)
+    return false
+end
+
+function M.ImGui_BeginPopupModal(ctx, title, p_open, flags)
+    return false, p_open
+end
+
+function M.ImGui_EndPopup(ctx)
+end
+
+function M.ImGui_OpenPopup(ctx, id)
+end
+
+function M.ImGui_CloseCurrentPopup(ctx)
+end
+
+function M.ImGui_BeginPopupContextItem(ctx, id)
+    return false
+end
+
+-- Tooltips
+function M.ImGui_SetTooltip(ctx, text)
+end
+
+function M.ImGui_BeginTooltip(ctx)
+end
+
+function M.ImGui_EndTooltip(ctx)
+end
+
+-- Menus
+function M.ImGui_BeginMenuBar(ctx)
+    return false
+end
+
+function M.ImGui_EndMenuBar(ctx)
+end
+
+function M.ImGui_BeginMenu(ctx, label, enabled)
+    return false
+end
+
+function M.ImGui_EndMenu(ctx)
+end
+
+function M.ImGui_MenuItem(ctx, label, shortcut, selected, enabled)
+    return false
+end
+
+-- Tabs
+function M.ImGui_BeginTabBar(ctx, id, flags)
+    return true
+end
+
+function M.ImGui_EndTabBar(ctx)
+end
+
+function M.ImGui_BeginTabItem(ctx, label, p_open, flags)
+    return true, p_open
+end
+
+function M.ImGui_EndTabItem(ctx)
+end
+
+-- State queries
+function M.ImGui_IsItemHovered(ctx, flags)
+    return false
+end
+
+function M.ImGui_IsItemClicked(ctx, button)
+    return false
+end
+
+function M.ImGui_IsItemActive(ctx)
+    return false
+end
+
+function M.ImGui_IsItemFocused(ctx)
+    return false
+end
+
+function M.ImGui_IsMouseDown(ctx, button)
+    return false
+end
+
+function M.ImGui_IsMouseClicked(ctx, button)
+    return false
+end
+
+function M.ImGui_IsMouseDoubleClicked(ctx, button)
+    return false
+end
+
+function M.ImGui_IsKeyDown(ctx, key)
+    return false
+end
+
+function M.ImGui_IsKeyPressed(ctx, key)
+    return false
+end
+
+-- Disabled state
+function M.ImGui_BeginDisabled(ctx, disabled)
+end
+
+function M.ImGui_EndDisabled(ctx)
+end
+
+-- Style
+function M.ImGui_PushStyleColor(ctx, idx, color)
+end
+
+function M.ImGui_PopStyleColor(ctx, count)
+end
+
+function M.ImGui_PushStyleVar(ctx, idx, value)
+end
+
+function M.ImGui_PopStyleVar(ctx, count)
+end
+
+-- Utility
+function M.ImGui_CalcTextSize(ctx, text)
+    return #text * 7, 14
+end
+
+-- Flags (return integers)
+function M.ImGui_WindowFlags_None() return 0 end
+function M.ImGui_WindowFlags_NoTitleBar() return 1 end
+function M.ImGui_WindowFlags_NoResize() return 2 end
+function M.ImGui_WindowFlags_NoMove() return 4 end
+function M.ImGui_WindowFlags_NoScrollbar() return 8 end
+function M.ImGui_WindowFlags_NoCollapse() return 32 end
+function M.ImGui_WindowFlags_MenuBar() return 1024 end
+function M.ImGui_WindowFlags_AlwaysAutoResize() return 64 end
+
+function M.ImGui_ChildFlags_None() return 0 end
+function M.ImGui_ChildFlags_Border() return 1 end
+function M.ImGui_ChildFlags_AlwaysAutoResize() return 64 end
+
+function M.ImGui_Cond_Always() return 1 end
+function M.ImGui_Cond_Once() return 2 end
+function M.ImGui_Cond_FirstUseEver() return 4 end
+function M.ImGui_Cond_Appearing() return 8 end
+
+function M.ImGui_Col_Text() return 0 end
+function M.ImGui_Col_WindowBg() return 2 end
+function M.ImGui_Col_Button() return 21 end
+function M.ImGui_Col_ButtonHovered() return 22 end
+function M.ImGui_Col_ButtonActive() return 23 end
+function M.ImGui_Col_Header() return 24 end
+function M.ImGui_Col_HeaderHovered() return 25 end
+function M.ImGui_Col_HeaderActive() return 26 end
+
+function M.ImGui_Mod_Shift() return 512 end
+function M.ImGui_Mod_Ctrl() return 1024 end
+function M.ImGui_Mod_Alt() return 2048 end
+function M.ImGui_Mod_Super() return 4096 end
+
+function M.ImGui_HoveredFlags_AllowWhenDisabled() return 128 end
 
 --------------------------------------------------------------------------------
 -- Set global `reaper`
