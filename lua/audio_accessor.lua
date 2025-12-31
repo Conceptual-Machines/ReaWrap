@@ -1,7 +1,7 @@
 --- Provide implementation for AudioAccessor functions.
--- @author NomadMonad
+-- @author Nomad Monad
 -- @license MIT
--- @release 0.0.1
+-- @release 0.2.0
 -- @module audio_accessor
 
 local r = reaper

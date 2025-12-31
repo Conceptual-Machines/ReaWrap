@@ -1,7 +1,7 @@
 --- Provide implementation for Track functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.0.1
+-- @release 0.2.0
 -- @module track
 
 local r = reaper

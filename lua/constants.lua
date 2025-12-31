@@ -1,5 +1,5 @@
 -- @description Provide constants for the project.
--- @author NomadMonad
+-- @author Nomad Monad
 -- @license MIT
 
 local constants = {}
