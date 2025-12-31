@@ -3,7 +3,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Lua](https://img.shields.io/badge/lua-5.1+-blue.svg)
 ![REAPER](https://img.shields.io/badge/REAPER-7.0+-green.svg)
-![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)
+![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)
+[![ReaPack](https://img.shields.io/badge/ReaPack-available-brightgreen.svg)](https://reapack.com/)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://conceptual-machines.github.io/ReaWrap/)
 
 **Object-Oriented Wrapper for REAPER's Lua API**
@@ -55,16 +56,28 @@ track:set_track_ui_volume(-3.0)
 
 ### Installation
 
-1. Clone or download ReaWrap to your REAPER Scripts folder:
-   ```bash
-   cd ~/Library/Application\ Support/REAPER/Scripts
-   git clone https://github.com/Conceptual-Machines/ReaWrap.git
-   ```
+#### Option 1: ReaPack (Recommended)
 
-2. Or add as a submodule in your project:
-   ```bash
-   git submodule add https://github.com/Conceptual-Machines/ReaWrap.git
+1. Open REAPER → Extensions → ReaPack → Import repositories
+2. Add this URL:
    ```
+   https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/index.xml
+   ```
+3. Extensions → ReaPack → Browse packages → Search "ReaWrap" → Install
+
+#### Option 2: Git Clone
+
+```bash
+cd ~/Library/Application\ Support/REAPER/Scripts  # macOS
+# or: cd ~/AppData/Roaming/REAPER/Scripts         # Windows
+git clone https://github.com/Conceptual-Machines/ReaWrap.git
+```
+
+#### Option 3: Git Submodule (for script developers)
+
+```bash
+git submodule add -b build https://github.com/Conceptual-Machines/ReaWrap.git
+```
 
 ### Basic Usage
 
