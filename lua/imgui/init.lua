@@ -116,7 +116,7 @@ end
 function Context:begin_child(id, width, height, flags)
     width = width or 0
     height = height or 0
-    flags = flags or r.ImGui_ChildFlags_None()
+    flags = flags or 0  -- Safe default (no flags)
     return r.ImGui_BeginChild(self.ctx, id, width, height, flags)
 end
 
@@ -822,10 +822,21 @@ M.WindowFlags = {
     AlwaysAutoResize = function() return r.ImGui_WindowFlags_AlwaysAutoResize() end,
 }
 
+-- ChildFlags (newer ReaImGui versions - provide safe fallbacks)
+local function safe_flag(fn, fallback)
+    return function()
+        if fn then
+            local ok, val = pcall(fn)
+            if ok then return val end
+        end
+        return fallback or 0
+    end
+end
+
 M.ChildFlags = {
-    None = function() return r.ImGui_ChildFlags_None() end,
-    Border = function() return r.ImGui_ChildFlags_Border() end,
-    AlwaysAutoResize = function() return r.ImGui_ChildFlags_AlwaysAutoResize() end,
+    None = safe_flag(r.ImGui_ChildFlags_None, 0),
+    Border = safe_flag(r.ImGui_ChildFlags_Border, 1),  -- 1 = border in older API
+    AlwaysAutoResize = safe_flag(r.ImGui_ChildFlags_AlwaysAutoResize, 0),
 }
 
 M.Cond = {
