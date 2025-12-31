@@ -301,7 +301,21 @@ table.function_list td {
     border-color: #424242;
     word-wrap: break-word;
 }
-table.function_list td.name { background-color: #2a2a2a; min-width: 400px; max-width: 600px; word-wrap: break-word; }
+table.function_list td.name {
+    background-color: #2a2a2a;
+    min-width: 300px;
+    max-width: 500px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+table.function_list td.name:hover {
+    overflow: visible;
+    white-space: normal;
+    word-wrap: break-word;
+    position: relative;
+    z-index: 1;
+}
 table.function_list td.summary { width: 100%; }
 
 
