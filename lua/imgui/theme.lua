@@ -3,7 +3,7 @@
 -- @module imgui.theme
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
+-- @release 0.3.0
 
 local r = reaper
 

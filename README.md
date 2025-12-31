@@ -211,5 +211,5 @@ MIT License - see [LICENSE](LICENSE).
 
 ## Acknowledgments
 
-- [REAPER](https://www.reaper.fm/) - The best DAW
+- [REAPER](https://www.reaper.fm/)
 - [ReaScript Documentation](https://www.extremraym.com/cloud/reascript-doc/) - Community docs
