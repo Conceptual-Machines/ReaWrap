@@ -4,6 +4,7 @@
 ![Lua](https://img.shields.io/badge/lua-5.1+-blue.svg)
 ![REAPER](https://img.shields.io/badge/REAPER-7.0+-green.svg)
 ![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://conceptual-machines.github.io/ReaWrap/)
 
 **OOP Implementation of Lua ReaScript API**
 
@@ -191,7 +192,7 @@ ReaWrap/
 
 ## Documentation
 
-- **[API Documentation](doc/index.html)** - Generated LDoc reference
+- **[API Documentation](https://conceptual-machines.github.io/ReaWrap/)** - Full API reference (GitHub Pages)
 - **[Changelog](CHANGELOG.md)** - Version history
 
 ## Contributing
