@@ -38,7 +38,7 @@ end
 
 
 
-    
+
 --- Add Media Item To Track. Wraps AddMediaItemToTrack.
 -- creates a new media item.
 -- @return Item table
@@ -48,7 +48,7 @@ function Track:add_media_item_to_track()
     return Item:new(result)
 end
 
-    
+
 --- Count Track Envelopes. Wraps CountTrackEnvelopes.
 -- see GetTrackEnvelope
 -- @return number
@@ -56,7 +56,7 @@ function Track:count_track_envelopes()
     return r.CountTrackEnvelopes(self.pointer)
 end
 
-    
+
 --- Count Track Media Items. Wraps CountTrackMediaItems.
 -- count the number of items in the track
 -- @return number
@@ -64,7 +64,7 @@ function Track:count_track_media_items()
     return r.CountTrackMediaItems(self.pointer)
 end
 
-    
+
 --- Create New Midi Item In Proj. Wraps CreateNewMIDIItemInProj.
 -- Create a new MIDI media item, containing no MIDI events. Time is in seconds
 -- unless qn is set.
@@ -79,7 +79,7 @@ function Track:create_new_midi_item_in_proj(starttime, endtime, boolean)
     return Item:new(result)
 end
 
-    
+
 --- Create Track Audio Accessor. Wraps CreateTrackAudioAccessor.
 -- Create an audio accessor object for this track. Must only call from the main
 -- thread. See CreateTakeAudioAccessor, DestroyAudioAccessor,
@@ -92,7 +92,7 @@ function Track:create_track_audio_accessor()
     return AudioAccessor:new(result)
 end
 
-    
+
 --- Create Track Send. Wraps CreateTrackSend.
 -- Create a send/receive (desttrInOptional!=NULL), or a hardware output
 -- (desttrInOptional==NULL) with default properties, return >=0 on success (== new
@@ -103,7 +103,7 @@ function Track:create_track_send()
     return r.CreateTrackSend(self.pointer, desttr_in)
 end
 
-    
+
 --- Get Touch State. Wraps CSurf_GetTouchState.
 -- @param is_pan number
 -- @return boolean
@@ -111,7 +111,7 @@ function Track:get_touch_state(is_pan)
     return r.CSurf_GetTouchState(self.pointer, is_pan)
 end
 
-    
+
 --- On Fx Change. Wraps CSurf_OnFXChange.
 -- @param en number
 -- @return boolean
@@ -119,7 +119,7 @@ function Track:on_fx_change(en)
     return r.CSurf_OnFXChange(self.pointer, en)
 end
 
-    
+
 --- On Input Monitor Change. Wraps CSurf_OnInputMonitorChange.
 -- @param monitor number
 -- @return number
@@ -127,7 +127,7 @@ function Track:on_input_monitor_change(monitor)
     return r.CSurf_OnInputMonitorChange(self.pointer, monitor)
 end
 
-    
+
 --- On Input Monitor Change Ex. Wraps CSurf_OnInputMonitorChangeEx.
 -- @param monitor number
 -- @param allowgang boolean
@@ -136,7 +136,7 @@ function Track:on_input_monitor_change_ex(monitor, allowgang)
     return r.CSurf_OnInputMonitorChangeEx(self.pointer, monitor, allowgang)
 end
 
-    
+
 --- On Mute Change. Wraps CSurf_OnMuteChange.
 -- @param mute number
 -- @return boolean
@@ -144,7 +144,7 @@ function Track:on_mute_change(mute)
     return r.CSurf_OnMuteChange(self.pointer, mute)
 end
 
-    
+
 --- On Mute Change Ex. Wraps CSurf_OnMuteChangeEx.
 -- @param mute number
 -- @param allowgang boolean
@@ -153,7 +153,7 @@ function Track:on_mute_change_ex(mute, allowgang)
     return r.CSurf_OnMuteChangeEx(self.pointer, mute, allowgang)
 end
 
-    
+
 --- On Pan Change. Wraps CSurf_OnPanChange.
 -- @param pan number
 -- @param relative boolean
@@ -162,7 +162,7 @@ function Track:on_pan_change(pan, relative)
     return r.CSurf_OnPanChange(self.pointer, pan, relative)
 end
 
-    
+
 --- On Pan Change Ex. Wraps CSurf_OnPanChangeEx.
 -- @param pan number
 -- @param relative boolean
@@ -172,7 +172,7 @@ function Track:on_pan_change_ex(pan, relative, allow_gang)
     return r.CSurf_OnPanChangeEx(self.pointer, pan, relative, allow_gang)
 end
 
-    
+
 --- On Rec Arm Change. Wraps CSurf_OnRecArmChange.
 -- @param recarm number
 -- @return boolean
@@ -180,7 +180,7 @@ function Track:on_rec_arm_change(recarm)
     return r.CSurf_OnRecArmChange(self.pointer, recarm)
 end
 
-    
+
 --- On Rec Arm Change Ex. Wraps CSurf_OnRecArmChangeEx.
 -- @param recarm number
 -- @param allowgang boolean
@@ -189,7 +189,7 @@ function Track:on_rec_arm_change_ex(recarm, allowgang)
     return r.CSurf_OnRecArmChangeEx(self.pointer, recarm, allowgang)
 end
 
-    
+
 --- On Recv Pan Change. Wraps CSurf_OnRecvPanChange.
 -- @param recv_index number
 -- @param pan number
@@ -199,7 +199,7 @@ function Track:on_recv_pan_change(recv_index, pan, relative)
     return r.CSurf_OnRecvPanChange(self.pointer, recv_index, pan, relative)
 end
 
-    
+
 --- On Recv Volume Change. Wraps CSurf_OnRecvVolumeChange.
 -- @param recv_index number
 -- @param volume number
@@ -209,7 +209,7 @@ function Track:on_recv_volume_change(recv_index, volume, relative)
     return r.CSurf_OnRecvVolumeChange(self.pointer, recv_index, volume, relative)
 end
 
-    
+
 --- On Selected Change. Wraps CSurf_OnSelectedChange.
 -- @param selected number
 -- @return boolean
@@ -217,7 +217,7 @@ function Track:on_selected_change(selected)
     return r.CSurf_OnSelectedChange(self.pointer, selected)
 end
 
-    
+
 --- On Send Pan Change. Wraps CSurf_OnSendPanChange.
 -- @param send_index number
 -- @param pan number
@@ -227,7 +227,7 @@ function Track:on_send_pan_change(send_index, pan, relative)
     return r.CSurf_OnSendPanChange(self.pointer, send_index, pan, relative)
 end
 
-    
+
 --- On Send Volume Change. Wraps CSurf_OnSendVolumeChange.
 -- @param send_index number
 -- @param volume number
@@ -237,7 +237,7 @@ function Track:on_send_volume_change(send_index, volume, relative)
     return r.CSurf_OnSendVolumeChange(self.pointer, send_index, volume, relative)
 end
 
-    
+
 --- On Solo Change. Wraps CSurf_OnSoloChange.
 -- @param solo number
 -- @return boolean
@@ -245,7 +245,7 @@ function Track:on_solo_change(solo)
     return r.CSurf_OnSoloChange(self.pointer, solo)
 end
 
-    
+
 --- On Solo Change Ex. Wraps CSurf_OnSoloChangeEx.
 -- @param solo number
 -- @param allowgang boolean
@@ -254,13 +254,13 @@ function Track:on_solo_change_ex(solo, allowgang)
     return r.CSurf_OnSoloChangeEx(self.pointer, solo, allowgang)
 end
 
-    
+
 --- On Track Selection. Wraps CSurf_OnTrackSelection.
 function Track:on_track_selection()
     return r.CSurf_OnTrackSelection(self.pointer)
 end
 
-    
+
 --- On Volume Change. Wraps CSurf_OnVolumeChange.
 -- @param volume number
 -- @param relative boolean
@@ -269,7 +269,7 @@ function Track:on_volume_change(volume, relative)
     return r.CSurf_OnVolumeChange(self.pointer, volume, relative)
 end
 
-    
+
 --- On Volume Change Ex. Wraps CSurf_OnVolumeChangeEx.
 -- @param volume number
 -- @param relative boolean
@@ -279,7 +279,7 @@ function Track:on_volume_change_ex(volume, relative, allow_gang)
     return r.CSurf_OnVolumeChangeEx(self.pointer, volume, relative, allow_gang)
 end
 
-    
+
 --- On Width Change. Wraps CSurf_OnWidthChange.
 -- @param width number
 -- @param relative boolean
@@ -288,7 +288,7 @@ function Track:on_width_change(width, relative)
     return r.CSurf_OnWidthChange(self.pointer, width, relative)
 end
 
-    
+
 --- On Width Change Ex. Wraps CSurf_OnWidthChangeEx.
 -- @param width number
 -- @param relative boolean
@@ -298,7 +298,7 @@ function Track:on_width_change_ex(width, relative, allow_gang)
     return r.CSurf_OnWidthChangeEx(self.pointer, width, relative, allow_gang)
 end
 
-    
+
 --- Set Surface Mute. Wraps CSurf_SetSurfaceMute.
 -- @param mute boolean
 -- @param ignoresurf IReaperControlSurface
@@ -306,7 +306,7 @@ function Track:set_surface_mute(mute, ignoresurf)
     return r.CSurf_SetSurfaceMute(self.pointer, mute, ignoresurf)
 end
 
-    
+
 --- Set Surface Pan. Wraps CSurf_SetSurfacePan.
 -- @param pan number
 -- @param ignoresurf IReaperControlSurface
@@ -314,7 +314,7 @@ function Track:set_surface_pan(pan, ignoresurf)
     return r.CSurf_SetSurfacePan(self.pointer, pan, ignoresurf)
 end
 
-    
+
 --- Set Surface Rec Arm. Wraps CSurf_SetSurfaceRecArm.
 -- @param recarm boolean
 -- @param ignoresurf IReaperControlSurface
@@ -322,7 +322,7 @@ function Track:set_surface_rec_arm(recarm, ignoresurf)
     return r.CSurf_SetSurfaceRecArm(self.pointer, recarm, ignoresurf)
 end
 
-    
+
 --- Set Surface Selected. Wraps CSurf_SetSurfaceSelected.
 -- @param selected boolean
 -- @param ignoresurf IReaperControlSurface
@@ -330,7 +330,7 @@ function Track:set_surface_selected(selected, ignoresurf)
     return r.CSurf_SetSurfaceSelected(self.pointer, selected, ignoresurf)
 end
 
-    
+
 --- Set Surface Solo. Wraps CSurf_SetSurfaceSolo.
 -- @param solo boolean
 -- @param ignoresurf IReaperControlSurface
@@ -338,7 +338,7 @@ function Track:set_surface_solo(solo, ignoresurf)
     return r.CSurf_SetSurfaceSolo(self.pointer, solo, ignoresurf)
 end
 
-    
+
 --- Set Surface Volume. Wraps CSurf_SetSurfaceVolume.
 -- @param volume number
 -- @param ignoresurf IReaperControlSurface
@@ -346,7 +346,7 @@ function Track:set_surface_volume(volume, ignoresurf)
     return r.CSurf_SetSurfaceVolume(self.pointer, volume, ignoresurf)
 end
 
-    
+
 --- Track To Id. Wraps CSurf_TrackToID.
 -- @param mcp_view boolean
 -- @return number
@@ -354,21 +354,21 @@ function Track:track_to_id(mcp_view)
     return r.CSurf_TrackToID(self.pointer, mcp_view)
 end
 
-    
+
 --- Delete Track. Wraps DeleteTrack.
 -- deletes a track
 function Track:delete_track()
     return r.DeleteTrack(self.pointer)
 end
 
-    
+
 --- Delete Track Media Item. Wraps DeleteTrackMediaItem.
 -- @return boolean
 function Track:delete_track_media_item()
     return r.DeleteTrackMediaItem(self.pointer, it)
 end
 
-    
+
 --- Get Fx Envelope. Wraps GetFXEnvelope.
 -- Returns the FX parameter envelope. If the envelope does not exist and
 -- create=true, the envelope will be created. If the envelope already exists and is
@@ -383,7 +383,7 @@ function Track:get_fx_envelope(fxindex, parameterindex, create)
     return Envelope:new(result)
 end
 
-    
+
 --- Constants for Track:get_info_value.
 -- @field B_MUTE boolean: muted
 -- @field B_PHASE boolean: track phase inverted
@@ -515,7 +515,7 @@ Track.GetInfoValueConstants = {
     P_PARTRACK = "P_PARTRACK",
     P_PROJECT = "P_PROJECT",
 }
-    
+
 --- Get Info Value. Wraps GetMediaTrackInfo_Value.
 -- Get track numerical-value attributes.
 -- @param parm_name string. Track.GetInfoValueConstants
@@ -524,7 +524,7 @@ function Track:get_info_value(parm_name)
     return r.GetMediaTrackInfo_Value(self.pointer, parm_name)
 end
 
-    
+
 --- Get Parent Track. Wraps GetParentTrack.
 -- @return Track table
 function Track:get_parent_track()
@@ -533,7 +533,7 @@ function Track:get_parent_track()
     return Track:new(result)
 end
 
-    
+
 --- Constants for Track:get_set_info_string.
 -- @field P_NAME string: track name (on master returns NULL)
 -- @field P_ICON const char *: track icon (full filename, or relative to resource_path/data/track_icons)
@@ -557,7 +557,7 @@ Track.GetSetInfoStringConstants = {
     P_UI_RECT = "P_UI_RECT",
     GUID = "GUID",
 }
-    
+
 --- Get Set Info String. Wraps GetSetMediaTrackInfo_String.
 -- Get or set track string attributes.Example: "0.0 1.0 \"\" 0.0 1.0
 -- "{xyz-...}"Example: "0.0 1.0,0.0 1.0 "{xyz-...}",1.0 2.0 "" 0.25 0.75"
@@ -574,7 +574,7 @@ function Track:get_set_info_string(parm_name, string_need_big, set_new_value)
     end
 end
 
-    
+
 --- Get Set Track Group Membership. Wraps GetSetTrackGroupMembership.
 -- Gets or modifies the group membership for a track. Returns group state prior to
 -- call (each bit represents one of the 32 group numbers). if setmask has bits set,
@@ -592,7 +592,7 @@ function Track:get_set_track_group_membership(group_name, setmask, setvalue)
     return r.GetSetTrackGroupMembership(self.pointer, group_name, setmask, setvalue)
 end
 
-    
+
 --- Get Set Track Group Membership Ex. Wraps GetSetTrackGroupMembershipEx.
 -- Gets or modifies 32 bits (at offset, where 0 is the low 32 bits of the grouping)
 -- of the group membership for a track. Returns group state prior to call. if
@@ -611,7 +611,7 @@ function Track:get_set_track_group_membership_ex(group_name, offset, setmask, se
     return r.GetSetTrackGroupMembershipEx(self.pointer, group_name, offset, setmask, setvalue)
 end
 
-    
+
 --- Get Set Track Group Membership High. Wraps GetSetTrackGroupMembershipHigh.
 -- Gets or modifies the group membership for a track. Returns group state prior to
 -- call (each bit represents one of the high 32 group numbers). if setmask has bits
@@ -629,13 +629,13 @@ function Track:get_set_track_group_membership_high(group_name, setmask, setvalue
     return r.GetSetTrackGroupMembershipHigh(self.pointer, group_name, setmask, setvalue)
 end
 
-    
+
 --- Constants for Track:get_set_track_send_info_string.
 -- @field P_EXT xyz: xyzchar *extension-specific persistent data
 Track.GetSetTrackSendInfoStringConstants = {
     P_EXT = "P_EXT",
 }
-    
+
 --- Get Set Track Send Info String. Wraps GetSetTrackSendInfo_String.
 -- Gets/sets a send attribute string:
 -- @param category number
@@ -653,7 +653,7 @@ function Track:get_set_track_send_info_string(category, send_idx, parm_name, str
     end
 end
 
-    
+
 --- Get Track Automation Mode. Wraps GetTrackAutomationMode.
 -- return the track mode, regardless of global override
 -- @return number
@@ -661,7 +661,7 @@ function Track:get_track_automation_mode()
     return r.GetTrackAutomationMode(self.pointer)
 end
 
-    
+
 --- Get Track Color. Wraps GetTrackColor.
 -- Returns the track custom color as OS dependent color|0x1000000 (i.e.
 -- ColorToNative(r,g,b)|0x1000000). Black is returned as 0x1000000, no color
@@ -671,14 +671,14 @@ function Track:get_track_color()
     return r.GetTrackColor(self.pointer)
 end
 
-    
+
 --- Get Track Depth. Wraps GetTrackDepth.
 -- @return number
 function Track:get_track_depth()
     return r.GetTrackDepth(self.pointer)
 end
 
-    
+
 --- Get Track Envelope. Wraps GetTrackEnvelope.
 -- @param env_idx number
 -- @return Envelope table
@@ -688,7 +688,7 @@ function Track:get_track_envelope(env_idx)
     return Envelope:new(result)
 end
 
-    
+
 --- Get Track Envelope By Chunk Name. Wraps GetTrackEnvelopeByChunkName.
 -- Gets a built-in track envelope by configuration chunk name, like "<VOLENV", or
 -- GUID string, like "{B577250D-146F-B544-9B34-F24FBE488F1F}".
@@ -700,7 +700,7 @@ function Track:get_track_envelope_by_chunk_name(cfgchunkname_or_guid)
     return Envelope:new(result)
 end
 
-    
+
 --- Get Track Envelope By Name. Wraps GetTrackEnvelopeByName.
 -- @param env_name string
 -- @return Envelope table
@@ -710,14 +710,14 @@ function Track:get_track_envelope_by_name(env_name)
     return Envelope:new(result)
 end
 
-    
+
 --- Get Track Guid. Wraps GetTrackGUID.
 -- @return guid string
 function Track:get_track_guid()
     return r.GetTrackGUID(self.pointer)
 end
 
-    
+
 --- Get Track Media Item. Wraps GetTrackMediaItem.
 -- @param item_idx number
 -- @return Item table
@@ -727,7 +727,7 @@ function Track:get_track_media_item(item_idx)
     return Item:new(result)
 end
 
-    
+
 --- Get Track Midi Lyrics. Wraps GetTrackMIDILyrics.
 -- Get all MIDI lyrics on the track. Lyrics will be returned as one string with
 -- tabs between each word. flag&1: double tabs at the end of each measure and
@@ -745,7 +745,7 @@ function Track:get_track_midi_lyrics(flag)
     end
 end
 
-    
+
 --- Get Track Name. Wraps GetTrackName.
 -- Returns "MASTER" for master track, "Track N" if track has no name.
 -- @return buf string
@@ -758,14 +758,14 @@ function Track:get_track_name()
     end
 end
 
-    
+
 --- Get Track Num Media Items. Wraps GetTrackNumMediaItems.
 -- @return number
 function Track:get_track_num_media_items()
     return r.GetTrackNumMediaItems(self.pointer)
 end
 
-    
+
 --- Get Track Num Sends. Wraps GetTrackNumSends.
 -- returns number of sends/receives/hardware outputs - category is <0 for receives,
 -- 0=sends, >0 for hardware outputs
@@ -775,7 +775,7 @@ function Track:get_track_num_sends(category)
     return r.GetTrackNumSends(self.pointer, category)
 end
 
-    
+
 --- Get Track Receive Name. Wraps GetTrackReceiveName.
 -- See GetTrackSendName.
 -- @param recv_index number
@@ -789,7 +789,7 @@ function Track:get_track_receive_name(recv_index)
     end
 end
 
-    
+
 --- Get Track Receive Ui Mute. Wraps GetTrackReceiveUIMute.
 -- See GetTrackSendUIMute.
 -- @param recv_index number
@@ -803,7 +803,7 @@ function Track:get_track_receive_ui_mute(recv_index)
     end
 end
 
-    
+
 --- Get Track Receive Ui Vol Pan. Wraps GetTrackReceiveUIVolPan.
 -- See GetTrackSendUIVolPan.
 -- @param recv_index number
@@ -818,7 +818,7 @@ function Track:get_track_receive_ui_vol_pan(recv_index)
     end
 end
 
-    
+
 --- Constants for Track:get_track_send_info_value.
 -- @field B_MUTE any: bool *
 -- @field B_PHASE boolean: true to flip phase
@@ -850,7 +850,7 @@ Track.GetTrackSendInfoValueConstants = {
     P_SRCTRACK = "P_SRCTRACK",
     P_ENV = "P_ENV",
 }
-    
+
 --- Get Track Send Info Value. Wraps GetTrackSendInfo_Value.
 -- Get send/receive/hardware output numerical-value attributes.category is <0 for
 -- receives, 0=sends, >0 for hardware outputsparameter
@@ -863,7 +863,7 @@ function Track:get_track_send_info_value(category, send_idx, parm_name)
     return r.GetTrackSendInfo_Value(self.pointer, category, send_idx, parm_name)
 end
 
-    
+
 --- Get Track Send Name. Wraps GetTrackSendName.
 -- send_idx>=0 for hw ouputs, >=nb_of_hw_ouputs for sends. See GetTrackReceiveName.
 -- @param send_index number
@@ -877,7 +877,7 @@ function Track:get_track_send_name(send_index)
     end
 end
 
-    
+
 --- Get Track Send Ui Mute. Wraps GetTrackSendUIMute.
 -- send_idx>=0 for hw ouputs, >=nb_of_hw_ouputs for sends. See
 -- GetTrackReceiveUIMute.
@@ -892,7 +892,7 @@ function Track:get_track_send_ui_mute(send_index)
     end
 end
 
-    
+
 --- Get Track Send Ui Vol Pan. Wraps GetTrackSendUIVolPan.
 -- send_idx>=0 for hw ouputs, >=nb_of_hw_ouputs for sends. See
 -- GetTrackReceiveUIVolPan.
@@ -908,7 +908,7 @@ function Track:get_track_send_ui_vol_pan(send_index)
     end
 end
 
-    
+
 --- Get Track State. Wraps GetTrackState.
 -- Gets track state, returns track name. flags will be set to: &1=folder
 -- &2=selected &4=has fx enabled &8=muted &16=soloed &32=SIP'd (with &16) &64=rec
@@ -924,7 +924,7 @@ function Track:get_track_state()
     end
 end
 
-    
+
 --- Get Track State Chunk. Wraps GetTrackStateChunk.
 -- Gets the RPPXML state of a track, returns true if successful. Undo flag is a
 -- performance/caching hint.
@@ -940,7 +940,7 @@ function Track:get_track_state_chunk(str, is_undo)
     end
 end
 
-    
+
 --- Get Track Ui Mute. Wraps GetTrackUIMute.
 -- @return mute boolean
 function Track:get_track_ui_mute()
@@ -952,7 +952,7 @@ function Track:get_track_ui_mute()
     end
 end
 
-    
+
 --- Get Track Ui Pan. Wraps GetTrackUIPan.
 -- @return pan1 number
 -- @return pan2 number
@@ -966,7 +966,7 @@ function Track:get_track_ui_pan()
     end
 end
 
-    
+
 --- Get Track Ui Vol Pan. Wraps GetTrackUIVolPan.
 -- @return volume number
 -- @return pan number
@@ -979,14 +979,14 @@ function Track:get_track_ui_vol_pan()
     end
 end
 
-    
+
 --- Is Track Selected. Wraps IsTrackSelected.
 -- @return boolean
 function Track:is_track_selected()
     return r.IsTrackSelected(self.pointer)
 end
 
-    
+
 --- Is Track Visible. Wraps IsTrackVisible.
 -- If mixer==true, returns true if the track is visible in the mixer.  If
 -- mixer==false, returns true if the track is visible in the track control panel.
@@ -996,14 +996,14 @@ function Track:is_track_visible(mixer)
     return r.IsTrackVisible(self.pointer, mixer)
 end
 
-    
+
 --- Mark Track Items Dirty. Wraps MarkTrackItemsDirty.
 -- If track is supplied, item is ignored
 function Track:mark_track_items_dirty()
     return r.MarkTrackItemsDirty(self.pointer, item)
 end
 
-    
+
 --- Midi Get Track Hash. Wraps MIDI_GetTrackHash.
 -- Get a string that only changes when the MIDI data changes. If notesonly==true,
 -- then the string changes only when the MIDI notes change. See MIDI_GetHash
@@ -1018,7 +1018,7 @@ function Track:midi_get_track_hash(notesonly)
     end
 end
 
-    
+
 --- Midi Editor Flags For Track. Wraps MIDIEditorFlagsForTrack.
 -- Get or set MIDI editor settings for this track. pitchwheelrange: semitones up or
 -- down. flags &1: snap pitch lane edits to semitones if pitchwheel range is
@@ -1032,7 +1032,7 @@ function Track:midi_editor_flags_for_track(pitchwheelrange, flags, is_set)
     return r.MIDIEditorFlagsForTrack(self.pointer, pitchwheelrange, flags, is_set)
 end
 
-    
+
 --- Remove Track Send. Wraps RemoveTrackSend.
 -- Remove a send/receive/hardware output, return true on success. category is <0
 -- for receives, 0=sends, >0 for hardware outputs. See CreateTrackSend,
@@ -1045,7 +1045,7 @@ function Track:remove_track_send(category, send_idx)
     return r.RemoveTrackSend(self.pointer, category, send_idx)
 end
 
-    
+
 --- Constants for Track:set_info_value.
 -- @field B_MUTE boolean: muted
 -- @field B_PHASE boolean: track phase inverted
@@ -1173,7 +1173,7 @@ Track.SetInfoValueConstants = {
     I_PLAY_OFFSET_FLAG = "I_PLAY_OFFSET_FLAG",
     D_PLAY_OFFSET = "D_PLAY_OFFSET",
 }
-    
+
 --- Set Info Value. Wraps SetMediaTrackInfo_Value.
 -- Set track numerical-value attributes.
 -- @param parm_name string. Track.SetInfoValueConstants
@@ -1183,7 +1183,7 @@ function Track:set_info_value(parm_name, newvalue)
     return r.SetMediaTrackInfo_Value(self.pointer, parm_name, newvalue)
 end
 
-    
+
 --- Set Mixer Scroll. Wraps SetMixerScroll.
 -- Scroll the mixer so that leftmosttrack is the leftmost visible track. Returns
 -- the leftmost track after scrolling, which may be different from the passed-in
@@ -1195,21 +1195,21 @@ function Track:set_mixer_scroll()
     return Track:new(result)
 end
 
-    
+
 --- Set Only Track Selected. Wraps SetOnlyTrackSelected.
 -- Set exactly one track selected, deselect all others
 function Track:set_only_track_selected()
     return r.SetOnlyTrackSelected(self.pointer)
 end
 
-    
+
 --- Set Track Automation Mode. Wraps SetTrackAutomationMode.
 -- @param mode number
 function Track:set_track_automation_mode(mode)
     return r.SetTrackAutomationMode(self.pointer, mode)
 end
 
-    
+
 --- Set Track Color. Wraps SetTrackColor.
 -- Set the custom track color, color is OS dependent (i.e. ColorToNative(r,g,b). To
 -- unset the track color, see SetMediaTrackInfo_Value I_CUSTOMCOLOR
@@ -1218,7 +1218,7 @@ function Track:set_track_color(color)
     return r.SetTrackColor(self.pointer, color)
 end
 
-    
+
 --- Set Track Midi Lyrics. Wraps SetTrackMIDILyrics.
 -- Set all MIDI lyrics on the track. Lyrics will be stuffed into any MIDI items
 -- found in range. Flag is unused at present. str is passed in as beat position,
@@ -1231,14 +1231,14 @@ function Track:set_track_midi_lyrics(flag, str)
     return r.SetTrackMIDILyrics(self.pointer, flag, str)
 end
 
-    
+
 --- Set Track Selected. Wraps SetTrackSelected.
 -- @param selected boolean
 function Track:set_track_selected(selected)
     return r.SetTrackSelected(self.pointer, selected)
 end
 
-    
+
 --- Constants for Track:set_track_send_info_value.
 -- @field B_MUTE any: bool *
 -- @field B_PHASE boolean: true to flip phase
@@ -1264,7 +1264,7 @@ Track.SetTrackSendInfoValueConstants = {
     I_DSTCHAN = "I_DSTCHAN",
     I_MIDIFLAGS = "I_MIDIFLAGS",
 }
-    
+
 --- Set Track Send Info Value. Wraps SetTrackSendInfo_Value.
 -- Set send/receive/hardware output numerical-value attributes, return true on
 -- success.category is <0 for receives, 0=sends, >0 for hardware outputsparameter
@@ -1278,7 +1278,7 @@ function Track:set_track_send_info_value(category, send_idx, parm_name, newvalue
     return r.SetTrackSendInfo_Value(self.pointer, category, send_idx, parm_name, newvalue)
 end
 
-    
+
 --- Set Track Send Ui Pan. Wraps SetTrackSendUIPan.
 -- send_idx<0 for receives, >=0 for hw ouputs, >=nb_of_hw_ouputs for sends. isend=1
 -- for end of edit, -1 for an instant edit (such as reset), 0 for normal tweak.
@@ -1290,7 +1290,7 @@ function Track:set_track_send_ui_pan(send_idx, pan, is_end)
     return r.SetTrackSendUIPan(self.pointer, send_idx, pan, is_end)
 end
 
-    
+
 --- Set Track Send Ui Vol. Wraps SetTrackSendUIVol.
 -- send_idx<0 for receives, >=0 for hw ouputs, >=nb_of_hw_ouputs for sends. isend=1
 -- for end of edit, -1 for an instant edit (such as reset), 0 for normal tweak.
@@ -1302,7 +1302,7 @@ function Track:set_track_send_ui_vol(send_idx, vol, is_end)
     return r.SetTrackSendUIVol(self.pointer, send_idx, vol, is_end)
 end
 
-    
+
 --- Set Track State Chunk. Wraps SetTrackStateChunk.
 -- Sets the RPPXML state of a track, returns true if successful. Undo flag is a
 -- performance/caching hint.
@@ -1313,7 +1313,7 @@ function Track:set_track_state_chunk(str, is_undo)
     return r.SetTrackStateChunk(self.pointer, str, is_undo)
 end
 
-    
+
 --- Set Track Ui Input Monitor. Wraps SetTrackUIInputMonitor.
 -- monitor: 0=no monitoring, 1=monitoring, 2=auto-monitoring. returns new value or
 -- -1 if error. igngroupflags: &1 to prevent track grouping, &2 to prevent
@@ -1325,7 +1325,7 @@ function Track:set_track_ui_input_monitor(monitor, igngroupflags)
     return r.SetTrackUIInputMonitor(self.pointer, monitor, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Mute. Wraps SetTrackUIMute.
 -- mute: <0 toggles, >0 sets mute, 0=unsets mute. returns new value or -1 if error.
 -- igngroupflags: &1 to prevent track grouping, &2 to prevent selection ganging
@@ -1336,7 +1336,7 @@ function Track:set_track_ui_mute(mute, igngroupflags)
     return r.SetTrackUIMute(self.pointer, mute, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Pan. Wraps SetTrackUIPan.
 -- igngroupflags: &1 to prevent track grouping, &2 to prevent selection ganging
 -- @param pan number
@@ -1348,7 +1348,7 @@ function Track:set_track_ui_pan(pan, relative, done, igngroupflags)
     return r.SetTrackUIPan(self.pointer, pan, relative, done, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Polarity. Wraps SetTrackUIPolarity.
 -- polarity (AKA phase): <0 toggles, 0=normal, >0=inverted. returns new value or -1
 -- if error.igngroupflags: &1 to prevent track grouping, &2 to prevent selection
@@ -1360,7 +1360,7 @@ function Track:set_track_ui_polarity(polarity, igngroupflags)
     return r.SetTrackUIPolarity(self.pointer, polarity, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Rec Arm. Wraps SetTrackUIRecArm.
 -- recarm: <0 toggles, >0 sets recarm, 0=unsets recarm. returns new value or -1 if
 -- error. igngroupflags: &1 to prevent track grouping, &2 to prevent selection
@@ -1372,7 +1372,7 @@ function Track:set_track_ui_rec_arm(recarm, igngroupflags)
     return r.SetTrackUIRecArm(self.pointer, recarm, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Solo. Wraps SetTrackUISolo.
 -- solo: <0 toggles, 1 sets solo (default mode), 0=unsets solo, 2 sets solo (non-
 -- SIP), 4 sets solo (SIP). returns new value or -1 if error. igngroupflags: &1 to
@@ -1384,7 +1384,7 @@ function Track:set_track_ui_solo(solo, igngroupflags)
     return r.SetTrackUISolo(self.pointer, solo, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Volume. Wraps SetTrackUIVolume.
 -- igngroupflags: &1 to prevent track grouping, &2 to prevent selection ganging
 -- @param volume number
@@ -1396,7 +1396,7 @@ function Track:set_track_ui_volume(volume, relative, done, igngroupflags)
     return r.SetTrackUIVolume(self.pointer, volume, relative, done, igngroupflags)
 end
 
-    
+
 --- Set Track Ui Width. Wraps SetTrackUIWidth.
 -- igngroupflags: &1 to prevent track grouping, &2 to prevent selection ganging
 -- @param width number
@@ -1408,7 +1408,7 @@ function Track:set_track_ui_width(width, relative, done, igngroupflags)
     return r.SetTrackUIWidth(self.pointer, width, relative, done, igngroupflags)
 end
 
-    
+
 --- Toggle Track Send Ui Mute. Wraps ToggleTrackSendUIMute.
 -- send_idx<0 for receives, >=0 for hw ouputs, >=nb_of_hw_ouputs for sends.
 -- @param send_idx number
@@ -1417,7 +1417,7 @@ function Track:toggle_track_send_ui_mute(send_idx)
     return r.ToggleTrackSendUIMute(self.pointer, send_idx)
 end
 
-    
+
 --- Get Peak Hold Db. Wraps Track_GetPeakHoldDB.
 -- Returns meter hold state, in dB*0.01 (0 = +0dB, -0.01 = -1dB, 0.02 = +2dB, etc).
 -- If clear is set, clears the meter hold. If channel==1024 or channel==1025,
@@ -1430,7 +1430,7 @@ function Track:get_peak_hold_db(channel, clear)
     return r.Track_GetPeakHoldDB(self.pointer, channel, clear)
 end
 
-    
+
 --- Get Peak Info. Wraps Track_GetPeakInfo.
 -- Returns peak meter value (1.0=+0dB, 0.0=-inf) for channel. If channel==1024 or
 -- channel==1025, returns loudness values if this is the master track or this
@@ -1441,7 +1441,7 @@ function Track:get_peak_info(channel)
     return r.Track_GetPeakInfo(self.pointer, channel)
 end
 
-    
+
 --- Delete Fx. Wraps TrackFX_Delete.
 -- Remove a FX from track chain (returns true on success) FX indices for tracks can
 -- have 0x1000000 added to them in order to reference record input FX (normal
@@ -1461,14 +1461,14 @@ function Track:delete_fx(fx)
     return r.TrackFX_Delete(self.pointer, fx)
 end
 
-    
+
 --- Get Fx Count. Wraps TrackFX_GetCount.
 -- @return number
 function Track:get_fx_count()
     return r.TrackFX_GetCount(self.pointer)
 end
 
-    
+
 --- Get Freeze Count. Wraps BR_GetMediaTrackFreezeCount.
 -- [BR] Get media track freeze count (if track isn't frozen at all, returns 0).
 -- @return number
@@ -1476,7 +1476,7 @@ function Track:get_freeze_count()
     return r.BR_GetMediaTrackFreezeCount(self.pointer)
 end
 
-    
+
 --- Get Send Info Envelope. Wraps BR_GetMediaTrackSendInfo_Envelope.
 -- [BR] Get track envelope for send/receive/hardware output.
 -- @param category number
@@ -1489,7 +1489,7 @@ function Track:get_send_info_envelope(category, send_idx, envelope_type)
     return Envelope:new(result)
 end
 
-    
+
 --- Get Send Info Track. Wraps BR_GetMediaTrackSendInfo_Track.
 -- [BR] Get source or destination media track for send/receive.
 -- @param category number
@@ -1502,7 +1502,7 @@ function Track:get_send_info_track(category, send_idx, track_type)
     return Track:new(result)
 end
 
-    
+
 --- Get Set Track Send Info. Wraps BR_GetSetTrackSendInfo.
 -- [BR] Get or set send attributes.
 -- @param category number
@@ -1515,21 +1515,21 @@ function Track:get_set_track_send_info(category, send_idx, parm_name, set_new_va
     return r.BR_GetSetTrackSendInfo(self.pointer, category, send_idx, parm_name, set_new_value, new_value)
 end
 
-    
+
 --- Get Sws Track Notes. Wraps NF_GetSWSTrackNotes.
 -- @return string
 function Track:get_sws_track_notes()
     return r.NF_GetSWSTrackNotes(self.pointer)
 end
 
-    
+
 --- Set Sws Track Notes. Wraps NF_SetSWSTrackNotes.
 -- @param str string
 function Track:set_sws_track_notes(str)
     return r.NF_SetSWSTrackNotes(self.pointer, str)
 end
 
-    
+
 --- Add Tcpfx Parm. Wraps SNM_AddTCPFXParm.
 -- [S&M] Add an FX parameter knob in the TCP. Returns false if nothing updated
 -- (invalid parameters, knob already present, etc..)
@@ -1540,7 +1540,7 @@ function Track:add_tcpfx_parm(fx_id, prm_id)
     return r.SNM_AddTCPFXParm(self.pointer, fx_id, prm_id)
 end
 
-    
+
 --- Remove Receives From. Wraps SNM_RemoveReceivesFrom.
 -- [S&M] Removes all receives from srctr. Returns false if nothing updated.
 -- @return boolean

@@ -5,11 +5,10 @@ from dataclasses import dataclass
 from typing import Annotated, Iterator
 
 from bs4 import BeautifulSoup, NavigableString
-
 from modules_generator import (
     API_HTML,
-    REAPER_TYPES,
     LUA_KEYWORDS,
+    REAPER_TYPES,
     UNSUPPORTED_NAMESPACES,
 )
 

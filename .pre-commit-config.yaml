@@ -1,13 +1,40 @@
 repos:
-  - repo: https://github.com/JohnnyMorganz/StyLua
-    rev: v2.0.1
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
     hooks:
-      - id: stylua
-        files: ^lua/.*\.lua$
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-merge-conflict
 
+  # Lua formatting - disabled until Cargo is updated
+  # - repo: https://github.com/JohnnyMorganz/StyLua
+  #   rev: v0.20.0
+  #   hooks:
+  #     - id: stylua
+  #       files: ^lua/.*\.lua$
+
+  # C++ formatting
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.3.5
     hooks:
       - id: clang-format
         args: [--style=file]
         files: ^cpp/.*\.(h|cpp)$
+
+  # Python (for tools/modules_generator)
+  - repo: https://github.com/psf/black
+    rev: 24.3.0
+    hooks:
+      - id: black
+        files: ^tools/.*\.py$
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        files: ^tools/.*\.py$
+        args: ["--profile", "black"]

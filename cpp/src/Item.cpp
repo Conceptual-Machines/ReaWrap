@@ -1,6 +1,6 @@
 #include <ReaWrap/Item.h>
-#include <ReaWrap/Track.h>
 #include <ReaWrap/Project.h>
+#include <ReaWrap/Track.h>
 
 namespace ReaWrap {
 

@@ -9,7 +9,7 @@ on:
 jobs:
   format-check:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,4 +26,3 @@ jobs:
           unzip stylua.zip
           chmod +x stylua
           ./stylua --check lua/
-

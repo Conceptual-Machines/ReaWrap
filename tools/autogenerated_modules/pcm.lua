@@ -38,7 +38,7 @@ end
 
 
 
-    
+
 --- Calc Media Src Loudness. Wraps CalcMediaSrcLoudness.
 -- Calculates loudness statistics of media via dry run render. Statistics will be
 -- displayed to the user; call GetSetProjectInfo_String("RENDER_STATS") to retrieve
@@ -49,7 +49,7 @@ function PCM:calc_media_src_loudness()
     return r.CalcMediaSrcLoudness(self.mediasource.pointer)
 end
 
-    
+
 --- Calculate Normalization. Wraps CalculateNormalization.
 -- Calculate normalize adjustment for source media. normalizeTo: 0=LUFS-I, 1=RMS-I,
 -- 2=peak, 3=true peak, 4=LUFS-M max, 5=LUFS-S max. normalizeTarget: dBFS or LUFS
@@ -65,7 +65,7 @@ function PCM:calculate_normalization(normalize_to, normalize_target, normalize_s
     return r.CalculateNormalization(self.source.pointer, normalize_to, normalize_target, normalize_start, normalize_end)
 end
 
-    
+
 --- Get Media File Metadata. Wraps GetMediaFileMetadata.
 -- Get text-based metadata from a media file for a given identifier. Call with
 -- identifier="" to list all identifiers contained in the file, separated by
@@ -81,7 +81,7 @@ function PCM:get_media_file_metadata(identifier)
     end
 end
 
-    
+
 --- Get Media Source File Name. Wraps GetMediaSourceFileName.
 -- Copies the media source filename to filenamebuf. Note that in-project MIDI media
 -- sources have no associated filename. See GetMediaSourceParent.
@@ -90,7 +90,7 @@ function PCM:get_media_source_file_name()
     return r.GetMediaSourceFileName(self.source.pointer)
 end
 
-    
+
 --- Get Media Source Length. Wraps GetMediaSourceLength.
 -- Returns the length of the source media. If the media source is beat-based, the
 -- length will be in quarter notes, otherwise it will be in seconds.
@@ -104,7 +104,7 @@ function PCM:get_media_source_length()
     end
 end
 
-    
+
 --- Get Media Source Num Channels. Wraps GetMediaSourceNumChannels.
 -- Returns the number of channels in the source media.
 -- @return number
@@ -112,7 +112,7 @@ function PCM:get_media_source_num_channels()
     return r.GetMediaSourceNumChannels(self.source.pointer)
 end
 
-    
+
 --- Get Media Source Parent. Wraps GetMediaSourceParent.
 -- Returns the parent source, or NULL if src is the root source. This can be used
 -- to retrieve the parent properties of sections or reversed sources for example.
@@ -123,7 +123,7 @@ function PCM:get_media_source_parent()
     return PCM_source:new(result)
 end
 
-    
+
 --- Get Media Source Sample Rate. Wraps GetMediaSourceSampleRate.
 -- Returns the sample rate. MIDI source media will return zero.
 -- @return number
@@ -131,7 +131,7 @@ function PCM:get_media_source_sample_rate()
     return r.GetMediaSourceSampleRate(self.source.pointer)
 end
 
-    
+
 --- Get Media Source Type. Wraps GetMediaSourceType.
 -- copies the media source type ("WAV", "MIDI", etc) to typebuf
 -- @return typebuf string
@@ -139,7 +139,7 @@ function PCM:get_media_source_type()
     return r.GetMediaSourceType(self.source.pointer)
 end
 
-    
+
 --- Get Sub Project From Source. Wraps GetSubProjectFromSource.
 -- @return Project table
 function PCM:get_sub_project_from_source()
@@ -148,7 +148,7 @@ function PCM:get_sub_project_from_source()
     return Project:new(result)
 end
 
-    
+
 --- Get Tempo Match Play Rate. Wraps GetTempoMatchPlayRate.
 -- finds the playrate and target length to insert this item stretched to a round
 -- power-of-2 number of bars, between 1/8 and 256
@@ -166,7 +166,7 @@ function PCM:get_tempo_match_play_rate(srcscale, position, mult)
     end
 end
 
-    
+
 --- Sink Enum. Wraps PCM_Sink_Enum.
 -- @param idx number
 -- @return descstr string
@@ -179,7 +179,7 @@ function PCM:sink_enum(idx)
     end
 end
 
-    
+
 --- Sink Get Extension. Wraps PCM_Sink_GetExtension.
 -- @param data string
 -- @return string
@@ -187,7 +187,7 @@ function PCM:sink_get_extension(data)
     return r.PCM_Sink_GetExtension(data)
 end
 
-    
+
 --- Sink Show Config. Wraps PCM_Sink_ShowConfig.
 -- @param cfg string
 -- @param hwnd_parent HWND
@@ -196,7 +196,7 @@ function PCM:sink_show_config(cfg, hwnd_parent)
     return r.PCM_Sink_ShowConfig(cfg, hwnd_parent)
 end
 
-    
+
 --- Source Build Peaks. Wraps PCM_Source_BuildPeaks.
 -- Calls and returns PCM_source::PeaksBuild_Begin() if mode=0, PeaksBuild_Run() if
 -- mode=1, and PeaksBuild_Finish() if mode=2. Normal use is to call
@@ -211,7 +211,7 @@ function PCM:source_build_peaks(mode)
     return r.PCM_Source_BuildPeaks(self.src.pointer, mode)
 end
 
-    
+
 --- Source Create From File. Wraps PCM_Source_CreateFromFile.
 -- See PCM_Source_CreateFromFileEx.
 -- @param file_name string
@@ -222,7 +222,7 @@ function PCM:source_create_from_file(file_name)
     return PCM_source:new(result)
 end
 
-    
+
 --- Source Create From File Ex. Wraps PCM_Source_CreateFromFileEx.
 -- Create a PCM_source from filename, and override pref of MIDI files being
 -- imported as in-project MIDI events.
@@ -235,7 +235,7 @@ function PCM:source_create_from_file_ex(file_name, forceno_midi_imp)
     return PCM_source:new(result)
 end
 
-    
+
 --- Source Create From Type. Wraps PCM_Source_CreateFromType.
 -- Create a PCM_source from a "type" (use this if you're going to load its state
 -- via LoadState/ProjectStateContext). Valid types include "WAVE", "MIDI", or
@@ -248,7 +248,7 @@ function PCM:source_create_from_type(source_type)
     return PCM_source:new(result)
 end
 
-    
+
 --- Source Destroy. Wraps PCM_Source_Destroy.
 -- Deletes a PCM_source -- be sure that you remove any project reference before
 -- deleting a source
@@ -256,7 +256,7 @@ function PCM:source_destroy()
     return r.PCM_Source_Destroy(self.src.pointer)
 end
 
-    
+
 --- Source Get Peaks. Wraps PCM_Source_GetPeaks.
 -- Gets block of peak samples to buf. Note that the peak samples are interleaved,
 -- but in two or three blocks (maximums, then minimums, then extra). Return value
@@ -275,7 +275,7 @@ function PCM:source_get_peaks(peakrate, starttime, numchannels, numsamplespercha
     return r.PCM_Source_GetPeaks(self.src.pointer, peakrate, starttime, numchannels, numsamplesperchannel, want_extra_type, buf)
 end
 
-    
+
 --- Source Get Section Info. Wraps PCM_Source_GetSectionInfo.
 -- If a section/reverse block, retrieves offset/len/reverse. return true if success
 -- @return offs number
@@ -290,7 +290,7 @@ function PCM:source_get_section_info()
     end
 end
 
-    
+
 --- Create Preview. Wraps CF_CreatePreview.
 -- Create a new preview object. Does not take ownership of the source (don't forget
 -- to destroy it unless it came from a take!). See CF_Preview_Play and the others
@@ -300,7 +300,7 @@ function PCM:create_preview()
     return r.CF_CreatePreview(self.source.pointer)
 end
 
-    
+
 --- Enum Media Source Cues. Wraps CF_EnumMediaSourceCues.
 -- Enumerate the source's media cues. Returns the next index or 0 when finished.
 -- @param index number
@@ -318,7 +318,7 @@ function PCM:enum_media_source_cues(index)
     end
 end
 
-    
+
 --- Export Media Source. Wraps CF_ExportMediaSource.
 -- Export the source to the given file (MIDI only).
 -- @param fn string
@@ -327,7 +327,7 @@ function PCM:export_media_source(fn)
     return r.CF_ExportMediaSource(self.src.pointer, fn)
 end
 
-    
+
 --- Get Media Source Bit Depth. Wraps CF_GetMediaSourceBitDepth.
 -- Returns the bit depth if available (0 otherwise).
 -- @return number
@@ -335,7 +335,7 @@ function PCM:get_media_source_bit_depth()
     return r.CF_GetMediaSourceBitDepth(self.src.pointer)
 end
 
-    
+
 --- Get Media Source Bit Rate. Wraps CF_GetMediaSourceBitRate.
 -- Returns the bit rate for WAVE (wav, aif) and streaming/variable formats (mp3,
 -- ogg, opus). REAPER v6.19 or later is required for non-WAVE formats.
@@ -344,7 +344,7 @@ function PCM:get_media_source_bit_rate()
     return r.CF_GetMediaSourceBitRate(self.src.pointer)
 end
 
-    
+
 --- Get Media Source Metadata. Wraps CF_GetMediaSourceMetadata.
 -- Get the value of the given metadata field (eg. DESC, ORIG, ORIGREF, DATE, TIME,
 -- UMI, CODINGHISTORY for BWF).
@@ -360,7 +360,7 @@ function PCM:get_media_source_metadata(name, out)
     end
 end
 
-    
+
 --- Get Media Source Online. Wraps CF_GetMediaSourceOnline.
 -- Returns the online/offline status of the given source.
 -- @return boolean
@@ -368,7 +368,7 @@ function PCM:get_media_source_online()
     return r.CF_GetMediaSourceOnline(self.src.pointer)
 end
 
-    
+
 --- Get Media Source Rpp. Wraps CF_GetMediaSourceRPP.
 -- Get the project associated with this source (BWF, subproject...).
 -- @return fn string
@@ -381,7 +381,7 @@ function PCM:get_media_source_rpp()
     end
 end
 
-    
+
 --- Source Set Section Info. Wraps CF_PCM_Source_SetSectionInfo.
 -- Give a section source created using PCM_Source_CreateFromType("SECTION"). Offset
 -- and length are ignored if 0. Negative length to subtract from the total length
@@ -396,7 +396,7 @@ function PCM:source_set_section_info(offset, length, reverse, number)
     return r.CF_PCM_Source_SetSectionInfo(self.section.pointer, source, offset, length, reverse, number)
 end
 
-    
+
 --- Set Media Source Online. Wraps CF_SetMediaSourceOnline.
 -- Set the online/offline status of the given source (closes files when set=false).
 -- @param set boolean
@@ -404,7 +404,7 @@ function PCM:set_media_source_online(set)
     return r.CF_SetMediaSourceOnline(self.src.pointer, set)
 end
 
-    
+
 --- Source Get Sample Value. Wraps GU_PCM_Source_GetSampleValue.
 -- Gets a PCM_source's sample value at a point in time (seconds)
 -- @param time number
@@ -413,7 +413,7 @@ function PCM:source_get_sample_value(time)
     return r.GU_PCM_Source_GetSampleValue(self.source.pointer, time)
 end
 
-    
+
 --- Source Has Region. Wraps GU_PCM_Source_HasRegion.
 -- Checks if PCM_source has embedded Media Cue Markers
 -- @return boolean
@@ -421,7 +421,7 @@ function PCM:source_has_region()
     return r.GU_PCM_Source_HasRegion(self.source.pointer)
 end
 
-    
+
 --- Source Is Mono. Wraps GU_PCM_Source_IsMono.
 -- Checks if PCM_source is mono by comparing all channels
 -- @return boolean
@@ -429,7 +429,7 @@ function PCM:source_is_mono()
     return r.GU_PCM_Source_IsMono(self.source.pointer)
 end
 
-    
+
 --- Source Time To Peak. Wraps GU_PCM_Source_TimeToPeak.
 -- Returns duration in seconds for PCM_source from start til peak threshold is
 -- breached. Returns -1 if invalid
@@ -440,7 +440,7 @@ function PCM:source_time_to_peak(buffer_size, threshold)
     return r.GU_PCM_Source_TimeToPeak(self.source.pointer, buffer_size, threshold)
 end
 
-    
+
 --- Source Time To Peak R. Wraps GU_PCM_Source_TimeToPeakR.
 -- Returns duration in seconds for PCM_source from end til peak threshold is
 -- breached in reverse. Returns -1 if invalid
@@ -451,7 +451,7 @@ function PCM:source_time_to_peak_r(buffer_size, threshold)
     return r.GU_PCM_Source_TimeToPeakR(self.source.pointer, buffer_size, threshold)
 end
 
-    
+
 --- Source Time To Rms. Wraps GU_PCM_Source_TimeToRMS.
 -- Returns duration in seconds for PCM_source from start til RMS threshold is
 -- breached. Returns -1 if invalid
@@ -462,7 +462,7 @@ function PCM:source_time_to_rms(buffer_size, threshold)
     return r.GU_PCM_Source_TimeToRMS(self.source.pointer, buffer_size, threshold)
 end
 
-    
+
 --- Source Time To Rmsr. Wraps GU_PCM_Source_TimeToRMSR.
 -- Returns duration in seconds for PCM_source from end til RMS threshold is
 -- breached in reverse. Returns -1 if invalid
@@ -473,7 +473,7 @@ function PCM:source_time_to_rmsr(buffer_size, threshold)
     return r.GU_PCM_Source_TimeToRMSR(self.source.pointer, buffer_size, threshold)
 end
 
-    
+
 --- Get Media Source Samples. Wraps Xen_GetMediaSourceSamples.
 -- Get interleaved audio data from media source
 -- @param destbuf identifier
@@ -487,7 +487,7 @@ function PCM:get_media_source_samples(destbuf, destbufoffset, numframes, numchan
     return r.Xen_GetMediaSourceSamples(self.src.pointer, destbuf, destbufoffset, numframes, numchans, samplerate, sourceposition)
 end
 
-    
+
 --- Start Source Preview. Wraps Xen_StartSourcePreview.
 -- Start audio preview of a PCM_source. Returns id of a preview handle that can be
 -- provided to Xen_StopSourcePreview. If the given PCM_source does not belong to an

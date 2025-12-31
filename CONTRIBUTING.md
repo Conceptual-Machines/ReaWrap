@@ -62,4 +62,3 @@ Run tests in REAPER's script console or use the test runner.
 ## Questions?
 
 Open an issue or start a discussion!
-

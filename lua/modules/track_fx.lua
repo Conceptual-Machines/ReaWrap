@@ -833,4 +833,200 @@ function TrackFX:select()
   return r.CF_SelectTrackFX(self.track.pointer, self.pointer)
 end
 
+--------------------------------------------------------------------------------
+-- Container Methods (Reaper 7+)
+--------------------------------------------------------------------------------
+
+--- Check if this FX is a container.
+--- @within Container Methods
+--- @return boolean True if this FX is a container
+function TrackFX:is_container()
+  local ok, count = r.TrackFX_GetNamedConfigParm(self.track.pointer, self.pointer, "container_count")
+  return ok and count ~= nil
+end
+
+--- Get the number of FX in this container.
+--- @within Container Methods
+--- @return number Number of child FX (0 if not a container)
+function TrackFX:get_container_child_count()
+  local ok, count = r.TrackFX_GetNamedConfigParm(self.track.pointer, self.pointer, "container_count")
+  return ok and tonumber(count) or 0
+end
+
+--- Get child FX from this container.
+--- @within Container Methods
+--- @return table Array of TrackFX objects
+function TrackFX:get_container_children()
+  local count = self:get_container_child_count()
+  local children = {}
+  for i = 0, count - 1 do
+    local ok, child_id = r.TrackFX_GetNamedConfigParm(
+      self.track.pointer,
+      self.pointer,
+      "container_item." .. i
+    )
+    if ok and child_id then
+      children[#children + 1] = TrackFX:new(self.track, tonumber(child_id))
+    end
+  end
+  return children
+end
+
+--- Iterate over child FX in this container.
+--- @within Container Methods
+--- @return function Iterator yielding TrackFX objects
+function TrackFX:iter_container_children()
+  return helpers.iter(self:get_container_children())
+end
+
+--- Get the parent container of this FX.
+--- @within Container Methods
+--- @return TrackFX|nil Parent container, or nil if top-level
+function TrackFX:get_parent_container()
+  local ok, parent_id = r.TrackFX_GetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "parent_container"
+  )
+  if ok and parent_id and parent_id ~= "" then
+    return TrackFX:new(self.track, tonumber(parent_id))
+  end
+  return nil
+end
+
+--- Get the container hierarchy depth of this FX.
+--- @within Container Methods
+--- @return number Depth (0 = top-level)
+function TrackFX:get_container_depth()
+  local depth = 0
+  local current = self
+  while true do
+    local parent = current:get_parent_container()
+    if not parent then
+      break
+    end
+    depth = depth + 1
+    current = parent
+  end
+  return depth
+end
+
+--- Get the internal channel count of this container.
+--- @within Container Methods
+--- @return number Channel count (default 2)
+function TrackFX:get_container_channels()
+  local ok, nch = r.TrackFX_GetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "container_nch"
+  )
+  return ok and tonumber(nch) or 2
+end
+
+--- Set the internal channel count of this container.
+--- @within Container Methods
+--- @param channels number Channel count (2, 4, 6, 8, etc.)
+--- @return boolean Success
+function TrackFX:set_container_channels(channels)
+  return r.TrackFX_SetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "container_nch",
+    tostring(channels)
+  )
+end
+
+--- Get the input pin count of this container.
+--- @within Container Methods
+--- @return number Input pin count
+function TrackFX:get_container_input_pins()
+  local ok, pins = r.TrackFX_GetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "container_nch_in"
+  )
+  return ok and tonumber(pins) or 2
+end
+
+--- Set the input pin count of this container.
+--- @within Container Methods
+--- @param pins number Input pin count
+--- @return boolean Success
+function TrackFX:set_container_input_pins(pins)
+  return r.TrackFX_SetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "container_nch_in",
+    tostring(pins)
+  )
+end
+
+--- Get the output pin count of this container.
+--- @within Container Methods
+--- @return number Output pin count
+function TrackFX:get_container_output_pins()
+  local ok, pins = r.TrackFX_GetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "container_nch_out"
+  )
+  return ok and tonumber(pins) or 2
+end
+
+--- Set the output pin count of this container.
+--- @within Container Methods
+--- @param pins number Output pin count
+--- @return boolean Success
+function TrackFX:set_container_output_pins(pins)
+  return r.TrackFX_SetNamedConfigParm(
+    self.track.pointer,
+    self.pointer,
+    "container_nch_out",
+    tostring(pins)
+  )
+end
+
+--- Move an FX into this container.
+--- @within Container Methods
+--- @param fx TrackFX FX to move into this container
+--- @param position number|nil Position within container (nil = end)
+--- @return boolean Success
+function TrackFX:add_fx_to_container(fx, position)
+  if not self:is_container() then
+    return false
+  end
+  local child_count = self:get_container_child_count()
+  local dest_pos = position or child_count
+  -- Container destination format: container_idx + 0x2000000 + position
+  local dest_idx = self.pointer + 0x2000000 + dest_pos
+  return r.TrackFX_CopyToTrack(
+    fx.track.pointer,
+    fx.pointer,
+    self.track.pointer,
+    dest_idx,
+    true -- move
+  )
+end
+
+--- Copy an FX into this container.
+--- @within Container Methods
+--- @param fx TrackFX FX to copy into this container
+--- @param position number|nil Position within container (nil = end)
+--- @return boolean Success
+function TrackFX:copy_fx_to_container(fx, position)
+  if not self:is_container() then
+    return false
+  end
+  local child_count = self:get_container_child_count()
+  local dest_pos = position or child_count
+  local dest_idx = self.pointer + 0x2000000 + dest_pos
+  return r.TrackFX_CopyToTrack(
+    fx.track.pointer,
+    fx.pointer,
+    self.track.pointer,
+    dest_idx,
+    false -- copy
+  )
+end
+
 return TrackFX

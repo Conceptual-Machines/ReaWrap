@@ -15,4 +15,3 @@ BreakBeforeBraces: Attach
 KeepEmptyLinesAtTheStartOfBlocks: true
 NamespaceIndentation: None
 SortIncludes: true
-

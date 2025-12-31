@@ -50,4 +50,3 @@ end
 - [Item](doc/modules/item.html)
 - [Take](doc/modules/take.html)
 - [Project](doc/modules/project.html)
-

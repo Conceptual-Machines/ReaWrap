@@ -38,7 +38,7 @@ end
 
 
 
-    
+
 --- Add Take. Wraps AddTakeToMediaItem.
 -- creates a new take in an item
 -- @return Take table
@@ -48,7 +48,7 @@ function Item:add_take()
     return Take:new(result)
 end
 
-    
+
 --- Count Takes. Wraps CountTakes.
 -- count the number of takes in the item
 -- @return number
@@ -56,7 +56,7 @@ function Item:count_takes()
     return r.CountTakes(self.pointer)
 end
 
-    
+
 --- Get Active Take. Wraps GetActiveTake.
 -- get the active take in this item
 -- @return Take table
@@ -66,7 +66,7 @@ function Item:get_active_take()
     return Take:new(result)
 end
 
-    
+
 --- Get Displayed Color. Wraps GetDisplayedMediaItemColor.
 -- see GetDisplayedMediaItemColor2.
 -- @return number
@@ -74,7 +74,7 @@ function Item:get_displayed_color()
     return r.GetDisplayedMediaItemColor(self.pointer)
 end
 
-    
+
 --- Get Displayed Color2. Wraps GetDisplayedMediaItemColor2.
 -- Returns the custom take, item, or track color that is used (according to the
 -- user preference) to color the media item. The returned color is OS
@@ -85,7 +85,7 @@ function Item:get_displayed_color2()
     return r.GetDisplayedMediaItemColor2(self.pointer, take)
 end
 
-    
+
 --- Get Item Project Context. Wraps GetItemProjectContext.
 -- @return Project table
 function Item:get_item_project_context()
@@ -94,7 +94,7 @@ function Item:get_item_project_context()
     return Project:new(result)
 end
 
-    
+
 --- Get Item State Chunk. Wraps GetItemStateChunk.
 -- Gets the RPPXML state of an item, returns true if successful. Undo flag is a
 -- performance/caching hint.
@@ -110,7 +110,7 @@ function Item:get_item_state_chunk(str, is_undo)
     end
 end
 
-    
+
 --- Get Track. Wraps GetMediaItem_Track.
 -- Get parent track of media item
 -- @return Track table
@@ -120,7 +120,7 @@ function Item:get_track()
     return Track:new(result)
 end
 
-    
+
 --- Constants for Item:get_info_value.
 -- @field B_MUTE boolean: muted (item solo overrides). setting this value will clear C_MUTE_SOLO.
 -- @field B_MUTE_ACTUAL boolean: muted (ignores solo). setting this value will not affect C_MUTE_SOLO.
@@ -190,7 +190,7 @@ Item.GetInfoValueConstants = {
     B_FIXEDLANE_HIDDEN = "B_FIXEDLANE_HIDDEN",
     P_TRACK = "P_TRACK",
 }
-    
+
 --- Get Info Value. Wraps GetMediaItemInfo_Value.
 -- Get media item numerical-value attributes.
 -- @param parm_name string. Item.GetInfoValueConstants
@@ -199,14 +199,14 @@ function Item:get_info_value(parm_name)
     return r.GetMediaItemInfo_Value(self.pointer, parm_name)
 end
 
-    
+
 --- Get Num Takes. Wraps GetMediaItemNumTakes.
 -- @return number
 function Item:get_num_takes()
     return r.GetMediaItemNumTakes(self.pointer)
 end
 
-    
+
 --- Get Take. Wraps GetMediaItemTake.
 -- @param tk number
 -- @return Take table
@@ -216,7 +216,7 @@ function Item:get_take(tk)
     return Take:new(result)
 end
 
-    
+
 --- Constants for Item:get_set_info_string.
 -- @field P_NOTES string: item note text (do not write to returned pointer, use setNewValue to update)
 -- @field P_EXT xyz: xyzchar *extension-specific persistent data
@@ -226,7 +226,7 @@ Item.GetSetInfoStringConstants = {
     P_EXT = "P_EXT",
     GUID = "GUID",
 }
-    
+
 --- Get Set Info String. Wraps GetSetMediaItemInfo_String.
 -- Gets/sets an item attribute string:
 -- @param parm_name string. Item.GetSetInfoStringConstants
@@ -242,14 +242,14 @@ function Item:get_set_info_string(parm_name, string_need_big, set_new_value)
     end
 end
 
-    
+
 --- Is Selected. Wraps IsMediaItemSelected.
 -- @return boolean
 function Item:is_selected()
     return r.IsMediaItemSelected(self.pointer)
 end
 
-    
+
 --- Descends From Track. Wraps MediaItemDescendsFromTrack.
 -- Returns 1 if the track holds the item, 2 if the track is a folder containing the
 -- track that holds the item, etc.
@@ -258,7 +258,7 @@ function Item:descends_from_track()
     return r.MediaItemDescendsFromTrack(self.pointer, track)
 end
 
-    
+
 --- Midi Set Item Extents. Wraps MIDI_SetItemExtents.
 -- Set the start/end positions of a media item that contains a MIDI take.
 -- @param start_qn number
@@ -268,7 +268,7 @@ function Item:midi_set_item_extents(start_qn, end_qn)
     return r.MIDI_SetItemExtents(self.pointer, start_qn, end_qn)
 end
 
-    
+
 --- Move To Track. Wraps MoveMediaItemToTrack.
 -- returns TRUE if move succeeded
 -- @return boolean
@@ -276,7 +276,7 @@ function Item:move_to_track()
     return r.MoveMediaItemToTrack(self.pointer, desttr)
 end
 
-    
+
 --- Set Item State Chunk. Wraps SetItemStateChunk.
 -- Sets the RPPXML state of an item, returns true if successful. Undo flag is a
 -- performance/caching hint.
@@ -287,7 +287,7 @@ function Item:set_item_state_chunk(str, is_undo)
     return r.SetItemStateChunk(self.pointer, str, is_undo)
 end
 
-    
+
 --- Constants for Item:set_info_value.
 -- @field B_MUTE boolean: muted (item solo overrides). setting this value will clear C_MUTE_SOLO.
 -- @field B_MUTE_ACTUAL boolean: muted (ignores solo). setting this value will not affect C_MUTE_SOLO.
@@ -355,7 +355,7 @@ Item.SetInfoValueConstants = {
     I_FIXEDLANE = "I_FIXEDLANE",
     B_FIXEDLANE_HIDDEN = "B_FIXEDLANE_HIDDEN",
 }
-    
+
 --- Set Info Value. Wraps SetMediaItemInfo_Value.
 -- Set media item numerical-value attributes.
 -- @param parm_name string. Item.SetInfoValueConstants
@@ -365,7 +365,7 @@ function Item:set_info_value(parm_name, newvalue)
     return r.SetMediaItemInfo_Value(self.pointer, parm_name, newvalue)
 end
 
-    
+
 --- Set Length. Wraps SetMediaItemLength.
 -- Redraws the screen only if refreshUI == true. See UpdateArrange().
 -- @param length number
@@ -375,7 +375,7 @@ function Item:set_length(length, refresh_ui)
     return r.SetMediaItemLength(self.pointer, length, refresh_ui)
 end
 
-    
+
 --- Set Position. Wraps SetMediaItemPosition.
 -- Redraws the screen only if refreshUI == true. See UpdateArrange().
 -- @param position number
@@ -385,14 +385,14 @@ function Item:set_position(position, refresh_ui)
     return r.SetMediaItemPosition(self.pointer, position, refresh_ui)
 end
 
-    
+
 --- Set Selected. Wraps SetMediaItemSelected.
 -- @param selected boolean
 function Item:set_selected(selected)
     return r.SetMediaItemSelected(self.pointer, selected)
 end
 
-    
+
 --- Split. Wraps SplitMediaItem.
 -- the original item becomes the left-hand split, the function returns the right-
 -- hand split (or NULL if the split failed)
@@ -404,13 +404,13 @@ function Item:split(position)
     return Item:new(result)
 end
 
-    
+
 --- Update Item In Project. Wraps UpdateItemInProject.
 function Item:update_item_in_project()
     return r.UpdateItemInProject(self.pointer)
 end
 
-    
+
 --- Get Guid. Wraps BR_GetMediaItemGUID.
 -- [BR] Get media item GUID as a string (guidStringOut_sz should be at least 64).
 -- To get media item back from GUID string, see BR_GetMediaItemByGUID.
@@ -419,7 +419,7 @@ function Item:get_guid()
     return r.BR_GetMediaItemGUID(self.pointer)
 end
 
-    
+
 --- Get Image Resource. Wraps BR_GetMediaItemImageResource.
 -- [BR] Get currently loaded image resource and its flags for a given item. Returns
 -- false if there is no image resource set. To set image resource, see
@@ -435,7 +435,7 @@ function Item:get_image_resource()
     end
 end
 
-    
+
 --- Set Item Edges. Wraps BR_SetItemEdges.
 -- [BR] Set item start and end edges' position - returns true in case of any
 -- changes
@@ -446,7 +446,7 @@ function Item:set_item_edges(start_time, end_time)
     return r.BR_SetItemEdges(self.pointer, start_time, end_time)
 end
 
-    
+
 --- Set Image Resource. Wraps BR_SetMediaItemImageResource.
 -- [BR] Set image resource and its flags for a given item. To clear current image
 -- resource, pass imageIn as "". imageFlags: &1=0: don't display image, &1: center
@@ -460,7 +460,7 @@ function Item:set_image_resource(image_in, image_flags)
     return r.BR_SetMediaItemImageResource(self.pointer, image_in, image_flags)
 end
 
-    
+
 --- Analyze Peak And Rms. Wraps NF_AnalyzeMediaItemPeakAndRMS.
 -- This function combines all other NF_Peak/RMS functions in a single one and
 -- additionally returns peak RMS positions. Lua example code here. Note: It's
@@ -477,7 +477,7 @@ function Item:analyze_peak_and_rms(window_size, reaperarray_peaks, reaperarray_p
     return r.NF_AnalyzeMediaItemPeakAndRMS(self.pointer, window_size, reaperarray_peaks, reaperarray_peakpositions, reaperarray_rm_ss, reaperarray_rm_spositions)
 end
 
-    
+
 --- Delete Take From Item. Wraps NF_DeleteTakeFromItem.
 -- Deletes a take from an item. takeIdx is zero-based. Returns true on success.
 -- @param take_idx number
@@ -486,7 +486,7 @@ function Item:delete_take_from_item(take_idx)
     return r.NF_DeleteTakeFromItem(self.pointer, take_idx)
 end
 
-    
+
 --- Get Average Rms. Wraps NF_GetMediaItemAverageRMS.
 -- Returns the average overall (non-windowed) dB RMS level of active channels of an
 -- audio item active take, post item gain, post take volume envelope, post-fade,
@@ -496,7 +496,7 @@ function Item:get_average_rms()
     return r.NF_GetMediaItemAverageRMS(self.pointer)
 end
 
-    
+
 --- Get Max Peak. Wraps NF_GetMediaItemMaxPeak.
 -- Returns the greatest max. peak value in dBFS of all active channels of an audio
 -- item active take, post item gain, post take volume envelope, post-fade, pre
@@ -506,7 +506,7 @@ function Item:get_max_peak()
     return r.NF_GetMediaItemMaxPeak(self.pointer)
 end
 
-    
+
 --- Get Max Peak And Max Peak Pos. Wraps NF_GetMediaItemMaxPeakAndMaxPeakPos.
 -- See NF_GetMediaItemMaxPeak, additionally returns maxPeakPos (relative to item
 -- position).
@@ -520,7 +520,7 @@ function Item:get_max_peak_and_max_peak_pos()
     end
 end
 
-    
+
 --- Get Peak Rms Non Windowed. Wraps NF_GetMediaItemPeakRMS_NonWindowed.
 -- Returns the greatest overall (non-windowed) dB RMS peak level of all active
 -- channels of an audio item active take, post item gain, post take volume
@@ -531,7 +531,7 @@ function Item:get_peak_rms_non_windowed()
     return r.NF_GetMediaItemPeakRMS_NonWindowed(self.pointer)
 end
 
-    
+
 --- Get Peak Rms Windowed. Wraps NF_GetMediaItemPeakRMS_Windowed.
 -- Returns the average dB RMS peak level of all active channels of an audio item
 -- active take, post item gain, post take volume envelope, post-fade, pre fader,
@@ -543,7 +543,7 @@ function Item:get_peak_rms_windowed()
     return r.NF_GetMediaItemPeakRMS_Windowed(self.pointer)
 end
 
-    
+
 --- Get Set Source State. Wraps SNM_GetSetSourceState.
 -- [S&M] Gets or sets a take source state. Returns false if failed. Use takeidx=-1
 -- to get/alter the active take. Note: this function does not use a MediaItem_Take*

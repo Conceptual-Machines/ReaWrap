@@ -2,7 +2,7 @@
 <!-- saved from url=(0055)https://www.extremraym.com/cloud/reascript-doc/#l_funcs -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-  
+
   <!-- https://stackoverflow.com/questions/44679794/position-fixed-on-chrome-mobile-causing-element-to-move-on-scroll-up-down-->
   <!--<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi">-->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24194,7 +24194,7 @@ If the given PCM_source does not belong to an existing MediaItem/Take, it will b
 <div class="function_definition" id="eel_get_action_context">
 	<div class="e_func"><code>get_action_context(#filename,sectionID,cmdID,mode,resolution,val,contextstr)</code></div>
 	<p>Queries contextual information about the script, typically MIDI/OSC input values.<br>Returns true if a new value has been updated.<br>val will be set to a relative or absolute value depending on mode (=0: absolute mode, &gt;0: relative modes).<br>resolution=127 for 7-bit resolution, =16383 for 14-bit resolution.<br>sectionID, and cmdID will be set to -1 if the script is not part of the action list.<br>mode, resolution and val will be set to -1 if the script was not triggered via MIDI/OSC.<br>contextstr may be empty or one of:
-	</p><ul>  
+	</p><ul>
 		<li>midi:XX[:YY] (one or two bytes hex)</li>
 		<li>[wheel|hwheel|mtvert|mthorz|mtzoom|mtrot|mediakbd]:flags</li>
 		<li>key:flags:keycode</li>
@@ -24821,11 +24821,11 @@ If the given PCM_source does not belong to an existing MediaItem/Take, it will b
 <div class="function_definition" id="lua_get_action_context">
 	<div class="l_func"><code>reaper.get_action_context()</code></div>
 	<p>is_new_value,filename,sectionID,cmdID,mode,resolution,val,contextstr = reaper.get_action_context()<br>Returns contextual information about the script, typically MIDI/OSC input values.<br>val will be set to a relative or absolute value depending on mode (=0: absolute mode, &gt;0: relative modes).<br>resolution=127 for 7-bit resolution, =16383 for 14-bit resolution.<br>sectionID, and cmdID will be set to -1 if the script is not part of the action list.<br>mode, resolution and val will be set to -1 if the script was not triggered via MIDI/OSC.<br>contextstr may be empty or one of:
-	</p><ul>  
-		<li>midi:XX[:YY] (one or two bytes hex)</li>  
-		<li>[wheel|hwheel|mtvert|mthorz|mtzoom|mtrot|mediakbd]:flags</li>  
-		<li>key:flags:keycode</li>  
-		<li>osc:/msg[:f=FloatValue|:s=StringValue]</li>  
+	</p><ul>
+		<li>midi:XX[:YY] (one or two bytes hex)</li>
+		<li>[wheel|hwheel|mtvert|mthorz|mtzoom|mtrot|mediakbd]:flags</li>
+		<li>key:flags:keycode</li>
+		<li>osc:/msg[:f=FloatValue|:s=StringValue]</li>
 		<li>KBD_OnMainActionEx
 	</li></ul>
 <p>(flags may include V=virtkey, S=shift, A=alt/option, C=control/command, W=win/control)</p>

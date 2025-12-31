@@ -38,7 +38,7 @@ end
 
 
 
-    
+
 --- Count Take Envelopes. Wraps CountTakeEnvelopes.
 -- See GetTakeEnvelope
 -- @return number
@@ -46,7 +46,7 @@ function Take:count_take_envelopes()
     return r.CountTakeEnvelopes(self.pointer)
 end
 
-    
+
 --- Create Take Audio Accessor. Wraps CreateTakeAudioAccessor.
 -- Create an audio accessor object for this take. Must only call from the main
 -- thread. See CreateTrackAudioAccessor, DestroyAudioAccessor,
@@ -59,7 +59,7 @@ function Take:create_take_audio_accessor()
     return AudioAccessor:new(result)
 end
 
-    
+
 --- Delete Take Marker. Wraps DeleteTakeMarker.
 -- Delete a take marker. Note that idx will change for all following take markers.
 -- See GetNumTakeMarkers, GetTakeMarker, SetTakeMarker
@@ -69,7 +69,7 @@ function Take:delete_take_marker(idx)
     return r.DeleteTakeMarker(self.pointer, idx)
 end
 
-    
+
 --- Delete Take Stretch Markers. Wraps DeleteTakeStretchMarkers.
 -- Deletes one or more stretch markers. Returns number of stretch markers deleted.
 -- @param idx number
@@ -80,7 +80,7 @@ function Take:delete_take_stretch_markers(idx, integer)
     return r.DeleteTakeStretchMarkers(self.pointer, idx, integer)
 end
 
-    
+
 --- Get Item. Wraps GetMediaItemTake_Item.
 -- Get parent item of media item take
 -- @return Item table
@@ -90,7 +90,7 @@ function Take:get_item()
     return Item:new(result)
 end
 
-    
+
 --- Get Peaks. Wraps GetMediaItemTake_Peaks.
 -- Gets block of peak samples to buf. Note that the peak samples are interleaved,
 -- but in two or three blocks (maximums, then minimums, then extra). Return value
@@ -109,7 +109,7 @@ function Take:get_peaks(peakrate, starttime, numchannels, numsamplesperchannel, 
     return r.GetMediaItemTake_Peaks(self.pointer, peakrate, starttime, numchannels, numsamplesperchannel, want_extra_type, buf)
 end
 
-    
+
 --- Get Source. Wraps GetMediaItemTake_Source.
 -- Get media source of media item take
 -- @return userdata
@@ -119,7 +119,7 @@ function Take:get_source()
     return PCM_source:new(result)
 end
 
-    
+
 --- Get Track. Wraps GetMediaItemTake_Track.
 -- Get parent track of media item take
 -- @return Track table
@@ -129,7 +129,7 @@ function Take:get_track()
     return Track:new(result)
 end
 
-    
+
 --- Constants for Take:get_info_value.
 -- @field D_STARTOFFS double *: start offset in source media, in seconds
 -- @field D_VOL double *: take volume, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc, negative if take polarity is flipped
@@ -173,7 +173,7 @@ Take.GetInfoValueConstants = {
     P_ITEM = "P_ITEM",
     P_SOURCE = "P_SOURCE",
 }
-    
+
 --- Get Info Value. Wraps GetMediaItemTakeInfo_Value.
 -- Get media item take numerical-value attributes.
 -- @param parm_name string. Take.GetInfoValueConstants
@@ -182,7 +182,7 @@ function Take:get_info_value(parm_name)
     return r.GetMediaItemTakeInfo_Value(self.pointer, parm_name)
 end
 
-    
+
 --- Get Num Take Markers. Wraps GetNumTakeMarkers.
 -- Returns number of take markers. See GetTakeMarker, SetTakeMarker,
 -- DeleteTakeMarker
@@ -191,7 +191,7 @@ function Take:get_num_take_markers()
     return r.GetNumTakeMarkers(self.pointer)
 end
 
-    
+
 --- Constants for Take:get_set_info_string.
 -- @field P_NAME string: take name
 -- @field P_EXT xyz: xyzchar *extension-specific persistent data
@@ -201,7 +201,7 @@ Take.GetSetInfoStringConstants = {
     P_EXT = "P_EXT",
     GUID = "GUID",
 }
-    
+
 --- Get Set Info String. Wraps GetSetMediaItemTakeInfo_String.
 -- Gets/sets a take attribute string:
 -- @param parm_name string. Take.GetSetInfoStringConstants
@@ -217,7 +217,7 @@ function Take:get_set_info_string(parm_name, string_need_big, set_new_value)
     end
 end
 
-    
+
 --- Get Take Envelope. Wraps GetTakeEnvelope.
 -- @param env_idx number
 -- @return Envelope table
@@ -227,7 +227,7 @@ function Take:get_take_envelope(env_idx)
     return Envelope:new(result)
 end
 
-    
+
 --- Get Take Envelope By Name. Wraps GetTakeEnvelopeByName.
 -- @param env_name string
 -- @return Envelope table
@@ -237,7 +237,7 @@ function Take:get_take_envelope_by_name(env_name)
     return Envelope:new(result)
 end
 
-    
+
 --- Get Take Marker. Wraps GetTakeMarker.
 -- Get information about a take marker. Returns the position in media item source
 -- time, or -1 if the take marker does not exist. See GetNumTakeMarkers,
@@ -254,7 +254,7 @@ function Take:get_take_marker(idx)
     end
 end
 
-    
+
 --- Get Take Name. Wraps GetTakeName.
 -- returns NULL if the take is not valid
 -- @return string
@@ -262,7 +262,7 @@ function Take:get_take_name()
     return r.GetTakeName(self.pointer)
 end
 
-    
+
 --- Get Take Num Stretch Markers. Wraps GetTakeNumStretchMarkers.
 -- Returns number of stretch markers in take
 -- @return number
@@ -270,7 +270,7 @@ function Take:get_take_num_stretch_markers()
     return r.GetTakeNumStretchMarkers(self.pointer)
 end
 
-    
+
 --- Get Take Stretch Marker. Wraps GetTakeStretchMarker.
 -- Gets information on a stretch marker, idx is 0..n. Returns -1 if stretch marker
 -- not valid. posOut will be set to position in item, srcposOutOptional will be set
@@ -290,7 +290,7 @@ function Take:get_take_stretch_marker(idx)
     end
 end
 
-    
+
 --- Get Take Stretch Marker Slope. Wraps GetTakeStretchMarkerSlope.
 -- See SetTakeStretchMarkerSlope
 -- @param idx number
@@ -299,7 +299,7 @@ function Take:get_take_stretch_marker_slope(idx)
     return r.GetTakeStretchMarkerSlope(self.pointer, idx)
 end
 
-    
+
 --- Midi Count Evts. Wraps MIDI_CountEvts.
 -- Count the number of notes, CC events, and text/sysex events in a given MIDI
 -- item.
@@ -315,7 +315,7 @@ function Take:midi_count_evts()
     end
 end
 
-    
+
 --- Midi Delete Cc. Wraps MIDI_DeleteCC.
 -- Delete a MIDI CC event.
 -- @param cc_idx number
@@ -324,7 +324,7 @@ function Take:midi_delete_cc(cc_idx)
     return r.MIDI_DeleteCC(self.pointer, cc_idx)
 end
 
-    
+
 --- Midi Delete Evt. Wraps MIDI_DeleteEvt.
 -- Delete a MIDI event.
 -- @param evt_idx number
@@ -333,7 +333,7 @@ function Take:midi_delete_evt(evt_idx)
     return r.MIDI_DeleteEvt(self.pointer, evt_idx)
 end
 
-    
+
 --- Midi Delete Note. Wraps MIDI_DeleteNote.
 -- Delete a MIDI note.
 -- @param note_idx number
@@ -342,7 +342,7 @@ function Take:midi_delete_note(note_idx)
     return r.MIDI_DeleteNote(self.pointer, note_idx)
 end
 
-    
+
 --- Midi Delete Text Sysex Evt. Wraps MIDI_DeleteTextSysexEvt.
 -- Delete a MIDI text or sysex event.
 -- @param textsyxevt_idx number
@@ -351,7 +351,7 @@ function Take:midi_delete_text_sysex_evt(textsyxevt_idx)
     return r.MIDI_DeleteTextSysexEvt(self.pointer, textsyxevt_idx)
 end
 
-    
+
 --- Midi Disable Sort. Wraps MIDI_DisableSort.
 -- Disable sorting for all MIDI insert, delete, get and set functions, until
 -- MIDI_Sort is called.
@@ -359,7 +359,7 @@ function Take:midi_disable_sort()
     return r.MIDI_DisableSort(self.pointer)
 end
 
-    
+
 --- Midi Enum Sel Cc. Wraps MIDI_EnumSelCC.
 -- Returns the index of the next selected MIDI CC event after ccidx (-1 if there
 -- are no more selected events).
@@ -369,7 +369,7 @@ function Take:midi_enum_sel_cc(cc_idx)
     return r.MIDI_EnumSelCC(self.pointer, cc_idx)
 end
 
-    
+
 --- Midi Enum Sel Evts. Wraps MIDI_EnumSelEvts.
 -- Returns the index of the next selected MIDI event after evtidx (-1 if there are
 -- no more selected events).
@@ -379,7 +379,7 @@ function Take:midi_enum_sel_evts(evt_idx)
     return r.MIDI_EnumSelEvts(self.pointer, evt_idx)
 end
 
-    
+
 --- Midi Enum Sel Notes. Wraps MIDI_EnumSelNotes.
 -- Returns the index of the next selected MIDI note after noteidx (-1 if there are
 -- no more selected events).
@@ -389,7 +389,7 @@ function Take:midi_enum_sel_notes(note_idx)
     return r.MIDI_EnumSelNotes(self.pointer, note_idx)
 end
 
-    
+
 --- Midi Enum Sel Text Sysex Evts. Wraps MIDI_EnumSelTextSysexEvts.
 -- Returns the index of the next selected MIDI text/sysex event after textsyxidx
 -- (-1 if there are no more selected events).
@@ -399,7 +399,7 @@ function Take:midi_enum_sel_text_sysex_evts(textsyx_idx)
     return r.MIDI_EnumSelTextSysexEvts(self.pointer, textsyx_idx)
 end
 
-    
+
 --- Midi Get All Evts. Wraps MIDI_GetAllEvts.
 -- Get all MIDI data. MIDI buffer is returned as a list of { int offset, char flag,
 -- int msglen, unsigned char msg[] }. offset: MIDI ticks from previous event flag:
@@ -420,7 +420,7 @@ function Take:midi_get_all_evts()
     end
 end
 
-    
+
 --- Midi Get Cc. Wraps MIDI_GetCC.
 -- Get MIDI CC event properties.
 -- @param cc_idx number
@@ -440,7 +440,7 @@ function Take:midi_get_cc(cc_idx)
     end
 end
 
-    
+
 --- Midi Get Cc Shape. Wraps MIDI_GetCCShape.
 -- Get CC shape and bezier tension. See MIDI_GetCC, MIDI_SetCCShape
 -- @param cc_idx number
@@ -455,7 +455,7 @@ function Take:midi_get_cc_shape(cc_idx)
     end
 end
 
-    
+
 --- Midi Get Evt. Wraps MIDI_GetEvt.
 -- Get MIDI event properties.
 -- @param evt_idx number
@@ -472,7 +472,7 @@ function Take:midi_get_evt(evt_idx)
     end
 end
 
-    
+
 --- Midi Get Grid. Wraps MIDI_GetGrid.
 -- Returns the most recent MIDI editor grid size for this MIDI take, in QN. Swing
 -- is between 0 and 1. Note length is 0 if it follows the grid size.
@@ -487,7 +487,7 @@ function Take:midi_get_grid()
     end
 end
 
-    
+
 --- Midi Get Hash. Wraps MIDI_GetHash.
 -- Get a string that only changes when the MIDI data changes. If notesonly==true,
 -- then the string changes only when the MIDI notes change. See MIDI_GetTrackHash
@@ -502,7 +502,7 @@ function Take:midi_get_hash(notesonly)
     end
 end
 
-    
+
 --- Midi Get Note. Wraps MIDI_GetNote.
 -- Get MIDI note properties.
 -- @param note_idx number
@@ -522,7 +522,7 @@ function Take:midi_get_note(note_idx)
     end
 end
 
-    
+
 --- Midi Get Ppq Pos End Of Measure. Wraps MIDI_GetPPQPos_EndOfMeasure.
 -- Returns the MIDI tick (ppq) position corresponding to the end of the measure.
 -- @param ppq_pos number
@@ -531,7 +531,7 @@ function Take:midi_get_ppq_pos_end_of_measure(ppq_pos)
     return r.MIDI_GetPPQPos_EndOfMeasure(self.pointer, ppq_pos)
 end
 
-    
+
 --- Midi Get Ppq Pos Start Of Measure. Wraps MIDI_GetPPQPos_StartOfMeasure.
 -- Returns the MIDI tick (ppq) position corresponding to the start of the measure.
 -- @param ppq_pos number
@@ -540,7 +540,7 @@ function Take:midi_get_ppq_pos_start_of_measure(ppq_pos)
     return r.MIDI_GetPPQPos_StartOfMeasure(self.pointer, ppq_pos)
 end
 
-    
+
 --- Midi Get Ppq Pos From Proj Qn. Wraps MIDI_GetPPQPosFromProjQN.
 -- Returns the MIDI tick (ppq) position corresponding to a specific project time in
 -- quarter notes.
@@ -550,7 +550,7 @@ function Take:midi_get_ppq_pos_from_proj_qn(projqn)
     return r.MIDI_GetPPQPosFromProjQN(self.pointer, projqn)
 end
 
-    
+
 --- Midi Get Ppq Pos From Proj Time. Wraps MIDI_GetPPQPosFromProjTime.
 -- Returns the MIDI tick (ppq) position corresponding to a specific project time in
 -- seconds.
@@ -560,7 +560,7 @@ function Take:midi_get_ppq_pos_from_proj_time(projtime)
     return r.MIDI_GetPPQPosFromProjTime(self.pointer, projtime)
 end
 
-    
+
 --- Midi Get Proj Qn From Ppq Pos. Wraps MIDI_GetProjQNFromPPQPos.
 -- Returns the project time in quarter notes corresponding to a specific MIDI tick
 -- (ppq) position.
@@ -570,7 +570,7 @@ function Take:midi_get_proj_qn_from_ppq_pos(ppq_pos)
     return r.MIDI_GetProjQNFromPPQPos(self.pointer, ppq_pos)
 end
 
-    
+
 --- Midi Get Proj Time From Ppq Pos. Wraps MIDI_GetProjTimeFromPPQPos.
 -- Returns the project time in seconds corresponding to a specific MIDI tick (ppq)
 -- position.
@@ -580,7 +580,7 @@ function Take:midi_get_proj_time_from_ppq_pos(ppq_pos)
     return r.MIDI_GetProjTimeFromPPQPos(self.pointer, ppq_pos)
 end
 
-    
+
 --- Midi Get Scale. Wraps MIDI_GetScale.
 -- Get the active scale in the media source, if any. root 0=C, 1=C#, etc. scale
 -- &0x1=root, &0x2=minor 2nd, &0x4=major 2nd, &0x8=minor 3rd, &0xF=fourth, etc.
@@ -596,7 +596,7 @@ function Take:midi_get_scale()
     end
 end
 
-    
+
 --- Midi Get Text Sysex Evt. Wraps MIDI_GetTextSysexEvt.
 -- Get MIDI meta-event properties. Allowable types are -1:sysex (msg should not
 -- include bounding F0..F7), 1-14:MIDI text event types, 15=REAPER notation event.
@@ -626,7 +626,7 @@ function Take:midi_get_text_sysex_evt(textsyxevt_idx, boolean, boolean, number, 
     end
 end
 
-    
+
 --- Midi Insert Cc. Wraps MIDI_InsertCC.
 -- Insert a new MIDI CC event.
 -- @param selected boolean
@@ -641,7 +641,7 @@ function Take:midi_insert_cc(selected, muted, ppq_pos, chanmsg, chan, msg2, msg3
     return r.MIDI_InsertCC(self.pointer, selected, muted, ppq_pos, chanmsg, chan, msg2, msg3)
 end
 
-    
+
 --- Midi Insert Evt. Wraps MIDI_InsertEvt.
 -- Insert a new MIDI event.
 -- @param selected boolean
@@ -653,7 +653,7 @@ function Take:midi_insert_evt(selected, muted, ppq_pos, bytestr)
     return r.MIDI_InsertEvt(self.pointer, selected, muted, ppq_pos, bytestr)
 end
 
-    
+
 --- Midi Insert Note. Wraps MIDI_InsertNote.
 -- Insert a new MIDI note. Set noSort if inserting multiple events, then call
 -- MIDI_Sort when done.
@@ -671,7 +671,7 @@ function Take:midi_insert_note(selected, muted, startppq_pos, endppq_pos, chan, 
     return r.MIDI_InsertNote(self.pointer, selected, muted, startppq_pos, endppq_pos, chan, pitch, vel, boolean)
 end
 
-    
+
 --- Midi Insert Text Sysex Evt. Wraps MIDI_InsertTextSysexEvt.
 -- Insert a new MIDI text or sysex event. Allowable types are -1:sysex (msg should
 -- not include bounding F0..F7), 1-14:MIDI text event types, 15=REAPER notation
@@ -686,14 +686,14 @@ function Take:midi_insert_text_sysex_evt(selected, muted, ppq_pos, type, bytestr
     return r.MIDI_InsertTextSysexEvt(self.pointer, selected, muted, ppq_pos, type, bytestr)
 end
 
-    
+
 --- Midi Refresh Editors. Wraps MIDI_RefreshEditors.
 -- Synchronously updates any open MIDI editors for MIDI take
 function Take:midi_refresh_editors()
     return r.MIDI_RefreshEditors(self.pointer)
 end
 
-    
+
 --- Midi Select All. Wraps MIDI_SelectAll.
 -- Select or deselect all MIDI content.
 -- @param select boolean
@@ -701,7 +701,7 @@ function Take:midi_select_all(select)
     return r.MIDI_SelectAll(self.pointer, select)
 end
 
-    
+
 --- Midi Set All Evts. Wraps MIDI_SetAllEvts.
 -- Set all MIDI data. MIDI buffer is passed in as a list of { int offset, char
 -- flag, int msglen, unsigned char msg[] }. offset: MIDI ticks from previous event
@@ -718,7 +718,7 @@ function Take:midi_set_all_evts(buf)
     return r.MIDI_SetAllEvts(self.pointer, buf)
 end
 
-    
+
 --- Midi Set Cc. Wraps MIDI_SetCC.
 -- Set MIDI CC event properties. Properties passed as NULL will not be set. set
 -- noSort if setting multiple events, then call MIDI_Sort when done.
@@ -739,7 +739,7 @@ function Take:midi_set_cc(cc_idx, boolean, boolean, number, integer, integer, in
     return r.MIDI_SetCC(self.pointer, cc_idx, boolean, boolean, number, integer, integer, integer, integer, boolean)
 end
 
-    
+
 --- Midi Set Cc Shape. Wraps MIDI_SetCCShape.
 -- Set CC shape and bezier tension. set noSort if setting multiple events, then
 -- call MIDI_Sort when done. See MIDI_SetCC, MIDI_GetCCShape
@@ -753,7 +753,7 @@ function Take:midi_set_cc_shape(cc_idx, shape, beztension, boolean)
     return r.MIDI_SetCCShape(self.pointer, cc_idx, shape, beztension, boolean)
 end
 
-    
+
 --- Midi Set Evt. Wraps MIDI_SetEvt.
 -- Set MIDI event properties. Properties passed as NULL will not be set.  set
 -- noSort if setting multiple events, then call MIDI_Sort when done.
@@ -771,7 +771,7 @@ function Take:midi_set_evt(evt_idx, boolean, boolean, number, string, boolean)
     return r.MIDI_SetEvt(self.pointer, evt_idx, boolean, boolean, number, string, boolean)
 end
 
-    
+
 --- Midi Set Note. Wraps MIDI_SetNote.
 -- Set MIDI note properties. Properties passed as NULL (or negative values) will
 -- not be set. Set noSort if setting multiple events, then call MIDI_Sort when
@@ -794,7 +794,7 @@ function Take:midi_set_note(note_idx, boolean, boolean, number, number, integer,
     return r.MIDI_SetNote(self.pointer, note_idx, boolean, boolean, number, number, integer, integer, integer, boolean)
 end
 
-    
+
 --- Midi Set Text Sysex Evt. Wraps MIDI_SetTextSysexEvt.
 -- Set MIDI text or sysex event properties. Properties passed as NULL will not be
 -- set. Allowable types are -1:sysex (msg should not include bounding F0..F7),
@@ -816,21 +816,21 @@ function Take:midi_set_text_sysex_evt(textsyxevt_idx, boolean, boolean, number, 
     return r.MIDI_SetTextSysexEvt(self.pointer, textsyxevt_idx, boolean, boolean, number, integer, string, boolean)
 end
 
-    
+
 --- Midi Sort. Wraps MIDI_Sort.
 -- Sort MIDI events after multiple calls to MIDI_SetNote, MIDI_SetCC, etc.
 function Take:midi_sort()
     return r.MIDI_Sort(self.pointer)
 end
 
-    
+
 --- Set Active Take. Wraps SetActiveTake.
 -- set this take active in this media item
 function Take:set_active_take()
     return r.SetActiveTake(self.pointer)
 end
 
-    
+
 --- Set Source. Wraps SetMediaItemTake_Source.
 -- Set media source of media item take. The old source will not be destroyed, it is
 -- the caller's responsibility to retrieve it and destroy it after. If source
@@ -842,7 +842,7 @@ function Take:set_source()
     return r.SetMediaItemTake_Source(self.pointer, source)
 end
 
-    
+
 --- Constants for Take:set_info_value.
 -- @field D_STARTOFFS double *: start offset in source media, in seconds
 -- @field D_VOL double *: take volume, 0=-inf, 0.5=-6dB, 1=+0dB, 2=+6dB, etc, negative if take polarity is flipped
@@ -880,7 +880,7 @@ Take.SetInfoValueConstants = {
     I_CUSTOMCOLOR = "I_CUSTOMCOLOR",
     IP_TAKENUMBER = "IP_TAKENUMBER",
 }
-    
+
 --- Set Info Value. Wraps SetMediaItemTakeInfo_Value.
 -- Set media item take numerical-value attributes.
 -- @param parm_name string. Take.SetInfoValueConstants
@@ -890,7 +890,7 @@ function Take:set_info_value(parm_name, newvalue)
     return r.SetMediaItemTakeInfo_Value(self.pointer, parm_name, newvalue)
 end
 
-    
+
 --- Set Take Marker. Wraps SetTakeMarker.
 -- Inserts or updates a take marker. If idx<0, a take marker will be added,
 -- otherwise an existing take marker will be updated. Returns the index of the new
@@ -907,7 +907,7 @@ function Take:set_take_marker(idx, name_in, number, integer)
     return r.SetTakeMarker(self.pointer, idx, name_in, number, integer)
 end
 
-    
+
 --- Set Take Stretch Marker. Wraps SetTakeStretchMarker.
 -- Adds or updates a stretch marker. If idx<0, stretch marker will be added. If
 -- idx>=0, stretch marker will be updated. When adding, if srcposInOptional is
@@ -925,7 +925,7 @@ function Take:set_take_stretch_marker(idx, pos, number)
     return r.SetTakeStretchMarker(self.pointer, idx, pos, number)
 end
 
-    
+
 --- Set Take Stretch Marker Slope. Wraps SetTakeStretchMarkerSlope.
 -- See GetTakeStretchMarkerSlope
 -- @param idx number
@@ -935,7 +935,7 @@ function Take:set_take_stretch_marker_slope(idx, slope)
     return r.SetTakeStretchMarkerSlope(self.pointer, idx, slope)
 end
 
-    
+
 --- Delete Fx. Wraps TakeFX_Delete.
 -- Remove a FX from take chain (returns true on success) FX indices can have
 -- 0x2000000 added to them, in which case they will be used to address FX in
@@ -953,14 +953,14 @@ function Take:delete_fx(fx)
     return r.TakeFX_Delete(self.pointer, fx)
 end
 
-    
+
 --- Get Fx Count. Wraps TakeFX_GetCount.
 -- @return number
 function Take:get_fx_count()
     return r.TakeFX_GetCount(self.pointer)
 end
 
-    
+
 --- Take Is Midi. Wraps TakeIsMIDI.
 -- Returns true if the active take contains MIDI.
 -- @return boolean
@@ -968,7 +968,7 @@ function Take:take_is_midi()
     return r.TakeIsMIDI(self.pointer)
 end
 
-    
+
 --- Get Guid. Wraps BR_GetMediaItemTakeGUID.
 -- [BR] Get media item take GUID as a string (guidStringOut_sz should be at least
 -- 64). To get take from GUID string, see SNM_GetMediaItemTakeByGUID.
@@ -977,7 +977,7 @@ function Take:get_guid()
     return r.BR_GetMediaItemTakeGUID(self.pointer)
 end
 
-    
+
 --- Get Media Source Properties. Wraps BR_GetMediaSourceProperties.
 -- [BR] Get take media source properties as they appear in Item properties. Returns
 -- false if take can't have them (MIDI items etc.). To set source properties, see
@@ -996,7 +996,7 @@ function Take:get_media_source_properties()
     end
 end
 
-    
+
 --- Get Midi Source Len Ppq. Wraps BR_GetMidiSourceLenPPQ.
 -- [BR] Get MIDI take source length in PPQ. In case the take isn't MIDI, return
 -- value will be -1.
@@ -1005,7 +1005,7 @@ function Take:get_midi_source_len_ppq()
     return r.BR_GetMidiSourceLenPPQ(self.pointer)
 end
 
-    
+
 --- Get Midi Take Pool Guid. Wraps BR_GetMidiTakePoolGUID.
 -- [BR] Get MIDI take pool GUID as a string (guidStringOut_sz should be at least
 -- 64). Returns true if take is pooled.
@@ -1019,7 +1019,7 @@ function Take:get_midi_take_pool_guid()
     end
 end
 
-    
+
 --- Get Midi Take Tempo Info. Wraps BR_GetMidiTakeTempoInfo.
 -- [BR] Get "ignore project tempo" information for MIDI take. Returns true if take
 -- can ignore project tempo (no matter if it's actually ignored), otherwise false.
@@ -1036,7 +1036,7 @@ function Take:get_midi_take_tempo_info()
     end
 end
 
-    
+
 --- Is Midi Open In Inline Editor. Wraps BR_IsMidiOpenInInlineEditor.
 -- [SWS] Check if take has MIDI inline editor open and returns true or false.
 -- @return boolean
@@ -1044,7 +1044,7 @@ function Take:is_midi_open_in_inline_editor()
     return r.BR_IsMidiOpenInInlineEditor(self.pointer)
 end
 
-    
+
 --- Is Take Midi. Wraps BR_IsTakeMidi.
 -- [BR] Check if take is MIDI take, in case MIDI take is in-project MIDI source
 -- data, inProjectMidiOut will be true, otherwise false.
@@ -1058,7 +1058,7 @@ function Take:is_take_midi()
     end
 end
 
-    
+
 --- Set Media Source Properties. Wraps BR_SetMediaSourceProperties.
 -- [BR] Set take media source properties. Returns false if take can't have them
 -- (MIDI items etc.). Section parameters have to be valid only when passing
@@ -1073,7 +1073,7 @@ function Take:set_media_source_properties(section, start, length, fade, reverse)
     return r.BR_SetMediaSourceProperties(self.pointer, section, start, length, fade, reverse)
 end
 
-    
+
 --- Set Midi Take Tempo Info. Wraps BR_SetMidiTakeTempoInfo.
 -- [BR] Set "ignore project tempo" information for MIDI take. Returns true in case
 -- the take was successfully updated.
@@ -1086,7 +1086,7 @@ function Take:set_midi_take_tempo_info(ignore_proj_tempo, bpm, num, den)
     return r.BR_SetMidiTakeTempoInfo(self.pointer, ignore_proj_tempo, bpm, num, den)
 end
 
-    
+
 --- Set Take Source From File. Wraps BR_SetTakeSourceFromFile.
 -- [BR] Set new take source from file. To import MIDI file as in-project source
 -- data pass inProjectData=true. Returns false if failed. Any take source
@@ -1100,7 +1100,7 @@ function Take:set_take_source_from_file(filename_in, in_project_data)
     return r.BR_SetTakeSourceFromFile(self.pointer, filename_in, in_project_data)
 end
 
-    
+
 --- Set Take Source From File2. Wraps BR_SetTakeSourceFromFile2.
 -- [BR] Differs from BR_SetTakeSourceFromFile only that it can also preserve
 -- existing take media source properties.
@@ -1112,7 +1112,7 @@ function Take:set_take_source_from_file2(filename_in, in_project_data, keep_sour
     return r.BR_SetTakeSourceFromFile2(self.pointer, filename_in, in_project_data, keep_source_properties)
 end
 
-    
+
 --- Alloc Midi Take. Wraps FNG_AllocMidiTake.
 -- [FNG] Allocate a RprMidiTake from a take pointer. Returns a NULL pointer if the
 -- take is not an in-project MIDI take
@@ -1121,7 +1121,7 @@ function Take:alloc_midi_take()
     return r.FNG_AllocMidiTake(self.pointer)
 end
 
-    
+
 --- Wildcard Parse Take. Wraps GU_WildcardParseTake.
 -- Returns a string by parsing wildcards relative to the supplied MediaItem_Take
 -- @param input string
@@ -1130,7 +1130,7 @@ function Take:wildcard_parse_take(input)
     return r.GU_WildcardParseTake(self.pointer, input)
 end
 
-    
+
 --- Analyze Take Loudness. Wraps NF_AnalyzeTakeLoudness.
 -- Full loudness analysis. retval: returns true on successful analysis, false on
 -- MIDI take or when analysis failed for some reason. analyzeTruePeak=true: Also do
@@ -1155,7 +1155,7 @@ function Take:analyze_take_loudness(analyze_true_peak)
     end
 end
 
-    
+
 --- Analyze Take Loudness2. Wraps NF_AnalyzeTakeLoudness2.
 -- Same as NF_AnalyzeTakeLoudness but additionally returns shortTermMaxPos and
 -- momentaryMaxPos (in absolute project time). Note: shortTermMaxPos and
@@ -1179,7 +1179,7 @@ function Take:analyze_take_loudness2(analyze_true_peak)
     end
 end
 
-    
+
 --- Analyze Take Loudness Integrated Only. Wraps NF_AnalyzeTakeLoudness_IntegratedOnly.
 -- Does LUFS integrated analysis only. Faster than full loudness analysis
 -- (NF_AnalyzeTakeLoudness) . Use this if only LUFS integrated is required. Take
@@ -1194,7 +1194,7 @@ function Take:analyze_take_loudness_integrated_only()
     end
 end
 
-    
+
 --- Get Set Source State2. Wraps SNM_GetSetSourceState2.
 -- [S&M] Gets or sets a take source state. Returns false if failed. Note: this
 -- function cannot deal with empty takes, see SNM_GetSetSourceState.

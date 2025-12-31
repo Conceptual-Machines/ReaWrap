@@ -1,0 +1,43 @@
+# Changelog
+
+All notable changes to ReaWrap will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.2.0] - 2024-12-31
+
+### Added
+- **Container support (Reaper 7+)**
+  - `TrackFX:is_container()` - Check if FX is a container
+  - `TrackFX:get_container_child_count()` - Get number of child FX
+  - `TrackFX:get_container_children()` - Get array of child TrackFX objects
+  - `TrackFX:iter_container_children()` - Iterator over children
+  - `TrackFX:get_parent_container()` - Get parent container
+  - `TrackFX:get_container_depth()` - Get nesting depth
+  - `TrackFX:get/set_container_channels()` - Internal channel count
+  - `TrackFX:get/set_container_input_pins()` - Input pin count
+  - `TrackFX:get/set_container_output_pins()` - Output pin count
+  - `TrackFX:add_fx_to_container()` - Move FX into container
+  - `TrackFX:copy_fx_to_container()` - Copy FX into container
+  - `Track:create_container()` - Create new container on track
+  - `Track:get_all_fx_flat()` - Get flat list including nested FX
+  - `Track:iter_all_fx_flat()` - Iterator over all FX
+- `version.lua` module for version checking
+- Pre-commit hooks configuration
+
+### Changed
+- Bumped version to 0.2.0
+
+## [0.1.0] - 2024-11-25
+
+### Added
+- Initial release with reorganized structure
+- Lua modules: track, track_fx, take, take_fx, item, project, pcm, audio_accessor, helpers
+- C++ implementation (experimental)
+- Documentation generation with LDoc
+
+## [0.0.1] - 2022-06-17
+
+### Added
+- Initial prototype

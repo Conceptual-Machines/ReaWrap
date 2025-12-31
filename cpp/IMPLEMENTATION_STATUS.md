@@ -69,15 +69,15 @@ Track* track = Track::findByName("Drums");
 REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(
     REAPER_PLUGIN_HINSTANCE hInstance,
     reaper_plugin_info_t *rec) {
-  
+
   // Initialize ReaWrap
   if (!ReaWrap::ReaperAPI::Initialize(rec)) {
     return 0;
   }
-  
+
   // Use the API
   ReaWrap::Track* track = ReaWrap::Track::create(-1, "My Track");
-  
+
   return 1;
 }
 ```
@@ -95,4 +95,3 @@ REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(
 3. Write unit tests
 4. Generate API documentation
 5. Create migration guide from magda project
-

@@ -38,7 +38,7 @@ end
 
 
 
-    
+
 --- Count Automation Items. Wraps CountAutomationItems.
 -- Returns the number of automation items on this envelope. See
 -- GetSetAutomationItemInfo
@@ -47,7 +47,7 @@ function Envelope:count_automation_items()
     return r.CountAutomationItems(self.pointer)
 end
 
-    
+
 --- Count Envelope Points. Wraps CountEnvelopePoints.
 -- Returns the number of points in the envelope. See CountEnvelopePointsEx.
 -- @return number
@@ -55,7 +55,7 @@ function Envelope:count_envelope_points()
     return r.CountEnvelopePoints(self.pointer)
 end
 
-    
+
 --- Count Envelope Points Ex. Wraps CountEnvelopePointsEx.
 -- Returns the number of points in the envelope. autoitem_idx=-1 for the underlying
 -- envelope, 0 for the first automation item on the envelope, etc. For automation
@@ -71,7 +71,7 @@ function Envelope:count_envelope_points_ex(autoitem_idx)
     return r.CountEnvelopePointsEx(self.pointer, autoitem_idx)
 end
 
-    
+
 --- Delete Envelope Point Ex. Wraps DeleteEnvelopePointEx.
 -- Delete an envelope point. If setting multiple points at once, set noSort=true,
 -- and call Envelope_SortPoints when done. autoitem_idx=-1 for the underlying
@@ -89,7 +89,7 @@ function Envelope:delete_envelope_point_ex(autoitem_idx, pt_idx)
     return r.DeleteEnvelopePointEx(self.pointer, autoitem_idx, pt_idx)
 end
 
-    
+
 --- Delete Envelope Point Range. Wraps DeleteEnvelopePointRange.
 -- Delete a range of envelope points. See DeleteEnvelopePointRangeEx,
 -- DeleteEnvelopePointEx.
@@ -100,7 +100,7 @@ function Envelope:delete_envelope_point_range(time_start, time_end)
     return r.DeleteEnvelopePointRange(self.pointer, time_start, time_end)
 end
 
-    
+
 --- Delete Envelope Point Range Ex. Wraps DeleteEnvelopePointRangeEx.
 -- Delete a range of envelope points. autoitem_idx=-1 for the underlying envelope,
 -- 0 for the first automation item on the envelope, etc.
@@ -112,7 +112,7 @@ function Envelope:delete_envelope_point_range_ex(autoitem_idx, time_start, time_
     return r.DeleteEnvelopePointRangeEx(self.pointer, autoitem_idx, time_start, time_end)
 end
 
-    
+
 --- Evaluate. Wraps Envelope_Evaluate.
 -- Get the effective envelope value at a given time position. samplesRequested is
 -- how long the caller expects until the next call to Envelope_Evaluate (often, the
@@ -136,7 +136,7 @@ function Envelope:evaluate(time, samplerate, samples_requested)
     end
 end
 
-    
+
 --- Format Value. Wraps Envelope_FormatValue.
 -- Formats the value of an envelope to a user-readable form
 -- @param value number
@@ -145,7 +145,7 @@ function Envelope:format_value(value)
     return r.Envelope_FormatValue(self.pointer, value)
 end
 
-    
+
 --- Get Parent Take. Wraps Envelope_GetParentTake.
 -- If take envelope, gets the take from the envelope. If FX, indexOut set to FX
 -- index, index2Out set to parameter index, otherwise -1.
@@ -160,7 +160,7 @@ function Envelope:get_parent_take()
     end
 end
 
-    
+
 --- Get Parent Track. Wraps Envelope_GetParentTrack.
 -- If track envelope, gets the track from the envelope. If FX, indexOut set to FX
 -- index, index2Out set to parameter index, otherwise -1.
@@ -175,7 +175,7 @@ function Envelope:get_parent_track()
     end
 end
 
-    
+
 --- Sort Points. Wraps Envelope_SortPoints.
 -- Sort envelope points by time. See SetEnvelopePoint, InsertEnvelopePoint.
 -- @return boolean
@@ -183,7 +183,7 @@ function Envelope:sort_points()
     return r.Envelope_SortPoints(self.pointer)
 end
 
-    
+
 --- Sort Points Ex. Wraps Envelope_SortPointsEx.
 -- Sort envelope points by time. autoitem_idx=-1 for the underlying envelope, 0 for
 -- the first automation item on the envelope, etc. See SetEnvelopePoint,
@@ -194,7 +194,7 @@ function Envelope:sort_points_ex(autoitem_idx)
     return r.Envelope_SortPointsEx(self.pointer, autoitem_idx)
 end
 
-    
+
 --- Constants for Envelope:get_envelope_info_value.
 -- @field I_TCPY number: Y offset of envelope relative to parent track (may be separate lane or overlap with track contents)
 -- @field I_TCPH number: visible height of envelope
@@ -220,7 +220,7 @@ Envelope.GetEnvelopeInfoValueConstants = {
     I_HWOUT_IDX = "I_HWOUT_IDX",
     I_RECV_IDX = "I_RECV_IDX",
 }
-    
+
 --- Get Envelope Info Value. Wraps GetEnvelopeInfo_Value.
 -- Gets an envelope numerical-value attribute:
 -- @param parm_name string. Envelope.GetEnvelopeInfoValueConstants
@@ -229,7 +229,7 @@ function Envelope:get_envelope_info_value(parm_name)
     return r.GetEnvelopeInfo_Value(self.pointer, parm_name)
 end
 
-    
+
 --- Get Envelope Name. Wraps GetEnvelopeName.
 -- @return buf string
 function Envelope:get_envelope_name()
@@ -241,7 +241,7 @@ function Envelope:get_envelope_name()
     end
 end
 
-    
+
 --- Get Envelope Point. Wraps GetEnvelopePoint.
 -- Get the attributes of an envelope point. See GetEnvelopePointEx.
 -- @param pt_idx number
@@ -259,7 +259,7 @@ function Envelope:get_envelope_point(pt_idx)
     end
 end
 
-    
+
 --- Get Envelope Point By Time. Wraps GetEnvelopePointByTime.
 -- Returns the envelope point at or immediately prior to the given time position.
 -- See GetEnvelopePointByTimeEx.
@@ -269,7 +269,7 @@ function Envelope:get_envelope_point_by_time(time)
     return r.GetEnvelopePointByTime(self.pointer, time)
 end
 
-    
+
 --- Get Envelope Point By Time Ex. Wraps GetEnvelopePointByTimeEx.
 -- Returns the envelope point at or immediately prior to the given time position.
 -- autoitem_idx=-1 for the underlying envelope, 0 for the first automation item on
@@ -286,7 +286,7 @@ function Envelope:get_envelope_point_by_time_ex(autoitem_idx, time)
     return r.GetEnvelopePointByTimeEx(self.pointer, autoitem_idx, time)
 end
 
-    
+
 --- Get Envelope Point Ex. Wraps GetEnvelopePointEx.
 -- Get the attributes of an envelope point. autoitem_idx=-1 for the underlying
 -- envelope, 0 for the first automation item on the envelope, etc. For automation
@@ -312,7 +312,7 @@ function Envelope:get_envelope_point_ex(autoitem_idx, pt_idx)
     end
 end
 
-    
+
 --- Get Envelope Scaling Mode. Wraps GetEnvelopeScalingMode.
 -- Returns the envelope scaling mode: 0=no scaling, 1=fader scaling. All API
 -- functions deal with raw envelope point values, to convert raw from/to scaled
@@ -322,7 +322,7 @@ function Envelope:get_envelope_scaling_mode()
     return r.GetEnvelopeScalingMode(self.pointer)
 end
 
-    
+
 --- Get Envelope State Chunk. Wraps GetEnvelopeStateChunk.
 -- Gets the RPPXML state of an envelope, returns true if successful. Undo flag is a
 -- performance/caching hint.
@@ -338,7 +338,7 @@ function Envelope:get_envelope_state_chunk(str, is_undo)
     end
 end
 
-    
+
 --- Get Envelope Ui State. Wraps GetEnvelopeUIState.
 -- gets information on the UI state of an envelope: returns &1 if
 -- automation/modulation is playing back, &2 if automation is being actively
@@ -348,7 +348,7 @@ function Envelope:get_envelope_ui_state()
     return r.GetEnvelopeUIState(self.pointer)
 end
 
-    
+
 --- Constants for Envelope:get_set_automation_item_info.
 -- @field D_POOL_ID double *: automation item pool ID (as an integer); edits are propagated to all other automation items that share a pool ID
 -- @field D_POSITION double *: automation item timeline position in seconds
@@ -372,7 +372,7 @@ Envelope.GetSetAutomationItemInfoConstants = {
     D_UISEL = "D_UISEL",
     D_POOL_QNLEN = "D_POOL_QNLEN",
 }
-    
+
 --- Get Set Automation Item Info. Wraps GetSetAutomationItemInfo.
 -- Get or set automation item information. autoitem_idx=0 for the first automation
 -- item on an envelope, 1 for the second item, etc. desc can be any of the
@@ -386,7 +386,7 @@ function Envelope:get_set_automation_item_info(autoitem_idx, desc, value, is_set
     return r.GetSetAutomationItemInfo(self.pointer, autoitem_idx, desc, value, is_set)
 end
 
-    
+
 --- Constants for Envelope:get_set_automation_item_info_string.
 -- @field P_POOL_NAME string: name of the underlying automation item pool
 -- @field P_POOL_EXT xyz: xyzchar *extension-specific persistent data
@@ -394,7 +394,7 @@ Envelope.GetSetAutomationItemInfoStringConstants = {
     P_POOL_NAME = "P_POOL_NAME",
     P_POOL_EXT = "P_POOL_EXT",
 }
-    
+
 --- Get Set Automation Item Info String. Wraps GetSetAutomationItemInfo_String.
 -- Get or set automation item information. autoitem_idx=0 for the first automation
 -- item on an envelope, 1 for the second item, etc. returns true on success. desc
@@ -413,7 +413,7 @@ function Envelope:get_set_automation_item_info_string(autoitem_idx, desc, values
     end
 end
 
-    
+
 --- Constants for Envelope:get_set_envelope_info_string.
 -- @field ACTIVE string: active state (bool as a string "0" or "1")
 -- @field ARM any: armed state (bool...)
@@ -429,7 +429,7 @@ Envelope.GetSetEnvelopeInfoStringConstants = {
     GUID = "GUID",
     P_EXT = "P_EXT",
 }
-    
+
 --- Get Set Envelope Info String. Wraps GetSetEnvelopeInfo_String.
 -- Gets/sets an attribute string:Note that when writing some of these attributes
 -- you will need to manually update the arrange and/or track panels,
@@ -447,7 +447,7 @@ function Envelope:get_set_envelope_info_string(parm_name, string_need_big, set_n
     end
 end
 
-    
+
 --- Insert Automation Item. Wraps InsertAutomationItem.
 -- Insert a new automation item. pool_id < 0 collects existing envelope points into
 -- the automation item; if pool_id is >= 0 the automation item will be a new
@@ -462,7 +462,7 @@ function Envelope:insert_automation_item(pool_id, position, length)
     return r.InsertAutomationItem(self.pointer, pool_id, position, length)
 end
 
-    
+
 --- Insert Envelope Point. Wraps InsertEnvelopePoint.
 -- Insert an envelope point. If setting multiple points at once, set noSort=true,
 -- and call Envelope_SortPoints when done. See InsertEnvelopePointEx.
@@ -478,7 +478,7 @@ function Envelope:insert_envelope_point(time, value, shape, tension, selected, b
     return r.InsertEnvelopePoint(self.pointer, time, value, shape, tension, selected, boolean)
 end
 
-    
+
 --- Insert Envelope Point Ex. Wraps InsertEnvelopePointEx.
 -- Insert an envelope point. If setting multiple points at once, set noSort=true,
 -- and call Envelope_SortPoints when done. autoitem_idx=-1 for the underlying
@@ -502,7 +502,7 @@ function Envelope:insert_envelope_point_ex(autoitem_idx, time, value, shape, ten
     return r.InsertEnvelopePointEx(self.pointer, autoitem_idx, time, value, shape, tension, selected, boolean)
 end
 
-    
+
 --- Set Envelope Point. Wraps SetEnvelopePoint.
 -- Set attributes of an envelope point. Values that are not supplied will be
 -- ignored. If setting multiple points at once, set noSort=true, and call
@@ -522,7 +522,7 @@ function Envelope:set_envelope_point(pt_idx, number, number, integer, number, bo
     return r.SetEnvelopePoint(self.pointer, pt_idx, number, number, integer, number, boolean, boolean)
 end
 
-    
+
 --- Set Envelope Point Ex. Wraps SetEnvelopePointEx.
 -- Set attributes of an envelope point. Values that are not supplied will be
 -- ignored. If setting multiple points at once, set noSort=true, and call
@@ -549,7 +549,7 @@ function Envelope:set_envelope_point_ex(autoitem_idx, pt_idx, number, number, in
     return r.SetEnvelopePointEx(self.pointer, autoitem_idx, pt_idx, number, number, integer, number, boolean, boolean)
 end
 
-    
+
 --- Set Envelope State Chunk. Wraps SetEnvelopeStateChunk.
 -- Sets the RPPXML state of an envelope, returns true if successful. Undo flag is a
 -- performance/caching hint.
@@ -560,7 +560,7 @@ function Envelope:set_envelope_state_chunk(str, is_undo)
     return r.SetEnvelopeStateChunk(self.pointer, str, is_undo)
 end
 
-    
+
 --- Env Alloc. Wraps BR_EnvAlloc.
 -- [BR] Allocate envelope object from track or take envelope pointer. Always call
 -- BR_EnvFree when done to release the object and commit changes if needed.
@@ -573,7 +573,7 @@ function Envelope:env_alloc(take_envelopes_use_project_time)
     return r.BR_EnvAlloc(self.pointer, take_envelopes_use_project_time)
 end
 
-    
+
 --- Calculate Envelope Hash. Wraps MRP_CalculateEnvelopeHash.
 -- This function isn't really correct... it calculates a 64 bit hash but returns it
 -- as a 32 bit int. Should reimplement this. Or rather, even more confusingly : The

@@ -2,278 +2,220 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Lua](https://img.shields.io/badge/lua-5.1+-blue.svg)
-![C++](https://img.shields.io/badge/c++-17+-blue.svg)
-![REAPER](https://img.shields.io/badge/REAPER-6.0+-green.svg)
+![REAPER](https://img.shields.io/badge/REAPER-7.0+-green.svg)
+![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)
 
-**Object-Oriented Implementation for ReaScript API**
+**Object-Oriented Lua Wrapper for the REAPER ReaScript API**
 
-Making REAPER automation easier, faster, and more intuitive.
-
-## History
-
-Back in 2020, I was using REAPER and wanted to learn Lua, so I built this project by scraping the REAPER documentation in Python. It was a bit messy, but I managed to create a working Lua wrapper that made the REAPER API more approachable.
-
-Like many side projects, I eventually gave up on it. But I always wanted to resurrect it.
-
-Fast forward to 2024, and here we are: ReaWrap has been reborn, reorganized, and expanded. The project now supports both Lua (for ReaScript) and C++ (for REAPER extensions and ReaScript API), with a clean, object-oriented API that makes working with REAPER a joy instead of a chore.
+Write REAPER scripts faster with a clean, intuitive API.
 
 ## Why ReaWrap?
 
-The REAPER API is powerful but can be obscure and verbose. Writing code with the vanilla API requires:
-- Memorizing cryptic function names like `GetSetMediaTrackInfo_String`
-- Managing raw pointers and indices
-- Converting between different time formats manually
-- Looking up documentation constantly
-- Writing boilerplate error checking everywhere
+The REAPER API is powerful but verbose. You end up writing code like this:
 
-**ReaWrap lets you write code faster** by providing an intuitive, object-oriented interface that handles the complexity for you.
-
-## Code Comparison: Vanilla API vs ReaWrap
-
-### Example 1: Create a Track with an Instrument
-
-**Vanilla REAPER API (Lua):**
 ```lua
--- Get project
-local proj = 0
-
--- Insert track
-reaper.InsertTrackInProject(proj, -1, 1)
-local track = reaper.GetTrack(proj, reaper.CountTracks(proj) - 1)
-
--- Set track name
+-- Vanilla REAPER API 😓
+reaper.InsertTrackInProject(0, -1, 1)
+local track = reaper.GetTrack(0, reaper.CountTracks(0) - 1)
 reaper.GetSetMediaTrackInfo_String(track, "P_NAME", "Drums", true)
-
--- Add instrument
-local fx_idx = reaper.TrackFX_AddByName(track, "VST3:Serum (Xfer Records)", false, -1)
-if fx_idx < 0 then
-    error("Failed to add instrument")
-end
-
--- Set volume to -3dB
-local vol_db = -3.0
-local vol_linear = 10^(vol_db / 20.0)
+local fx_idx = reaper.TrackFX_AddByName(track, "VST3:Serum", false, -1)
+local vol_linear = 10^(-3.0 / 20.0)
 reaper.SetTrackUIVolPan(track, vol_linear, 0.0)
 ```
 
-**ReaWrap (Lua):**
-```lua
-local Track = require("track")
+**ReaWrap makes it simple:**
 
+```lua
+-- ReaWrap 🎉
+local Track = require("track")
 local track = Track:new(reaper.GetTrack(0, 0))
 track:set_name("Drums")
-track:add_instrument("VST3:Serum (Xfer Records)")
-track:set_volume(-3.0)  -- Automatically converts dB to linear
+track:add_fx_by_name("VST3:Serum", false, -1)
+track:set_track_ui_volume(-3.0)
 ```
 
-**ReaWrap (C++):**
-```cpp
-#include <ReaWrap/Track.h>
+## Features
 
-Track* track = Track::create(-1, "Drums", "VST3:Serum (Xfer Records)");
-track->setVolume(-3.0);  // Automatically converts dB to linear
-```
+- **Object-Oriented API** - Work with `Track`, `Item`, `Take`, `TrackFX`, `TakeFX`, `Project` objects
+- **Iterators** - `track:iter_items()`, `project:iter_tracks()`, `fx:iter_param_names()`
+- **Container Support (Reaper 7+)** - Full API for FX containers
+- **Constants** - Named constants for all REAPER enums
+- **Documentation** - LDoc-generated API docs
 
-### Example 2: Create a Track and Add a Clip at Bar 17
+## Quick Start
 
-**Vanilla REAPER API (Lua):**
+### Installation
+
+1. Clone or download ReaWrap to your REAPER Scripts folder:
+   ```bash
+   cd ~/Library/Application\ Support/REAPER/Scripts
+   git clone https://github.com/lucaromagnoli/ReaWrap.git
+   ```
+
+2. Or add as a submodule in your project:
+   ```bash
+   git submodule add https://github.com/lucaromagnoli/ReaWrap.git
+   ```
+
+### Basic Usage
+
 ```lua
--- Create track (same as above)
-reaper.InsertTrackInProject(0, -1, 1)
-local track = reaper.GetTrack(0, reaper.CountTracks(0) - 1)
+-- Setup path (adjust based on your structure)
+local script_path = ({ reaper.get_action_context() })[2]:match('^.+[\\//]')
+package.path = script_path .. "ReaWrap/lua/modules/?.lua;" .. package.path
 
--- Convert bar 17 to time
-local measure = 16  -- 0-based
-local qn_start, qn_end, timesig_num, timesig_denom, tempo = 
-    reaper.TimeMap_GetMeasureInfo(0, measure, 0, 0, 0, 0, 0)
-local start_time = reaper.TimeMap2_QNToTime(0, qn_start)
-
--- Get measure length for 4 bars
-local qn_end_4bars = 0
-reaper.TimeMap_GetMeasureInfo(0, measure + 4, 0, &qn_end_4bars, 0, 0, 0)
-local end_time = reaper.TimeMap2_QNToTime(0, qn_end_4bars)
-local length = end_time - start_time
-
--- Create item
-local item = reaper.AddMediaItemToTrack(track)
-reaper.SetMediaItemPosition(item, start_time, false)
-reaper.SetMediaItemLength(item, length, false)
-```
-
-**ReaWrap (Lua):**
-```lua
-local Track = require("track")
-
-local track = Track:new(reaper.GetTrack(0, 0))
-local item = track:add_clip_at_bar(17, 4)  -- Bar 17, 4 bars long
-```
-
-**ReaWrap (C++):**
-```cpp
-#include <ReaWrap/Track.h>
-
-Track* track = Track::create(-1);
-MediaItem* item = track->addClipAtBar(17, 4);  // Bar 17, 4 bars long
-```
-
-### Example 3: Iterate Over All Tracks and Their FX
-
-**Vanilla REAPER API (Lua):**
-```lua
-local proj = 0
-local num_tracks = reaper.CountTracks(proj)
-
-for i = 0, num_tracks - 1 do
-    local track = reaper.GetTrack(proj, i)
-    
-    -- Get track name
-    local ret, name = reaper.GetSetMediaTrackInfo_String(track, "P_NAME", "", false)
-    
-    -- Get FX count
-    local fx_count = reaper.TrackFX_GetCount(track)
-    
-    for j = 0, fx_count - 1 do
-        local ret, fx_name = reaper.TrackFX_GetFXName(track, j, "")
-        -- Process FX...
-    end
-end
-```
-
-**ReaWrap (Lua):**
-```lua
+-- Import modules
 local Project = require("project")
-local project = Project:new()
+local Track = require("track")
 
-for track in project:iter_tracks() do
-    print(track:get_name())
-    
+-- Get selected track
+local project = Project:new()
+local track = project:get_selected_track(0)
+
+if track then
+    print("Track: " .. track:get_name())
+
+    -- Iterate over FX
     for fx in track:iter_track_fx_chain() do
-        local name = fx:get_name()
-        print("  FX: " .. name)
+        print("  FX: " .. fx:get_name())
     end
 end
 ```
 
-**ReaWrap (C++):**
-```cpp
-#include <ReaWrap/Project.h>
-#include <ReaWrap/Track.h>
+## Container Support (Reaper 7+)
 
-for (Track* track : Project::getTracks()) {
-    char name[256];
-    track->getName(name, sizeof(name));
-    
-    for (TrackFX* fx : track->getFXChain()) {
-        char fx_name[256];
-        fx->getName(fx_name, sizeof(fx_name));
-        // Process FX...
-    }
-}
-```
+ReaWrap provides full support for Reaper 7's FX containers:
 
-### Example 4: Set FX Parameter Values
-
-**Vanilla REAPER API (Lua):**
-```lua
-local track = reaper.GetTrack(0, 0)
-local fx_idx = 0  -- First FX
-local param_idx = 0  -- First parameter
-
--- Get parameter range
-local ret, min_val, max_val = reaper.TrackFX_GetParam(track, fx_idx, param_idx)
-
--- Set to 50% (normalized)
-local normalized = 0.5
-reaper.TrackFX_SetParamNormalized(track, fx_idx, param_idx, normalized)
-
--- Or set to absolute value
-local abs_value = min_val + (max_val - min_val) * normalized
-reaper.TrackFX_SetParam(track, fx_idx, param_idx, abs_value)
-```
-
-**ReaWrap (Lua):**
 ```lua
 local Track = require("track")
-local TrackFX = require("track_fx")
-
 local track = Track:new(reaper.GetTrack(0, 0))
-local fx = TrackFX:new(track, 0)
-fx:set_param_normalized(0, 0.5)  -- Set first param to 50%
+
+-- Create a container
+local container = track:create_container()
+
+-- Check if FX is a container
+if fx:is_container() then
+    -- Get children
+    for child_fx in fx:iter_container_children() do
+        print(child_fx:get_name())
+    end
+
+    -- Configure container routing
+    fx:set_container_channels(4)      -- Internal channels
+    fx:set_container_input_pins(2)    -- Stereo in
+    fx:set_container_output_pins(2)   -- Stereo out
+end
+
+-- Get parent container
+local parent = fx:get_parent_container()
+
+-- Get nesting depth
+local depth = fx:get_container_depth()
+
+-- Move FX into container
+container:add_fx_to_container(some_fx)
+
+-- Get flat list of all FX (including nested)
+for entry in track:iter_all_fx_flat() do
+    local indent = string.rep("  ", entry.depth)
+    print(indent .. entry.fx:get_name())
+end
 ```
 
-**ReaWrap (C++):**
-```cpp
-#include <ReaWrap/Track.h>
-#include <ReaWrap/TrackFX.h>
+## API Overview
 
-Track* track = Track::findByIndex(0);
-TrackFX* fx = TrackFX::getByIndex(track, 0);
-fx->setParamNormalized(0, 0.5);  // Set first param to 50%
+### Core Modules
+
+| Module | Description |
+|--------|-------------|
+| `project` | Project-level operations, track management |
+| `track` | Track properties, FX chain, sends/receives |
+| `track_fx` | Track FX parameters, presets, containers |
+| `item` | Media items, position, length |
+| `take` | Takes, sources, stretch markers |
+| `take_fx` | Take FX parameters |
+| `pcm` | PCM source operations |
+| `audio_accessor` | Audio data access |
+| `helpers` | Utility functions |
+| `version` | Version info and checking |
+
+### Common Patterns
+
+```lua
+-- Iterate over all tracks
+for track in project:iter_tracks() do
+    -- ...
+end
+
+-- Iterate over items on a track
+for item in track:iter_items() do
+    -- ...
+end
+
+-- Get/set FX parameters
+local value = fx:get_param_normalized(0)
+fx:set_param_normalized(0, 0.5)
+
+-- Get all parameter names
+for name in fx:iter_param_names() do
+    print(name)
+end
 ```
 
-## Getting Started
+## Version Checking
 
-ReaWrap is available in two flavors:
+```lua
+local version = require("version")
 
-### Lua (ReaScript)
-For REAPER scripts written in Lua using the ReaScript API.
+print(version.get_version_string())  -- "ReaWrap v0.2.0"
 
-👉 **[Read the Lua Guide →](lua/README.md)** for installation, API reference, and examples.
-
-### C++ (Extension & ReaScript API)
-For REAPER extensions and ReaScript API written in C++.
-
-👉 **[Read the C++ Guide →](cpp/README.md)** for building, initialization, and API reference.
+-- Check minimum version
+if version.check_version(0, 2, 0) then
+    -- Use container features
+end
+```
 
 ## Project Structure
 
 ```
 ReaWrap/
-├── lua/              # Lua implementation (ReaScript)
-│   ├── modules/      # Core modules (Track, Item, Take, etc.)
-│   │   └── constants.lua  # REAPER API constants
-│   ├── doc/          # Generated documentation
-│   └── tests/        # Lua tests
-├── cpp/              # C++ implementation (Extension API)
-│   ├── include/ReaWrap/  # Headers (Track.h, Item.h, Project.h, etc.)
-│   │   └── Constants.h   # REAPER API constants
-│   ├── src/          # Implementation
-│   ├── examples/     # Example projects
-│   └── tests/        # C++ tests
-├── docs/             # Cross-language documentation
-│   ├── api/          # API reference
-│   ├── guides/       # Getting started guides
-│   └── examples/     # Code examples
-└── tools/            # Shared tools
-    └── modules_generator/  # Auto-generate modules from REAPER docs
+├── lua/
+│   ├── modules/          # Core modules
+│   │   ├── track.lua
+│   │   ├── track_fx.lua
+│   │   ├── item.lua
+│   │   ├── take.lua
+│   │   ├── project.lua
+│   │   ├── version.lua
+│   │   └── ...
+│   ├── doc/              # Generated LDoc documentation
+│   └── tests/
+├── tools/
+│   └── modules_generator/  # Scrapes REAPER docs to generate modules
+├── CHANGELOG.md
+└── README.md
 ```
-
-## Using as a Submodule
-
-ReaWrap is designed to work well as a git submodule in your REAPER extension project:
-
-```bash
-git submodule add https://github.com/Conceptual-Machines/ReaWrap.git reawrap
-```
-
-See the [C++ README](cpp/README.md) for CMake integration details.
 
 ## Documentation
 
-- **[Lua Documentation](lua/README.md)** - Complete guide for ReaScript development
-- **[C++ Documentation](cpp/README.md)** - Complete guide for extension development
-- [API Reference](docs/api/) - Detailed API documentation
-- [Examples](docs/examples/) - Code examples and tutorials
+- **[Lua Module Documentation](lua/doc/index.html)** - Generated API reference
+- **[Changelog](CHANGELOG.md)** - Version history
 
 ## Contributing
 
-Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Run pre-commit hooks before committing:
+```bash
+pre-commit install
+pre-commit run --all-files
+```
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file.
+MIT License - see [LICENSE](LICENSE).
 
-## Related Projects
+## Acknowledgments
 
-- [REAPER SDK](https://www.reaper.fm/sdk/) - Official REAPER API
-- [ReaScript Documentation](https://www.extremraym.com/cloud/reascript-doc/) - REAPER scripting reference
+- [REAPER](https://www.reaper.fm/) - The best DAW
+- [ReaScript Documentation](https://www.extremraym.com/cloud/reascript-doc/) - Community docs

@@ -1508,4 +1508,66 @@ function Track:toggle_track_send_ui_mute(send_idx)
   return r.ToggleTrackSendUIMute(self.pointer, send_idx)
 end
 
+--------------------------------------------------------------------------------
+-- Container Methods (Reaper 7+)
+--------------------------------------------------------------------------------
+
+--- Create a new empty container on this track.
+--- @within Container Methods
+--- @param position number|nil Insert position in FX chain (nil = end)
+--- @return TrackFX|nil Container FX object, or nil on failure
+function Track:create_container(position)
+  local TrackFX = require("track_fx")
+  local insert_pos = position or -1
+  local idx = r.TrackFX_AddByName(self.pointer, "Container", false, insert_pos)
+  if idx >= 0 then
+    return TrackFX:new(self, idx)
+  end
+  return nil
+end
+
+--- Get all FX on this track as a flat list (including nested container children).
+--- @within Container Methods
+--- @return table Array of {fx: TrackFX, depth: number, is_container: boolean}
+function Track:get_all_fx_flat()
+  local TrackFX = require("track_fx")
+  local result = {}
+
+  local function add_fx(fx_idx, depth)
+    local fx = TrackFX:new(self, fx_idx)
+    local is_cont = fx:is_container()
+
+    result[#result + 1] = {
+      fx = fx,
+      depth = depth,
+      is_container = is_cont,
+    }
+
+    if is_cont then
+      for child_fx in fx:iter_container_children() do
+        add_fx(child_fx.pointer, depth + 1)
+      end
+    end
+  end
+
+  local fx_count = self:get_track_fx_count()
+  for i = 0, fx_count - 1 do
+    -- Only add top-level FX
+    local fx = TrackFX:new(self, i)
+    if not fx:get_parent_container() then
+      add_fx(i, 0)
+    end
+  end
+
+  return result
+end
+
+--- Iterate over all FX including nested container children.
+--- @within Container Methods
+--- @return function Iterator yielding {fx: TrackFX, depth: number, is_container: boolean}
+function Track:iter_all_fx_flat()
+  local helpers = require("helpers")
+  return helpers.iter(self:get_all_fx_flat())
+end
+
 return Track

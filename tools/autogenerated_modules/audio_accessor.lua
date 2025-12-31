@@ -38,7 +38,7 @@ end
 
 
 
-    
+
 --- State Changed. Wraps AudioAccessorStateChanged.
 -- Returns true if the underlying samples (track or media item take) have changed,
 -- but does not update the audio accessor, so the user can selectively call
@@ -50,7 +50,7 @@ function AudioAccessor:state_changed()
     return r.AudioAccessorStateChanged(self.pointer)
 end
 
-    
+
 --- Update. Wraps AudioAccessorUpdate.
 -- Force the accessor to reload its state from the underlying track or media item
 -- take. See CreateTakeAudioAccessor, CreateTrackAudioAccessor,
@@ -60,7 +60,7 @@ function AudioAccessor:update()
     return r.AudioAccessorUpdate(self.pointer)
 end
 
-    
+
 --- Validate State. Wraps AudioAccessorValidateState.
 -- Validates the current state of the audio accessor -- must ONLY call this from
 -- the main thread. Returns true if the state changed.
@@ -69,7 +69,7 @@ function AudioAccessor:validate_state()
     return r.AudioAccessorValidateState(self.pointer)
 end
 
-    
+
 --- Destroy. Wraps DestroyAudioAccessor.
 -- Destroy an audio accessor. Must only call from the main thread. See
 -- CreateTakeAudioAccessor, CreateTrackAudioAccessor, AudioAccessorStateChanged,
@@ -78,7 +78,7 @@ function AudioAccessor:destroy()
     return r.DestroyAudioAccessor(self.pointer)
 end
 
-    
+
 --- Get End Time. Wraps GetAudioAccessorEndTime.
 -- Get the end time of the audio that can be returned from this accessor. See
 -- CreateTakeAudioAccessor, CreateTrackAudioAccessor, DestroyAudioAccessor,
@@ -88,7 +88,7 @@ function AudioAccessor:get_end_time()
     return r.GetAudioAccessorEndTime(self.pointer)
 end
 
-    
+
 --- Get Samples. Wraps GetAudioAccessorSamples.
 -- Get a block of samples from the audio accessor. Samples are extracted
 -- immediately pre-FX, and returned interleaved (first sample of first channel,
@@ -106,7 +106,7 @@ function AudioAccessor:get_samples(samplerate, numchannels, starttime_sec, numsa
     return r.GetAudioAccessorSamples(self.pointer, samplerate, numchannels, starttime_sec, numsamplesperchannel, samplebuffer)
 end
 
-    
+
 --- Get Start Time. Wraps GetAudioAccessorStartTime.
 -- Get the start time of the audio that can be returned from this accessor. See
 -- CreateTakeAudioAccessor, CreateTrackAudioAccessor, DestroyAudioAccessor,

@@ -18,12 +18,12 @@ In your plugin's entry point:
 REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(
     REAPER_PLUGIN_HINSTANCE hInstance,
     reaper_plugin_info_t *rec) {
-  
+
   // Initialize ReaWrap
   if (!ReaWrap::ReaperAPI::Initialize(rec)) {
     return 0;  // Failed to initialize
   }
-  
+
   // ... rest of your plugin code
 }
 ```
@@ -89,7 +89,7 @@ make
 ReaWrap uses type aliases to avoid naming conflicts between REAPER SDK types and ReaWrap wrapper classes:
 
 - `ReaMediaTrack` - REAPER SDK's `MediaTrack*` type
-- `ReaMediaItem` - REAPER SDK's `MediaItem*` type  
+- `ReaMediaItem` - REAPER SDK's `MediaItem*` type
 - `ReaMediaItemTake` - REAPER SDK's `MediaItem_Take*` type
 
 These are defined in `ReaperAPI.h` and used throughout the low-level API wrapper. The high-level classes (`Track`, `MediaItem`, etc.) are ReaWrap wrapper classes.
@@ -101,4 +101,3 @@ See [docs/api/](../docs/api/) for full API documentation.
 ## Examples
 
 See [examples/](examples/) directory for complete examples.
-

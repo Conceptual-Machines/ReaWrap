@@ -8,6 +8,7 @@ namespace ReaWrap {
 using ReaMediaItem = ::MediaItem;
 using ReaMediaTrack = ::MediaTrack;
 using ReaMediaItemTake = ::MediaItem_Take;
+using ReaProject = void *; // ReaProject is typically void* in REAPER API
 
 // Low-level wrapper for REAPER API functions
 // Caches function pointers for performance
@@ -95,10 +96,10 @@ public:
   static double BarToTime(int bar);
   static int TimeToBar(double time);
   static double BarsToTime(int bars);
-  
+
   // Time map operations
-  static double GetMeasureInfo(int measure, double *qn_start, double *qn_end, 
-                                int *timesig_num, int *timesig_denom, double *tempo);
+  static double GetMeasureInfo(int measure, double *qn_start, double *qn_end, int *timesig_num,
+                               int *timesig_denom, double *tempo);
 
   // Project operations
   static void UpdateArrange();
