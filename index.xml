@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<index version="1" name="Conceptual Machines" commit="HEAD">
+  <category name="Libraries">
+    <reapack name="ReaWrap.lua" type="script" desc="Object-Oriented Wrapper for REAPER's Lua API">
+      <version name="0.3.0" author="Nomad Monad" time="2024-12-31T00:00:00Z">
+        <changelog><![CDATA[v0.3.0 (2024-12-31)
+  + ImGui wrapper module with Context, Window, and Theme classes
+  + Pre-built themes (Dark, Light, Reaper, HighContrast)
+
+v0.2.0 (2024-12-31)
+  + Container API support for REAPER 7 FX Containers
+  + Version module
+
+v0.1.0 (2024-11-25)
+  + Initial release]]></changelog>
+        <source main="main">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/ReaWrap.lua</source>
+        <source file="lua/audio_accessor.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/audio_accessor.lua</source>
+        <source file="lua/constants.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/constants.lua</source>
+        <source file="lua/helpers.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/helpers.lua</source>
+        <source file="lua/item.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/item.lua</source>
+        <source file="lua/pcm.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/pcm.lua</source>
+        <source file="lua/project.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/project.lua</source>
+        <source file="lua/take.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/take.lua</source>
+        <source file="lua/take_fx.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/take_fx.lua</source>
+        <source file="lua/track.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/track.lua</source>
+        <source file="lua/track_fx.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/track_fx.lua</source>
+        <source file="lua/version.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/version.lua</source>
+        <source file="lua/imgui/init.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/imgui/init.lua</source>
+        <source file="lua/imgui/window.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/imgui/window.lua</source>
+        <source file="lua/imgui/theme.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/imgui/theme.lua</source>
+      </version>
+    </reapack>
+  </category>
+</index>
