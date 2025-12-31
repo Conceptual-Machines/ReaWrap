@@ -2,6 +2,8 @@
 project = 'ReaWrap'
 title = 'ReaWrap API Documentation'
 description = 'OOP Implementation of Lua ReaScript API'
+version = '0.2.0'
+author = 'Nomad Monad'
 
 -- Source files
 file = 'lua'
