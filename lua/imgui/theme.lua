@@ -207,40 +207,6 @@ M.Light = Theme:new("Light", {
     SeparatorActive = M.hex("#707070"),
 })
 
---- Ableton-inspired dark theme.
-M.Ableton = Theme:new("Ableton", {
-    Text = M.hex("#D4D4D4"),
-    TextDisabled = M.hex("#6B6B6B"),
-    WindowBg = M.hex("#1E1E1E"),
-    ChildBg = M.hex("#1E1E1E00"),
-    PopupBg = M.hex("#2D2D2D"),
-    Border = M.hex("#3C3C3C"),
-    FrameBg = M.hex("#333333"),
-    FrameBgHovered = M.hex("#404040"),
-    FrameBgActive = M.hex("#4A4A4A"),
-    TitleBg = M.hex("#1E1E1E"),
-    TitleBgActive = M.hex("#2D2D2D"),
-    TitleBgCollapsed = M.hex("#1E1E1E80"),
-    MenuBarBg = M.hex("#2D2D2D"),
-    ScrollbarBg = M.hex("#1E1E1E"),
-    ScrollbarGrab = M.hex("#505050"),
-    ScrollbarGrabHovered = M.hex("#606060"),
-    ScrollbarGrabActive = M.hex("#707070"),
-    CheckMark = M.hex("#FF764D"),  -- Ableton orange
-    SliderGrab = M.hex("#FF764D"),
-    SliderGrabActive = M.hex("#FF9670"),
-    Button = M.hex("#3C3C3C"),
-    ButtonHovered = M.hex("#4C4C4C"),
-    ButtonActive = M.hex("#FF764D"),
-    Header = M.hex("#3C3C3C"),
-    HeaderHovered = M.hex("#4C4C4C"),
-    HeaderActive = M.hex("#FF764D"),
-    Separator = M.hex("#3C3C3C"),
-    Tab = M.hex("#2D2D2D"),
-    TabHovered = M.hex("#4C4C4C"),
-    TabSelected = M.hex("#3C3C3C"),
-})
-
 --- REAPER-inspired theme.
 M.Reaper = Theme:new("Reaper", {
     Text = M.hex("#E0E0E0"),
