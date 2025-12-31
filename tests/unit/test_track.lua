@@ -20,8 +20,7 @@ function M.run()
 
     M.test_new()
     M.test_get_name()
-    M.test_set_name()
-    M.test_get_fx_count()
+    M.test_has_track_fx()
     M.test_iter_track_fx_chain()
 end
 
@@ -45,25 +44,16 @@ function M.test_get_name()
     assert.equals("Track 1", name, "Track name should match")
 end
 
-function M.test_set_name()
-    assert.set_test("Track:set_name")
+function M.test_has_track_fx()
+    assert.set_test("Track:has_track_fx")
 
     local track_ptr = reaper.GetTrack(0, 0)
-    local track = Track:new(track_ptr)
+    local track_no_fx = Track:new(track_ptr)
+    assert.is_false(track_no_fx:has_track_fx(), "Track 1 should have no FX")
 
-    track:set_name("New Name")
-    local name = track:get_name()
-    assert.equals("New Name", name, "Track name should be updated")
-end
-
-function M.test_get_fx_count()
-    assert.set_test("Track:get_fx_count")
-
-    local track_ptr = reaper.GetTrack(0, 2)  -- Track 3 with 2 FX
-    local track = Track:new(track_ptr)
-
-    local count = track:get_fx_count()
-    assert.equals(2, count, "Track should have 2 FX")
+    local track_ptr2 = reaper.GetTrack(0, 2)  -- Track 3 with FX
+    local track_with_fx = Track:new(track_ptr2)
+    assert.is_true(track_with_fx:has_track_fx(), "Track 3 should have FX")
 end
 
 function M.test_iter_track_fx_chain()

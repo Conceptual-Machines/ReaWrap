@@ -108,17 +108,17 @@ function M.test_container_methods()
     local track = Track:new(track_ptr)
     local container = TrackFX:new(track, 1)
 
-    -- Test get_child_count
-    local count = container:get_child_count()
+    -- Test get_container_child_count
+    local count = container:get_container_child_count()
     assert.equals(2, count, "Container should have 2 children")
 
-    -- Test get_container_channel_count
-    local channels = container:get_container_channel_count()
+    -- Test get_container_channels
+    local channels = container:get_container_channels()
     assert.equals(4, channels, "Container should have 4 internal channels")
 
-    -- Test set_container_channel_count
-    container:set_container_channel_count(8)
-    channels = container:get_container_channel_count()
+    -- Test set_container_channels
+    container:set_container_channels(8)
+    channels = container:get_container_channels()
     assert.equals(8, channels, "Container channels should be updated to 8")
 end
 

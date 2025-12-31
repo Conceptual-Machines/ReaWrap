@@ -44,7 +44,13 @@ package.path = root_path .. "tests/?.lua;" .. package.path
 --------------------------------------------------------------------------------
 
 local function output(msg)
-    if reaper and reaper.ShowConsoleMsg then
+    -- In standalone mode (mock reaper), always use print
+    -- In real REAPER, use ShowConsoleMsg
+    if reaper and reaper._reset then
+        -- Mock mode - use print
+        print(msg)
+    elseif reaper and reaper.ShowConsoleMsg then
+        -- Real REAPER
         reaper.ShowConsoleMsg(msg .. "\n")
     else
         print(msg)

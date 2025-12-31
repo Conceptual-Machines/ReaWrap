@@ -125,6 +125,11 @@ function M.CountSelectedTracks(proj)
     return count
 end
 
+function M.GetTrackName(track)
+    if not track then return false, "" end
+    return true, track.name or "Track"
+end
+
 function M.GetSetMediaTrackInfo_String(track, param, value, is_set)
     if not track then return false, "" end
 
