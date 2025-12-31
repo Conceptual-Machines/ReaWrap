@@ -1,4 +1,4 @@
--- @description ReaWrap - Object-Oriented Wrapper for REAPER's Lua API
+-- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
 -- @version 0.3.0
 -- @changelog
@@ -30,7 +30,7 @@
 -- @about
 --   # ReaWrap
 --
---   Object-Oriented Wrapper for REAPER's Lua API.
+--   Object-Oriented Wrapper for ReaScript Lua API.
 --
 --   ## Features
 --

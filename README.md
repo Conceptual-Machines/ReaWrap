@@ -7,7 +7,7 @@
 [![ReaPack](https://img.shields.io/badge/ReaPack-available-brightgreen.svg)](https://reapack.com/)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://conceptual-machines.github.io/ReaWrap/)
 
-**Object-Oriented Wrapper for REAPER's Lua API**
+**Object-Oriented Wrapper for ReaScript Lua API**
 
 Write REAPER scripts faster with a clean, intuitive, object-oriented interface.
 
