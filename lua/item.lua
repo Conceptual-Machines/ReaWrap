@@ -1,5 +1,5 @@
 --- Provide implementation for Item functions.
--- @author NomadMonad
+-- @author Nomad Monad
 -- @license MIT
 -- @release 0.2.0
 -- @module item
