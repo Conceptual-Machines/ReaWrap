@@ -2,16 +2,16 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
-      <version name="0.3.0" author="Nomad Monad" time="2024-12-31T00:00:00Z">
-        <changelog><![CDATA[v0.3.0 (2024-12-31)
+      <version name="0.3.0" author="Nomad Monad" time="2025-12-31T00:00:00Z">
+        <changelog><![CDATA[v0.3.0 (2025-12-31)
   + ImGui wrapper module with Context, Window, and Theme classes
   + Pre-built themes (Dark, Light, Reaper, HighContrast)
 
-v0.2.0 (2024-12-31)
+v0.2.0 (2025-12-31)
   + Container API support for REAPER 7 FX Containers
   + Version module
 
-v0.1.0 (2024-11-25)
+v0.1.0 (2025-11-25)
   + Initial release]]></changelog>
         <source main="main">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/ReaWrap.lua</source>
         <source file="lua/audio_accessor.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/audio_accessor.lua</source>

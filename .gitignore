@@ -181,3 +181,4 @@ cython_debug/
 REAPER API functions.html
 REORGANIZATION_PLAN.md
 cpp/build_test/
+Libraries/
