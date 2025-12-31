@@ -34,6 +34,8 @@ jobs:
       - name: Generate documentation
         run: |
           ldoc lua/ -d doc/ -c config.ld
+          # Apply custom dark theme CSS
+          cp tools/doc_css/ldoc.css doc/ldoc.css
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
