@@ -5,7 +5,7 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - 2024-12-31
+## [0.3.0] - 2025-12-31
 
 ### Added
 - **ImGui wrapper module** (`lua/imgui/`)
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive ImGui mock for unit testing
 - 33 new unit tests for ImGui wrapper
 
-## [0.2.0] - 2024-12-31
+## [0.2.0] - 2025-12-31
 
 ### Added
 - **Container support (Reaper 7+)**
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Bumped version to 0.2.0
 
-## [0.1.0] - 2024-11-25
+## [0.1.0] - 2025-11-25
 
 ### Added
 - Initial release with reorganized structure
