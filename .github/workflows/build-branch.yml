@@ -5,6 +5,9 @@ on:
     types: [published]
   workflow_dispatch:  # Allow manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   update-build-branch:
     name: Update Build Branch
