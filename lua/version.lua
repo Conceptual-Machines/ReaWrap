@@ -15,7 +15,7 @@ M.NAME = "ReaWrap"
 M.DESCRIPTION = "Object-oriented Lua wrapper for the REAPER ReaScript API"
 M.AUTHOR = "Nomad Monad"
 M.LICENSE = "MIT"
-M.URL = "https://github.com/lucaromagnoli/ReaWrap"
+M.URL = "https://github.com/Conceptual-Machines/ReaWrap"
 
 --- Get full version string.
 -- @return string Version in format "ReaWrap v0.2.0"

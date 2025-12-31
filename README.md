@@ -5,9 +5,17 @@
 ![REAPER](https://img.shields.io/badge/REAPER-7.0+-green.svg)
 ![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)
 
-**Object-Oriented Lua Wrapper for the REAPER ReaScript API**
+**OOP Implementation of Lua ReaScript API**
 
-Write REAPER scripts faster with a clean, intuitive API.
+Write REAPER scripts faster with a clean, intuitive, object-oriented interface.
+
+## History
+
+This project started in 2020 as a way to learn Lua while scratching an itch: the REAPER API is incredibly powerful, but its C-style interface felt verbose and low-level. I wanted something more intuitive — an object-oriented layer that reads more like Python than pointer arithmetic. So I scraped the REAPER documentation with Python and auto-generated Lua wrapper classes around it.
+
+Like many side projects, it eventually got shelved. But the itch never went away.
+
+Fast forward to 2025 — ReaWrap has been resurrected, reorganized, and expanded. The codebase is cleaner, the API is more complete, and it now includes full support for REAPER 7's FX containers.
 
 ## Why ReaWrap?
 
@@ -49,12 +57,12 @@ track:set_track_ui_volume(-3.0)
 1. Clone or download ReaWrap to your REAPER Scripts folder:
    ```bash
    cd ~/Library/Application\ Support/REAPER/Scripts
-   git clone https://github.com/lucaromagnoli/ReaWrap.git
+   git clone https://github.com/Conceptual-Machines/ReaWrap.git
    ```
 
 2. Or add as a submodule in your project:
    ```bash
-   git submodule add https://github.com/lucaromagnoli/ReaWrap.git
+   git submodule add https://github.com/Conceptual-Machines/ReaWrap.git
    ```
 
 ### Basic Usage
