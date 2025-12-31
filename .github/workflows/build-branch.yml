@@ -1,0 +1,97 @@
+name: Update Build Branch
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-build-branch:
+    name: Update Build Branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for branch operations
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create stripped build branch
+        run: |
+          # Get the release tag or current commit
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+          else
+            VERSION="manual-$(git rev-parse --short HEAD)"
+          fi
+
+          echo "Building version: $VERSION"
+
+          # Create or reset build branch from current state
+          git checkout -B build
+
+          # Remove non-essential files and directories
+          rm -rf .github/
+          rm -rf doc/
+          rm -rf tests/
+          rm -rf tools/
+          rm -rf .idea/
+          rm -rf .venv/
+          rm -rf .ruff_cache/
+          rm -f .pre-commit-config.yaml
+          rm -f .stylua.toml
+          rm -f CONTRIBUTING.md
+          rm -f pyproject.toml
+          rm -f "REAPER API functions.html"
+
+          # Create a minimal README for the build branch
+          cat > README.md << 'EOF'
+          # ReaWrap
+
+          **OOP Implementation of Lua ReaScript API**
+
+          This is the **build branch** - a stripped-down version for use as a git submodule.
+
+          For full documentation, tests, and development files, see the [main branch](https://github.com/Conceptual-Machines/ReaWrap/tree/main).
+
+          ## Installation
+
+          Add as a submodule:
+          ```bash
+          git submodule add -b build https://github.com/Conceptual-Machines/ReaWrap.git
+          ```
+
+          ## Usage
+
+          ```lua
+          local script_path = ({ reaper.get_action_context() })[2]:match('^.+[\\//]')
+          package.path = script_path .. "ReaWrap/lua/?.lua;" .. package.path
+
+          local Project = require("project")
+          local Track = require("track")
+
+          local project = Project:new()
+          for track in project:iter_tracks() do
+              print(track:get_name())
+          end
+          ```
+
+          ## License
+
+          MIT License - see [LICENSE](LICENSE)
+          EOF
+
+          # Stage all changes
+          git add -A
+
+          # Commit
+          git commit -m "Build branch: $VERSION (auto-generated)" || echo "No changes to commit"
+
+      - name: Push build branch
+        run: |
+          git push origin build --force
