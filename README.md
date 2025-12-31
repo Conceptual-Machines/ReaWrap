@@ -6,7 +6,7 @@
 ![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://conceptual-machines.github.io/ReaWrap/)
 
-**OOP Implementation of Lua ReaScript API**
+**Object-Oriented Wrapper for REAPER's Lua API**
 
 Write REAPER scripts faster with a clean, intuitive, object-oriented interface.
 
