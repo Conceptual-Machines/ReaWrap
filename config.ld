@@ -1,7 +1,7 @@
 -- LDoc configuration file
 project = 'ReaWrap'
 title = 'ReaWrap API Documentation'
-description = "Object-Oriented Wrapper for REAPER's Lua API"
+description = "Object-Oriented Wrapper for ReaScript Lua API"
 version = '0.2.0'
 author = 'Nomad Monad'
 
