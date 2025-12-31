@@ -142,6 +142,54 @@ for _, entry in ipairs(all_fx) do
 end
 ```
 
+## ImGui Wrapper
+
+ReaWrap includes a clean OOP wrapper for ReaImGui that reduces boilerplate:
+
+```lua
+local Window = require("imgui.window")
+local Theme = require("imgui.theme")
+
+-- Define your window
+local MyWindow = Window:extend()
+
+function MyWindow:init()
+    self.title = "My Tool"
+    self.width = 400
+    self.height = 300
+    self.counter = 0
+end
+
+function MyWindow:draw()
+    local ctx = self.ctx
+
+    -- Apply theme
+    Theme.Dark:apply(ctx)
+
+    -- Simple widgets with method chaining
+    ctx:text("Hello from ReaWrap!")
+    ctx:separator()
+
+    if ctx:button("Click Me") then
+        self.counter = self.counter + 1
+    end
+    ctx:same_line()
+    ctx:text("Count: " .. self.counter)
+
+    -- Disabled sections
+    ctx:with_disabled(self.counter == 0, function()
+        if ctx:button("Reset") then
+            self.counter = 0
+        end
+    end)
+
+    Theme.Dark:pop(ctx)
+end
+
+-- Run the window
+MyWindow:run()
+```
+
 ## API Overview
 
 ### Core Modules
@@ -156,6 +204,7 @@ end
 | `take_fx` | Take FX parameters |
 | `pcm` | PCM source operations |
 | `audio_accessor` | Audio data access |
+| `imgui` | ImGui wrapper (Context, Window, Theme) |
 | `helpers` | Utility functions |
 | `constants` | REAPER API constants |
 | `version` | Version info |
