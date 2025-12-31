@@ -62,7 +62,7 @@ track:set_track_ui_volume(-3.0)
 ```lua
 -- Setup path (adjust based on your structure)
 local script_path = ({ reaper.get_action_context() })[2]:match('^.+[\\//]')
-package.path = script_path .. "ReaWrap/lua/modules/?.lua;" .. package.path
+package.path = script_path .. "ReaWrap/?.lua;" .. package.path
 
 -- Import modules
 local Project = require("project")
@@ -96,29 +96,27 @@ local container = track:create_container()
 -- Check if FX is a container
 if fx:is_container() then
     -- Get children
-    for child_fx in fx:iter_container_children() do
+    for _, child_fx in ipairs(fx:get_children()) do
         print(child_fx:get_name())
     end
 
     -- Configure container routing
-    fx:set_container_channels(4)      -- Internal channels
-    fx:set_container_input_pins(2)    -- Stereo in
-    fx:set_container_output_pins(2)   -- Stereo out
+    fx:set_container_channel_count(4)   -- Internal channels
+    fx:set_container_input_pins(2)      -- Stereo in
+    fx:set_container_output_pins(2)     -- Stereo out
 end
 
 -- Get parent container
 local parent = fx:get_parent_container()
 
--- Get nesting depth
-local depth = fx:get_container_depth()
-
 -- Move FX into container
-container:add_fx_to_container(some_fx)
+fx:move_to_container(container_fx)
 
 -- Get flat list of all FX (including nested)
-for entry in track:iter_all_fx_flat() do
+local all_fx = fx:get_all_fx_flat_recursive()
+for _, entry in ipairs(all_fx) do
     local indent = string.rep("  ", entry.depth)
-    print(indent .. entry.fx:get_name())
+    print(indent .. entry.name)
 end
 ```
 
@@ -137,7 +135,8 @@ end
 | `pcm` | PCM source operations |
 | `audio_accessor` | Audio data access |
 | `helpers` | Utility functions |
-| `version` | Version info and checking |
+| `constants` | REAPER API constants |
+| `version` | Version info |
 
 ### Common Patterns
 
@@ -162,34 +161,20 @@ for name in fx:iter_param_names() do
 end
 ```
 
-## Version Checking
-
-```lua
-local version = require("version")
-
-print(version.get_version_string())  -- "ReaWrap v0.2.0"
-
--- Check minimum version
-if version.check_version(0, 2, 0) then
-    -- Use container features
-end
-```
-
 ## Project Structure
 
 ```
 ReaWrap/
-├── lua/
-│   ├── modules/          # Core modules
-│   │   ├── track.lua
-│   │   ├── track_fx.lua
-│   │   ├── item.lua
-│   │   ├── take.lua
-│   │   ├── project.lua
-│   │   ├── version.lua
-│   │   └── ...
-│   ├── doc/              # Generated LDoc documentation
-│   └── tests/
+├── lua/              # Core modules
+│   ├── track.lua
+│   ├── track_fx.lua
+│   ├── item.lua
+│   ├── take.lua
+│   ├── project.lua
+│   ├── version.lua
+│   └── ...
+├── doc/              # Generated LDoc documentation
+├── tests/            # Test files
 ├── tools/
 │   └── modules_generator/  # Scrapes REAPER docs to generate modules
 ├── CHANGELOG.md
@@ -198,7 +183,7 @@ ReaWrap/
 
 ## Documentation
 
-- **[Lua Module Documentation](lua/doc/index.html)** - Generated API reference
+- **[API Documentation](doc/index.html)** - Generated LDoc reference
 - **[Changelog](CHANGELOG.md)** - Version history
 
 ## Contributing
