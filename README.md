@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Lua](https://img.shields.io/badge/lua-5.1+-blue.svg)
 ![REAPER](https://img.shields.io/badge/REAPER-7.0+-green.svg)
-![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)
+![Version](https://img.shields.io/badge/version-0.3.1-orange.svg)
 [![ReaPack](https://img.shields.io/badge/ReaPack-available-brightgreen.svg)](https://reapack.com/)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://conceptual-machines.github.io/ReaWrap/)
 

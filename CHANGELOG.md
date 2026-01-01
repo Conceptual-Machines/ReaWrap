@@ -5,22 +5,10 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - 2025-12-31
+## [0.3.1] - 2026-01-01
 
 ### Added
-- **ImGui wrapper module** (`lua/imgui/`)
-  - `imgui.Context` - Context wrapper with shorthand methods (no ctx passing)
-  - `imgui.Window` - OOP window management with lifecycle callbacks
-  - `imgui.Modal` - Modal dialog support
-  - `Window.confirm()` / `Window.alert()` - Quick dialog helpers
-  - `Window:defer_action(fn)` - Queue actions to run after frame completes
-  - `imgui.theme` - Theme system with pre-built themes
-    - `theme.Dark`, `theme.Light`, `theme.Reaper`, `theme.HighContrast`
-    - Color utilities: `rgba()`, `hex()`, `brighten()`, `with_alpha()`
-    - `theme.create()`, `theme.extend()` for custom themes
-  - Flag constant shortcuts (`WindowFlags`, `ChildFlags`, `Cond`, `Col`, `Key`)
-- Comprehensive ImGui mock for unit testing
-- 33 new unit tests for ImGui wrapper
+- `Window:defer_action(fn)` - Queue actions to run after frame completes
 - Integration tests for core classes and ImGui (`tests/integration/`)
 
 ### Changed
@@ -30,6 +18,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated for ReaImGui 0.9+ compatibility
   - Config flags passed directly to `ImGui_CreateContext()`
   - Contexts are garbage collected (no explicit destroy needed)
+
+## [0.3.0] - 2025-12-31
+
+### Added
+- **ImGui wrapper module** (`lua/imgui/`)
+  - `imgui.Context` - Context wrapper with shorthand methods (no ctx passing)
+  - `imgui.Window` - OOP window management with lifecycle callbacks
+  - `imgui.Modal` - Modal dialog support
+  - `Window.confirm()` / `Window.alert()` - Quick dialog helpers
+  - `imgui.theme` - Theme system with pre-built themes
+    - `theme.Dark`, `theme.Light`, `theme.Reaper`, `theme.HighContrast`
+    - Color utilities: `rgba()`, `hex()`, `brighten()`, `with_alpha()`
+    - `theme.create()`, `theme.extend()` for custom themes
+  - Flag constant shortcuts (`WindowFlags`, `ChildFlags`, `Cond`, `Col`, `Key`)
+- Comprehensive ImGui mock for unit testing
+- 33 new unit tests for ImGui wrapper
 
 ## [0.2.0] - 2025-12-31
 
