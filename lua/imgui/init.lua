@@ -868,6 +868,39 @@ M.ChildFlags = {
     AlwaysAutoResize = safe_flag(r.ImGui_ChildFlags_AlwaysAutoResize, 0),
 }
 
+M.TreeNodeFlags = {
+    None = function() return r.ImGui_TreeNodeFlags_None() end,
+    Selected = function() return r.ImGui_TreeNodeFlags_Selected() end,
+    Framed = function() return r.ImGui_TreeNodeFlags_Framed() end,
+    AllowOverlap = function() return r.ImGui_TreeNodeFlags_AllowOverlap() end,
+    NoTreePushOnOpen = function() return r.ImGui_TreeNodeFlags_NoTreePushOnOpen() end,
+    NoAutoOpenOnLog = function() return r.ImGui_TreeNodeFlags_NoAutoOpenOnLog() end,
+    DefaultOpen = function() return r.ImGui_TreeNodeFlags_DefaultOpen() end,
+    OpenOnDoubleClick = function() return r.ImGui_TreeNodeFlags_OpenOnDoubleClick() end,
+    OpenOnArrow = function() return r.ImGui_TreeNodeFlags_OpenOnArrow() end,
+    Leaf = function() return r.ImGui_TreeNodeFlags_Leaf() end,
+    Bullet = function() return r.ImGui_TreeNodeFlags_Bullet() end,
+    FramePadding = function() return r.ImGui_TreeNodeFlags_FramePadding() end,
+    SpanAvailWidth = function() return r.ImGui_TreeNodeFlags_SpanAvailWidth() end,
+    SpanFullWidth = function() return r.ImGui_TreeNodeFlags_SpanFullWidth() end,
+    CollapsingHeader = function() return r.ImGui_TreeNodeFlags_CollapsingHeader() end,
+}
+
+M.InputTextFlags = {
+    None = function() return r.ImGui_InputTextFlags_None() end,
+    CharsDecimal = function() return r.ImGui_InputTextFlags_CharsDecimal() end,
+    CharsHexadecimal = function() return r.ImGui_InputTextFlags_CharsHexadecimal() end,
+    CharsUppercase = function() return r.ImGui_InputTextFlags_CharsUppercase() end,
+    CharsNoBlank = function() return r.ImGui_InputTextFlags_CharsNoBlank() end,
+    AutoSelectAll = function() return r.ImGui_InputTextFlags_AutoSelectAll() end,
+    EnterReturnsTrue = function() return r.ImGui_InputTextFlags_EnterReturnsTrue() end,
+    AllowTabInput = function() return r.ImGui_InputTextFlags_AllowTabInput() end,
+    CtrlEnterForNewLine = function() return r.ImGui_InputTextFlags_CtrlEnterForNewLine() end,
+    NoHorizontalScroll = function() return r.ImGui_InputTextFlags_NoHorizontalScroll() end,
+    ReadOnly = function() return r.ImGui_InputTextFlags_ReadOnly() end,
+    Password = function() return r.ImGui_InputTextFlags_Password() end,
+}
+
 M.Cond = {
     Always = function() return r.ImGui_Cond_Always() end,
     Once = function() return r.ImGui_Cond_Once() end,
