@@ -213,10 +213,12 @@ end
 -- @param selected boolean|nil Whether selected
 -- @param flags number|nil Selectable flags
 -- @return boolean True if clicked
-function Context:selectable(label, selected, flags)
+function Context:selectable(label, selected, flags, size_w, size_h)
     selected = selected or false
     flags = flags or 0
-    return r.ImGui_Selectable(self.ctx, label, selected, flags)
+    size_w = size_w or 0
+    size_h = size_h or 0
+    return r.ImGui_Selectable(self.ctx, label, selected, flags, size_w, size_h)
 end
 
 --------------------------------------------------------------------------------
@@ -734,6 +736,59 @@ end
 function Context:is_alt_down()
     local mods = r.ImGui_GetKeyMods(self.ctx)
     return (mods & r.ImGui_Mod_Alt()) ~= 0
+end
+
+--------------------------------------------------------------------------------
+-- Drag and Drop
+--------------------------------------------------------------------------------
+
+--- Begin a drag source on the last item.
+-- Call between item creation and next item. Returns true if dragging.
+-- @param flags number|nil DragDropFlags (default 0)
+-- @return boolean True if drag source is active
+function Context:begin_drag_drop_source(flags)
+    return r.ImGui_BeginDragDropSource(self.ctx, flags or 0)
+end
+
+--- End drag source (must call if begin_drag_drop_source returned true).
+function Context:end_drag_drop_source()
+    r.ImGui_EndDragDropSource(self.ctx)
+end
+
+--- Set drag payload data.
+-- @param type string Payload type identifier
+-- @param data string Payload data
+-- @param cond number|nil SetCond flags (default Always)
+-- @return boolean
+function Context:set_drag_drop_payload(type, data, cond)
+    return r.ImGui_SetDragDropPayload(self.ctx, type, data, cond)
+end
+
+--- Begin a drop target on the last item.
+-- @return boolean True if drop target is active
+function Context:begin_drag_drop_target()
+    return r.ImGui_BeginDragDropTarget(self.ctx)
+end
+
+--- End drop target (must call if begin_drag_drop_target returned true).
+function Context:end_drag_drop_target()
+    r.ImGui_EndDragDropTarget(self.ctx)
+end
+
+--- Accept a drag payload.
+-- @param type string Expected payload type
+-- @param flags number|nil DragDropFlags (default 0)
+-- @return boolean, string|nil Accepted, payload data
+function Context:accept_drag_drop_payload(type, flags)
+    local rv, payload = r.ImGui_AcceptDragDropPayload(self.ctx, type, flags or 0)
+    return rv, payload
+end
+
+--- Get current drag payload (peek without accepting).
+-- @param type string|nil Expected payload type (nil for any)
+-- @return boolean, string|nil Has payload, payload data
+function Context:get_drag_drop_payload(type)
+    return r.ImGui_GetDragDropPayload(self.ctx, type)
 end
 
 --------------------------------------------------------------------------------
