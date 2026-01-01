@@ -115,11 +115,12 @@ end
 -- @param height number|nil Height (0 = auto)
 -- @param flags number|nil Child flags
 -- @return boolean
-function Context:begin_child(id, width, height, flags)
+function Context:begin_child(id, width, height, child_flags, window_flags)
     width = width or 0
     height = height or 0
-    flags = flags or 0  -- Safe default (no flags)
-    return r.ImGui_BeginChild(self.ctx, id, width, height, flags)
+    child_flags = child_flags or 0
+    window_flags = window_flags or 0
+    return r.ImGui_BeginChild(self.ctx, id, width, height, child_flags, window_flags)
 end
 
 --- End a child region.
