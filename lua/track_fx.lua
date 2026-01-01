@@ -1006,26 +1006,33 @@ end
 --- @param position number|nil 0-based position in main chain (nil = end)
 --- @return boolean Success
 function TrackFX:move_out_of_container(position)
-  local parent = self:get_parent_container()
-  if not parent then
-    return false -- Already in main chain
+  local container = self:get_parent_container()
+  if not container then
+    return false -- Already on track
   end
 
-  local fx_count = r.TrackFX_GetCount(self.track.pointer)
-  local dest_idx = position or fx_count
-
-  return r.TrackFX_CopyToTrack(
-    self.track.pointer,
-    self.pointer,
-    self.track.pointer,
-    dest_idx,
-    true -- move
-  )
+  local destination = container:get_parent_container()
+  
+  if destination then
+    -- Container is nested, move to its parent
+    return destination:add_fx_to_container(self, position)
+  else
+    -- Container is on track, move to track
+    local fx_count = r.TrackFX_GetCount(self.track.pointer)
+    local dest_idx = position or fx_count
+    return r.TrackFX_CopyToTrack(
+      self.track.pointer,
+      self.pointer,
+      self.track.pointer,
+      dest_idx,
+      true -- move
+    )
+  end
 end
 
 --- Calculate the REAPER FX index for addressing a position inside a container.
 --- Handles both top-level and nested containers using REAPER's addressing scheme.
---- For nested containers, uses container_count per REAPER docs:
+--- For nested containers, uses the PARENT's child count per REAPER docs:
 --- "This can be extended to sub-containers using TrackFX_GetNamedConfigParm with container_count"
 --- @within Container Methods
 --- @param container TrackFX The container FX object
@@ -1037,54 +1044,23 @@ local function calc_container_dest_idx(container, position)
   end
 
   local is_nested = container.pointer >= 0x2000000
+  local one_based_pos = position + 1
 
   if is_nested then
-    -- For nested containers: use container's own child_count (container_count)
-    local container_child_count = container:get_container_child_count()
-    local one_based_pos = position + 1
-
-    -- Get container's position within its parent using container_item.X
+    -- For nested containers: use parent's container_count as the "FX chain" count
+    -- Note: Direct moves from track to nested containers may fail - use intermediate steps
     local parent = container:get_parent_container()
     if not parent then
       return nil
     end
-
-    -- Find container's index in parent using ReaWrap method
-    local container_idx_in_parent = nil
-    local parent_children = parent:get_container_children()
-    for i, child in ipairs(parent_children) do
-      if child.pointer == container.pointer then
-        container_idx_in_parent = i - 1 -- 0-based
-        break
-      end
-    end
-
-    if container_idx_in_parent == nil then
-      return nil
-    end
-
-    local one_based_container = container_idx_in_parent + 1
-
-    -- For nested: use container's child_count in formula
-    -- Formula: base + (1-based position) * (container_child_count + 1) + (1-based container index)
-    if parent.pointer >= 0x2000000 then
-      -- Parent is nested - use parent's encoded address as base
-      return parent.pointer + one_based_pos * (container_child_count + 1) + one_based_container
-    else
-      -- Parent is top-level - use standard formula with container's child_count
-      local fx_count = r.TrackFX_GetCount(container.track.pointer)
-      return 0x2000000 + one_based_pos * (container_child_count + 1) + (parent.pointer + 1)
-    end
+    local parent_count = parent:get_container_child_count()
+    return container.pointer + 2 * (parent_count + 1)
   else
     -- For top-level containers: use track FX count
     -- Formula: 0x2000000 + (1-based position) * (track_fx_count + 1) + (1-based container index)
     local fx_count = r.TrackFX_GetCount(container.track.pointer)
-    local one_based_pos = position + 1
     local one_based_container = container.pointer + 1
-    local result = 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
-    r.ShowConsoleMsg(string.format("calc_container_dest_idx (top-level): container=0x%X, pos=%d, fx_count=%d, one_based_pos=%d, one_based_container=%d, result=0x%X\n",
-      container.pointer, position, fx_count, one_based_pos, one_based_container, result))
-    return result
+    return 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
   end
 end
 
@@ -1103,13 +1079,15 @@ function TrackFX:add_fx_to_container(fx, position)
   local dest_idx = calc_container_dest_idx(self, dest_pos)
 
   if not dest_idx then
-    r.ShowConsoleMsg(string.format("add_fx_to_container: calc_container_dest_idx returned nil (container=0x%X, pos=%d)\n", self.pointer, dest_pos))
     return false
   end
 
-  -- TrackFX_CopyToTrack is void (returns nil), so we just call it and verify by child count
-  r.ShowConsoleMsg(string.format("Calling TrackFX_CopyToTrack: src_track=%s, src_fx=0x%X, dest_track=%s, dest_idx=0x%X, move=true\n",
-    tostring(fx.track.pointer), fx.pointer, tostring(self.track.pointer), dest_idx))
+  -- If moving FX from before container on same track, container will shift down
+  -- This only applies to top-level containers (pointer < 0x2000000)
+  local container_will_shift = false
+  if self.pointer < 0x2000000 then
+    container_will_shift = fx.track.pointer == self.track.pointer and fx.pointer < self.pointer
+  end
 
   r.TrackFX_CopyToTrack(
     fx.track.pointer,
@@ -1119,11 +1097,13 @@ function TrackFX:add_fx_to_container(fx, position)
     true -- move
   )
 
+  -- Adjust our pointer if container shifted (only for top-level)
+  if container_will_shift then
+    self.pointer = self.pointer - 1
+  end
+
   -- Verify the move succeeded by checking child count
   local new_child_count = self:get_container_child_count()
-  r.ShowConsoleMsg(string.format("After CopyToTrack: child_count %d -> %d (success: %s)\n",
-    child_count, new_child_count, tostring(new_child_count > child_count)))
-
   return new_child_count > child_count
 end
 
