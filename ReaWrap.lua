@@ -1,7 +1,10 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.6.1
+-- @version 0.6.2
 -- @changelog
+--   v0.6.2 (2026-01-01)
+--     * Fixed nested container addressing in add_fx_to_container()
+--     + Added integration tests for container operations
 --   v0.6.1 (2026-01-01)
 --     * Fixed begin_child() to support window_flags parameter for horizontal scrollbar
 --   v0.6.0 (2026-01-01)

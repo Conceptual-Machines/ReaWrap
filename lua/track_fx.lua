@@ -1006,34 +1006,62 @@ end
 --- @param position number|nil 0-based position in main chain (nil = end)
 --- @return boolean Success
 function TrackFX:move_out_of_container(position)
-  local parent = self:get_parent_container()
-  if not parent then
-    return false -- Already in main chain
+  local container = self:get_parent_container()
+  if not container then
+    return false -- Already on track
   end
 
-  local fx_count = r.TrackFX_GetCount(self.track.pointer)
-  local dest_idx = position or fx_count
+  local destination = container:get_parent_container()
 
-  return r.TrackFX_CopyToTrack(
-    self.track.pointer,
-    self.pointer,
-    self.track.pointer,
-    dest_idx,
-    true -- move
-  )
+  if destination then
+    -- Container is nested, move to its parent
+    return destination:add_fx_to_container(self, position)
+  else
+    -- Container is on track, move to track
+    local fx_count = r.TrackFX_GetCount(self.track.pointer)
+    local dest_idx = position or fx_count
+    return r.TrackFX_CopyToTrack(
+      self.track.pointer,
+      self.pointer,
+      self.track.pointer,
+      dest_idx,
+      true -- move
+    )
+  end
 end
 
 --- Calculate the REAPER FX index for addressing a position inside a container.
---- REAPER formula: 0x2000000 + (1-based position) * (FX_count + 1) + (1-based container index)
+--- Handles both top-level and nested containers using REAPER's addressing scheme.
+--- For nested containers, uses the PARENT's child count per REAPER docs:
+--- "This can be extended to sub-containers using TrackFX_GetNamedConfigParm with container_count"
 --- @within Container Methods
---- @param container_idx number 0-based container FX index
+--- @param container TrackFX The container FX object
 --- @param position number 0-based position within container
---- @param fx_count number Total FX count on track
---- @return number The encoded destination index
-local function calc_container_dest_idx(container_idx, position, fx_count)
+--- @return number The encoded destination index, or nil if invalid
+local function calc_container_dest_idx(container, position)
+  if not container:is_container() then
+    return nil
+  end
+
+  local is_nested = container.pointer >= 0x2000000
   local one_based_pos = position + 1
-  local one_based_container = container_idx + 1
-  return 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
+
+  if is_nested then
+    -- For nested containers: use parent's container_count as the "FX chain" count
+    -- Note: Direct moves from track to nested containers may fail - use intermediate steps
+    local parent = container:get_parent_container()
+    if not parent then
+      return nil
+    end
+    local parent_count = parent:get_container_child_count()
+    return container.pointer + 2 * (parent_count + 1)
+  else
+    -- For top-level containers: use track FX count
+    -- Formula: 0x2000000 + (1-based position) * (track_fx_count + 1) + (1-based container index)
+    local fx_count = r.TrackFX_GetCount(container.track.pointer)
+    local one_based_container = container.pointer + 1
+    return 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
+  end
 end
 
 --- Move an FX into this container.
@@ -1048,8 +1076,18 @@ function TrackFX:add_fx_to_container(fx, position)
 
   local child_count = self:get_container_child_count()
   local dest_pos = position or child_count
-  local fx_count = r.TrackFX_GetCount(self.track.pointer)
-  local dest_idx = calc_container_dest_idx(self.pointer, dest_pos, fx_count)
+  local dest_idx = calc_container_dest_idx(self, dest_pos)
+
+  if not dest_idx then
+    return false
+  end
+
+  -- If moving FX from before container on same track, container will shift down
+  -- This only applies to top-level containers (pointer < 0x2000000)
+  local container_will_shift = false
+  if self.pointer < 0x2000000 then
+    container_will_shift = fx.track.pointer == self.track.pointer and fx.pointer < self.pointer
+  end
 
   r.TrackFX_CopyToTrack(
     fx.track.pointer,
@@ -1059,7 +1097,14 @@ function TrackFX:add_fx_to_container(fx, position)
     true -- move
   )
 
-  return self:get_container_child_count() > child_count
+  -- Adjust our pointer if container shifted (only for top-level)
+  if container_will_shift then
+    self.pointer = self.pointer - 1
+  end
+
+  -- Verify the move succeeded by checking child count
+  local new_child_count = self:get_container_child_count()
+  return new_child_count > child_count
 end
 
 --- Copy an FX into this container.
