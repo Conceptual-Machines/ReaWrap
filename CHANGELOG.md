@@ -5,6 +5,14 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-01-01
+
+### Added
+- **ImGui ID stack methods**
+  - `Context:push_id(id)` - Push string or number ID onto stack
+  - `Context:pop_id()` - Pop ID from stack
+- `Context:set_next_item_width(width)` - Set width for next widget
+
 ## [0.3.1] - 2026-01-01
 
 ### Added
