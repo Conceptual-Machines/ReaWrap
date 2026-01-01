@@ -1081,7 +1081,10 @@ local function calc_container_dest_idx(container, position)
     local fx_count = r.TrackFX_GetCount(container.track.pointer)
     local one_based_pos = position + 1
     local one_based_container = container.pointer + 1
-    return 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
+    local result = 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
+    r.ShowConsoleMsg(string.format("calc_container_dest_idx (top-level): container=0x%X, pos=%d, fx_count=%d, one_based_pos=%d, one_based_container=%d, result=0x%X\n",
+      container.pointer, position, fx_count, one_based_pos, one_based_container, result))
+    return result
   end
 end
 
@@ -1100,10 +1103,15 @@ function TrackFX:add_fx_to_container(fx, position)
   local dest_idx = calc_container_dest_idx(self, dest_pos)
 
   if not dest_idx then
+    r.ShowConsoleMsg(string.format("add_fx_to_container: calc_container_dest_idx returned nil (container=0x%X, pos=%d)\n", self.pointer, dest_pos))
     return false
   end
 
-  local success = r.TrackFX_CopyToTrack(
+  -- TrackFX_CopyToTrack is void (returns nil), so we just call it and verify by child count
+  r.ShowConsoleMsg(string.format("Calling TrackFX_CopyToTrack: src_track=%s, src_fx=0x%X, dest_track=%s, dest_idx=0x%X, move=true\n",
+    tostring(fx.track.pointer), fx.pointer, tostring(self.track.pointer), dest_idx))
+
+  r.TrackFX_CopyToTrack(
     fx.track.pointer,
     fx.pointer,
     self.track.pointer,
@@ -1111,12 +1119,12 @@ function TrackFX:add_fx_to_container(fx, position)
     true -- move
   )
 
-  if not success then
-    return false
-  end
-
   -- Verify the move succeeded by checking child count
-  return self:get_container_child_count() > child_count
+  local new_child_count = self:get_container_child_count()
+  r.ShowConsoleMsg(string.format("After CopyToTrack: child_count %d -> %d (success: %s)\n",
+    child_count, new_child_count, tostring(new_child_count > child_count)))
+
+  return new_child_count > child_count
 end
 
 --- Copy an FX into this container.
