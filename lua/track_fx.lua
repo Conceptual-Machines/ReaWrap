@@ -1025,7 +1025,8 @@ end
 
 --- Calculate the REAPER FX index for addressing a position inside a container.
 --- Handles both top-level and nested containers using REAPER's addressing scheme.
---- For nested containers, finds the container's position within its parent.
+--- For nested containers, uses container_count per REAPER docs:
+--- "This can be extended to sub-containers using TrackFX_GetNamedConfigParm with container_count"
 --- @within Container Methods
 --- @param container TrackFX The container FX object
 --- @param position number 0-based position within container
@@ -1038,39 +1039,46 @@ local function calc_container_dest_idx(container, position)
   local is_nested = container.pointer >= 0x2000000
 
   if is_nested then
-    -- For nested containers: find container's position within its parent
+    -- For nested containers: use container's own child_count (container_count)
+    local container_child_count = container:get_container_child_count()
+    local one_based_pos = position + 1
+
+    -- Get container's position within its parent using container_item.X
     local parent = container:get_parent_container()
     if not parent then
-      return nil -- Shouldn't happen, but safety check
+      return nil
     end
 
-    -- Find this container's index within parent
+    -- Find container's index in parent
     local container_idx_in_parent = nil
-    local parent_children = parent:get_container_children()
-    for i, child in ipairs(parent_children) do
-      if child.pointer == container.pointer then
-        container_idx_in_parent = i - 1 -- 0-based
+    local parent_child_count = parent:get_container_child_count()
+    for i = 0, parent_child_count - 1 do
+      local ok, child_id = r.TrackFX_GetNamedConfigParm(
+        parent.track.pointer,
+        parent.pointer,
+        "container_item." .. i
+      )
+      if ok and child_id and tonumber(child_id) == container.pointer then
+        container_idx_in_parent = i
         break
       end
     end
 
     if container_idx_in_parent == nil then
-      return nil -- Container not found in parent (shouldn't happen)
+      return nil
     end
 
-    -- Use parent's child_count in the formula (for nested containers)
-    local parent_child_count = parent:get_container_child_count()
-    local one_based_pos = position + 1
     local one_based_container = container_idx_in_parent + 1
 
-    -- For nested: use parent's encoded pointer + formula with parent's child_count
+    -- For nested: use container's child_count in formula
+    -- Formula: base + (1-based position) * (container_child_count + 1) + (1-based container index)
     if parent.pointer >= 0x2000000 then
-      -- Parent is also nested - use its pointer as base
-      return parent.pointer + one_based_pos * (parent_child_count + 1) + one_based_container
+      -- Parent is nested - use parent's encoded address as base
+      return parent.pointer + one_based_pos * (container_child_count + 1) + one_based_container
     else
-      -- Parent is top-level - use standard formula
+      -- Parent is top-level - use standard formula with container's child_count
       local fx_count = r.TrackFX_GetCount(container.track.pointer)
-      return 0x2000000 + one_based_pos * (fx_count + 1) + (parent.pointer + 1)
+      return 0x2000000 + one_based_pos * (container_child_count + 1) + (parent.pointer + 1)
     end
   else
     -- For top-level containers: use track FX count
