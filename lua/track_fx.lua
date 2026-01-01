@@ -1012,7 +1012,7 @@ function TrackFX:move_out_of_container(position)
   end
 
   local destination = container:get_parent_container()
-  
+
   if destination then
     -- Container is nested, move to its parent
     return destination:add_fx_to_container(self, position)

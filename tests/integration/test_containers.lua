@@ -252,7 +252,7 @@ TestRunner:add("TrackFX:add_fx_to_container works with nested containers (inside
     container1 = track:find_fx_by_guid(container1_guid)
     local success1 = container1:add_fx_to_container(fx1)
     TestRunner:assert(success1, "Should move FX into Container1")
-    
+
     -- Verify Container1 has the FX
     container1 = track:find_fx_by_guid(container1_guid)
     TestRunner:assert_equals(1, container1:get_container_child_count(), "Container1 should have 1 child")
@@ -278,7 +278,7 @@ TestRunner:add("TrackFX:add_fx_to_container works with nested containers (inside
     -- Verify parent chain: FX -> Container1 -> Container2
     local found_fx = track:find_fx_by_guid(fx1_guid)
     TestRunner:assert_not_nil(found_fx, "Should find FX")
-    
+
     local parent1 = found_fx:get_parent_container()
     TestRunner:assert_not_nil(parent1, "FX should have parent (Container1)")
     TestRunner:assert(parent1:get_guid() == container1_guid, "FX's parent should be Container1")
