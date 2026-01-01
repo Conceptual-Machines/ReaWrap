@@ -2,8 +2,14 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
-      <version name="0.3.0" author="Nomad Monad" time="2025-12-31T00:00:00Z">
-        <changelog><![CDATA[v0.3.0 (2025-12-31)
+      <version name="0.3.1" author="Nomad Monad" time="2026-01-01T00:00:00Z">
+        <changelog><![CDATA[v0.3.1 (2026-01-01)
+  * ReaImGui 0.9+ compatibility
+  * Deferred close pattern - Window:close() safe during on_draw
+  + Window:defer_action(fn) for post-frame actions
+  + Integration tests for Core and ImGui
+
+v0.3.0 (2025-12-31)
   + ImGui wrapper module with Context, Window, and Theme classes
   + Pre-built themes (Dark, Light, Reaper, HighContrast)
 
