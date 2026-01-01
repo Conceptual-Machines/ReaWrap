@@ -382,6 +382,32 @@ function Context:unindent(width)
 end
 
 --------------------------------------------------------------------------------
+-- ID Stack
+--------------------------------------------------------------------------------
+
+--- Push an ID onto the ID stack.
+-- Use to avoid ID conflicts when creating multiple widgets with same labels.
+-- @param id string|number ID to push
+function Context:push_id(id)
+    if type(id) == "number" then
+        r.ImGui_PushID(self.ctx, id)
+    else
+        r.ImGui_PushID(self.ctx, tostring(id))
+    end
+end
+
+--- Pop an ID from the ID stack.
+function Context:pop_id()
+    r.ImGui_PopID(self.ctx)
+end
+
+--- Set width for the next item.
+-- @param width number Width in pixels
+function Context:set_next_item_width(width)
+    r.ImGui_SetNextItemWidth(self.ctx, width)
+end
+
+--------------------------------------------------------------------------------
 -- Tables
 --------------------------------------------------------------------------------
 
