@@ -144,51 +144,165 @@ end
 
 ## ImGui Wrapper
 
-ReaWrap includes a clean OOP wrapper for ReaImGui that reduces boilerplate:
+ReaWrap includes a clean OOP wrapper for [ReaImGui](https://forum.cockos.com/showthread.php?t=250419) that reduces boilerplate and provides safer patterns.
+
+> **Requires:** ReaImGui extension (install via ReaPack)
+
+### Quick Start
 
 ```lua
-local Window = require("imgui.window")
-local Theme = require("imgui.theme")
+local window = require("imgui.window")
 
--- Define your window
-local MyWindow = Window:extend()
+window.Window.run({
+    title = "My Tool",
+    width = 400,
+    height = 300,
+    data = { counter = 0 },  -- Your state goes here
 
-function MyWindow:init()
-    self.title = "My Tool"
-    self.width = 400
-    self.height = 300
-    self.counter = 0
-end
+    on_draw = function(self, ctx)
+        ctx:text("Hello from ReaWrap!")
+        ctx:separator()
 
-function MyWindow:draw()
-    local ctx = self.ctx
-
-    -- Apply theme
-    Theme.Dark:apply(ctx)
-
-    -- Simple widgets with method chaining
-    ctx:text("Hello from ReaWrap!")
-    ctx:separator()
-
-    if ctx:button("Click Me") then
-        self.counter = self.counter + 1
-    end
-    ctx:same_line()
-    ctx:text("Count: " .. self.counter)
-
-    -- Disabled sections
-    ctx:with_disabled(self.counter == 0, function()
-        if ctx:button("Reset") then
-            self.counter = 0
+        if ctx:button("Click Me") then
+            self.data.counter = self.data.counter + 1
         end
-    end)
+        ctx:same_line()
+        ctx:text_fmt("Count: %d", self.data.counter)
 
-    Theme.Dark:pop(ctx)
+        ctx:spacing()
+        if ctx:button("Close") then
+            self:close()  -- Safe! Deferred until after frame
+        end
+    end,
+})
+```
+
+### Theming
+
+```lua
+local window = require("imgui.window")
+local theme = require("imgui.theme")
+
+window.Window.run({
+    title = "Themed Window",
+    on_draw = function(self, ctx)
+        -- Apply a built-in theme
+        theme.Dark:apply(ctx)
+
+        ctx:text("Dark themed content")
+        -- ... your UI ...
+
+        theme.Dark:unapply(ctx)
+    end,
+})
+```
+
+**Built-in themes:** `theme.Dark`, `theme.Light`, `theme.Reaper`, `theme.HighContrast`
+
+### Context Methods
+
+The `ctx` object wraps ReaImGui with cleaner method names:
+
+```lua
+-- Widgets
+ctx:text("Static text")
+ctx:text_fmt("Formatted: %d", value)
+ctx:text_wrapped("Long text that wraps...")
+local clicked = ctx:button("Click", width, height)
+local changed, new_val = ctx:checkbox("Enable", current_val)
+local changed, new_val = ctx:slider_int("Volume", current, min, max)
+local changed, new_val = ctx:slider_double("Pan", current, min, max)
+local changed, new_text = ctx:input_text("Name", current_text)
+local changed, new_val = ctx:combo("Select", current_idx, {"A", "B", "C"})
+
+-- Layout
+ctx:same_line()
+ctx:spacing()
+ctx:separator()
+ctx:indent(pixels)
+ctx:unindent(pixels)
+
+-- Groups & Trees
+ctx:begin_group() ... ctx:end_group()
+if ctx:tree_node("Section") then ... ctx:tree_pop() end
+if ctx:collapsing_header("Header") then ... end
+
+-- Tables
+if ctx:begin_table("mytable", 3) then
+    ctx:table_setup_column("Col1")
+    ctx:table_headers_row()
+    ctx:table_next_row()
+    ctx:table_next_column()
+    ctx:text("Cell")
+    ctx:end_table()
 end
 
--- Run the window
-MyWindow:run()
+-- Tabs
+if ctx:begin_tab_bar("tabs") then
+    if ctx:begin_tab_item("Tab 1") then ... ctx:end_tab_item() end
+    if ctx:begin_tab_item("Tab 2") then ... ctx:end_tab_item() end
+    ctx:end_tab_bar()
+end
+
+-- Style
+ctx:push_style_color(imgui.Col.Text(), 0xFF0000FF)  -- Red
+ctx:pop_style_color()
 ```
+
+### Deferred Actions
+
+When you need to perform actions after the frame completes (e.g., opening another window):
+
+```lua
+on_draw = function(self, ctx)
+    if ctx:button("Open Settings") then
+        self:defer_action(function()
+            -- This runs after the current frame
+            open_settings_window()
+        end)
+    end
+
+    if ctx:button("Close and Do Something") then
+        self:close()
+        self:defer_action(function()
+            -- Runs after window closes
+            reaper.ShowMessageBox("Goodbye!", "Info", 0)
+        end)
+    end
+end
+```
+
+### Modal Dialogs
+
+```lua
+local window = require("imgui.window")
+
+window.Modal.run({
+    title = "Confirm Delete",
+    width = 300,
+    height = 150,
+    data = { confirmed = false },
+
+    on_draw = function(self, ctx)
+        ctx:text("Are you sure you want to delete?")
+        ctx:spacing()
+
+        if ctx:button("Yes", 80) then
+            self.data.confirmed = true
+            self:close()
+        end
+        ctx:same_line()
+        if ctx:button("No", 80) then
+            self:close()
+        end
+    end,
+
+    on_close = function(self)
+        if self.data.confirmed then
+            -- Do the delete
+        end
+    end,
+})
 
 ## API Overview
 
@@ -204,10 +318,17 @@ MyWindow:run()
 | `take_fx` | Take FX parameters |
 | `pcm` | PCM source operations |
 | `audio_accessor` | Audio data access |
-| `imgui` | ImGui wrapper (Context, Window, Theme) |
 | `helpers` | Utility functions |
 | `constants` | REAPER API constants |
 | `version` | Version info |
+
+### ImGui Modules
+
+| Module | Description |
+|--------|-------------|
+| `imgui` | Core ImGui wrapper, context creation, flags |
+| `imgui.window` | `Window` and `Modal` classes for managing windows |
+| `imgui.theme` | Color utilities and built-in themes (Dark, Light, etc.) |
 
 ### Common Patterns
 
@@ -236,16 +357,26 @@ end
 
 ```
 ReaWrap/
-├── lua/              # Core modules
-│   ├── track.lua
-│   ├── track_fx.lua
-│   ├── item.lua
-│   ├── take.lua
-│   ├── project.lua
-│   ├── version.lua
-│   └── ...
-├── doc/              # Generated LDoc documentation
-├── tests/            # Test files
+├── lua/                    # Core modules
+│   ├── project.lua         # Project class
+│   ├── track.lua           # Track class
+│   ├── track_fx.lua        # TrackFX class (with container support)
+│   ├── item.lua            # Item class
+│   ├── take.lua            # Take class
+│   ├── take_fx.lua         # TakeFX class
+│   ├── pcm.lua             # PCM source class
+│   ├── audio_accessor.lua  # AudioAccessor class
+│   ├── helpers.lua         # Utility functions
+│   ├── constants.lua       # REAPER API constants
+│   ├── version.lua         # Version info
+│   └── imgui/              # ImGui wrapper
+│       ├── init.lua        # Core Context class
+│       ├── window.lua      # Window & Modal classes
+│       └── theme.lua       # Themes & color utilities
+├── doc/                    # Generated LDoc documentation
+├── tests/
+│   ├── unit/               # Unit tests (with mocks)
+│   └── integration/        # Integration tests (run in REAPER)
 ├── tools/
 │   └── modules_generator/  # Scrapes REAPER docs to generate modules
 ├── CHANGELOG.md

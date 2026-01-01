@@ -490,19 +490,26 @@ end
 --------------------------------------------------------------------------------
 
 -- Context
-function M.ImGui_CreateContext(name)
-    return { name = name, _mock = true }
+-- ImGui_CreateContext takes optional config_flags as second parameter
+function M.ImGui_CreateContext(name, config_flags)
+    return { name = name, config_flags = config_flags, _mock = true }
 end
 
-function M.ImGui_DestroyContext(ctx)
-end
+-- Note: ImGui_DestroyContext was removed in ReaImGui 0.8+
+-- Contexts are now garbage collected automatically
 
 function M.ImGui_GetVersion()
-    return "0.9.0-mock"
+    return "0.9.3-mock"
 end
 
-function M.ImGui_SetConfigFlags(ctx, flags)
-end
+-- Config flags constants
+function M.ImGui_ConfigFlags_None() return 0 end
+function M.ImGui_ConfigFlags_NavEnableKeyboard() return 1 end
+function M.ImGui_ConfigFlags_NoKeyboard() return 2 end
+function M.ImGui_ConfigFlags_NoMouse() return 4 end
+function M.ImGui_ConfigFlags_NoMouseCursorChange() return 8 end
+function M.ImGui_ConfigFlags_NoSavedSettings() return 16 end
+function M.ImGui_ConfigFlags_DockingEnable() return 32 end
 
 -- Window functions
 function M.ImGui_Begin(ctx, title, p_open, flags)

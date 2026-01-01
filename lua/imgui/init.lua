@@ -24,12 +24,19 @@ Context.__index = Context
 
 --- Create a new ImGui context wrapper.
 -- @param name string Context name (window title)
--- @param opts table|nil Optional settings {font_size, config_flags}
+-- @param opts table|nil Optional settings {config_flags}
 -- @return Context
 function Context:new(name, opts)
     opts = opts or {}
 
-    local ctx = r.ImGui_CreateContext(name)
+    -- Config flags are passed directly to CreateContext as optional second param
+    local ctx
+    if opts.config_flags then
+        ctx = r.ImGui_CreateContext(name, opts.config_flags)
+    else
+        ctx = r.ImGui_CreateContext(name)
+    end
+
     if not ctx then
         error("Failed to create ImGui context. Is ReaImGui installed?")
     end
@@ -41,20 +48,16 @@ function Context:new(name, opts)
         _style_stack = {},
     }, Context)
 
-    -- Apply config flags if provided
-    if opts.config_flags then
-        r.ImGui_SetConfigFlags(ctx, opts.config_flags)
-    end
-
     return self
 end
 
 --- Destroy the context.
+-- Note: In ReaImGui 0.8+, contexts are garbage collected automatically.
+-- This method just clears the reference to allow GC.
 function Context:destroy()
-    if self.ctx then
-        r.ImGui_DestroyContext(self.ctx)
-        self.ctx = nil
-    end
+    -- Contexts are garbage collected in modern ReaImGui
+    -- Just clear our reference
+    self.ctx = nil
 end
 
 --- Get the raw ImGui context pointer.

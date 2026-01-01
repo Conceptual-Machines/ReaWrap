@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `imgui.Window` - OOP window management with lifecycle callbacks
   - `imgui.Modal` - Modal dialog support
   - `Window.confirm()` / `Window.alert()` - Quick dialog helpers
+  - `Window:defer_action(fn)` - Queue actions to run after frame completes
   - `imgui.theme` - Theme system with pre-built themes
     - `theme.Dark`, `theme.Light`, `theme.Reaper`, `theme.HighContrast`
     - Color utilities: `rgba()`, `hex()`, `brighten()`, `with_alpha()`
@@ -20,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Flag constant shortcuts (`WindowFlags`, `ChildFlags`, `Cond`, `Col`, `Key`)
 - Comprehensive ImGui mock for unit testing
 - 33 new unit tests for ImGui wrapper
+- Integration tests for core classes and ImGui (`tests/integration/`)
+
+### Changed
+- **ImGui deferred close pattern** - `Window:close()` is now safe to call during `on_draw`
+  - Context destruction is deferred until after the frame completes
+  - Prevents "expected valid ImGui_Context*" errors
+- Updated for ReaImGui 0.9+ compatibility
+  - Config flags passed directly to `ImGui_CreateContext()`
+  - Contexts are garbage collected (no explicit destroy needed)
 
 ## [0.2.0] - 2025-12-31
 
