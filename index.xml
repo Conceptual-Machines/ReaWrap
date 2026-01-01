@@ -2,8 +2,13 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
-      <version name="0.3.2" author="Nomad Monad" time="2026-01-01T00:00:00Z">
-        <changelog><![CDATA[v0.3.2 (2026-01-01)
+      <version name="0.4.0" author="Nomad Monad" time="2026-01-01T00:00:00Z">
+        <changelog><![CDATA[v0.4.0 (2026-01-01)
+  + Plugins module - scan/search installed FX plugins
+  + PluginScanner class with format/manufacturer filtering
+  + Deduplication with format preferences (VST3 > VST > AU > JS)
+
+v0.3.2 (2026-01-01)
   + Context:push_id() / pop_id() - ID stack for widget conflicts
   + Context:set_next_item_width() - Set next widget width
 
@@ -28,6 +33,7 @@ v0.1.0 (2025-11-25)
         <source file="lua/helpers.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/helpers.lua</source>
         <source file="lua/item.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/item.lua</source>
         <source file="lua/pcm.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/pcm.lua</source>
+        <source file="lua/plugins.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/plugins.lua</source>
         <source file="lua/project.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/project.lua</source>
         <source file="lua/take.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/take.lua</source>
         <source file="lua/take_fx.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/main/lua/take_fx.lua</source>

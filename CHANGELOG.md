@@ -5,6 +5,21 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-01-01
+
+### Added
+- **Plugins module** (`lua/plugins.lua`)
+  - `Plugins.scan()` - Scan all installed FX using `EnumInstalledFX`
+  - `Plugins.iter_all()` - Iterate over all plugins
+  - `Plugins.iter_instruments()` - Iterate over instruments (VSTi, AUi, CLAPi)
+  - `Plugins.iter_effects()` - Iterate over effects
+  - `Plugins.iter_search(query)` - Search and iterate matching plugins
+  - `Plugins.find(name)` - Find plugin by exact name
+  - `PluginScanner` class with format/manufacturer filtering
+  - `PluginInfo` with parsed name, format, manufacturer, is_instrument
+  - Deduplication with format preferences (VST3 > VST > AU > JS)
+- Integration test for plugins module
+
 ## [0.3.2] - 2026-01-01
 
 ### Added
