@@ -2,8 +2,12 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
-      <version name="0.4.0" author="Nomad Monad" time="2026-01-01T00:00:00Z">
-        <changelog><![CDATA[v0.4.0 (2026-01-01)
+      <version name="0.4.1" author="Nomad Monad" time="2026-01-01T00:00:00Z">
+        <changelog><![CDATA[v0.4.1 (2026-01-01)
+  + ImGui TreeNodeFlags constants
+  + ImGui InputTextFlags constants
+
+v0.4.0 (2026-01-01)
   + Plugins module - scan/search installed FX plugins
   + PluginScanner class with format/manufacturer filtering
   + Deduplication with format preferences (VST3 > VST > AU > JS)
