@@ -1,14 +1,23 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.3.0
+-- @version 0.4.1
 -- @changelog
---   v0.3.0 (2024-12-31)
+--   v0.4.1 (2026-01-01)
+--     + ImGui TreeNodeFlags and InputTextFlags
+--   v0.4.0 (2026-01-01)
+--     + Plugins module for scanning/searching installed FX
+--   v0.3.2 (2026-01-01)
+--     + ImGui ID stack methods and set_next_item_width
+--   v0.3.1 (2026-01-01)
+--     + defer_action() for safe post-frame actions
+--     + Integration tests
+--   v0.3.0 (2025-12-31)
 --     + ImGui wrapper module with Context, Window, and Theme classes
 --     + Pre-built themes (Dark, Light, Reaper, HighContrast)
---   v0.2.0 (2024-12-31)
+--   v0.2.0 (2025-12-31)
 --     + Container API support for REAPER 7 FX Containers
 --     + Version module
---   v0.1.0 (2024-11-25)
+--   v0.1.0 (2025-11-25)
 --     + Initial release
 -- @provides
 --   [nomain] lua/audio_accessor.lua
@@ -16,6 +25,7 @@
 --   [nomain] lua/helpers.lua
 --   [nomain] lua/item.lua
 --   [nomain] lua/pcm.lua
+--   [nomain] lua/plugins.lua
 --   [nomain] lua/project.lua
 --   [nomain] lua/take.lua
 --   [nomain] lua/take_fx.lua
