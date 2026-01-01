@@ -709,6 +709,33 @@ function Context:is_key_pressed(key)
     return r.ImGui_IsKeyPressed(self.ctx, key)
 end
 
+--- Get current modifier key flags.
+-- @return number Bitmask of modifier keys
+function Context:get_key_mods()
+    return r.ImGui_GetKeyMods(self.ctx)
+end
+
+--- Check if shift modifier is held.
+-- @return boolean
+function Context:is_shift_down()
+    local mods = r.ImGui_GetKeyMods(self.ctx)
+    return (mods & r.ImGui_Mod_Shift()) ~= 0
+end
+
+--- Check if ctrl/cmd modifier is held.
+-- @return boolean
+function Context:is_ctrl_down()
+    local mods = r.ImGui_GetKeyMods(self.ctx)
+    return (mods & r.ImGui_Mod_Ctrl()) ~= 0
+end
+
+--- Check if alt modifier is held.
+-- @return boolean
+function Context:is_alt_down()
+    local mods = r.ImGui_GetKeyMods(self.ctx)
+    return (mods & r.ImGui_Mod_Alt()) ~= 0
+end
+
 --------------------------------------------------------------------------------
 -- Disabled State
 --------------------------------------------------------------------------------
