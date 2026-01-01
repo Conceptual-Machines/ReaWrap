@@ -1,7 +1,14 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.4.1
+-- @version 0.5.0
 -- @changelog
+--   v0.5.0 (2026-01-01)
+--     + Track:find_fx_by_guid() - find FX by stable GUID
+--     + Track:add_fx_to_new_container() - create container and move FX into it
+--     + TrackFX:delete() - delete FX from track
+--     + TrackFX:move_to_container() - move FX into container
+--     + Fixed container addressing formula for add_fx_to_container
+--     + Improved create_container() with position parameter
 --   v0.4.1 (2026-01-01)
 --     + ImGui TreeNodeFlags and InputTextFlags
 --   v0.4.0 (2026-01-01)

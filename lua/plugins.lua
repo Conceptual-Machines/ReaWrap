@@ -116,16 +116,19 @@ local function parse_plugin_name(full_name)
         local paren_content = rest:sub(paren_start + 1, paren_end - 1)
         local paren_lower = paren_content:lower()
 
-        -- Check if this is a bitness marker
+        -- Check if this is a bitness marker or numeric value (buffer sizes, etc)
         local is_bitness = paren_lower == "x64" or paren_lower == "x86"
             or paren_lower == "64bit" or paren_lower == "32bit"
             or paren_lower == "64-bit" or paren_lower == "32-bit"
+        local is_numeric = paren_content:match("^%d+$") ~= nil
+            or paren_content:match("^%d+ samples?$") ~= nil
+            or paren_content:match("^%d+ch$") ~= nil
 
         -- Extract name (everything before opening paren, trimmed)
         info.name = rest:sub(1, paren_start - 1):gsub("%s+$", "")
 
-        -- Set manufacturer if not a bitness marker
-        if not is_bitness and paren_content ~= "" then
+        -- Set manufacturer if not a bitness marker or numeric value
+        if not is_bitness and not is_numeric and paren_content ~= "" then
           info.manufacturer = paren_content
         end
       else

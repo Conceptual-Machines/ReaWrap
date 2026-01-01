@@ -41,6 +41,13 @@ function TrackFX:__tostring()
   return string.format("<TrackFX name=%s>", self:get_name())
 end
 
+--- Delete this FX from the track.
+--- @within ReaWrap Custom Methods
+--- @return boolean Success
+function TrackFX:delete()
+  return r.TrackFX_Delete(self.track.pointer, self.pointer)
+end
+
 --- Get param values from TrackFX.
 --- @within ReaWrap Custom Methods
 --- @return table array<Envelope>
@@ -986,26 +993,52 @@ function TrackFX:set_container_output_pins(pins)
   )
 end
 
+--- Move this FX into a container.
+--- @within Container Methods
+--- @param container TrackFX Container to move this FX into
+--- @param position number|nil Position within container (nil = end)
+--- @return boolean Success
+function TrackFX:move_to_container(container, position)
+  return container:add_fx_to_container(self, position)
+end
+
+--- Calculate the REAPER FX index for addressing a position inside a container.
+--- REAPER formula: 0x2000000 + (1-based position) * (FX_count + 1) + (1-based container index)
+--- @within Container Methods
+--- @param container_idx number 0-based container FX index
+--- @param position number 0-based position within container
+--- @param fx_count number Total FX count on track
+--- @return number The encoded destination index
+local function calc_container_dest_idx(container_idx, position, fx_count)
+  local one_based_pos = position + 1
+  local one_based_container = container_idx + 1
+  return 0x2000000 + one_based_pos * (fx_count + 1) + one_based_container
+end
+
 --- Move an FX into this container.
 --- @within Container Methods
 --- @param fx TrackFX FX to move into this container
---- @param position number|nil Position within container (nil = end)
+--- @param position number|nil 0-based position within container (nil = end)
 --- @return boolean Success
 function TrackFX:add_fx_to_container(fx, position)
   if not self:is_container() then
     return false
   end
+
   local child_count = self:get_container_child_count()
   local dest_pos = position or child_count
-  -- Container destination format: container_idx + 0x2000000 + position
-  local dest_idx = self.pointer + 0x2000000 + dest_pos
-  return r.TrackFX_CopyToTrack(
+  local fx_count = r.TrackFX_GetCount(self.track.pointer)
+  local dest_idx = calc_container_dest_idx(self.pointer, dest_pos, fx_count)
+
+  r.TrackFX_CopyToTrack(
     fx.track.pointer,
     fx.pointer,
     self.track.pointer,
     dest_idx,
     true -- move
   )
+
+  return self:get_container_child_count() > child_count
 end
 
 --- Copy an FX into this container.
