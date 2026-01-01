@@ -469,6 +469,15 @@ function Context:tree_node(label, flags)
     return r.ImGui_TreeNode(self.ctx, label, flags)
 end
 
+--- Create a tree node with extended options.
+-- @param label string
+-- @param flags number|nil Tree node flags
+-- @return boolean True if open
+function Context:tree_node_ex(label, flags)
+    flags = flags or 0
+    return r.ImGui_TreeNodeEx(self.ctx, label, flags)
+end
+
 --- Pop a tree node.
 function Context:tree_pop()
     r.ImGui_TreePop(self.ctx)

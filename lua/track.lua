@@ -129,6 +129,19 @@ function Track:has_track_fx()
   return self:get_track_fx_count() > 0
 end
 
+--- Find a TrackFX by its GUID.
+--- @within ReaWrap Custom Methods
+--- @param guid string The GUID to search for
+--- @return TrackFX|nil
+function Track:find_fx_by_guid(guid)
+  for fx in self:iter_track_fx_chain() do
+    if fx:get_guid() == guid then
+      return fx
+    end
+  end
+  return nil
+end
+
 --- Add Media Item To Track. Wraps AddMediaItemToTrack.
 -- creates a new media item.
 --- @within ReaScript Wrapped Methods
@@ -1518,12 +1531,57 @@ end
 --- @return TrackFX|nil Container FX object, or nil on failure
 function Track:create_container(position)
   local TrackFX = require("track_fx")
-  local insert_pos = position or -1
-  local idx = r.TrackFX_AddByName(self.pointer, "Container", false, insert_pos)
+  -- TrackFX_AddByName instantiate parameter:
+  -- -1 = add at end, -1000-idx = add at position idx, 0 = query only
+  local instantiate
+  if position then
+    instantiate = -1000 - position
+  else
+    instantiate = -1
+  end
+  local idx = r.TrackFX_AddByName(self.pointer, "Container", false, instantiate)
   if idx >= 0 then
     return TrackFX:new(self, idx)
   end
   return nil
+end
+
+--- Move a list of FX into a new container.
+--- Creates a container at the position of the lowest-indexed FX and moves all
+--- specified FX into it. Uses GUIDs internally to handle index shifting.
+--- @within Container Methods
+--- @param fx_list table Array of TrackFX objects to move into the container
+--- @return TrackFX|nil Container FX object, or nil on failure
+function Track:add_fx_to_new_container(fx_list)
+  if not fx_list or #fx_list == 0 then
+    return nil
+  end
+
+  -- Collect GUIDs and find lowest index (GUIDs are stable, indices shift)
+  local guids = {}
+  local lowest_idx = math.huge
+  for fx in helpers.iter(fx_list) do
+    guids[#guids + 1] = fx:get_guid()
+    if fx.pointer < lowest_idx then
+      lowest_idx = fx.pointer
+    end
+  end
+
+  -- Create container at the lowest selected position
+  local container = self:create_container(lowest_idx)
+  if not container then
+    return nil
+  end
+
+  -- Re-find each FX by GUID (indices have shifted) and move to container
+  for guid in helpers.iter(guids) do
+    local fx = self:find_fx_by_guid(guid)
+    if fx then
+      container:add_fx_to_container(fx)
+    end
+  end
+
+  return container
 end
 
 --- Get all FX on this track as a flat list (including nested container children).
