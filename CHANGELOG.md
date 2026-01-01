@@ -5,6 +5,20 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-01-01
+
+### Added
+- `Window:defer_action(fn)` - Queue actions to run after frame completes
+- Integration tests for core classes and ImGui (`tests/integration/`)
+
+### Changed
+- **ImGui deferred close pattern** - `Window:close()` is now safe to call during `on_draw`
+  - Context destruction is deferred until after the frame completes
+  - Prevents "expected valid ImGui_Context*" errors
+- Updated for ReaImGui 0.9+ compatibility
+  - Config flags passed directly to `ImGui_CreateContext()`
+  - Contexts are garbage collected (no explicit destroy needed)
+
 ## [0.3.0] - 2025-12-31
 
 ### Added

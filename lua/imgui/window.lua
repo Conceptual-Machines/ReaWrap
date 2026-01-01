@@ -52,6 +52,8 @@ function Window:new(opts)
         _ctx = nil,
         _is_open = false,
         _first_frame = true,
+        _pending_close = false,  -- Deferred close flag
+        _deferred_actions = {},  -- Queue of actions to run after frame
 
         -- User data storage
         data = opts.data or {},
@@ -94,12 +96,24 @@ function Window:open(run_loop)
 end
 
 --- Close the window.
+-- When called during on_draw, the actual close is deferred until after the frame.
 function Window:close()
     if not self._is_open then
         return
     end
 
+    -- Mark for deferred close (safe to call during on_draw)
+    self._pending_close = true
+end
+
+--- Internal: Actually close the window (called after frame completes).
+function Window:_do_close()
+    if not self._is_open then
+        return
+    end
+
     self._is_open = false
+    self._pending_close = false
 
     -- Callback
     if self.on_close then
@@ -111,6 +125,13 @@ function Window:close()
         self._ctx:destroy()
         self._ctx = nil
     end
+end
+
+--- Queue an action to run after the current frame completes.
+-- Useful for actions that shouldn't happen during on_draw.
+-- @param action function The function to call after the frame
+function Window:defer_action(action)
+    table.insert(self._deferred_actions, action)
 end
 
 --- Check if window is open.
@@ -158,10 +179,28 @@ function Window:render_frame()
         ctx:end_window()
     end
 
-    -- Handle close
+    -- Handle close button (X)
     if not open then
-        self:close()
+        self._pending_close = true
+    end
+
+    -- Capture deferred actions before potentially closing
+    local actions = self._deferred_actions
+    self._deferred_actions = {}
+
+    -- Handle pending close (after frame drawing is complete)
+    if self._pending_close then
+        self:_do_close()
+        -- Run deferred actions after close
+        for _, action in ipairs(actions) do
+            action()
+        end
         return false
+    end
+
+    -- Run deferred actions if not closing
+    for _, action in ipairs(actions) do
+        action()
     end
 
     return true

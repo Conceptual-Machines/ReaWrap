@@ -24,12 +24,19 @@ Context.__index = Context
 
 --- Create a new ImGui context wrapper.
 -- @param name string Context name (window title)
--- @param opts table|nil Optional settings {font_size, config_flags}
+-- @param opts table|nil Optional settings {config_flags}
 -- @return Context
 function Context:new(name, opts)
     opts = opts or {}
 
-    local ctx = r.ImGui_CreateContext(name)
+    -- Config flags are passed directly to CreateContext as optional second param
+    local ctx
+    if opts.config_flags then
+        ctx = r.ImGui_CreateContext(name, opts.config_flags)
+    else
+        ctx = r.ImGui_CreateContext(name)
+    end
+
     if not ctx then
         error("Failed to create ImGui context. Is ReaImGui installed?")
     end
@@ -41,20 +48,16 @@ function Context:new(name, opts)
         _style_stack = {},
     }, Context)
 
-    -- Apply config flags if provided
-    if opts.config_flags then
-        r.ImGui_SetConfigFlags(ctx, opts.config_flags)
-    end
-
     return self
 end
 
 --- Destroy the context.
+-- Note: In ReaImGui 0.8+, contexts are garbage collected automatically.
+-- This method just clears the reference to allow GC.
 function Context:destroy()
-    if self.ctx then
-        r.ImGui_DestroyContext(self.ctx)
-        self.ctx = nil
-    end
+    -- Contexts are garbage collected in modern ReaImGui
+    -- Just clear our reference
+    self.ctx = nil
 end
 
 --- Get the raw ImGui context pointer.
@@ -116,7 +119,7 @@ end
 function Context:begin_child(id, width, height, flags)
     width = width or 0
     height = height or 0
-    flags = flags or r.ImGui_ChildFlags_None()
+    flags = flags or 0  -- Safe default (no flags)
     return r.ImGui_BeginChild(self.ctx, id, width, height, flags)
 end
 
@@ -822,10 +825,21 @@ M.WindowFlags = {
     AlwaysAutoResize = function() return r.ImGui_WindowFlags_AlwaysAutoResize() end,
 }
 
+-- ChildFlags (newer ReaImGui versions - provide safe fallbacks)
+local function safe_flag(fn, fallback)
+    return function()
+        if fn then
+            local ok, val = pcall(fn)
+            if ok then return val end
+        end
+        return fallback or 0
+    end
+end
+
 M.ChildFlags = {
-    None = function() return r.ImGui_ChildFlags_None() end,
-    Border = function() return r.ImGui_ChildFlags_Border() end,
-    AlwaysAutoResize = function() return r.ImGui_ChildFlags_AlwaysAutoResize() end,
+    None = safe_flag(r.ImGui_ChildFlags_None, 0),
+    Border = safe_flag(r.ImGui_ChildFlags_Border, 1),  -- 1 = border in older API
+    AlwaysAutoResize = safe_flag(r.ImGui_ChildFlags_AlwaysAutoResize, 0),
 }
 
 M.Cond = {
