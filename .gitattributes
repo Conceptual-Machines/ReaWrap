@@ -1,0 +1,2 @@
+# Mark generated/vendored files so GitHub doesn't count them in language stats
+tools/modules_generator/HTML/** linguist-vendored
