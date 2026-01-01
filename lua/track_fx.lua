@@ -1049,17 +1049,12 @@ local function calc_container_dest_idx(container, position)
       return nil
     end
 
-    -- Find container's index in parent
+    -- Find container's index in parent using ReaWrap method
     local container_idx_in_parent = nil
-    local parent_child_count = parent:get_container_child_count()
-    for i = 0, parent_child_count - 1 do
-      local ok, child_id = r.TrackFX_GetNamedConfigParm(
-        parent.track.pointer,
-        parent.pointer,
-        "container_item." .. i
-      )
-      if ok and child_id and tonumber(child_id) == container.pointer then
-        container_idx_in_parent = i
+    local parent_children = parent:get_container_children()
+    for i, child in ipairs(parent_children) do
+      if child.pointer == container.pointer then
+        container_idx_in_parent = i - 1 -- 0-based
         break
       end
     end
@@ -1108,7 +1103,7 @@ function TrackFX:add_fx_to_container(fx, position)
     return false
   end
 
-  r.TrackFX_CopyToTrack(
+  local success = r.TrackFX_CopyToTrack(
     fx.track.pointer,
     fx.pointer,
     self.track.pointer,
@@ -1116,6 +1111,11 @@ function TrackFX:add_fx_to_container(fx, position)
     true -- move
   )
 
+  if not success then
+    return false
+  end
+
+  -- Verify the move succeeded by checking child count
   return self:get_container_child_count() > child_count
 end
 
