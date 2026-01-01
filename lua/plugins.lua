@@ -1,7 +1,6 @@
 --- Provide utilities for scanning and searching installed FX plugins.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.3.2
 -- @module plugins
 
 local r = reaper

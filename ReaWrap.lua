@@ -1,7 +1,12 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.5.0
+-- @version 0.6.0
 -- @changelog
+--   v0.6.0 (2026-01-01)
+--     + ImGui drag-drop API (begin/end source/target, payload methods)
+--     + ImGui selectable size parameters
+--     + ImGui modifier key detection (is_shift_down, is_ctrl_down, is_alt_down)
+--     + TrackFX:move_out_of_container() - move FX back to main chain
 --   v0.5.0 (2026-01-01)
 --     + Track:find_fx_by_guid() - find FX by stable GUID
 --     + Track:add_fx_to_new_container() - create container and move FX into it

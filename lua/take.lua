@@ -1,7 +1,6 @@
 --- Provide implementation for Take functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module take
 
 local r = reaper

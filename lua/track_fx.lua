@@ -1,7 +1,6 @@
 --- Provide implementation for TrackFX functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module track_fx
 
 local r = reaper
@@ -1000,6 +999,28 @@ end
 --- @return boolean Success
 function TrackFX:move_to_container(container, position)
   return container:add_fx_to_container(self, position)
+end
+
+--- Move this FX out of its container to the main FX chain.
+--- @within Container Methods
+--- @param position number|nil 0-based position in main chain (nil = end)
+--- @return boolean Success
+function TrackFX:move_out_of_container(position)
+  local parent = self:get_parent_container()
+  if not parent then
+    return false -- Already in main chain
+  end
+
+  local fx_count = r.TrackFX_GetCount(self.track.pointer)
+  local dest_idx = position or fx_count
+
+  return r.TrackFX_CopyToTrack(
+    self.track.pointer,
+    self.pointer,
+    self.track.pointer,
+    dest_idx,
+    true -- move
+  )
 end
 
 --- Calculate the REAPER FX index for addressing a position inside a container.

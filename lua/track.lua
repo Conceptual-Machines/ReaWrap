@@ -1,7 +1,6 @@
 --- Provide implementation for Track functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module track
 
 local r = reaper
@@ -134,9 +133,10 @@ end
 --- @param guid string The GUID to search for
 --- @return TrackFX|nil
 function Track:find_fx_by_guid(guid)
-  for fx in self:iter_track_fx_chain() do
-    if fx:get_guid() == guid then
-      return fx
+  -- Search all FX including nested ones inside containers
+  for fx_info in self:iter_all_fx_flat() do
+    if fx_info.fx:get_guid() == guid then
+      return fx_info.fx
     end
   end
   return nil

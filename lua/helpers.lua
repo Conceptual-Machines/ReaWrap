@@ -1,7 +1,6 @@
 --- Contains helper functions for common tasks.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module helpers
 
 local r = reaper

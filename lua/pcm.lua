@@ -1,7 +1,6 @@
 --- Provide implementation for PCM functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module pcm
 
 local r = reaper
