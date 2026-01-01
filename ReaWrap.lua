@@ -1,7 +1,9 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.6.0
+-- @version 0.6.1
 -- @changelog
+--   v0.6.1 (2026-01-01)
+--     * Fixed begin_child() to support window_flags parameter for horizontal scrollbar
 --   v0.6.0 (2026-01-01)
 --     + ImGui drag-drop API (begin/end source/target, payload methods)
 --     + ImGui selectable size parameters
