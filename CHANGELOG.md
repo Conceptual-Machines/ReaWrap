@@ -5,6 +5,36 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-01-01
+
+### Fixed
+- `Context:begin_child()` now supports `window_flags` parameter for horizontal scrollbar
+
+## [0.6.0] - 2026-01-01
+
+### Added
+- **ImGui drag-drop API**
+  - `Context:begin_drag_drop_source()` / `end_drag_drop_source()`
+  - `Context:begin_drag_drop_target()` / `end_drag_drop_target()`
+  - `Context:set_drag_drop_payload()` / `accept_drag_drop_payload()` / `get_drag_drop_payload()`
+- **ImGui selectable size parameters** - `Context:selectable()` now accepts `size_x` and `size_y`
+- **ImGui modifier key detection**
+  - `Context:is_shift_down()` / `is_ctrl_down()` / `is_alt_down()`
+  - `Context:get_key_mods()`
+- `TrackFX:move_out_of_container()` - Move FX back to main chain
+
+## [0.5.0] - 2026-01-01
+
+### Added
+- `Track:find_fx_by_guid()` - Find FX by stable GUID (recursive search)
+- `Track:add_fx_to_new_container()` - Create container and move FX into it
+- `TrackFX:delete()` - Delete FX from track
+- `TrackFX:move_to_container()` - Move FX into container
+
+### Fixed
+- Container addressing formula for `add_fx_to_container`
+- `Track:create_container()` with position parameter
+
 ## [0.4.1] - 2026-01-01
 
 ### Added
