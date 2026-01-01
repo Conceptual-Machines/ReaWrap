@@ -1,7 +1,6 @@
 --- Provide implementation for TakeFX functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module take_fx
 
 local r = reaper

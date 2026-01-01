@@ -1,7 +1,6 @@
 --- Provide implementation for Project functions.
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.2.0
 -- @module project
 
 local r = reaper

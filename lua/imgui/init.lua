@@ -3,7 +3,6 @@
 -- @module imgui
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.3.0
 
 local r = reaper
 
@@ -933,6 +932,14 @@ M.Key = {
     Ctrl = function() return r.ImGui_Mod_Ctrl() end,
     Alt = function() return r.ImGui_Mod_Alt() end,
     Super = function() return r.ImGui_Mod_Super() end,
+}
+
+M.ConfigFlags = {
+    None = safe_flag(r.ImGui_ConfigFlags_None, 0),
+    NavEnableKeyboard = safe_flag(r.ImGui_ConfigFlags_NavEnableKeyboard, 0),
+    NavEnableGamepad = safe_flag(r.ImGui_ConfigFlags_NavEnableGamepad, 0),
+    NoSavedSettings = safe_flag(r.ImGui_ConfigFlags_NoSavedSettings, 0),
+    DockingEnable = safe_flag(r.ImGui_ConfigFlags_DockingEnable, 0),
 }
 
 return M

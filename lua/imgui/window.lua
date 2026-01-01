@@ -3,7 +3,6 @@
 -- @module imgui.window
 -- @author Nomad Monad
 -- @license MIT
--- @release 0.3.0
 
 local r = reaper
 local imgui = require("imgui")
@@ -26,6 +25,7 @@ Window.__index = Window
 -- @param opts.y number|nil Initial Y position
 -- @param opts.flags number|nil Window flags
 -- @param opts.closeable boolean|nil Whether window can be closed (default true)
+-- @param opts.dockable boolean|nil Whether window can be docked (default false)
 -- @param opts.on_open function|nil Called when window opens
 -- @param opts.on_close function|nil Called when window closes
 -- @param opts.on_draw function Required draw callback (receives gui context)
@@ -42,6 +42,7 @@ function Window:new(opts)
         y = opts.y,
         flags = opts.flags or r.ImGui_WindowFlags_None(),
         closeable = opts.closeable ~= false,
+        dockable = opts.dockable or false,
 
         -- Callbacks
         on_open = opts.on_open,
@@ -79,8 +80,12 @@ function Window:open(run_loop)
         return
     end
 
-    -- Create context
-    self._ctx = imgui.create_context(self.title)
+    -- Create context with optional docking support
+    local ctx_opts = {}
+    if self.dockable and r.ImGui_ConfigFlags_DockingEnable then
+        ctx_opts.config_flags = r.ImGui_ConfigFlags_DockingEnable()
+    end
+    self._ctx = imgui.create_context(self.title, ctx_opts)
     self._is_open = true
     self._first_frame = true
 
