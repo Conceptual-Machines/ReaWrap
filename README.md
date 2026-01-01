@@ -49,6 +49,8 @@ track:set_track_ui_volume(-3.0)
 - **Object-Oriented API** - Work with `Track`, `Item`, `Take`, `TrackFX`, `TakeFX`, `Project` objects
 - **Iterators** - `track:iter_items()`, `project:iter_tracks()`, `fx:iter_param_names()`
 - **Container Support (Reaper 7+)** - Full API for FX containers
+- **Plugin Scanner** - Scan, search, and filter installed FX by format/manufacturer
+- **ImGui Wrapper** - Clean OOP interface for ReaImGui with themes
 - **Constants** - Named constants for all REAPER enums
 - **Documentation** - LDoc-generated API docs
 
@@ -139,6 +141,61 @@ local all_fx = fx:get_all_fx_flat_recursive()
 for _, entry in ipairs(all_fx) do
     local indent = string.rep("  ", entry.depth)
     print(indent .. entry.name)
+end
+```
+
+## Plugins Scanner
+
+ReaWrap includes a plugin scanner for discovering and searching installed FX:
+
+```lua
+local Plugins = require("plugins")
+
+-- Scan all installed plugins
+Plugins.scan()
+
+-- Iterate over all plugins
+for plugin in Plugins.iter_all() do
+    print(plugin.name, plugin.format, plugin.manufacturer)
+end
+
+-- Filter by type
+for instrument in Plugins.iter_instruments() do
+    print("Instrument: " .. instrument.name)
+end
+
+for effect in Plugins.iter_effects() do
+    print("Effect: " .. effect.name)
+end
+
+-- Search plugins
+for plugin in Plugins.iter_search("Serum") do
+    print(plugin.full_name)
+end
+
+-- Find exact match
+local serum = Plugins.find("Serum")
+if serum then
+    print(serum.format)  -- "VST3"
+end
+
+-- Advanced: Use PluginScanner directly for more control
+local scanner = Plugins.PluginScanner:new()
+scanner:scan()
+
+-- Filter by format
+for plugin in scanner:iter_by_format("VST3") do
+    print(plugin.name)
+end
+
+-- Filter by manufacturer
+for plugin in scanner:iter_by_manufacturer("Xfer Records") do
+    print(plugin.name)
+end
+
+-- Deduplicate (prefer VST3 > VST > AU > JS)
+for plugin in scanner:iter_deduplicated() do
+    print(plugin.name, plugin.format)
 end
 ```
 
@@ -318,6 +375,7 @@ window.Modal.run({
 | `take_fx` | Take FX parameters |
 | `pcm` | PCM source operations |
 | `audio_accessor` | Audio data access |
+| `plugins` | Scan and search installed FX plugins |
 | `helpers` | Utility functions |
 | `constants` | REAPER API constants |
 | `version` | Version info |
@@ -366,6 +424,7 @@ ReaWrap/
 │   ├── take_fx.lua         # TakeFX class
 │   ├── pcm.lua             # PCM source class
 │   ├── audio_accessor.lua  # AudioAccessor class
+│   ├── plugins.lua         # Plugin scanner and search
 │   ├── helpers.lua         # Utility functions
 │   ├── constants.lua       # REAPER API constants
 │   ├── version.lua         # Version info
