@@ -5,6 +5,19 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.2] - 2026-01-01
+
+### Fixed
+- `TrackFX:add_fx_to_container()` now correctly handles nested containers
+  - Fixed `calc_container_dest_idx()` to find container's position within parent
+  - Properly calculates destination index for nested container hierarchies
+
+### Added
+- Integration tests for container operations (`tests/integration/test_containers.lua`)
+  - Tests for top-level and nested container creation
+  - Tests for FX movement in and out of containers
+  - Tests for `Track:add_fx_to_new_container()` with nested structures
+
 ## [0.6.1] - 2026-01-01
 
 ### Fixed
