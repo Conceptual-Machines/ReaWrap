@@ -2,7 +2,7 @@
 project = 'ReaWrap'
 title = 'ReaWrap API Documentation'
 description = "Object-Oriented Wrapper for ReaScript Lua API"
-version = '0.6.2'
+version = '0.6.4'
 author = 'Nomad Monad'
 
 -- Source files
