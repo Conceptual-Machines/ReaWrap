@@ -292,4 +292,221 @@ function M.extend(base, name, overrides)
     return Theme:new(name, colors)
 end
 
+--- Convert REAPER color format (BGR) to RGBA format.
+-- REAPER returns colors as BGR (blue in low byte, red in high byte).
+-- @param reaper_color number REAPER color value
+-- @return number RGBA color value
+local function reaper_to_rgba(reaper_color)
+    if reaper_color < 0 then
+        return nil
+    end
+    -- REAPER color: BGR format (blue, green, red)
+    local b = (reaper_color >> 0) & 0xFF
+    local g = (reaper_color >> 8) & 0xFF
+    local r = (reaper_color >> 16) & 0xFF
+    local a = 255
+    return M.rgba(r, g, b, a)
+end
+
+--- Get a REAPER theme color.
+-- @param ini_key string Theme color key (e.g., "col_main_bg")
+-- @param fallback number|nil Fallback color if theme color not found
+-- @return number|nil RGBA color or nil
+local function get_reaper_theme_color(ini_key, fallback)
+    local color = r.GetThemeColor(ini_key, 0)
+    if color >= 0 then
+        return reaper_to_rgba(color)
+    end
+    return fallback
+end
+
+--- Calculate luminance of a color (0-1, higher = brighter).
+-- @param color number RGBA color
+-- @return number Luminance value
+local function get_luminance(color)
+    local r = ((color >> 24) & 0xFF) / 255.0
+    local g = ((color >> 16) & 0xFF) / 255.0
+    local b = ((color >> 8) & 0xFF) / 255.0
+    -- Relative luminance formula
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+end
+
+--- Ensure minimum contrast between text and background.
+-- @param text_color number Text color
+-- @param bg_color number Background color
+-- @param min_contrast number Minimum contrast ratio (default 4.5 for WCAG AA)
+-- @return number Adjusted text color
+local function ensure_contrast(text_color, bg_color, min_contrast)
+    min_contrast = min_contrast or 4.5
+    local text_lum = get_luminance(text_color)
+    local bg_lum = get_luminance(bg_color)
+
+    -- Calculate current contrast
+    local lighter = math.max(text_lum, bg_lum)
+    local darker = math.min(text_lum, bg_lum)
+    local contrast = (lighter + 0.05) / (darker + 0.05)
+
+    if contrast >= min_contrast then
+        return text_color
+    end
+
+    -- Need to adjust: if text is darker than bg, make it lighter; if lighter, make it darker
+    if text_lum < bg_lum then
+        -- Text is darker, brighten it
+        local target_lum = (bg_lum + 0.05) * min_contrast - 0.05
+        target_lum = math.min(1.0, target_lum)
+        local factor = target_lum / (text_lum + 0.0001)  -- Avoid division by zero
+        return M.brighten(text_color, factor)
+    else
+        -- Text is lighter, darken it (shouldn't happen often)
+        local target_lum = (bg_lum + 0.05) / min_contrast - 0.05
+        target_lum = math.max(0.0, target_lum)
+        local factor = target_lum / (text_lum + 0.0001)
+        return M.brighten(text_color, factor)
+    end
+end
+
+--- Create a theme from REAPER's current theme colors.
+-- Reads colors from REAPER's theme and maps them to ImGui colors.
+-- @param name string Theme name (default: "REAPER Dynamic")
+-- @return Theme
+function M.from_reaper_theme(name)
+    name = name or "REAPER Dynamic"
+
+    -- Read REAPER theme colors - use actual theme colors
+    local bg = get_reaper_theme_color("col_main_bg", M.hex("#2B2B2B"))
+    local bg2 = get_reaper_theme_color("col_main_bg2", M.hex("#363636"))
+    local bg3 = get_reaper_theme_color("col_main_bg3", M.hex("#404040"))
+    local text = get_reaper_theme_color("col_main_text", M.hex("#E0E0E0"))
+    local text2 = get_reaper_theme_color("col_main_text2", M.hex("#707070"))
+    local edge = get_reaper_theme_color("col_main_edge", M.hex("#4A4A4A"))
+    local sel = get_reaper_theme_color("col_main_sel", M.hex("#5BA0D0"))
+
+    -- Only adjust if background is pure black or extremely dark (luminance < 0.02)
+    -- Otherwise, trust the REAPER theme
+    local bg_lum = get_luminance(bg)
+    if bg_lum < 0.02 then
+        -- Only brighten pure black slightly - keep it dark to match theme
+        bg = M.brighten(bg, 0.02 / (bg_lum + 0.0001))
+    end
+
+    local bg2_lum = get_luminance(bg2)
+    if bg2_lum < 0.02 then
+        bg2 = M.brighten(bg2, 0.02 / (bg2_lum + 0.0001))
+    end
+
+    local bg3_lum = get_luminance(bg3)
+    if bg3_lum < 0.02 then
+        bg3 = M.brighten(bg3, 0.02 / (bg3_lum + 0.0001))
+    end
+
+    -- Only fix text if it's clearly wrong (dark text on dark bg)
+    -- Otherwise use theme colors
+    local text_lum = get_luminance(text)
+    local bg_lum_final = get_luminance(bg)
+
+    -- If text is darker than background, that's wrong - fix it
+    if text_lum < bg_lum_final then
+        -- Text is darker than background - use light text
+        text = M.hex("#E0E0E0")  -- Light gray text
+    end
+    -- If text is very dark (luminance < 0.3), it's probably wrong
+    if text_lum < 0.3 then
+        text = M.hex("#E0E0E0")  -- Light gray text
+    end
+
+    local text2_lum = get_luminance(text2)
+    if text2_lum < bg_lum_final or text2_lum < 0.25 then
+        text2 = M.hex("#A0A0A0")  -- Medium gray for disabled text
+    end
+
+    -- Derive additional colors from base colors
+    local hovered = M.brighten(bg3, 1.2)
+    local active = M.brighten(bg3, 1.4)
+    local border = edge
+    local separator = edge
+
+    -- Create darker background for child windows (darker than main window)
+    local child_bg = M.brighten(bg, 0.7)  -- Make it 70% of brightness (darker)
+
+    -- Ensure borders are visible
+    if get_luminance(border) < 0.25 then
+        border = M.brighten(border, 0.25 / (get_luminance(border) + 0.0001))
+    end
+    separator = border
+
+    -- Ensure all text colors have good contrast on their backgrounds
+    local frame_text = ensure_contrast(text, bg3, 4.5)
+    local button_text = ensure_contrast(text, bg3, 4.5)
+
+    -- Final override: ALWAYS use light gray backgrounds for better visibility
+    -- Don't trust REAPER theme colors if they're too dark
+    local final_bg_lum = get_luminance(bg)
+    if final_bg_lum < 0.25 then
+        -- Force to a clearly visible light gray
+        bg = M.hex("#404040")  -- Light gray (clearly not black)
+    end
+
+    local final_bg2_lum = get_luminance(bg2)
+    if final_bg2_lum < 0.28 then
+        bg2 = M.hex("#4A4A4A")  -- Lighter gray
+    end
+
+    local final_bg3_lum = get_luminance(bg3)
+    if final_bg3_lum < 0.30 then
+        bg3 = M.hex("#545454")  -- Even lighter gray
+    end
+
+    -- Recalculate child_bg after bg adjustments
+    child_bg = M.brighten(bg, 0.7)  -- Darker than main window
+
+    local colors = {
+        Text = text,
+        TextDisabled = text2,
+        WindowBg = bg,  -- Main window background from REAPER theme
+        ChildBg = child_bg,  -- Child windows use darker bg for visual distinction
+        PopupBg = bg2,
+        Border = border,
+        BorderShadow = M.hex("#00000000"),
+        FrameBg = bg3,
+        FrameBgHovered = hovered,
+        FrameBgActive = active,
+        TitleBg = bg,  -- Title bar same as window
+        TitleBgActive = bg2,
+        TitleBgCollapsed = M.with_alpha(bg, 128),
+        MenuBarBg = bg2,
+        ScrollbarBg = bg,  -- Scrollbar background same as window
+        ScrollbarGrab = M.brighten(bg3, 1.3),
+        ScrollbarGrabHovered = M.brighten(bg3, 1.5),
+        ScrollbarGrabActive = M.brighten(bg3, 1.7),
+        CheckMark = sel,
+        SliderGrab = sel,
+        SliderGrabActive = M.brighten(sel, 1.3),
+        Button = bg3,
+        ButtonHovered = hovered,
+        ButtonActive = sel,
+        Header = bg3,
+        HeaderHovered = hovered,
+        HeaderActive = sel,
+        Separator = separator,
+        SeparatorHovered = M.brighten(separator, 1.2),
+        SeparatorActive = M.brighten(separator, 1.4),
+        ResizeGrip = bg3,
+        ResizeGripHovered = hovered,
+        ResizeGripActive = active,
+        Tab = bg3,
+        TabHovered = hovered,
+        TabSelected = bg3,
+        TabDimmed = M.brighten(bg, 0.9),
+        TabDimmedSelected = bg3,
+        TableHeaderBg = bg2,
+        TableBorderStrong = border,
+        TableBorderLight = M.brighten(border, 0.7),
+        TableRowBg = M.hex("#00000000"),
+        TableRowBgAlt = M.with_alpha(text, 6),
+    }
+
+    return Theme:new(name, colors)
+end
+
 return M
