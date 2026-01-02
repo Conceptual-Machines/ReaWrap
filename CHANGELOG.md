@@ -5,7 +5,16 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.2] - 2026-01-01
+## [0.6.4] - 2026-01-01
+
+### Added
+- `theme.from_reaper_theme()` function to dynamically generate ImGui themes from REAPER's current theme colors
+  - Reads `col_main_bg`, `col_main_text`, `col_main_edge`, and other theme colors via `GetThemeColor` API
+  - Ensures text colors are readable with automatic contrast adjustment
+  - Makes child windows darker than main window for visual distinction
+  - Converts REAPER's BGR color format to RGBA for ImGui
+
+## [0.6.3] - 2026-01-01
 
 ### Fixed
 - `TrackFX:add_fx_to_container()` now correctly handles nested containers
@@ -17,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tests for top-level and nested container creation
   - Tests for FX movement in and out of containers
   - Tests for `Track:add_fx_to_new_container()` with nested structures
+
+## [0.6.2] - Skipped
+
+*Note: Version 0.6.2 was skipped by mistake. The changes intended for 0.6.2 were released in 0.6.3.*
 
 ## [0.6.1] - 2026-01-01
 
