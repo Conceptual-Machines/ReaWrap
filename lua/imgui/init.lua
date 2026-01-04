@@ -443,6 +443,13 @@ function Context:table_next_column()
     return r.ImGui_TableNextColumn(self.ctx)
 end
 
+--- Set current table column index.
+-- @param column number Column index (0-based)
+-- @return boolean
+function Context:table_set_column_index(column)
+    return r.ImGui_TableSetColumnIndex(self.ctx, column)
+end
+
 --- Set up a table column.
 -- @param label string Column label
 -- @param flags number|nil Column flags
@@ -975,6 +982,23 @@ M.TreeNodeFlags = {
     SpanAvailWidth = function() return r.ImGui_TreeNodeFlags_SpanAvailWidth() end,
     SpanFullWidth = function() return r.ImGui_TreeNodeFlags_SpanFullWidth() end,
     CollapsingHeader = function() return r.ImGui_TreeNodeFlags_CollapsingHeader() end,
+}
+
+M.TableFlags = {
+    None = safe_flag(r.ImGui_TableFlags_None, 0),
+    Resizable = safe_flag(r.ImGui_TableFlags_Resizable, 0),
+    Borders = safe_flag(r.ImGui_TableFlags_Borders, 0),
+    BordersH = safe_flag(r.ImGui_TableFlags_BordersH, 0),
+    BordersV = safe_flag(r.ImGui_TableFlags_BordersV, 0),
+    RowBg = safe_flag(r.ImGui_TableFlags_RowBg, 0),
+    SizingStretchSame = safe_flag(r.ImGui_TableFlags_SizingStretchSame, 0),
+}
+
+M.TableColumnFlags = {
+    None = safe_flag(r.ImGui_TableColumnFlags_None, 0),
+    WidthStretch = safe_flag(r.ImGui_TableColumnFlags_WidthStretch, 0),
+    WidthFixed = safe_flag(r.ImGui_TableColumnFlags_WidthFixed, 0),
+    NoResize = safe_flag(r.ImGui_TableColumnFlags_NoResize, 0),
 }
 
 M.InputTextFlags = {
