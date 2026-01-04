@@ -1,7 +1,9 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.6.4
+-- @version 0.6.5
 -- @changelog
+--   v0.6.5 (2026-01-04)
+--     * Fixed get_named_config_param() to return nil instead of throwing error
 --   v0.6.4 (2026-01-01)
 --     + Added theme.from_reaper_theme() for dynamic REAPER theme integration
 --   v0.6.3 (2026-01-01)

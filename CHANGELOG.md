@@ -5,6 +5,12 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.5] - 2026-01-04
+
+### Fixed
+- `TrackFX:get_named_config_param()` now returns `nil` instead of throwing an error when parameter is not found
+  - This is correct behavior for optional parameters like `param.X.plink.*` which return false when not set
+
 ## [0.6.4] - 2026-01-01
 
 ### Added
