@@ -2,8 +2,11 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
-      <version name="0.6.4" author="Nomad Monad" time="2026-01-01T00:00:00Z">
-        <changelog><![CDATA[v0.6.4 (2026-01-01)
+      <version name="0.6.5" author="Nomad Monad" time="2026-01-04T00:00:00Z">
+        <changelog><![CDATA[v0.6.5 (2026-01-04)
+  * Fixed get_named_config_param() to return nil instead of throwing error
+
+v0.6.4 (2026-01-01)
   + Added theme.from_reaper_theme() for dynamic REAPER theme integration
   + Reads REAPER theme colors via GetThemeColor API
   + Ensures text colors are readable with automatic contrast adjustment
