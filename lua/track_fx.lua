@@ -1047,14 +1047,10 @@ local function calc_container_dest_idx(container, position)
   local one_based_pos = position + 1
 
   if is_nested then
-    -- For nested containers: use parent's container_count as the "FX chain" count
-    -- Note: Direct moves from track to nested containers may fail - use intermediate steps
-    local parent = container:get_parent_container()
-    if not parent then
-      return nil
-    end
-    local parent_count = parent:get_container_child_count()
-    return container.pointer + 2 * (parent_count + 1)
+    -- For nested containers: use the container's OWN child count
+    -- Formula: container.pointer + (1-based position) * (container_child_count + 1)
+    local container_count = container:get_container_child_count()
+    return container.pointer + one_based_pos * (container_count + 1)
   else
     -- For top-level containers: use track FX count
     -- Formula: 0x2000000 + (1-based position) * (track_fx_count + 1) + (1-based container index)
