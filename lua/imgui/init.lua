@@ -222,6 +222,28 @@ function Context:selectable(label, selected, flags, size_w, size_h)
     return r.ImGui_Selectable(self.ctx, label, selected, flags, size_w, size_h)
 end
 
+--- Begin a combo box.
+-- @param label string
+-- @param preview_value string Preview text
+-- @param flags number|nil Combo flags
+-- @return boolean True if open
+function Context:begin_combo(label, preview_value, flags)
+    flags = flags or 0
+    return r.ImGui_BeginCombo(self.ctx, label, preview_value, flags)
+end
+
+--- End a combo box.
+function Context:end_combo()
+    r.ImGui_EndCombo(self.ctx)
+end
+
+--- Add dummy space.
+-- @param width number
+-- @param height number
+function Context:dummy(width, height)
+    r.ImGui_Dummy(self.ctx, width, height)
+end
+
 --------------------------------------------------------------------------------
 -- Input Widgets
 --------------------------------------------------------------------------------
@@ -678,6 +700,12 @@ function Context:is_item_active()
     return r.ImGui_IsItemActive(self.ctx)
 end
 
+--- Check if previous item was just made inactive and made a value change.
+-- @return boolean
+function Context:is_item_deactivated_after_edit()
+    return r.ImGui_IsItemDeactivatedAfterEdit(self.ctx)
+end
+
 --- Check if previous item is focused.
 -- @return boolean
 function Context:is_item_focused()
@@ -1040,6 +1068,11 @@ M.Key = {
     Ctrl = function() return r.ImGui_Mod_Ctrl() end,
     Alt = function() return r.ImGui_Mod_Alt() end,
     Super = function() return r.ImGui_Mod_Super() end,
+    Enter = function() return r.ImGui_Key_Enter() end,
+    Escape = function() return r.ImGui_Key_Escape() end,
+    Tab = function() return r.ImGui_Key_Tab() end,
+    Backspace = function() return r.ImGui_Key_Backspace() end,
+    Delete = function() return r.ImGui_Key_Delete() end,
 }
 
 M.ConfigFlags = {
