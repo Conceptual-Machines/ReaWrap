@@ -9,6 +9,8 @@ repos:
       - id: check-added-large-files
         args: ['--maxkb=500']
       - id: check-merge-conflict
+      - id: no-commit-to-branch
+        args: ['--branch', 'main']
 
   # Lua formatting - disabled until Cargo is updated
   # - repo: https://github.com/JohnnyMorganz/StyLua
