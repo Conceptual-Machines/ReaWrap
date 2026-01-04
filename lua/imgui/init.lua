@@ -222,6 +222,28 @@ function Context:selectable(label, selected, flags, size_w, size_h)
     return r.ImGui_Selectable(self.ctx, label, selected, flags, size_w, size_h)
 end
 
+--- Begin a combo box.
+-- @param label string
+-- @param preview_value string Preview text
+-- @param flags number|nil Combo flags
+-- @return boolean True if open
+function Context:begin_combo(label, preview_value, flags)
+    flags = flags or 0
+    return r.ImGui_BeginCombo(self.ctx, label, preview_value, flags)
+end
+
+--- End a combo box.
+function Context:end_combo()
+    r.ImGui_EndCombo(self.ctx)
+end
+
+--- Add dummy space.
+-- @param width number
+-- @param height number
+function Context:dummy(width, height)
+    r.ImGui_Dummy(self.ctx, width, height)
+end
+
 --------------------------------------------------------------------------------
 -- Input Widgets
 --------------------------------------------------------------------------------
@@ -441,6 +463,13 @@ end
 -- @return boolean
 function Context:table_next_column()
     return r.ImGui_TableNextColumn(self.ctx)
+end
+
+--- Set current table column index.
+-- @param column number Column index (0-based)
+-- @return boolean
+function Context:table_set_column_index(column)
+    return r.ImGui_TableSetColumnIndex(self.ctx, column)
 end
 
 --- Set up a table column.
@@ -671,6 +700,12 @@ function Context:is_item_active()
     return r.ImGui_IsItemActive(self.ctx)
 end
 
+--- Check if previous item was just made inactive and made a value change.
+-- @return boolean
+function Context:is_item_deactivated_after_edit()
+    return r.ImGui_IsItemDeactivatedAfterEdit(self.ctx)
+end
+
 --- Check if previous item is focused.
 -- @return boolean
 function Context:is_item_focused()
@@ -843,11 +878,16 @@ function Context:pop_style_color(count)
     end
 end
 
---- Push a style variable (float).
+--- Push a style variable (float or vec2).
 -- @param idx number Variable index (ImGui_StyleVar_*)
--- @param value number Value
-function Context:push_style_var(idx, value)
-    r.ImGui_PushStyleVar(self.ctx, idx, value)
+-- @param value number Value (or first component of Vec2)
+-- @param value2 number|nil Second component for Vec2 style vars
+function Context:push_style_var(idx, value, value2)
+    if value2 then
+        r.ImGui_PushStyleVar(self.ctx, idx, value, value2)
+    else
+        r.ImGui_PushStyleVar(self.ctx, idx, value)
+    end
     self._style_stack[#self._style_stack + 1] = "var"
 end
 
@@ -859,6 +899,123 @@ function Context:pop_style_var(count)
     for _ = 1, count do
         table.remove(self._style_stack)
     end
+end
+
+--------------------------------------------------------------------------------
+-- Cursor & Position
+--------------------------------------------------------------------------------
+
+--- Get cursor screen position.
+-- @return number x
+-- @return number y
+function Context:get_cursor_screen_pos()
+    return r.ImGui_GetCursorScreenPos(self.ctx)
+end
+
+--- Set cursor screen position.
+-- @param x number
+-- @param y number
+function Context:set_cursor_screen_pos(x, y)
+    r.ImGui_SetCursorScreenPos(self.ctx, x, y)
+end
+
+--- Get mouse position.
+-- @return number x
+-- @return number y
+function Context:get_mouse_pos()
+    return r.ImGui_GetMousePos(self.ctx)
+end
+
+--- Set keyboard focus to next widget.
+-- @param offset number|nil Offset (default 0 = next widget)
+function Context:set_keyboard_focus_here(offset)
+    offset = offset or 0
+    r.ImGui_SetKeyboardFocusHere(self.ctx, offset)
+end
+
+--------------------------------------------------------------------------------
+-- Fonts
+--------------------------------------------------------------------------------
+
+--- Push a font.
+-- @param font userdata Font object
+-- @param size number|nil Font size (optional)
+function Context:push_font(font, size)
+    if size then
+        r.ImGui_PushFont(self.ctx, font, size)
+    else
+        r.ImGui_PushFont(self.ctx, font)
+    end
+end
+
+--- Pop font.
+function Context:pop_font()
+    r.ImGui_PopFont(self.ctx)
+end
+
+--------------------------------------------------------------------------------
+-- Drawing
+--------------------------------------------------------------------------------
+
+--- Get window draw list.
+-- @return userdata Draw list
+function Context:get_window_draw_list()
+    return r.ImGui_GetWindowDrawList(self.ctx)
+end
+
+--- Draw a filled rectangle.
+-- @param draw_list userdata Draw list
+-- @param x1 number Top-left X
+-- @param y1 number Top-left Y
+-- @param x2 number Bottom-right X
+-- @param y2 number Bottom-right Y
+-- @param color number RGBA color
+-- @param rounding number|nil Corner rounding
+function Context:draw_list_add_rect_filled(draw_list, x1, y1, x2, y2, color, rounding)
+    rounding = rounding or 0
+    r.ImGui_DrawList_AddRectFilled(draw_list, x1, y1, x2, y2, color, rounding)
+end
+
+--- Draw a line.
+-- @param draw_list userdata Draw list
+-- @param x1 number Start X
+-- @param y1 number Start Y
+-- @param x2 number End X
+-- @param y2 number End Y
+-- @param color number RGBA color
+-- @param thickness number|nil Line thickness
+function Context:draw_list_add_line(draw_list, x1, y1, x2, y2, color, thickness)
+    thickness = thickness or 1.0
+    r.ImGui_DrawList_AddLine(draw_list, x1, y1, x2, y2, color, thickness)
+end
+
+--- Draw text.
+-- @param draw_list userdata Draw list
+-- @param x number X position
+-- @param y number Y position
+-- @param color number RGBA color
+-- @param text string Text to draw
+function Context:draw_list_add_text(draw_list, x, y, color, text)
+    r.ImGui_DrawList_AddText(draw_list, x, y, color, text)
+end
+
+--------------------------------------------------------------------------------
+-- Additional Input Widgets
+--------------------------------------------------------------------------------
+
+--- Create a vertical slider (double/float).
+-- @param label string
+-- @param width number Slider width
+-- @param height number Slider height
+-- @param value number Current value
+-- @param min number Minimum value
+-- @param max number Maximum value
+-- @param format string|nil Display format
+-- @return boolean changed
+-- @return number new_value
+function Context:v_slider_double(label, width, height, value, min, max, format)
+    format = format or "%.3f"
+    return r.ImGui_VSliderDouble(self.ctx, label, width, height, value, min, max, format)
 end
 
 --------------------------------------------------------------------------------
@@ -940,6 +1097,7 @@ M.WindowFlags = {
     NoCollapse = function() return r.ImGui_WindowFlags_NoCollapse() end,
     MenuBar = function() return r.ImGui_WindowFlags_MenuBar() end,
     AlwaysAutoResize = function() return r.ImGui_WindowFlags_AlwaysAutoResize() end,
+    HorizontalScrollbar = function() return r.ImGui_WindowFlags_HorizontalScrollbar() end,
 }
 
 -- ChildFlags (newer ReaImGui versions - provide safe fallbacks)
@@ -977,6 +1135,24 @@ M.TreeNodeFlags = {
     CollapsingHeader = function() return r.ImGui_TreeNodeFlags_CollapsingHeader() end,
 }
 
+M.TableFlags = {
+    None = safe_flag(r.ImGui_TableFlags_None, 0),
+    Resizable = safe_flag(r.ImGui_TableFlags_Resizable, 0),
+    Borders = safe_flag(r.ImGui_TableFlags_Borders, 0),
+    BordersH = safe_flag(r.ImGui_TableFlags_BordersH, 0),
+    BordersV = safe_flag(r.ImGui_TableFlags_BordersV, 0),
+    RowBg = safe_flag(r.ImGui_TableFlags_RowBg, 0),
+    SizingStretchSame = safe_flag(r.ImGui_TableFlags_SizingStretchSame, 0),
+    SizingStretchProp = safe_flag(r.ImGui_TableFlags_SizingStretchProp, 0),
+}
+
+M.TableColumnFlags = {
+    None = safe_flag(r.ImGui_TableColumnFlags_None, 0),
+    WidthStretch = safe_flag(r.ImGui_TableColumnFlags_WidthStretch, 0),
+    WidthFixed = safe_flag(r.ImGui_TableColumnFlags_WidthFixed, 0),
+    NoResize = safe_flag(r.ImGui_TableColumnFlags_NoResize, 0),
+}
+
 M.InputTextFlags = {
     None = function() return r.ImGui_InputTextFlags_None() end,
     CharsDecimal = function() return r.ImGui_InputTextFlags_CharsDecimal() end,
@@ -1002,6 +1178,7 @@ M.Cond = {
 M.Col = {
     Text = function() return r.ImGui_Col_Text() end,
     WindowBg = function() return r.ImGui_Col_WindowBg() end,
+    ChildBg = function() return r.ImGui_Col_ChildBg() end,
     Button = function() return r.ImGui_Col_Button() end,
     ButtonHovered = function() return r.ImGui_Col_ButtonHovered() end,
     ButtonActive = function() return r.ImGui_Col_ButtonActive() end,
@@ -1010,11 +1187,27 @@ M.Col = {
     HeaderActive = function() return r.ImGui_Col_HeaderActive() end,
 }
 
+M.StyleVar = {
+    WindowPadding = function() return r.ImGui_StyleVar_WindowPadding() end,
+    FramePadding = function() return r.ImGui_StyleVar_FramePadding() end,
+    ItemSpacing = function() return r.ImGui_StyleVar_ItemSpacing() end,
+    ItemInnerSpacing = function() return r.ImGui_StyleVar_ItemInnerSpacing() end,
+    IndentSpacing = function() return r.ImGui_StyleVar_IndentSpacing() end,
+    FrameRounding = function() return r.ImGui_StyleVar_FrameRounding() end,
+    WindowRounding = function() return r.ImGui_StyleVar_WindowRounding() end,
+    ChildRounding = function() return r.ImGui_StyleVar_ChildRounding() end,
+}
+
 M.Key = {
     Shift = function() return r.ImGui_Mod_Shift() end,
     Ctrl = function() return r.ImGui_Mod_Ctrl() end,
     Alt = function() return r.ImGui_Mod_Alt() end,
     Super = function() return r.ImGui_Mod_Super() end,
+    Enter = function() return r.ImGui_Key_Enter() end,
+    Escape = function() return r.ImGui_Key_Escape() end,
+    Tab = function() return r.ImGui_Key_Tab() end,
+    Backspace = function() return r.ImGui_Key_Backspace() end,
+    Delete = function() return r.ImGui_Key_Delete() end,
 }
 
 M.ConfigFlags = {

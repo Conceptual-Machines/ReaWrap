@@ -1,7 +1,14 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.6.5
+-- @version 0.7.0
 -- @changelog
+--   v0.7.0 (2026-01-04)
+--     + ImGui cursor/position: get_cursor_screen_pos, set_cursor_screen_pos, get_mouse_pos, set_keyboard_focus_here
+--     + ImGui fonts: push_font, pop_font
+--     + ImGui drawing: get_window_draw_list, draw_list_add_rect_filled, draw_list_add_line, draw_list_add_text
+--     + ImGui widgets: v_slider_double
+--     + ImGui flags: WindowFlags.HorizontalScrollbar, Col.ChildBg, StyleVar.*
+--     * Updated push_style_var to support Vec2 (two values for WindowPadding etc.)
 --   v0.6.5 (2026-01-04)
 --     * Fixed get_named_config_param() to return nil instead of throwing error
 --   v0.6.4 (2026-01-01)

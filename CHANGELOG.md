@@ -5,6 +5,18 @@ All notable changes to ReaWrap will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-01-04
+
+### Added
+- ImGui cursor/position methods: `get_cursor_screen_pos()`, `set_cursor_screen_pos()`, `get_mouse_pos()`, `set_keyboard_focus_here()`
+- ImGui font methods: `push_font()`, `pop_font()`
+- ImGui drawing methods: `get_window_draw_list()`, `draw_list_add_rect_filled()`, `draw_list_add_line()`, `draw_list_add_text()`
+- ImGui widget: `v_slider_double()`
+- ImGui flag constants: `WindowFlags.HorizontalScrollbar`, `Col.ChildBg`, `StyleVar.*` (WindowPadding, FramePadding, etc.)
+
+### Changed
+- `push_style_var()` now supports Vec2 style variables (two values for WindowPadding, FramePadding, etc.)
+
 ## [0.6.5] - 2026-01-04
 
 ### Fixed
