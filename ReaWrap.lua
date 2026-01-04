@@ -1,7 +1,11 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.7.0
+-- @version 0.7.1
 -- @changelog
+--   v0.7.1 (2026-01-04)
+--     + ImGui Col constants: FrameBg, FrameBgHovered, FrameBgActive, SliderGrab, SliderGrabActive
+--     + ImGui drawing: draw_list_add_rect (outline)
+--     + Pre-commit: main branch protection
 --   v0.7.0 (2026-01-04)
 --     + ImGui cursor/position: get_cursor_screen_pos, set_cursor_screen_pos, get_mouse_pos, set_keyboard_focus_here
 --     + ImGui fonts: push_font, pop_font
