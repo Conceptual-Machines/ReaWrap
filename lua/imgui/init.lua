@@ -976,6 +976,21 @@ function Context:draw_list_add_rect_filled(draw_list, x1, y1, x2, y2, color, rou
     r.ImGui_DrawList_AddRectFilled(draw_list, x1, y1, x2, y2, color, rounding)
 end
 
+--- Draw a rectangle outline.
+-- @param draw_list userdata Draw list
+-- @param x1 number Top-left X
+-- @param y1 number Top-left Y
+-- @param x2 number Bottom-right X
+-- @param y2 number Bottom-right Y
+-- @param color number RGBA color
+-- @param rounding number|nil Corner rounding
+-- @param thickness number|nil Border thickness
+function Context:draw_list_add_rect(draw_list, x1, y1, x2, y2, color, rounding, thickness)
+    rounding = rounding or 0
+    thickness = thickness or 1.0
+    r.ImGui_DrawList_AddRect(draw_list, x1, y1, x2, y2, color, rounding, 0, thickness)
+end
+
 --- Draw a line.
 -- @param draw_list userdata Draw list
 -- @param x1 number Start X
@@ -1185,6 +1200,11 @@ M.Col = {
     Header = function() return r.ImGui_Col_Header() end,
     HeaderHovered = function() return r.ImGui_Col_HeaderHovered() end,
     HeaderActive = function() return r.ImGui_Col_HeaderActive() end,
+    FrameBg = function() return r.ImGui_Col_FrameBg() end,
+    FrameBgHovered = function() return r.ImGui_Col_FrameBgHovered() end,
+    FrameBgActive = function() return r.ImGui_Col_FrameBgActive() end,
+    SliderGrab = function() return r.ImGui_Col_SliderGrab() end,
+    SliderGrabActive = function() return r.ImGui_Col_SliderGrabActive() end,
 }
 
 M.StyleVar = {

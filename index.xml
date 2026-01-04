@@ -2,6 +2,27 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
+      <version name="0.7.1" author="Nomad Monad" time="2026-01-04T00:00:00Z">
+        <changelog><![CDATA[v0.7.1 (2026-01-04)
+  + ImGui Col constants: FrameBg, FrameBgHovered, FrameBgActive, SliderGrab, SliderGrabActive
+  + ImGui drawing: draw_list_add_rect (outline)
+  + Pre-commit: main branch protection
+]]></changelog>
+        <source main="main">ReaWrap.lua</source>
+        <source file="lua/version.lua">lua/version.lua</source>
+        <source file="lua/imgui/init.lua">lua/imgui/init.lua</source>
+        <source file="lua/imgui/window.lua">lua/imgui/window.lua</source>
+        <source file="lua/imgui/theme.lua">lua/imgui/theme.lua</source>
+        <source file="lua/helpers.lua">lua/helpers.lua</source>
+        <source file="lua/project.lua">lua/project.lua</source>
+        <source file="lua/track.lua">lua/track.lua</source>
+        <source file="lua/track_fx.lua">lua/track_fx.lua</source>
+        <source file="lua/envelope.lua">lua/envelope.lua</source>
+        <source file="lua/item.lua">lua/item.lua</source>
+        <source file="lua/take.lua">lua/take.lua</source>
+        <source file="lua/plugins.lua">lua/plugins.lua</source>
+        <source file="lua/file.lua">lua/file.lua</source>
+      </version>
       <version name="0.7.0" author="Nomad Monad" time="2026-01-04T00:00:00Z">
         <changelog><![CDATA[v0.7.0 (2026-01-04)
   + ImGui cursor/position: get_cursor_screen_pos, set_cursor_screen_pos, get_mouse_pos, set_keyboard_focus_here
