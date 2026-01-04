@@ -992,6 +992,7 @@ M.TableFlags = {
     BordersV = safe_flag(r.ImGui_TableFlags_BordersV, 0),
     RowBg = safe_flag(r.ImGui_TableFlags_RowBg, 0),
     SizingStretchSame = safe_flag(r.ImGui_TableFlags_SizingStretchSame, 0),
+    SizingStretchProp = safe_flag(r.ImGui_TableFlags_SizingStretchProp, 0),
 }
 
 M.TableColumnFlags = {
