@@ -196,3 +196,4 @@ tests/TestProject/
 # REAPER project files that change frequently
 *.RPP-bak
 *.reapeaks/
+.DS_Store
