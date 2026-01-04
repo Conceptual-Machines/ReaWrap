@@ -461,12 +461,13 @@ end
 -- local constants = TrackFX.NamedConfigParamConstants:create({container_idx = 0})
 -- TrackFX:get_named_config_param(constants.CONTAINER_ITEM_X)
 --- @see TrackFX.NamedConfigParamConstants:create
+--- @return string|nil value The parameter value, or nil if not found
 function TrackFX:get_named_config_param(param_name)
   local ret_val, buf = r.TrackFX_GetNamedConfigParm(self.track.pointer, self.pointer, param_name)
   if ret_val then
     return buf
   else
-    error("Failed to get named config param.")
+    return nil  -- Parameter not found/not set (valid for optional params like plink)
   end
 end
 
