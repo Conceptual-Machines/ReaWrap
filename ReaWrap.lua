@@ -1,7 +1,9 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.7.1
+-- @version 0.7.2
 -- @changelog
+--   v0.7.2 (2026-01-04)
+--     * Fixed move_out_of_container() to return boolean instead of nil
 --   v0.7.1 (2026-01-04)
 --     + ImGui Col constants: FrameBg, FrameBgHovered, FrameBgActive, SliderGrab, SliderGrabActive
 --     + ImGui drawing: draw_list_add_rect (outline)

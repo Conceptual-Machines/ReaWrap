@@ -1013,6 +1013,7 @@ function TrackFX:move_out_of_container(position)
   end
 
   local destination = container:get_parent_container()
+  local my_guid = self:get_guid()
 
   if destination then
     -- Container is nested, move to its parent
@@ -1021,13 +1022,21 @@ function TrackFX:move_out_of_container(position)
     -- Container is on track, move to track
     local fx_count = r.TrackFX_GetCount(self.track.pointer)
     local dest_idx = position or fx_count
-    return r.TrackFX_CopyToTrack(
+    r.TrackFX_CopyToTrack(
       self.track.pointer,
       self.pointer,
       self.track.pointer,
       dest_idx,
       true -- move
     )
+    -- Verify by checking if we no longer have a parent
+    -- Need to re-find ourselves since pointer changed after move
+    local new_self = self.track:find_fx_by_guid(my_guid)
+    if new_self then
+      local new_parent = new_self:get_parent_container()
+      return new_parent == nil  -- Success if no parent (now at track level)
+    end
+    return false
   end
 end
 
