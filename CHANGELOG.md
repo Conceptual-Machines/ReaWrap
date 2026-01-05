@@ -2,6 +2,16 @@
 
 All notable changes to ReaWrap will be documented in this file.
 
+## [0.7.3] - 2026-01-05
+
+### Fixed
+- Fixed nested container stale pointer issues that prevented adding FX to nested containers
+  - `TrackFX:add_fx_to_container()` now automatically refreshes stale pointers before operations
+  - `TrackFX:get_container_child_count()` and `TrackFX:get_parent_container()` now handle stale pointers gracefully
+
+### Added
+- `TrackFX:refresh_pointer()` method to refresh stale encoded pointers by re-searching for FX by GUID
+
 ## [0.7.2] - 2026-01-04
 
 ### Fixed

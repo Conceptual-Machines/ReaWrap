@@ -1,7 +1,10 @@
 -- @description ReaWrap - Object-Oriented Wrapper for ReaScript Lua API
 -- @author Nomad Monad
--- @version 0.7.2
+-- @version 0.7.3
 -- @changelog
+--   v0.7.3 (2026-01-05)
+--     * Fixed nested container stale pointer issues
+--     + Added TrackFX:refresh_pointer() method
 --   v0.7.2 (2026-01-04)
 --     * Fixed move_out_of_container() to return boolean instead of nil
 --   v0.7.1 (2026-01-04)

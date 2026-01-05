@@ -528,6 +528,250 @@ if not has_tracks then
     TestRunner:log("")
 end
 
+--------------------------------------------------------------------------------
+-- Tests: Adding FX to Nested Containers (Bug Fix Verification)
+--------------------------------------------------------------------------------
+
+TestRunner:add("TrackFX:is_container works on nested containers", function()
+    local track = get_test_track()
+    clear_track_fx(track)
+
+    -- Create and nest containers
+    local container1 = track:create_container()
+    local container1_guid = container1:get_guid()
+
+    local container2 = track:create_container()
+    local container2_guid = container2:get_guid()
+
+    container1 = track:find_fx_by_guid(container1_guid)
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert(container1:add_fx_to_container(container2, 0), "Should nest Container2")
+
+    -- Re-find Container2 and test is_container()
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert_not_nil(container2, "Should find Container2")
+    TestRunner:assert(container2:is_container(), "is_container() should work on nested Container2")
+    TestRunner:assert(container2:get_container_child_count() == 0, "Should be able to get child count")
+end, true)
+
+TestRunner:add("TrackFX:add_fx_to_container adds FX to nested container (1 level)", function()
+    local track = get_test_track()
+    clear_track_fx(track)
+
+    -- Create Container1 -> Container2 (nested)
+    local container1 = track:create_container()
+    local container1_guid = container1:get_guid()
+
+    local container2 = track:create_container()
+    local container2_guid = container2:get_guid()
+
+    -- Nest Container2 inside Container1
+    container1 = track:find_fx_by_guid(container1_guid)
+    container2 = track:find_fx_by_guid(container2_guid)
+    local success = container1:add_fx_to_container(container2, 0)
+    TestRunner:assert(success, "Should nest Container2 inside Container1")
+
+    -- Verify Container2 is nested
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert_not_nil(container2:get_parent_container(), "Container2 should have parent")
+
+    -- Add FX at track level
+    local fx = add_test_fx(track, "ReaEQ")
+    local fx_guid = fx:get_guid()
+
+    -- Add FX to nested Container2
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx = track:find_fx_by_guid(fx_guid)
+    local add_success = container2:add_fx_to_container(fx, 0)
+
+    TestRunner:assert(add_success, "Should add FX to nested Container2")
+
+    -- Verify FX is in Container2
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert_equals(1, container2:get_container_child_count(), "Container2 should have 1 child")
+
+    -- Verify Container2 is still nested
+    local parent = container2:get_parent_container()
+    TestRunner:assert_not_nil(parent, "Container2 should still have parent")
+    TestRunner:assert(parent:get_guid() == container1_guid, "Parent should still be Container1")
+
+    -- Verify FX has correct parent
+    fx = track:find_fx_by_guid(fx_guid)
+    local fx_parent = fx:get_parent_container()
+    TestRunner:assert_not_nil(fx_parent, "FX should have parent")
+    TestRunner:assert(fx_parent:get_guid() == container2_guid, "FX parent should be Container2")
+end, true)
+
+TestRunner:add("TrackFX:add_fx_to_container adds FX to deeply nested container (2 levels)", function()
+    local track = get_test_track()
+    clear_track_fx(track)
+
+    -- Create Container1 -> Container2 -> Container3 (deeply nested)
+    local container1 = track:create_container()
+    local container1_guid = container1:get_guid()
+
+    local container2 = track:create_container()
+    local container2_guid = container2:get_guid()
+
+    local container3 = track:create_container()
+    local container3_guid = container3:get_guid()
+
+    -- Build hierarchy: Container1 -> Container2 -> Container3
+    container1 = track:find_fx_by_guid(container1_guid)
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert(container1:add_fx_to_container(container2, 0), "Should nest Container2 in Container1")
+
+    container2 = track:find_fx_by_guid(container2_guid)
+    container3 = track:find_fx_by_guid(container3_guid)
+    TestRunner:assert(container2:add_fx_to_container(container3, 0), "Should nest Container3 in Container2")
+
+    -- Verify Container3 is deeply nested
+    container3 = track:find_fx_by_guid(container3_guid)
+    local parent2 = container3:get_parent_container()
+    TestRunner:assert_not_nil(parent2, "Container3 should have parent")
+    TestRunner:assert(parent2:get_guid() == container2_guid, "Container3's parent should be Container2")
+
+    local parent1 = parent2:get_parent_container()
+    TestRunner:assert_not_nil(parent1, "Container2 should have parent")
+    TestRunner:assert(parent1:get_guid() == container1_guid, "Container2's parent should be Container1")
+
+    -- Add FX at track level
+    local fx = add_test_fx(track, "ReaEQ")
+    local fx_guid = fx:get_guid()
+
+    -- Add FX to deeply nested Container3
+    container3 = track:find_fx_by_guid(container3_guid)
+    fx = track:find_fx_by_guid(fx_guid)
+    local add_success = container3:add_fx_to_container(fx, 0)
+
+    TestRunner:assert(add_success, "Should add FX to deeply nested Container3")
+
+    -- Verify FX is in Container3
+    container3 = track:find_fx_by_guid(container3_guid)
+    TestRunner:assert_equals(1, container3:get_container_child_count(), "Container3 should have 1 child")
+
+    -- Verify Container3 is still deeply nested
+    parent2 = container3:get_parent_container()
+    TestRunner:assert_not_nil(parent2, "Container3 should still have parent")
+    TestRunner:assert(parent2:get_guid() == container2_guid, "Parent should still be Container2")
+
+    parent1 = parent2:get_parent_container()
+    TestRunner:assert_not_nil(parent1, "Container2 should still have parent")
+    TestRunner:assert(parent1:get_guid() == container1_guid, "Container2's parent should still be Container1")
+
+    -- Verify FX has correct parent
+    fx = track:find_fx_by_guid(fx_guid)
+    local fx_parent = fx:get_parent_container()
+    TestRunner:assert_not_nil(fx_parent, "FX should have parent")
+    TestRunner:assert(fx_parent:get_guid() == container3_guid, "FX parent should be Container3")
+end, true)
+
+TestRunner:add("TrackFX:add_fx_to_container adds multiple FX to nested container", function()
+    local track = get_test_track()
+    clear_track_fx(track)
+
+    -- Create nested structure
+    local container1 = track:create_container()
+    local container1_guid = container1:get_guid()
+
+    local container2 = track:create_container()
+    local container2_guid = container2:get_guid()
+
+    container1 = track:find_fx_by_guid(container1_guid)
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert(container1:add_fx_to_container(container2, 0), "Should nest Container2")
+
+    -- Add multiple FX to nested container
+    local fx1 = add_test_fx(track, "ReaEQ")
+    local fx1_guid = fx1:get_guid()
+
+    local fx2 = add_test_fx(track, "ReaComp")
+    local fx2_guid = fx2:get_guid()
+
+    local fx3 = add_test_fx(track, "ReaDelay")
+    local fx3_guid = fx3:get_guid()
+
+    -- Add all FX to nested Container2
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx1 = track:find_fx_by_guid(fx1_guid)
+    TestRunner:assert(container2:add_fx_to_container(fx1, 0), "Should add FX1")
+
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx2 = track:find_fx_by_guid(fx2_guid)
+    TestRunner:assert(container2:add_fx_to_container(fx2, 1), "Should add FX2")
+
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx3 = track:find_fx_by_guid(fx3_guid)
+    TestRunner:assert(container2:add_fx_to_container(fx3, 2), "Should add FX3")
+
+    -- Verify all FX are in Container2
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert_equals(3, container2:get_container_child_count(), "Container2 should have 3 children")
+
+    -- Verify Container2 is still nested
+    local parent = container2:get_parent_container()
+    TestRunner:assert_not_nil(parent, "Container2 should still have parent")
+    TestRunner:assert(parent:get_guid() == container1_guid, "Parent should still be Container1")
+end, true)
+
+TestRunner:add("TrackFX:add_fx_to_container adds at different positions in nested container", function()
+    local track = get_test_track()
+    clear_track_fx(track)
+
+    -- Create nested structure with one FX already in it
+    local container1 = track:create_container()
+    local container1_guid = container1:get_guid()
+
+    local container2 = track:create_container()
+    local container2_guid = container2:get_guid()
+
+    local fx_existing = add_test_fx(track, "ReaEQ")
+    local fx_existing_guid = fx_existing:get_guid()
+
+    -- Add existing FX to container2 first
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx_existing = track:find_fx_by_guid(fx_existing_guid)
+    TestRunner:assert(container2:add_fx_to_container(fx_existing, 0), "Should add existing FX")
+
+    -- Nest Container2
+    container1 = track:find_fx_by_guid(container1_guid)
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert(container1:add_fx_to_container(container2, 0), "Should nest Container2")
+
+    -- Add FX at beginning (position 0)
+    local fx_first = add_test_fx(track, "ReaComp")
+    local fx_first_guid = fx_first:get_guid()
+
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx_first = track:find_fx_by_guid(fx_first_guid)
+    TestRunner:assert(container2:add_fx_to_container(fx_first, 0), "Should add FX at position 0")
+
+    -- Add FX at end (position nil)
+    local fx_last = add_test_fx(track, "ReaDelay")
+    local fx_last_guid = fx_last:get_guid()
+
+    container2 = track:find_fx_by_guid(container2_guid)
+    fx_last = track:find_fx_by_guid(fx_last_guid)
+    TestRunner:assert(container2:add_fx_to_container(fx_last), "Should add FX at end")
+
+    -- Verify order: fx_first, fx_existing, fx_last
+    container2 = track:find_fx_by_guid(container2_guid)
+    TestRunner:assert_equals(3, container2:get_container_child_count(), "Container2 should have 3 children")
+
+    local children = {}
+    for child in container2:iter_container_children() do
+        table.insert(children, child:get_guid())
+    end
+
+    TestRunner:assert(children[1] == fx_first_guid, "First child should be fx_first")
+    TestRunner:assert(children[2] == fx_existing_guid, "Second child should be fx_existing")
+    TestRunner:assert(children[3] == fx_last_guid, "Third child should be fx_last")
+
+    -- Verify Container2 is still nested
+    local parent = container2:get_parent_container()
+    TestRunner:assert_not_nil(parent, "Container2 should still have parent")
+end, true)
+
 -- Run tests
 local results = TestRunner:run_all(has_tracks)
 
