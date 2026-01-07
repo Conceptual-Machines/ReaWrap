@@ -1334,7 +1334,6 @@ end
 --- @return boolean Success
 function TrackFX:create_param_link(source_fx, source_param_idx, target_param_idx, scale)
   if not source_fx or not source_fx.track or not self.track then
-    reaper.ShowConsoleMsg("[ReaWrap] create_param_link: Missing FX or track objects\n")
     return false
   end
 
@@ -1344,58 +1343,32 @@ function TrackFX:create_param_link(source_fx, source_param_idx, target_param_idx
   local source_fx_idx = source_fx.pointer
   local my_parent = self:get_parent_container()
 
-  reaper.ShowConsoleMsg(string.format("[ReaWrap] Initial source_fx_idx: %s (pointer)\n", tostring(source_fx_idx)))
-
   -- If both FX share the same parent container, use LOCAL index
   if my_parent then
     local source_parent = source_fx:get_parent_container()
 
-    reaper.ShowConsoleMsg(string.format("[ReaWrap] Target parent: %s\n", my_parent and "exists" or "nil"))
-    reaper.ShowConsoleMsg(string.format("[ReaWrap] Source parent: %s\n", source_parent and "exists" or "nil"))
-
     -- Check if they share the same parent (compare GUIDs)
     if source_parent and source_parent:get_guid() == my_parent:get_guid() then
-      reaper.ShowConsoleMsg("[ReaWrap] Same parent container - using local index\n")
-
       -- Find source FX's local position within the container
       local children = my_parent:get_container_children()
       local source_guid = source_fx:get_guid()
 
-      reaper.ShowConsoleMsg(string.format("[ReaWrap] Container has %d children\n", #children))
-      reaper.ShowConsoleMsg(string.format("[ReaWrap] Looking for source GUID: %s\n", source_guid))
-
       for i, child in ipairs(children) do
-        local child_guid = child:get_guid()
-        reaper.ShowConsoleMsg(string.format("[ReaWrap]   Child %d: %s (GUID: %s)\n", i, child:get_name(), child_guid))
-        if child_guid == source_guid then
+        if child:get_guid() == source_guid then
           source_fx_idx = i - 1  -- Convert to 0-based local index
-          reaper.ShowConsoleMsg(string.format("[ReaWrap] MATCH! Using local index: %d\n", source_fx_idx))
           break
         end
       end
-    else
-      reaper.ShowConsoleMsg("[ReaWrap] Different parent containers - using global index\n")
     end
-  else
-    reaper.ShowConsoleMsg("[ReaWrap] No parent container - using global index\n")
   end
 
   -- Create the parameter link using REAPER's plink API
   local plink_prefix = string.format("param.%d.plink.", target_param_idx)
 
-  reaper.ShowConsoleMsg(string.format("[ReaWrap] Setting plink values:\n"))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   %sactive = 1\n", plink_prefix))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   %seffect = %s\n", plink_prefix, tostring(source_fx_idx)))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   %sparam = %s\n", plink_prefix, tostring(source_param_idx)))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   %sscale = %s\n", plink_prefix, tostring(scale)))
-
   local ok1 = self:set_named_config_param(plink_prefix .. "active", "1")
   local ok2 = self:set_named_config_param(plink_prefix .. "effect", tostring(source_fx_idx))
   local ok3 = self:set_named_config_param(plink_prefix .. "param", tostring(source_param_idx))
   local ok4 = self:set_named_config_param(plink_prefix .. "scale", tostring(scale))
-
-  reaper.ShowConsoleMsg(string.format("[ReaWrap] set_named_config_param results: ok1=%s, ok2=%s, ok3=%s, ok4=%s\n",
-    tostring(ok1), tostring(ok2), tostring(ok3), tostring(ok4)))
 
   return ok1 and ok2 and ok3 and ok4
 end
@@ -1416,25 +1389,16 @@ end
 function TrackFX:get_param_link_info(target_param_idx)
   local plink_prefix = string.format("param.%d.plink.", target_param_idx)
 
-  reaper.ShowConsoleMsg(string.format("[ReaWrap] get_param_link_info: Reading plink for param %d\n", target_param_idx))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   Prefix: %s\n", plink_prefix))
-
   -- get_named_config_param returns a single value (buf or nil), not retval + value
   local active = self:get_named_config_param(plink_prefix .. "active")
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   active: value='%s'\n", tostring(active)))
 
   if not active or active ~= "1" then
-    reaper.ShowConsoleMsg("[ReaWrap]   No active link (active != '1')\n")
     return nil  -- No active link
   end
 
   local effect = self:get_named_config_param(plink_prefix .. "effect")
   local param = self:get_named_config_param(plink_prefix .. "param")
   local scale = self:get_named_config_param(plink_prefix .. "scale")
-
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   effect: value='%s'\n", tostring(effect)))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   param: value='%s'\n", tostring(param)))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   scale: value='%s'\n", tostring(scale)))
 
   return {
     active = true,
