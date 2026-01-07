@@ -1419,21 +1419,22 @@ function TrackFX:get_param_link_info(target_param_idx)
   reaper.ShowConsoleMsg(string.format("[ReaWrap] get_param_link_info: Reading plink for param %d\n", target_param_idx))
   reaper.ShowConsoleMsg(string.format("[ReaWrap]   Prefix: %s\n", plink_prefix))
 
-  local retval_active, active = self:get_named_config_param(plink_prefix .. "active")
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   active: retval=%s, value='%s'\n", tostring(retval_active), tostring(active)))
+  -- get_named_config_param returns a single value (buf or nil), not retval + value
+  local active = self:get_named_config_param(plink_prefix .. "active")
+  reaper.ShowConsoleMsg(string.format("[ReaWrap]   active: value='%s'\n", tostring(active)))
 
-  if not retval_active or active ~= "1" then
+  if not active or active ~= "1" then
     reaper.ShowConsoleMsg("[ReaWrap]   No active link (active != '1')\n")
     return nil  -- No active link
   end
 
-  local retval_effect, effect = self:get_named_config_param(plink_prefix .. "effect")
-  local retval_param, param = self:get_named_config_param(plink_prefix .. "param")
-  local retval_scale, scale = self:get_named_config_param(plink_prefix .. "scale")
+  local effect = self:get_named_config_param(plink_prefix .. "effect")
+  local param = self:get_named_config_param(plink_prefix .. "param")
+  local scale = self:get_named_config_param(plink_prefix .. "scale")
 
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   effect: retval=%s, value='%s'\n", tostring(retval_effect), tostring(effect)))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   param: retval=%s, value='%s'\n", tostring(retval_param), tostring(param)))
-  reaper.ShowConsoleMsg(string.format("[ReaWrap]   scale: retval=%s, value='%s'\n", tostring(retval_scale), tostring(scale)))
+  reaper.ShowConsoleMsg(string.format("[ReaWrap]   effect: value='%s'\n", tostring(effect)))
+  reaper.ShowConsoleMsg(string.format("[ReaWrap]   param: value='%s'\n", tostring(param)))
+  reaper.ShowConsoleMsg(string.format("[ReaWrap]   scale: value='%s'\n", tostring(scale)))
 
   return {
     active = true,
