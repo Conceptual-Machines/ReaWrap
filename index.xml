@@ -2,6 +2,28 @@
 <index version="1" name="ReaWrap" commit="HEAD">
   <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
+      <version name="0.7.4" author="Nomad Monad" time="2026-01-07T00:00:00Z">
+        <changelog><![CDATA[v0.7.4 (2026-01-07)
+  * Fixed TrackFX:get_param() to return actual parameter value instead of min/max bounds
+  * Was incorrectly returning (min_val, max_val) instead of (param_value, min_val, max_val)
+  * This caused discrete parameter controls to always read 0.0 instead of actual state
+  + TrackFX:create_param_link() - Create parameter modulation link from source FX to target parameter
+  + TrackFX:remove_param_link() - Remove parameter modulation link from target parameter
+  + TrackFX:get_param_link_info() - Query parameter link information (active, effect, param, scale)
+]]></changelog>
+        <source main="main">ReaWrap.lua</source>
+        <source file="lua/version.lua">lua/version.lua</source>
+        <source file="lua/imgui/init.lua">lua/imgui/init.lua</source>
+        <source file="lua/imgui/window.lua">lua/imgui/window.lua</source>
+        <source file="lua/imgui/theme.lua">lua/imgui/theme.lua</source>
+        <source file="lua/helpers.lua">lua/helpers.lua</source>
+        <source file="lua/project.lua">lua/project.lua</source>
+        <source file="lua/track.lua">lua/track.lua</source>
+        <source file="lua/track_fx.lua">lua/track_fx.lua</source>
+        <source file="lua/item.lua">lua/item.lua</source>
+        <source file="lua/take.lua">lua/take.lua</source>
+        <source file="lua/plugins.lua">lua/plugins.lua</source>
+      </version>
       <version name="0.7.3" author="Nomad Monad" time="2026-01-05T00:00:00Z">
         <changelog><![CDATA[v0.7.3 (2026-01-05)
   * Fixed nested container stale pointer issues

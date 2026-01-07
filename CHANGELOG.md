@@ -2,6 +2,18 @@
 
 All notable changes to ReaWrap will be documented in this file.
 
+## [0.7.4] - 2026-01-07
+
+### Added
+- `TrackFX:create_param_link()` - Create parameter modulation link from source FX to target parameter
+- `TrackFX:remove_param_link()` - Remove parameter modulation link from target parameter
+- `TrackFX:get_param_link_info()` - Query parameter link information (active, effect, param, scale)
+
+### Fixed
+- Fixed `TrackFX:get_param()` to return actual parameter value instead of min/max bounds
+  - Was incorrectly returning `(min_val, max_val)` instead of `(param_value, min_val, max_val)`
+  - This caused discrete parameter controls to always read 0.0 instead of actual state
+
 ## [0.7.3] - 2026-01-05
 
 ### Fixed
