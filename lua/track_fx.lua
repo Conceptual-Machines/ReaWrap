@@ -495,12 +495,13 @@ end
 --- Get Param. Wraps TrackFX_GetParam.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return number min_val
---- @return number max_val
+--- @return number param_value The current parameter value
+--- @return number min_val The minimum parameter value
+--- @return number max_val The maximum parameter value
 function TrackFX:get_param(param)
   local ret_val, min_val, max_val = r.TrackFX_GetParam(self.track.pointer, self.pointer, param)
   if ret_val then
-    return min_val, max_val
+    return ret_val, min_val, max_val
   else
     error("Failed to get param.")
   end
