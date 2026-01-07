@@ -495,12 +495,13 @@ end
 --- Get Param. Wraps TrackFX_GetParam.
 --- @within ReaScript Wrapped Methods
 --- @param param number
---- @return number min_val
---- @return number max_val
+--- @return number param_value The current parameter value
+--- @return number min_val The minimum parameter value
+--- @return number max_val The maximum parameter value
 function TrackFX:get_param(param)
   local ret_val, min_val, max_val = r.TrackFX_GetParam(self.track.pointer, self.pointer, param)
   if ret_val then
-    return min_val, max_val
+    return ret_val, min_val, max_val
   else
     error("Failed to get param.")
   end
@@ -1322,6 +1323,90 @@ function TrackFX:copy_fx_to_container(fx, position)
     dest_idx,
     false -- copy
   )
+end
+
+--- Create a parameter modulation link from a source FX to this FX's parameter.
+--- Automatically handles local container indices when both FX are in the same container.
+--- @within ReaWrap Custom Methods
+--- @param source_fx table The source FX (modulator) TrackFX object
+--- @param source_param_idx number The parameter index of the source FX output
+--- @param target_param_idx number The parameter index on this FX to modulate
+--- @param scale number|nil Modulation scale (0.0-1.0), defaults to 1.0 (100%)
+--- @return boolean Success
+function TrackFX:create_param_link(source_fx, source_param_idx, target_param_idx, scale)
+  if not source_fx or not source_fx.track or not self.track then
+    return false
+  end
+
+  scale = scale or 1.0
+
+  -- Determine if we need local or global FX index
+  local source_fx_idx = source_fx.pointer
+  local my_parent = self:get_parent_container()
+
+  -- If both FX share the same parent container, use LOCAL index
+  if my_parent then
+    local source_parent = source_fx:get_parent_container()
+
+    -- Check if they share the same parent (compare GUIDs)
+    if source_parent and source_parent:get_guid() == my_parent:get_guid() then
+      -- Find source FX's local position within the container
+      local children = my_parent:get_container_children()
+      local source_guid = source_fx:get_guid()
+
+      for i, child in ipairs(children) do
+        if child:get_guid() == source_guid then
+          source_fx_idx = i - 1  -- Convert to 0-based local index
+          break
+        end
+      end
+    end
+  end
+
+  -- Create the parameter link using REAPER's plink API
+  local plink_prefix = string.format("param.%d.plink.", target_param_idx)
+
+  local ok1 = self:set_named_config_param(plink_prefix .. "active", "1")
+  local ok2 = self:set_named_config_param(plink_prefix .. "effect", tostring(source_fx_idx))
+  local ok3 = self:set_named_config_param(plink_prefix .. "param", tostring(source_param_idx))
+  local ok4 = self:set_named_config_param(plink_prefix .. "scale", tostring(scale))
+
+  return ok1 and ok2 and ok3 and ok4
+end
+
+--- Remove a parameter modulation link from this FX's parameter.
+--- @within ReaWrap Custom Methods
+--- @param target_param_idx number The parameter index to remove modulation from
+--- @return boolean Success
+function TrackFX:remove_param_link(target_param_idx)
+  local plink_prefix = string.format("param.%d.plink.", target_param_idx)
+  return self:set_named_config_param(plink_prefix .. "active", "0")
+end
+
+--- Get parameter modulation link information.
+--- @within ReaWrap Custom Methods
+--- @param target_param_idx number The parameter index to query
+--- @return table|nil Link info table with fields: active, effect, param, scale, or nil if no link
+function TrackFX:get_param_link_info(target_param_idx)
+  local plink_prefix = string.format("param.%d.plink.", target_param_idx)
+
+  -- get_named_config_param returns a single value (buf or nil), not retval + value
+  local active = self:get_named_config_param(plink_prefix .. "active")
+
+  if not active or active ~= "1" then
+    return nil  -- No active link
+  end
+
+  local effect = self:get_named_config_param(plink_prefix .. "effect")
+  local param = self:get_named_config_param(plink_prefix .. "param")
+  local scale = self:get_named_config_param(plink_prefix .. "scale")
+
+  return {
+    active = true,
+    effect = tonumber(effect),
+    param = tonumber(param),
+    scale = tonumber(scale) or 1.0
+  }
 end
 
 return TrackFX
