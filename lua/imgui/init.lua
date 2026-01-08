@@ -128,6 +128,31 @@ function Context:end_child()
     r.ImGui_EndChild(self.ctx)
 end
 
+--- Execute function with automatic child region cleanup.
+-- Automatically calls end_child() after function execution, even if an error occurs.
+-- @param id string Child ID
+-- @param width number|nil Width (0 = auto)
+-- @param height number|nil Height (0 = auto)
+-- @param child_flags number|nil Child flags
+-- @param window_flags number|nil Window flags
+-- @param fn function Function to execute with child context
+-- @return boolean True if child was created
+function Context:with_child(id, width, height, child_flags, window_flags, fn)
+    width = width or 0
+    height = height or 0
+    child_flags = child_flags or 0
+    window_flags = window_flags or 0
+    local success = r.ImGui_BeginChild(self.ctx, id, width, height, child_flags, window_flags)
+    if success then
+        local ok, err = pcall(fn)
+        r.ImGui_EndChild(self.ctx)
+        if not ok then
+            error(err, 2)
+        end
+    end
+    return success
+end
+
 --------------------------------------------------------------------------------
 -- Basic Widgets
 --------------------------------------------------------------------------------
@@ -487,6 +512,26 @@ function Context:table_headers_row()
     r.ImGui_TableHeadersRow(self.ctx)
 end
 
+--- Execute function with automatic table cleanup.
+-- Automatically calls end_table() after function execution, even if an error occurs.
+-- @param id string Table ID
+-- @param columns number Number of columns
+-- @param flags number|nil Table flags
+-- @param fn function Function to execute with table context
+-- @return boolean True if table was created
+function Context:with_table(id, columns, flags, fn)
+    flags = flags or 0
+    local success = r.ImGui_BeginTable(self.ctx, id, columns, flags)
+    if success then
+        local ok, err = pcall(fn)
+        r.ImGui_EndTable(self.ctx)
+        if not ok then
+            error(err, 2)
+        end
+    end
+    return success
+end
+
 --------------------------------------------------------------------------------
 -- Trees & Collapsing Headers
 --------------------------------------------------------------------------------
@@ -512,6 +557,25 @@ end
 --- Pop a tree node.
 function Context:tree_pop()
     r.ImGui_TreePop(self.ctx)
+end
+
+--- Execute function with automatic tree node cleanup.
+-- Automatically calls tree_pop() after function execution if tree was opened.
+-- @param label string Tree node label
+-- @param flags number|nil Tree node flags
+-- @param fn function Function to execute with tree context
+-- @return boolean True if tree was opened
+function Context:with_tree_node(label, flags, fn)
+    flags = flags or 0
+    local opened = r.ImGui_TreeNode(self.ctx, label, flags)
+    if opened then
+        local ok, err = pcall(fn)
+        r.ImGui_TreePop(self.ctx)
+        if not ok then
+            error(err, 2)
+        end
+    end
+    return opened
 end
 
 --- Create a collapsing header.

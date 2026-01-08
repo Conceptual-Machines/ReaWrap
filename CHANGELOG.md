@@ -2,6 +2,14 @@
 
 All notable changes to ReaWrap will be documented in this file.
 
+## [0.8.0] - 2026-01-07
+
+### Added
+- `Context:with_table(id, columns, flags, fn)` - Execute function with automatic table cleanup
+- `Context:with_child(id, width, height, child_flags, window_flags, fn)` - Execute function with automatic child region cleanup
+- `Context:with_tree_node(label, flags, fn)` - Execute function with automatic tree node cleanup
+- Closure-based helpers use pcall to ensure cleanup even on errors, preventing ImGui state corruption
+
 ## [0.7.4] - 2026-01-07
 
 ### Added
