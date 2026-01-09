@@ -52,6 +52,33 @@ function helpers.log_func(name, sep)
   end
 end
 
+--- Return a log function that only logs each unique message once.
+--- Useful for preventing console spam in loops or frequent function calls.
+--- @param name string Logger name
+--- @param sep string Default is ' --- '
+--- @return function Logger function that tracks logged messages
+function helpers.log_once_func(name, sep)
+  sep = sep or " --- "
+  local logged = {}  -- Track logged message hashes
+  
+  return function(...)
+    -- Create a hash of the message arguments
+    local args = {...}
+    local msg_parts = {}
+    for i, arg in ipairs(args) do
+      msg_parts[i] = tostring(arg)
+    end
+    local msg_key = table.concat(msg_parts, "|")
+    
+    -- Only log if not already logged
+    if not logged[msg_key] then
+      local printer = helpers.print_func(sep)
+      printer(os.date(), name, ...)
+      logged[msg_key] = true
+    end
+  end
+end
+
 --- Constants for message box types.
 --- @within Constants
 --- @field OK number
