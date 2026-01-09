@@ -18,7 +18,7 @@ jobs:
           luaVersion: "5.4"
 
       - name: Run unit tests
-        run: lua tests/runner.lua
+        run: lua tests/runner_luaunit.lua
 
   lint:
     name: Code Quality
