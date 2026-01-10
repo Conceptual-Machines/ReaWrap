@@ -1386,7 +1386,7 @@ end
 --- Get parameter modulation link information.
 --- @within ReaWrap Custom Methods
 --- @param target_param_idx number The parameter index to query
---- @return table|nil Link info table with fields: active, effect, param, scale, or nil if no link
+--- @return table|nil Link info table with fields: active, effect, param, scale, offset, or nil if no link
 function TrackFX:get_param_link_info(target_param_idx)
   local plink_prefix = string.format("param.%d.plink.", target_param_idx)
 
@@ -1400,12 +1400,14 @@ function TrackFX:get_param_link_info(target_param_idx)
   local effect = self:get_named_config_param(plink_prefix .. "effect")
   local param = self:get_named_config_param(plink_prefix .. "param")
   local scale = self:get_named_config_param(plink_prefix .. "scale")
+  local offset = self:get_named_config_param(plink_prefix .. "offset")
 
   return {
     active = true,
     effect = tonumber(effect),
     param = tonumber(param),
-    scale = tonumber(scale) or 1.0
+    scale = tonumber(scale) or 1.0,
+    offset = tonumber(offset) or 0
   }
 end
 
