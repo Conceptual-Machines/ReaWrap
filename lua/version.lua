@@ -7,7 +7,7 @@ local M = {}
 
 M.MAJOR = 0
 M.MINOR = 8
-M.PATCH = 0
+M.PATCH = 1
 
 M.VERSION = string.format("%d.%d.%d", M.MAJOR, M.MINOR, M.PATCH)
 

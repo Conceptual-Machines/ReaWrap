@@ -2,6 +2,18 @@
 
 All notable changes to ReaWrap will be documented in this file.
 
+## [0.8.1] - 2026-01-11
+
+### Added
+- `helpers.log_once_func()` - Creates logger that only logs each unique message once, preventing console spam in loops
+- `TrackFX:get_param_link_info()` now returns `baseline` and `offset` fields for correct modulation formula
+
+### Changed
+- **Test framework migration**: All unit tests migrated from custom assertions to LuaUnit framework
+  - Single-file `luaunit.lua` testing framework
+  - Proper exit codes for CI integration
+  - 45 test functions across 4 test files
+
 ## [0.8.0] - 2026-01-07
 
 ### Added
