@@ -60,7 +60,7 @@ end
 function helpers.log_once_func(name, sep)
   sep = sep or " --- "
   local logged = {}  -- Track logged message hashes
-  
+
   return function(...)
     -- Create a hash of the message arguments
     local args = {...}
@@ -69,7 +69,7 @@ function helpers.log_once_func(name, sep)
       msg_parts[i] = tostring(arg)
     end
     local msg_key = table.concat(msg_parts, "|")
-    
+
     -- Only log if not already logged
     if not logged[msg_key] then
       local printer = helpers.print_func(sep)
