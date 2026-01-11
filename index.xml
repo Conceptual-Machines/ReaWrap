@@ -2,6 +2,10 @@
   <index version="1" name="ReaWrap" commit="HEAD">
     <category name="Libraries">
       <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
+        <version name="0.8.1" author="Nomad Monad" time="2026-01-11T00:00:00Z"><changelog><![CDATA[v0.8.1 (2026-01-11)
+          + helpers.log_once_func() - Logger that only logs unique messages once
+          + TrackFX:get_param_link_info() returns baseline and offset fields
+          * Unit tests migrated to LuaUnit framework]]></changelog><source file="ReaWrap.lua" main="main">ReaWrap.lua</source><source file="lua/version.lua">lua/version.lua</source><source file="lua/imgui/init.lua">lua/imgui/init.lua</source><source file="lua/imgui/window.lua">lua/imgui/window.lua</source><source file="lua/imgui/theme.lua">lua/imgui/theme.lua</source><source file="lua/helpers.lua">lua/helpers.lua</source><source file="lua/project.lua">lua/project.lua</source><source file="lua/track.lua">lua/track.lua</source><source file="lua/track_fx.lua">lua/track_fx.lua</source><source file="lua/item.lua">lua/item.lua</source><source file="lua/take.lua">lua/take.lua</source><source file="lua/plugins.lua">lua/plugins.lua</source></version>
         <version name="0.8.0" author="Nomad Monad" time="2026-01-07T00:00:00Z"><changelog><![CDATA[v0.8.0 (2026-01-07)
           * `Context:with_table(id, columns, flags, fn)` - Execute function with automatic table cleanup
           * `Context:with_child(id, width, height, child_flags, window_flags, fn)` - Execute function with automatic child region cleanup
