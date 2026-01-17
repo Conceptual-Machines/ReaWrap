@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <index version="1" name="ReaWrap" commit="HEAD">
-  <category name="">
-    <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
-      <metadata>
-        <description><![CDATA[Object-oriented wrapper for REAPER's Lua API.
+  <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
+    <metadata>
+      <description><![CDATA[Object-oriented wrapper for REAPER's Lua API.
 
 Provides clean OOP interfaces for:
 - Project, Track, TrackFX, Item, Take
 - ImGui Context, Window, Theme
 - Plugin scanning and filtering]]></description>
-        <link rel="homepage">https://github.com/Conceptual-Machines/ReaWrap</link>
-      </metadata>
-      <version name="0.8.1" author="Nomad Monad" time="2026-01-11T00:00:00Z">
-        <changelog><![CDATA[v0.8.1 (2026-01-11)
+      <link rel="homepage">https://github.com/Conceptual-Machines/ReaWrap</link>
+    </metadata>
+    <version name="0.8.1" author="Nomad Monad" time="2026-01-11T00:00:00Z">
+      <changelog><![CDATA[v0.8.1 (2026-01-11)
   + helpers.log_once_func() - Logger that only logs unique messages once
   + TrackFX:get_param_link_info() returns baseline and offset fields
   * Unit tests migrated to LuaUnit framework]]></changelog>
-        <source main="main">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/ReaWrap.lua</source>
-        <source file="lua/version.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/version.lua</source>
-        <source file="lua/imgui/init.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/imgui/init.lua</source>
-        <source file="lua/imgui/window.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/imgui/window.lua</source>
-        <source file="lua/imgui/theme.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/imgui/theme.lua</source>
-        <source file="lua/helpers.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/helpers.lua</source>
-        <source file="lua/project.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/project.lua</source>
-        <source file="lua/track.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/track.lua</source>
-        <source file="lua/track_fx.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/track_fx.lua</source>
-        <source file="lua/item.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/item.lua</source>
-        <source file="lua/take.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/take.lua</source>
-        <source file="lua/plugins.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/plugins.lua</source>
-      </version>
-    </reapack>
-  </category>
+      <source main="main">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/ReaWrap.lua</source>
+      <source file="lua/version.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/version.lua</source>
+      <source file="lua/imgui/init.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/imgui/init.lua</source>
+      <source file="lua/imgui/window.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/imgui/window.lua</source>
+      <source file="lua/imgui/theme.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/imgui/theme.lua</source>
+      <source file="lua/helpers.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/helpers.lua</source>
+      <source file="lua/project.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/project.lua</source>
+      <source file="lua/track.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/track.lua</source>
+      <source file="lua/track_fx.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/track_fx.lua</source>
+      <source file="lua/item.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/item.lua</source>
+      <source file="lua/take.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/take.lua</source>
+      <source file="lua/plugins.lua">https://raw.githubusercontent.com/Conceptual-Machines/ReaWrap/v0.8.1/lua/plugins.lua</source>
+    </version>
+  </reapack>
 </index>
