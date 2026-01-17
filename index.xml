@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <index version="1" name="ReaWrap" commit="HEAD">
-  <category name="">
+  <category name="Libraries">
     <reapack name="ReaWrap.lua" type="script" desc="ReaWrap - OOP Wrapper for ReaScript Lua API">
       <metadata>
         <description><![CDATA[Object-oriented wrapper for REAPER's Lua API.
