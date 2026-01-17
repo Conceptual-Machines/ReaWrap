@@ -15,6 +15,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is on main branch
+        run: |
+          # Get the commit the tag points to
+          TAG_COMMIT=$(git rev-list -n 1 ${{ github.ref }})
+          # Check if this commit is on main
+          if ! git branch -r --contains "$TAG_COMMIT" | grep -q 'origin/main'; then
+            echo "Error: Tag ${{ github.ref_name }} is not on the main branch"
+            echo "Tags should only be created from main branch commits"
+            exit 1
+          fi
+          echo "Tag ${{ github.ref_name }} is on main branch"
 
       - name: Extract version from tag
         id: version
